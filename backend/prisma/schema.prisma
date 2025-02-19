@@ -23,14 +23,6 @@ model User {
   freelancer Freelancer?
 }
 
-model Client {
-  id           String  @id @default(uuid()) @map("user_id")
-  user         User    @relation(fields: [id], references: [id])
-  companyName  String?
-  companyWebsite String?
-  verified     Boolean @default(false)
-}
-
 // freelancer
 
 model Freelancer {
@@ -92,4 +84,56 @@ model WorkHistory {
   endDate      DateTime?
   jobType      String
   feedback     String?
+}
+
+// client
+
+model Client {
+  id           String  @id @default(uuid()) @map("user_id")
+  user         User    @relation(fields: [id], references: [id])
+  companyName  String?
+  companyWebsite String?
+  verified     Boolean @default(false)
+
+  job Job[]
+}
+
+
+// job
+model Job {
+  id              String    @id @default(uuid()) // ID của job (UUID)
+  title           String    @db.VarChar(255)    // Tiêu đề công việc
+  description     String    @db.Text            // Mô tả công việc
+  client         Client    @relation(fields: [id], references: [id], onDelete: Cascade) // Quan hệ với Client
+  client_id       String   // ID của client đăng job
+  category        String    @db.VarChar(100)    // Danh mục công việc
+  skills         String[]  // Mảng các kỹ năng yêu cầu
+  budget         Float?     // Ngân sách công việc (nếu có)
+  job_type       JobType    // Loại công việc (fixed price / hourly)
+  experience_level ExperienceLevel // Mức độ kinh nghiệm yêu cầu
+  status         JobStatus // Trạng thái công việc
+  created_at     DateTime  @default(now())     // Ngày tạo
+  updated_at     DateTime  @updatedAt          // Ngày cập nhật
+
+  @@map("jobs") // Đặt tên bảng là "jobs" trong PostgreSQL
+}
+
+// Định nghĩa enum cho loại công việc
+enum JobType {
+  FIXED_PRICE
+  HOURLY
+}
+
+// Định nghĩa enum cho mức độ kinh nghiệm
+enum ExperienceLevel {
+  ENTRY
+  INTERMEDIATE
+  EXPERT
+}
+
+// Định nghĩa enum cho trạng thái công việc
+enum JobStatus {
+  OPEN
+  CLOSED
+  HIRED
 }
