@@ -1,5 +1,5 @@
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DB_URL")
 }
 
@@ -12,6 +12,7 @@ model User {
   id    String  @id   @default(uuid())
   email String @unique
   password String
+  address String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
   avatarUrl String
@@ -30,13 +31,65 @@ model Client {
   verified     Boolean @default(false)
 }
 
+// freelancer
+
 model Freelancer {
   id          String  @id @default(uuid()) @map("user_id")
   user        User    @relation(fields: [id], references: [id])
-  title       String
-  bio         String?
-  hourlyRate  Decimal @default(0.0)
-  skills      String[]
-  experience  Int     @default(0)
-  rating      Decimal @default(0.0)
+  title          String
+  hourlyRate     Decimal        @default(0.0)
+  totalEarnings  Decimal        @default(0.0)
+  completedJobs  Int            @default(0)
+  inProgressJobs Int            @default(0)
+  hoursPerWeek   String
+  responseTime   String
+  openToContract Boolean        @default(false)
+  education      String?
+  workHistory    WorkHistory[]
+  freelancerSkills FreelancerSkill[]
+  freelancerLanguages FreelancerLanguage[]
+  verifications  Verification[]
+  linkedAccounts LinkedAccount[]
+}
+
+model FreelancerSkill {
+  id           String      @id @default(uuid())
+  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  freelancerId String
+  skill        String
+}
+
+model FreelancerLanguage {
+  id           String      @id @default(uuid())
+  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  freelancerId String
+  language     String
+}
+
+model Verification {
+  id           String      @id @default(uuid())
+  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  freelancerId String
+  type         String
+}
+
+model LinkedAccount {
+  id           String      @id @default(uuid())
+  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  freelancerId String
+  platform     String
+  url          String
+}
+
+model WorkHistory {
+  id           String      @id @default(uuid())
+  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  freelancerId String
+  jobTitle     String
+  rating       Decimal     @default(0.0)
+  price        Decimal
+  startDate    DateTime
+  endDate      DateTime?
+  jobType      String
+  feedback     String?
 }
