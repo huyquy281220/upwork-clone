@@ -7,7 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 model User {
   id    String  @id   @default(uuid())
   email String @unique
@@ -19,9 +18,10 @@ model User {
   avatarUrl String
   phoneNumber String
 
-
-  client Client?
+  client     Client?
   freelancer Freelancer?
+  review     Review[]
+  // sender Message[]
 }
 
 enum Role {
@@ -32,59 +32,61 @@ enum Role {
 // freelancer
 
 model Freelancer {
-  id          String  @id @default(uuid()) @map("user_id")
-  user        User    @relation(fields: [id], references: [id])
-  title          String
-  hourlyRate     Decimal        @default(0.0)
-  totalEarnings  Decimal        @default(0.0)
-  completedJobs  Int            @default(0)
-  inProgressJobs Int            @default(0)
-  hoursPerWeek   String
-  responseTime   String
-  openToContract Boolean        @default(false)
-  education      String?
-  workHistory    WorkHistory[]
-  freelancerSkills FreelancerSkill[]
+  id                  String               @id @default(uuid()) @map("user_id")
+  user                User                 @relation(fields: [id], references: [id])
+  title               String
+  hourlyRate          Decimal              @default(0.0)
+  totalEarnings       Decimal              @default(0.0)
+  completedJobs       Int                  @default(0)
+  inProgressJobs      Int                  @default(0)
+  hoursPerWeek        String
+  responseTime        String
+  openToContract      Boolean              @default(false)
+  education           String?
+  workHistory         WorkHistory[]
+  freelancerSkills    FreelancerSkill[]
   freelancerLanguages FreelancerLanguage[]
-  verifications  Verification[]
-  linkedAccounts LinkedAccount[]
+  verifications       Verification[]
+  linkedAccounts      LinkedAccount[]
+  contracts           Contract[]
+  proposal            Proposal[]
 }
 
 model FreelancerSkill {
-  id           String      @id @default(uuid())
-  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  id           String     @id @default(uuid())
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
   freelancerId String
   skill        String
 }
 
 model FreelancerLanguage {
-  id           String      @id @default(uuid())
-  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  id           String     @id @default(uuid())
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
   freelancerId String
   language     String
 }
 
 model Verification {
-  id           String      @id @default(uuid())
-  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  id           String     @id @default(uuid())
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
   freelancerId String
   type         String
 }
 
 model LinkedAccount {
-  id           String      @id @default(uuid())
-  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  id           String     @id @default(uuid())
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
   freelancerId String
   platform     String
   url          String
 }
 
 model WorkHistory {
-  id           String      @id @default(uuid())
-  freelancer   Freelancer  @relation(fields: [freelancerId], references: [id])
+  id           String     @id @default(uuid())
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
   freelancerId String
   jobTitle     String
-  rating       Decimal     @default(0.0)
+  rating       Decimal    @default(0.0)
   price        Decimal
   startDate    DateTime
   endDate      DateTime?
@@ -95,30 +97,33 @@ model WorkHistory {
 // client
 
 model Client {
-  id           String  @id @default(uuid()) @map("user_id")
-  user         User    @relation(fields: [id], references: [id])
-  companyName  String?
+  id             String     @id @default(uuid()) @map("user_id")
+  user           User       @relation(fields: [id], references: [id])
+  companyName    String?
   companyWebsite String?
-  verified     Boolean @default(false)
-
-  job Job[]
+  verified       Boolean    @default(false)
+  contracts      Contract[]
+  job            Job[]
 }
-
 
 // job
 model Job {
-  id              String    @id @default(uuid()) 
-  title           String    @db.VarChar(255)   
-  client         Client    @relation(fields: [id], references: [id], onDelete: Cascade) // Quan hệ với Client
-  client_id       String   
-  category        String    @db.VarChar(100)    
-  skills         String[]  
-  budget         Float?     
-  job_type       JobType    
-  experience_level ExperienceLevel 
-  status         JobStatus 
-  created_at     DateTime  @default(now())     
-  updated_at     DateTime  @updatedAt          
+  id               String          @id @default(uuid()) // ID của job (UUID)
+  title            String          @db.VarChar(255) // Tiêu đề công việc
+  description      String          @db.Text // Mô tả công việc
+  client           Client          @relation(fields: [id], references: [id], onDelete: Cascade) // Quan hệ với Client
+  client_id        String // ID của client đăng job
+  category         String          @db.VarChar(100) // Danh mục công việc
+  skills           String[] // Mảng các kỹ năng yêu cầu
+  budget           Float? // Ngân sách công việc (nếu có)
+  job_type         JobType // Loại công việc (fixed price / hourly)
+  experience_level ExperienceLevel // Mức độ kinh nghiệm yêu cầu
+  status           JobStatus // Trạng thái công việc
+  created_at       DateTime        @default(now()) // Ngày tạo
+  updated_at       DateTime        @updatedAt // Ngày cập nhật
+  contract         Contract?
+  proposal         Proposal[]
+  review           Review[]
 
   @@map("jobs") 
 }
@@ -142,3 +147,101 @@ enum JobStatus {
   CLOSED
   HIRED
 }
+
+// contract
+model Contract {
+  id            String         @id @default(uuid())
+  job           Job            @relation(fields: [job_id], references: [id])
+  job_id        String         @unique
+  freelancer    Freelancer     @relation(fields: [freelancer_id], references: [id])
+  freelancer_id String
+  client        Client         @relation(fields: [client_id], references: [id])
+  client_id     String
+  status        ContractStatus @default(ACTIVE) // ACTIVE, COMPLETED, CANCELLED
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+
+  payment   Payment[]
+  milestone Milestone[]
+}
+
+enum ContractStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  contract    Contract      @relation(fields: [contract_id], references: [id])
+  contract_id String
+  amount      Float
+  status      PaymentStatus @default(PENDING) // PENDING, SUCCESS, FAILED
+  created_at  DateTime      @default(now())
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+// proposal 
+model Proposal {
+  id            String         @id @default(uuid())
+  freelancer    Freelancer     @relation(fields: [freelancer_id], references: [id])
+  freelancer_id String
+  job           Job            @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  job_id        String
+  cover_letter  String         @db.Text
+  bid_amount    Float
+  status        ProposalStatus @default(PENDING) // PENDING, ACCEPTED, REJECTED
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+}
+
+enum ProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// milestone
+model Milestone {
+  id          String          @id @default(uuid())
+  contract    Contract        @relation(fields: [contract_id], references: [id])
+  contract_id String
+  description String          @db.Text
+  amount      Float
+  due_date    DateTime
+  status      MilestoneStatus @default(PENDING) // PENDING, COMPLETED, CANCELLED
+}
+
+enum MilestoneStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+// review
+model Review {
+  id          String   @id @default(uuid())
+  job         Job      @relation(fields: [job_id], references: [id])
+  job_id      String
+  reviewer    User     @relation(fields: [reviewer_id], references: [id])
+  reviewer_id String
+  rating      Int      @default(5) // 1 - 5 sao
+  comment     String   @db.Text
+  created_at  DateTime @default(now())
+}
+
+// message
+// model Message {
+//   id           String   @id @default(uuid())
+//   sender      User     @relation(fields: [sender_id], references: [id], name: "sent_messages")
+//   sender_id    String
+//   receiver    User     @relation(fields: [receiver_id], references: [id], name: "received_messages") 
+//   receiver_id  String
+//   content     String   @db.Text
+//   created_at  DateTime @default(now())
+// }
