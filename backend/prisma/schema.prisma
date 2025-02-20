@@ -149,10 +149,27 @@ model Contract {
   status        ContractStatus @default(ACTIVE) // ACTIVE, COMPLETED, CANCELLED
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
+
+  payment Payment[]
 }
 
 enum ContractStatus {
   ACTIVE
   COMPLETED
   CANCELLED
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  contract    Contract      @relation(fields: [contract_id], references: [id])
+  contract_id String
+  amount      Float
+  status      PaymentStatus @default(PENDING) // PENDING, SUCCESS, FAILED
+  created_at  DateTime      @default(now())
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
 }
