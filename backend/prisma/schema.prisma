@@ -11,6 +11,7 @@ generator client {
 model User {
   id    String  @id   @default(uuid())
   email String @unique
+  fullName String
   password String
   address String
   createdAt DateTime @default(now())
@@ -21,6 +22,11 @@ model User {
 
   client Client?
   freelancer Freelancer?
+}
+
+enum Role {
+  CLIENT
+  FREELANCER
 }
 
 // freelancer
@@ -101,21 +107,20 @@ model Client {
 
 // job
 model Job {
-  id              String    @id @default(uuid()) // ID của job (UUID)
-  title           String    @db.VarChar(255)    // Tiêu đề công việc
-  description     String    @db.Text            // Mô tả công việc
+  id              String    @id @default(uuid()) 
+  title           String    @db.VarChar(255)   
   client         Client    @relation(fields: [id], references: [id], onDelete: Cascade) // Quan hệ với Client
-  client_id       String   // ID của client đăng job
-  category        String    @db.VarChar(100)    // Danh mục công việc
-  skills         String[]  // Mảng các kỹ năng yêu cầu
-  budget         Float?     // Ngân sách công việc (nếu có)
-  job_type       JobType    // Loại công việc (fixed price / hourly)
-  experience_level ExperienceLevel // Mức độ kinh nghiệm yêu cầu
-  status         JobStatus // Trạng thái công việc
-  created_at     DateTime  @default(now())     // Ngày tạo
-  updated_at     DateTime  @updatedAt          // Ngày cập nhật
+  client_id       String   
+  category        String    @db.VarChar(100)    
+  skills         String[]  
+  budget         Float?     
+  job_type       JobType    
+  experience_level ExperienceLevel 
+  status         JobStatus 
+  created_at     DateTime  @default(now())     
+  updated_at     DateTime  @updatedAt          
 
-  @@map("jobs") // Đặt tên bảng là "jobs" trong PostgreSQL
+  @@map("jobs") 
 }
 
 // Định nghĩa enum cho loại công việc
