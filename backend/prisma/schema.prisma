@@ -19,6 +19,8 @@ model User {
 
   client     Client?
   freelancer Freelancer?
+  review     Review[]
+  // sender Message[]
 }
 
 // freelancer
@@ -41,6 +43,7 @@ model Freelancer {
   verifications       Verification[]
   linkedAccounts      LinkedAccount[]
   contracts           Contract[]
+  proposal            Proposal[]
 }
 
 model FreelancerSkill {
@@ -113,6 +116,8 @@ model Job {
   created_at       DateTime        @default(now()) // Ngày tạo
   updated_at       DateTime        @updatedAt // Ngày cập nhật
   contract         Contract?
+  proposal         Proposal[]
+  review           Review[]
 
   @@map("jobs") // Đặt tên bảng là "jobs" trong PostgreSQL
 }
@@ -150,7 +155,8 @@ model Contract {
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
 
-  payment Payment[]
+  payment   Payment[]
+  milestone Milestone[]
 }
 
 enum ContractStatus {
@@ -172,4 +178,64 @@ enum PaymentStatus {
   PENDING
   SUCCESS
   FAILED
+}
+
+// proposal 
+model Proposal {
+  id            String         @id @default(uuid())
+  freelancer    Freelancer     @relation(fields: [freelancer_id], references: [id])
+  freelancer_id String
+  job           Job            @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  job_id        String
+  cover_letter  String         @db.Text
+  bid_amount    Float
+  status        ProposalStatus @default(PENDING) // PENDING, ACCEPTED, REJECTED
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+}
+
+enum ProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// milestone
+model Milestone {
+  id          String          @id @default(uuid())
+  contract    Contract        @relation(fields: [contract_id], references: [id])
+  contract_id String
+  description String          @db.Text
+  amount      Float
+  due_date    DateTime
+  status      MilestoneStatus @default(PENDING) // PENDING, COMPLETED, CANCELLED
+}
+
+enum MilestoneStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+// review
+model Review {
+  id          String   @id @default(uuid())
+  job         Job      @relation(fields: [job_id], references: [id])
+  job_id      String
+  reviewer    User     @relation(fields: [reviewer_id], references: [id])
+  reviewer_id String
+  rating      Int      @default(5) // 1 - 5 sao
+  comment     String   @db.Text
+  created_at  DateTime @default(now())
+}
+
+// message
+model Message {
+  id           String   @id @default(uuid())
+  sender      User     @relation(fields: [sender_id], references: [id], name: "sent_messages")
+  sender_id    String
+  receiver    User     @relation(fields: [receiver_id], references: [id], name: "received_messages") 
+  receiver_id  String
+  content     String   @db.Text
+  created_at  DateTime @default(now())
 }
