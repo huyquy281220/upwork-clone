@@ -32,7 +32,7 @@ enum Role {
 // freelancer
 
 model Freelancer {
-  id                  String               @id @default(uuid()) @map("user_id")
+  id                  String               @id @default(uuid())
   user                User                 @relation(fields: [id], references: [id])
   title               String
   hourlyRate          Decimal              @default(0.0)
@@ -97,7 +97,7 @@ model WorkHistory {
 // client
 
 model Client {
-  id             String     @id @default(uuid()) @map("user_id")
+  id             String     @id @default(uuid())
   user           User       @relation(fields: [id], references: [id])
   companyName    String?
   companyWebsite String?

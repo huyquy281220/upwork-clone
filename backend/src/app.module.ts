@@ -7,10 +7,12 @@ import { ClientController } from './client/client.controller';
 import { FreelancerController } from './freelancer/freelancer.controller';
 import { ClientModule } from './client/client.module';
 import { FreelancerModule } from './freelancer/freelancer.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
-  imports: [UserModule, ClientModule, FreelancerModule],
+  imports: [UserModule, ClientModule, FreelancerModule, PrismaModule],
   controllers: [AppController, ClientController, FreelancerController],
-  providers: [AppService, UserService],
+  providers: [AppService, UserService, PrismaService],
 })
 export class AppModule {}
