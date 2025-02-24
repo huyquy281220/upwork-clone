@@ -7,125 +7,117 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id    String  @id   @default(uuid())
-  email String @unique
-  fullName String
-  password String
-  address String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-  avatarUrl String
-  phoneNumber String
-
-  client     Client?
-  freelancer Freelancer?
-  review     Review[]
-  // sender Message[]
-}
-
 enum Role {
   CLIENT
   FREELANCER
 }
 
-// freelancer
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  fullName      String
+  password      String
+  address       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt()
+  avatarUrl     String?
+  phoneNumber   String?
+  role          Role
+  verificationToken String? @unique  
+  verified       Boolean  @default(false)
 
-model Freelancer {
-  id                  String               @id @default(uuid())
-  user                User                 @relation(fields: [id], references: [id])
-  title               String
-  hourlyRate          Decimal              @default(0.0)
-  totalEarnings       Decimal              @default(0.0)
-  completedJobs       Int                  @default(0)
-  inProgressJobs      Int                  @default(0)
-  hoursPerWeek        String
-  responseTime        String
-  openToContract      Boolean              @default(false)
+  // Client-specific fields
+  companyName    String?  @default("")
+  companyWebsite String?  @default("")
+  jobs               Job[]
+
+  // Freelancer-specific fields
+  title               String?
+  hourlyRate          Decimal? @default(0.0)
+  totalEarnings       Decimal? @default(0.0)
+  completedJobs       Int      @default(0)
+  inProgressJobs      Int      @default(0)
+  hoursPerWeek        String?
+  responseTime        String?
+  openToContract      Boolean @default(false)
   education           String?
-  workHistory         WorkHistory[]
-  freelancerSkills    FreelancerSkill[]
+
+  // Relations
+  workHistory        WorkHistory[]
+  freelancerSkills   FreelancerSkill[]
   freelancerLanguages FreelancerLanguage[]
-  verifications       Verification[]
-  linkedAccounts      LinkedAccount[]
-  contracts           Contract[]
-  proposal            Proposal[]
+  verifications      Verification[]
+  linkedAccounts     LinkedAccount[]
+  proposals          Proposal[]
+
+  contractAsFreelancer Contract[] @relation(name: "FreelancerContracts")
+
+  contractAsClient Contract[] @relation(name: "ClientContracts")
+
+  reviewsGiven        Review[] @relation("ClientReviews")
+
+  review Review[] @relation(name: "FreelancerReviews")
 }
 
 model FreelancerSkill {
-  id           String     @id @default(uuid())
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
-  freelancerId String
-  skill        String
+  id        String @id @default(uuid())
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  skill     String
 }
 
 model FreelancerLanguage {
-  id           String     @id @default(uuid())
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
-  freelancerId String
-  language     String
+  id        String @id @default(uuid())
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  language  String
 }
 
 model Verification {
-  id           String     @id @default(uuid())
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
-  freelancerId String
-  type         String
+  id        String @id @default(uuid())
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  type      String
 }
 
 model LinkedAccount {
-  id           String     @id @default(uuid())
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
-  freelancerId String
-  platform     String
-  url          String
+  id        String @id @default(uuid())
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  platform  String
+  url       String
 }
 
 model WorkHistory {
-  id           String     @id @default(uuid())
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
-  freelancerId String
-  jobTitle     String
-  rating       Decimal    @default(0.0)
-  price        Decimal
-  startDate    DateTime
-  endDate      DateTime?
-  jobType      String
-  feedback     String?
+  id        String  @id @default(uuid())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  jobTitle  String
+  rating    Decimal @default(0.0)
+  price     Decimal
+  startDate DateTime
+  endDate   DateTime?
+  jobType   String
+  feedback  String?
 }
 
-// client
 
-model Client {
-  id             String     @id @default(uuid())
-  user           User       @relation(fields: [id], references: [id])
-  companyName    String?
-  companyWebsite String?
-  verified       Boolean    @default(false)
-  contracts      Contract[]
-  job            Job[]
-}
+
 
 // job
-model Job {
-  id               String          @id @default(uuid()) // ID của job (UUID)
-  title            String          @db.VarChar(255) // Tiêu đề công việc
-  description      String          @db.Text // Mô tả công việc
-  client           Client          @relation(fields: [id], references: [id], onDelete: Cascade) // Quan hệ với Client
-  client_id        String // ID của client đăng job
-  category         String          @db.VarChar(100) // Danh mục công việc
-  skills           String[] // Mảng các kỹ năng yêu cầu
-  budget           Float? // Ngân sách công việc (nếu có)
-  job_type         JobType // Loại công việc (fixed price / hourly)
-  experience_level ExperienceLevel // Mức độ kinh nghiệm yêu cầu
-  status           JobStatus // Trạng thái công việc
-  created_at       DateTime        @default(now()) // Ngày tạo
-  updated_at       DateTime        @updatedAt // Ngày cập nhật
-  contract         Contract?
-  proposal         Proposal[]
-  review           Review[]
 
-  @@map("jobs") 
+model Job {
+  id          String  @id @default(uuid())
+  client      User    @relation(fields: [userId], references: [id])
+  userId      String
+  title       String
+  description String
+  budget      Decimal
+  status      JobStatus
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
+
+  proposals   Proposal[]
 }
 
 // Định nghĩa enum cho loại công việc
@@ -150,18 +142,17 @@ enum JobStatus {
 
 // contract
 model Contract {
-  id            String         @id @default(uuid())
-  job           Job            @relation(fields: [job_id], references: [id])
-  job_id        String         @unique
-  freelancer    Freelancer     @relation(fields: [freelancer_id], references: [id])
-  freelancer_id String
-  client        Client         @relation(fields: [client_id], references: [id])
-  client_id     String
-  status        ContractStatus @default(ACTIVE) // ACTIVE, COMPLETED, CANCELLED
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+  id          String  @id @default(uuid())
+  client      User    @relation(fields: [clientId], references: [id], name: "ClientContracts")
+  freelancer  User    @relation(fields: [freelancerId], references: [id], name: "FreelancerContracts")
+  clientId    String
+  freelancerId String
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
 
-  payment   Payment[]
+  payment Payment[]
+
   milestone Milestone[]
 }
 
@@ -172,12 +163,12 @@ enum ContractStatus {
 }
 
 model Payment {
-  id          String        @id @default(uuid())
-  contract    Contract      @relation(fields: [contract_id], references: [id])
-  contract_id String
-  amount      Float
-  status      PaymentStatus @default(PENDING) // PENDING, SUCCESS, FAILED
-  created_at  DateTime      @default(now())
+  id          String  @id @default(uuid())
+  contract    Contract @relation(fields: [contractId], references: [id])
+  contractId  String
+  amount      Decimal
+  status      PaymentStatus @default(PENDING)
+  createdAt   DateTime @default(now())
 }
 
 enum PaymentStatus {
@@ -188,18 +179,16 @@ enum PaymentStatus {
 
 // proposal 
 model Proposal {
-  id            String         @id @default(uuid())
-  freelancer    Freelancer     @relation(fields: [freelancer_id], references: [id])
-  freelancer_id String
-  job           Job            @relation(fields: [job_id], references: [id], onDelete: Cascade)
-  job_id        String
-  cover_letter  String         @db.Text
-  bid_amount    Float
-  status        ProposalStatus @default(PENDING) // PENDING, ACCEPTED, REJECTED
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+  id           String  @id @default(uuid())
+  freelancer   User    @relation(fields: [userId], references: [id])
+  userId       String
+  job          Job     @relation(fields: [jobId], references: [id])
+  jobId        String
+  coverLetter  String
+  bidAmount    Decimal
+  status       ProposalStatus @default(PENDING)
+  createdAt    DateTime @default(now())
 }
-
 enum ProposalStatus {
   PENDING
   ACCEPTED
@@ -225,14 +214,14 @@ enum MilestoneStatus {
 
 // review
 model Review {
-  id          String   @id @default(uuid())
-  job         Job      @relation(fields: [job_id], references: [id])
-  job_id      String
-  reviewer    User     @relation(fields: [reviewer_id], references: [id])
-  reviewer_id String
-  rating      Int      @default(5) // 1 - 5 sao
-  comment     String   @db.Text
-  created_at  DateTime @default(now())
+  id          String  @id @default(uuid())
+  reviewer    User    @relation(fields: [reviewerId], references: [id], name: "ClientReviews")
+  reviewee    User    @relation(fields: [revieweeId], references: [id], name: "FreelancerReviews")
+  reviewerId  String
+  revieweeId  String
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now())
 }
 
 // message

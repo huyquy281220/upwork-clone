@@ -1,32 +1,41 @@
 import { PrismaService } from './../prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { scrypt } from 'crypto';
+import { Role } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class UserService {
   constructor(private prismaService: PrismaService) {}
-  private readonly users: [] = [];
 
-  //   create() {
-  //     return this.create();
-  //   }
-  findAll() {
-    return this.prismaService.user.findMany();
+  async findAll() {
+    return await this.prismaService.user.findMany();
   }
 
-  create(data: CreateUserDto) {
-    return this.prismaService.user.create({
-      data: {
-        ...data,
-        avatarUrl: '',
-        phoneNumber: '',
-      },
-    });
-  }
+  async create(data: CreateUserDto) {
+    const { password } = data;
 
-  delete(id: string) {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     try {
-      this.prismaService.user.delete({
+      return this.prismaService.user.create({
+        data: {
+          ...data,
+          password: hashedPassword,
+          avatarUrl: '',
+          phoneNumber: '',
+          role: data.role as unknown as Role,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      await this.prismaService.user.delete({
         where: {
           id: id,
         },
