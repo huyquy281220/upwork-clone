@@ -6,7 +6,7 @@ export class EmailService {
   private transporter: Transporter;
   constructor() {
     this.transporter = createTransport({
-      //   host: '',
+      host: 'smtp.gmail.com',
       port: 587,
       secure: false,
       auth: {
@@ -29,6 +29,7 @@ export class EmailService {
                <a href="${verificationLink}">${verificationLink}</a>`,
       });
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException('Can not send email.');
     }
   }
