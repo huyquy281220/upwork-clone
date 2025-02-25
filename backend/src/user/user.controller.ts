@@ -1,6 +1,14 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
-import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Param,
+  Query,
+} from '@nestjs/common';
 
 @Controller('user')
 export class UserController {
@@ -19,5 +27,10 @@ export class UserController {
   @Delete('delete/:id')
   async delete(@Param('id') id: string) {
     return this.userService.delete(id);
+  }
+
+  @Post('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    return this.userService.verifyEmail(token);
   }
 }
