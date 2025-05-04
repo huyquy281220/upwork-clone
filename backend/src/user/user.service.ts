@@ -3,9 +3,10 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Role } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { EmailService } from 'src/message/email.service';
@@ -21,6 +22,34 @@ export class UserService {
     return await this.prismaService.user.findMany();
   }
 
+  async findById(id: string) {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { id },
+      });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    } catch (error) {
+      throw new NotFoundException('User not found');
+    }
+  }
+
+  async findOne(email: string) {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { email },
+      });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    } catch (error) {
+      throw new NotFoundException('User not found');
+    }
+  }
+
   async create(data: CreateUserDto) {
     const { password } = data;
 
@@ -28,6 +57,14 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     try {
+      const user = await this.prismaService.user.findUnique({
+        where: { email: data.email },
+      });
+
+      if (user) {
+        throw new BadRequestException('Email da ton tai');
+      }
+
       const verificationToken = crypto.randomBytes(32).toString('hex');
 
       await this.emailService.sendVerificationEmail(
@@ -39,6 +76,7 @@ export class UserService {
         data: {
           ...data,
           password: hashedPassword,
+          verificationToken,
           avatarUrl: '',
           phoneNumber: '',
           role: data.role as unknown as Role,
@@ -46,6 +84,27 @@ export class UserService {
       });
     } catch (error) {
       throw new InternalServerErrorException(error);
+    }
+  }
+
+  async updatePartialById(data: Partial<User>) {
+    try {
+      return this.prismaService.user.update({
+        where: { id: data.id },
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async updatePartial(data: Partial<User>) {
+    try {
+      return this.prismaService.user.update({
+        where: { email: data.email },
+        data,
+      });
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -80,6 +139,8 @@ export class UserService {
           verificationToken: null, // Xóa token sau khi xác thực
         },
       });
+
+      return 'email verified';
     } catch (error) {
       throw new InternalServerErrorException('Lỗi khi xác thực email.');
     }

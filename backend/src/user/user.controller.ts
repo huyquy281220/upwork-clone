@@ -8,6 +8,7 @@ import {
   Delete,
   Param,
   Query,
+  Patch,
 } from '@nestjs/common';
 
 @Controller('user')
@@ -19,9 +20,19 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get('/:id')
+  async findById(@Param('id') id: string) {
+    return this.userService.findById(id);
+  }
+
   @Post('create')
   async create(@Body() createUser: CreateUserDto) {
     return this.userService.create(createUser);
+  }
+
+  @Patch('update')
+  async update(@Body() data: Partial<CreateUserDto>) {
+    return this.userService.updatePartial(data);
   }
 
   @Delete('delete/:id')
@@ -29,7 +40,7 @@ export class UserController {
     return this.userService.delete(id);
   }
 
-  @Post('verify-email')
+  @Get('verify-email')
   async verifyEmail(@Query('token') token: string) {
     return this.userService.verifyEmail(token);
   }
