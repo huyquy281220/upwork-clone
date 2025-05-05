@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE "User" ALTER COLUMN "accessToken" DROP NOT NULL,
-ALTER COLUMN "accessToken" SET DEFAULT '',
-ALTER COLUMN "refreshToken" DROP NOT NULL,
-ALTER COLUMN "refreshToken" SET DEFAULT '';

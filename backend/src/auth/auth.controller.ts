@@ -16,6 +16,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 interface LoginDto {
   email: string;
@@ -29,6 +30,11 @@ export class AuthController {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
+
+  @Post('sign-up')
+  async create(@Body() createUser: CreateUserDto) {
+    return this.userService.create(createUser);
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')

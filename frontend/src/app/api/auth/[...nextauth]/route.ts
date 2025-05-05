@@ -19,6 +19,12 @@ const handler = NextAuth({
       }
       return token;
     },
+
+    async signIn({ account, profile }) {
+      console.log(account);
+      console.log(profile);
+      return true;
+    },
   },
 });
 

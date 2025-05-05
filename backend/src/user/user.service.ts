@@ -65,18 +65,18 @@ export class UserService {
         throw new BadRequestException('Email da ton tai');
       }
 
-      const verificationToken = crypto.randomBytes(32).toString('hex');
+      // const verificationToken = crypto.randomBytes(32).toString('hex');
 
-      await this.emailService.sendVerificationEmail(
-        data.email,
-        verificationToken,
-      );
+      // await this.emailService.sendVerificationEmail(
+      //   data.email,
+      //   verificationToken,
+      // );
 
       return this.prismaService.user.create({
         data: {
           ...data,
           password: hashedPassword,
-          verificationToken,
+          // verificationToken,
           avatarUrl: '',
           phoneNumber: '',
           role: data.role as unknown as Role,
@@ -122,27 +122,27 @@ export class UserService {
     }
   }
 
-  async verifyEmail(token: string) {
-    try {
-      const user = await this.prismaService.user.findUnique({
-        where: { verificationToken: token },
-      });
+  // async verifyEmail(token: string) {
+  //   try {
+  //     const user = await this.prismaService.user.findUnique({
+  //       where: { verificationToken: token },
+  //     });
 
-      if (!user) {
-        throw new BadRequestException('Token k hop le');
-      }
+  //     if (!user) {
+  //       throw new BadRequestException('Token k hop le');
+  //     }
 
-      await this.prismaService.user.update({
-        where: { id: user.id },
-        data: {
-          verified: true,
-          verificationToken: null, // Xóa token sau khi xác thực
-        },
-      });
+  //     await this.prismaService.user.update({
+  //       where: { id: user.id },
+  //       data: {
+  //         verified: true,
+  //         verificationToken: null, // Xóa token sau khi xác thực
+  //       },
+  //     });
 
-      return 'email verified';
-    } catch (error) {
-      throw new InternalServerErrorException('Lỗi khi xác thực email.');
-    }
-  }
+  //     return 'email verified';
+  //   } catch (error) {
+  //     throw new InternalServerErrorException('Lỗi khi xác thực email.');
+  //   }
+  // }
 }

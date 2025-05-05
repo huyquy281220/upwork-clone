@@ -8,22 +8,28 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  name           String?
-  email          String   @unique
-  password       String?
-  role           Role
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                String    @id @default(uuid())
+  fullName          String?
+  email             String    @unique
+  password          String?
+  role              Role
+  phoneNumber       String?
+  avatarUrl         String?
+  address           String?
+  // verified          Boolean   @default(false)
+  // verificationToken String?
+  refreshToken      String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  profile        Profile?
-  jobs           Job[]        @relation("ClientJobs")
-  proposals      Proposal[]   @relation("FreelancerProposals")
-  contractsAsClient   Contract[] @relation("ClientContracts")
-  contractsAsFreelancer Contract[] @relation("FreelancerContracts")
-  sentMessages     Message[] @relation("MessageSender")
-  receivedMessages Message[] @relation("MessageRecipient")
-  notifications  Notification[]
+  profile                 Profile?
+  jobs                    Job[]        @relation("ClientJobs")
+  proposals               Proposal[]   @relation("FreelancerProposals")
+  contractsAsClient       Contract[]   @relation("ClientContracts")
+  contractsAsFreelancer   Contract[]   @relation("FreelancerContracts")
+  sentMessages            Message[]    @relation("MessageSender")
+  receivedMessages        Message[]    @relation("MessageRecipient")
+  notifications           Notification[]
 }
 
 model Profile {
@@ -34,7 +40,6 @@ model Profile {
   hourlyRate   Float?
   skills       String[]
   experience   String?
-  location     String?
   user         User     @relation(fields: [userId], references: [id])
 }
 
@@ -46,7 +51,7 @@ model Job {
   category     String
   budget       Float
   type         JobType
-  contracts Contract[]
+  contracts    Contract[]
   createdAt    DateTime @default(now())
 
   client       User     @relation("ClientJobs", fields: [clientId], references: [id])
@@ -74,7 +79,7 @@ model Contract {
   status       ContractStatus
   startedAt    DateTime
   completedAt  DateTime?
-  payments Payment[]
+  payments     Payment[]
 
   job          Job      @relation(fields: [jobId], references: [id])
   client       User     @relation("ClientContracts", fields: [clientId], references: [id])
@@ -126,7 +131,6 @@ enum PaymentMethod {
   BANK_TRANSFER
   STRIPE
 }
-
 
 enum Role {
   CLIENT

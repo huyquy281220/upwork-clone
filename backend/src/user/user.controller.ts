@@ -25,10 +25,10 @@ export class UserController {
     return this.userService.findById(id);
   }
 
-  @Post('create')
-  async create(@Body() createUser: CreateUserDto) {
-    return this.userService.create(createUser);
-  }
+  // @Post('create')
+  // async create(@Body() createUser: CreateUserDto) {
+  //   return this.userService.create(createUser);
+  // }
 
   @Patch('update')
   async update(@Body() data: Partial<CreateUserDto>) {
@@ -40,8 +40,8 @@ export class UserController {
     return this.userService.delete(id);
   }
 
-  @Get('verify-email')
-  async verifyEmail(@Query('token') token: string) {
-    return this.userService.verifyEmail(token);
-  }
+  // @Get('verify-email')
+  // async verifyEmail(@Query('token') token: string) {
+  //   return this.userService.verifyEmail(token);
+  // }
 }

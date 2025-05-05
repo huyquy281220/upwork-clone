@@ -46,12 +46,9 @@ export class AuthService {
         expiresIn: '7d',
       });
 
-      // const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-      // await this.userService.updateRefreshToken(user.id, hashedRefreshToken);
-
+      // Only store the refresh token in the database, not the access token
       await this.userService.updatePartial({
         email: user.email,
-        accessToken,
         refreshToken,
       });
 
@@ -70,9 +67,9 @@ export class AuthService {
 
   async logout(id: string, res: Response) {
     try {
+      // Only clear the refresh token, no need to clear access token from DB
       await this.userService.updatePartialById({
         id,
-        accessToken: null,
         refreshToken: null,
       });
 
@@ -83,7 +80,7 @@ export class AuthService {
         sameSite: 'strict',
       });
 
-      return res.status(200).json({ mess: 'asdada' });
+      return res.status(200).json({ message: 'Logged out successfully' });
     } catch (error) {
       throw new Error('Logout failed');
     }
