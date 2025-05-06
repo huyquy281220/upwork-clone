@@ -16,8 +16,8 @@ model User {
   phoneNumber       String?
   avatarUrl         String?
   address           String?
-  // verified          Boolean   @default(false)
-  // verificationToken String?
+  verified          Boolean   @default(false)
+  verificationToken String?
   refreshToken      String?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt

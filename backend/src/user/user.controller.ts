@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import {
   Controller,
   Get,
-  Post,
   Body,
   Delete,
   Param,
@@ -40,8 +39,8 @@ export class UserController {
     return this.userService.delete(id);
   }
 
-  // @Get('verify-email')
-  // async verifyEmail(@Query('token') token: string) {
-  //   return this.userService.verifyEmail(token);
-  // }
+  @Get('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    return this.userService.verifyEmail(token);
+  }
 }
