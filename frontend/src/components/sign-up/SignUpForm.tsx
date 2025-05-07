@@ -4,12 +4,16 @@ import { useState, FormEvent, ChangeEvent } from "react";
 import Link from "next/link";
 import { Eye, EyeOff, ChevronDown } from "lucide-react";
 import { FormData } from "@/types";
+import { useSignup } from "@/hooks/useSignup";
+import { useRouter } from "next/navigation";
 
 interface SignupFormProps {
-  onSubmit: (data: FormData) => void;
+  onSubmit?: (data: FormData) => void;
 }
 
 export default function SignupForm({ onSubmit }: SignupFormProps) {
+  const router = useRouter();
+  const { signup, isLoading, error } = useSignup();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -20,6 +24,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
     emailUpdates: true,
     agreeTerms: false,
   });
+  const [formError, setFormError] = useState<string | null>(null);
 
   const togglePasswordVisibility = (): void => {
     setShowPassword(!showPassword);
@@ -33,6 +38,9 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
       ...formData,
       [name]: value,
     });
+
+    // Clear any errors when user makes changes
+    setFormError(null);
   };
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -43,13 +51,41 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
     });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    onSubmit(formData);
+
+    // If an onSubmit prop is provided, call it
+    if (onSubmit) {
+      onSubmit(formData);
+      return;
+    }
+
+    try {
+      const result = await signup({
+        email: formData.email,
+        password: formData.password,
+        fullName: `${formData.firstName} ${formData.lastName}`,
+        role: "FREELANCER", // Default role, could be made configurable
+      });
+
+      if (result.success) {
+        router.push(result.callbackUrl || "/");
+      } else {
+        setFormError(result.message);
+      }
+    } catch {
+      setFormError("An unexpected error occurred during signup");
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
+      {(formError || error) && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
+          {formError || error}
+        </div>
+      )}
+
       <div className="flex gap-4 mb-4">
         <div className="flex-1">
           <label
@@ -209,8 +245,9 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
       <button
         type="submit"
         className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-md"
+        disabled={isLoading}
       >
-        Create my account
+        {isLoading ? "Creating account..." : "Create my account"}
       </button>
     </form>
   );

@@ -1,29 +1,12 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import SignupForm from "@/components/sign-up/SignUpForm";
 import { GoogleSvg } from "@/assets/svg";
-
-interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  country: string;
-  emailUpdates: boolean;
-  agreeTerms: boolean;
-}
+import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
-  const handleFormSubmit = (data: FormData): void => {
-    // Handle form submission
-    console.log(data);
-    // You could add API calls here, e.g.:
-    // registerUser(data);
-  };
-
   const handleGoogleSignIn = () => {
     signIn("google", { callbackUrl: "/" });
   };
@@ -87,11 +70,14 @@ export default function SignupPage() {
         </div>
 
         {/* Signup Form Component */}
-        <SignupForm onSubmit={handleFormSubmit} />
+        <SignupForm />
 
         <p className="mt-6 text-sm text-gray-600 text-center">
           Already have an account?{" "}
-          <Link href="#" className="text-green-600 hover:underline font-medium">
+          <Link
+            href="/api/auth/signin"
+            className="text-green-600 hover:underline font-medium"
+          >
             Log In
           </Link>
         </p>
