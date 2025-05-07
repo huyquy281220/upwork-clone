@@ -19,6 +19,12 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    console.log('Verification endpoint hit with token:', token);
+    return this.userService.verifyEmail(token);
+  }
+
   @Get('/:id')
   async findById(@Param('id') id: string) {
     return this.userService.findById(id);
@@ -37,10 +43,5 @@ export class UserController {
   @Delete('delete/:id')
   async delete(@Param('id') id: string) {
     return this.userService.delete(id);
-  }
-
-  @Get('verify-email')
-  async verifyEmail(@Query('token') token: string) {
-    return this.userService.verifyEmail(token);
   }
 }

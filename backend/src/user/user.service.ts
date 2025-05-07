@@ -124,9 +124,29 @@ export class UserService {
 
   async verifyEmail(token: string) {
     try {
+      console.log('======= Email Verification Debug =======');
+      console.log('Received token:', token);
+      console.log('Token length:', token.length);
+
+      // First try direct query to check if token exists
+      const dbCheck = await this.prismaService.$queryRaw`
+        SELECT * FROM "User" WHERE "verificationToken" = ${token}
+      `;
+      console.log('Direct DB query result:', dbCheck);
+
+      // Try with findFirst
       const user = await this.prismaService.user.findFirst({
         where: { verificationToken: token },
       });
+      console.log('Prisma findFirst result:', user);
+      // Log both for comparison
+
+      if (dbCheck && Array.isArray(dbCheck) && dbCheck.length > 0) {
+        console.log(
+          'DB direct query found user, but Prisma findFirst did not:',
+          user === null,
+        );
+      }
 
       if (!user) {
         throw new BadRequestException('Token k hop le');
@@ -142,6 +162,7 @@ export class UserService {
 
       return 'email verified';
     } catch (error) {
+      console.error('Verification error:', error);
       throw new InternalServerErrorException('Lỗi khi xác thực email.');
     }
   }
