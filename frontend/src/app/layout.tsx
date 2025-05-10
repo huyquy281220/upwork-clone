@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { SessionWrapper } from "@/providers/SessionWrapper";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { LayoutWrapper } from "@/providers/LayoutWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,9 @@ export default function RootLayout({
       >
         <QueryProvider>
           <SessionWrapper>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              <LayoutWrapper>{children}</LayoutWrapper>
+            </ThemeProvider>
           </SessionWrapper>
         </QueryProvider>
       </body>
