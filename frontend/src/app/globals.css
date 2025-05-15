@@ -7,8 +7,6 @@
   --foreground: white;
 }
 
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -65,8 +63,6 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
@@ -74,4 +70,15 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.arrow-up::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 2rem;
+  border: 8px solid #181818;
+  transform: rotate(135deg);
+  box-shadow: -2px 2px 3px -1px #ffffff1f;
+  z-index: -1;
 }

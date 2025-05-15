@@ -21,3 +21,12 @@ export interface Country {
 export type ChildrenProps = {
   children: React.ReactNode;
 };
+
+export interface NavMenuItemProps {
+  title: string;
+  menu: {
+    label: string;
+    link?: string;
+    type?: string;
+  };
+}

@@ -1,7 +1,7 @@
 import { SwitchTheme } from "@/components/SwitchTheme";
 import Image from "next/image";
 import { Test } from "./sign-up/TestCredential";
-import MainHeader from "@/components/layouts/headers/MainHeader";
+import MainHeader from "@/components/layouts/main-layout/header";
 
 export default function Home() {
   return (

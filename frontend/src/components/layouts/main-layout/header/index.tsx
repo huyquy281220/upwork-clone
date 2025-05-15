@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { NavMenu } from "../nav-menu/NavMenu";
+import { Logo } from "@/assets/svg";
 
 export default function MainHeader() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,78 +13,11 @@ export default function MainHeader() {
       {/* Logo */}
       <div className="flex items-center">
         <Link href="/" className="text-white font-bold text-xl mr-6">
-          upwork
+          <Image src={Logo} alt="logo" width={100} height={100} />
         </Link>
 
         {/* Main Navigation */}
-        <nav className="hidden md:flex items-center space-x-1">
-          <div className="relative group">
-            <button className="flex items-center px-3 py-1 text-sm hover:bg-gray-800 rounded">
-              Find work
-              <svg
-                className="w-4 h-4 ml-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </button>
-          </div>
-
-          <div className="relative group">
-            <button className="flex items-center px-3 py-1 text-sm hover:bg-gray-800 rounded">
-              Deliver work
-              <svg
-                className="w-4 h-4 ml-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </button>
-          </div>
-
-          <div className="relative group">
-            <button className="flex items-center px-3 py-1 text-sm hover:bg-gray-800 rounded">
-              Manage finances
-              <svg
-                className="w-4 h-4 ml-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </button>
-          </div>
-
-          <Link
-            href="/messages"
-            className="px-3 py-1 text-sm hover:bg-gray-800 rounded"
-          >
-            Messages
-          </Link>
-        </nav>
+        <NavMenu />
       </div>
 
       {/* Mobile menu button */}

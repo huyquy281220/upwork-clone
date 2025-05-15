@@ -14,6 +14,9 @@ export default {
       maxWidth: {
         "8xl": "120rem",
       },
+      backgroundColor: {
+        "nav-menu": "#181818",
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -60,6 +63,9 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        menu: "0 8px 24px 2px #ffffff1f, 0 0 0 1px #333",
       },
     },
   },
