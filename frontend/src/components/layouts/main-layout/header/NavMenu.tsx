@@ -1,3 +1,4 @@
+import { BoxShadow } from "@/components/common/BoxShadow";
 import { menuHeader } from "@/constants/menu";
 // import { NavMenuItemProps } from "@/types";
 import { ChevronDown, Divide } from "lucide-react";
@@ -38,11 +39,11 @@ export const NavMenu = () => {
                   >
                     {title}
                   </span>
-                  <ChevronDown className="w-4 h-4" />
+                  {menu && <ChevronDown className="w-4 h-4" />}
                 </button>
 
-                {activeDropdown === title && (
-                  <div className="arrow-up absolute left-0 top-7 mt-1 bg-nav-menu rounded w-64 py-2 shadow-menu z-50">
+                {activeDropdown === title && menu ? (
+                  <BoxShadow classNames="absolute left-0 top-7 mt-1 bg-main rounded w-64 py-2 z-50">
                     <div className="absolute left-0 -top-5 w-full h-5 bg-transparent" />
                     {menu?.map(({ label, link, type }) => (
                       <div key={label} className="flex flex-col">
@@ -63,7 +64,9 @@ export const NavMenu = () => {
                         )}
                       </div>
                     ))}
-                  </div>
+                  </BoxShadow>
+                ) : (
+                  <div />
                 )}
               </div>
             ))}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { AspectRatio } from "@/components/AspectRatio";
+import { AspectRatio } from "@/components/common/AspectRatio";
 import { ClientSvg, FreelancerSvg, Logo } from "@/assets/svg";
 import { useState } from "react";
 

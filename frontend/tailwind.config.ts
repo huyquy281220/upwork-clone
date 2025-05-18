@@ -15,7 +15,7 @@ export default {
         "8xl": "120rem",
       },
       backgroundColor: {
-        "nav-menu": "#181818",
+        main: "#181818",
       },
       colors: {
         background: "hsl(var(--background))",
@@ -66,6 +66,23 @@ export default {
       },
       boxShadow: {
         menu: "0 8px 24px 2px #ffffff1f, 0 0 0 1px #333",
+      },
+
+      keyframes: {
+        slide: {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(0)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(-105%)",
+          },
+        },
+      },
+
+      animation: {
+        "slide-right": "slide 0.3s ease-in-out forwards",
       },
     },
   },

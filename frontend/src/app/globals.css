@@ -72,11 +72,22 @@
   }
 }
 
-.arrow-up::before {
+.arrow-up-left::before {
   content: "";
   position: absolute;
   top: -6px;
   left: 2rem;
+  border: 8px solid #181818;
+  transform: rotate(135deg);
+  box-shadow: -2px 2px 3px -1px #ffffff1f;
+  z-index: -1;
+}
+
+.arrow-up-right::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 0.5rem;
   border: 8px solid #181818;
   transform: rotate(135deg);
   box-shadow: -2px 2px 3px -1px #ffffff1f;
