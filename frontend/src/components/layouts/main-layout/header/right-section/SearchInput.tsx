@@ -1,44 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ChevronDown, Briefcase, Users, FileText } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Link from "next/link";
-
-type JobMenuCategory = {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  href: string;
-};
+import { searchCategories } from "../data/navigation";
+import { getDynamicIcon } from "../mobile/components/NavComponents";
 
 export const SearchInput = () => {
   const [isJobsOpen, setIsJobsOpen] = useState(false);
-
-  const jobMenuCategories: JobMenuCategory[] = [
-    {
-      icon: <Briefcase className="h-5 w-5" />,
-      title: "Jobs",
-      description: "Apply to jobs posted by clients",
-      href: "/jobs",
-    },
-    {
-      icon: <Users className="h-5 w-5" />,
-      title: "Talent",
-      description: "Find freelancers and agencies",
-      href: "/talent",
-    },
-    {
-      icon: <FileText className="h-5 w-5" />,
-      title: "Projects",
-      description: "See projects from other pros",
-      href: "/projects",
-    },
-  ];
 
   return (
     <div className="flex items-center space-x-2 py-1 border border-gray-700 rounded-md">
@@ -70,13 +44,15 @@ export const SearchInput = () => {
           sideOffset={5}
         >
           <div className="py-2">
-            {jobMenuCategories.map((category) => (
+            {searchCategories.map((category) => (
               <Link
-                key={category.title}
+                key={category.id}
                 href={category.href}
                 className="flex items-start px-4 py-3 hover:bg-gray-800"
               >
-                <div className="mr-3 mt-1 text-gray-300">{category.icon}</div>
+                <div className="mr-3 mt-1 text-gray-300">
+                  {getDynamicIcon(category.iconName)}
+                </div>
                 <div>
                   <h3 className="font-medium text-white">{category.title}</h3>
                   <p className="text-sm text-gray-400">

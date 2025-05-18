@@ -4,44 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import { useTheme } from "next-themes";
-import {
-  ChevronDown,
-  LogOut,
-  Settings,
-  BarChart2,
-  User,
-  Circle,
-  CreditCard,
-  Briefcase,
-  MonitorSmartphone,
-  Monitor,
-  Sun,
-  Moon,
-  ChevronLeft,
-} from "lucide-react";
+import { ChevronDown, ChevronLeft } from "lucide-react";
 import { PopoverContent } from "@/components/ui/popover";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-
-// Menu item type definitions
-type MenuItem = {
-  icon: React.ReactNode;
-  label: string;
-  href?: string;
-  onClick?: () => void;
-};
-
-type MenuSection = {
-  items: MenuItem[];
-  hasBorder?: boolean;
-};
-
-type ThemeOption = {
-  value: string;
-  label: string;
-  description: string;
-  icon: React.ReactNode;
-};
+import {
+  userMenuSections,
+  themeOptions as navigationThemeOptions,
+} from "../data/navigation";
+import { getDynamicIcon } from "../mobile/components/NavComponents";
 
 export const UserAvatar = () => {
   const { theme, setTheme } = useTheme();
@@ -72,122 +43,63 @@ export const UserAvatar = () => {
     setShowThemeMenu(!showThemeMenu);
   };
 
-  // Theme options data
-  const themeOptions: ThemeOption[] = [
-    {
-      value: "system",
-      label: "Auto",
-      description: "Use the same theme as your device",
-      icon: <Monitor className="h-4 w-4 mr-3 mt-0.5" />,
-    },
-    {
-      value: "light",
-      label: "Light",
-      description: "Light background with dark text",
-      icon: <Sun className="h-4 w-4 mr-3 mt-0.5" />,
-    },
-    {
-      value: "dark",
-      label: "Dark",
-      description: "Dark background with light text",
-      icon: <Moon className="h-4 w-4 mr-3 mt-0.5" />,
-    },
-  ];
-
-  // Menu sections data
-  const menuSections: MenuSection[] = [
-    {
-      items: [
-        {
-          icon: <User className="h-4 w-4 mr-3" />,
-          label: "Your profile",
-          href: "/profile",
-        },
-        {
-          icon: <BarChart2 className="h-4 w-4 mr-3" />,
-          label: "Stats and trends",
-          href: "/stats",
-        },
-      ],
-    },
-    {
-      hasBorder: true,
-      items: [
-        {
-          icon: <CreditCard className="h-4 w-4 mr-3" />,
-          label: "Membership plan",
-          href: "/membership",
-        },
-        {
-          icon: <Circle className="h-4 w-4 mr-3" />,
-          label: "Connects",
-          href: "/connects",
-        },
-        {
-          icon: <Briefcase className="h-4 w-4 mr-3" />,
-          label: "Apps and Offers",
-          href: "/apps-offers",
-        },
-      ],
-    },
-    {
-      hasBorder: true,
-      items: [
-        {
-          icon: <MonitorSmartphone className="h-4 w-4 mr-3" />,
-          label: `Theme: ${getThemeDisplayText()}`,
-          onClick: handleThemeClick,
-        },
-        {
-          icon: <Settings className="h-4 w-4 mr-3" />,
-          label: "Account settings",
-          href: "/settings",
-        },
-      ],
-    },
-    {
-      hasBorder: true,
-      items: [
-        {
-          icon: <LogOut className="h-4 w-4 mr-3" />,
-          label: "Log out",
-          onClick: () => console.log("Logging out..."),
-        },
-      ],
-    },
-  ];
+  // Map the theme options from navigation to the format we need here
+  const adaptedThemeOptions = navigationThemeOptions.map((option) => ({
+    value: option.value,
+    label: option.label,
+    description: option.description,
+    icon: getDynamicIcon(option.iconName, 16),
+  }));
 
   // Render a menu item
-  const renderMenuItem = (item: MenuItem) => {
+  const renderMenuItem = (item: {
+    id: string;
+    label: string;
+    iconName: string;
+    href?: string;
+  }) => {
     if (item.href) {
       return (
         <Link
-          key={item.label}
+          key={item.id}
           href={item.href}
           className="flex items-center px-4 py-2 hover:bg-gray-800 text-sm"
         >
-          {item.icon}
-          {item.label}
+          {getDynamicIcon(item.iconName, 16)}
+          <span className="ml-3">{item.label}</span>
         </Link>
       );
     } else {
-      return (
-        <div
-          key={item.label}
-          onClick={item.onClick}
-          className="flex items-center justify-between px-4 py-2 hover:bg-gray-800 text-sm cursor-pointer"
-        >
-          <div className="flex items-center">
-            {item.icon}
-            {item.label}
-          </div>
-          {item.label.includes("Theme") && (
+      // Special case for theme item
+      if (item.id === "theme") {
+        return (
+          <div
+            key={item.id}
+            onClick={handleThemeClick}
+            className="flex items-center justify-between px-4 py-2 hover:bg-gray-800 text-sm cursor-pointer"
+          >
+            <div className="flex items-center">
+              {getDynamicIcon(item.iconName, 16)}
+              <span className="ml-3">{`Theme: ${getThemeDisplayText()}`}</span>
+            </div>
             <ChevronDown
               className={`h-4 w-4 transition-transform duration-200 ${
                 showThemeMenu ? "rotate-180" : ""
               }`}
             />
-          )}
+          </div>
+        );
+      }
+
+      // For logout or other action items
+      return (
+        <div
+          key={item.id}
+          onClick={() => console.log(`Action: ${item.id}`)}
+          className="flex items-center px-4 py-2 hover:bg-gray-800 text-sm cursor-pointer"
+        >
+          {getDynamicIcon(item.iconName, 16)}
+          <span className="ml-3">{item.label}</span>
         </div>
       );
     }
@@ -209,7 +121,7 @@ export const UserAvatar = () => {
       <PopoverContent
         align="end"
         sideOffset={15}
-        className="border-none shadow-menu bg-[#181818] text-white p-0 w-64"
+        className="border-none shadow-menu bg-main text-white p-0 w-64"
       >
         {/* User info section */}
         <div className="p-4 border-b border-gray-700 flex items-center space-x-3">
@@ -236,8 +148,8 @@ export const UserAvatar = () => {
           </div>
         </div>
 
-        {/* Menu items sections */}
-        {menuSections.map((section, sectionIndex) => (
+        {/* Menu items sections - using shared data structure */}
+        {userMenuSections.map((section, sectionIndex) => (
           <div
             key={`section-${sectionIndex}`}
             className={cn(
@@ -253,7 +165,7 @@ export const UserAvatar = () => {
         <div
           ref={themeMenuRef}
           className={cn(
-            "absolute left-0 bottom-0 w-64 bg-[#181818] shadow-menu -z-[1] border border-gray-700 rounded-md transition-transform duration-200 ease-in-out",
+            "absolute left-0 bottom-0 w-64 bg-main shadow-menu -z-[1] border border-gray-700 rounded-md transition-transform duration-200 ease-in-out",
             showThemeMenu
               ? "translate-x-[-105%] opacity-100"
               : "translate-x-[-95%] opacity-0"
@@ -266,11 +178,11 @@ export const UserAvatar = () => {
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <span className="ml-2 font-medium">Promote with ads</span>
+            <span className="ml-2 font-medium">Theme settings</span>
           </div>
 
           <div className="py-1">
-            {themeOptions.map((option) => (
+            {adaptedThemeOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => {
@@ -280,7 +192,7 @@ export const UserAvatar = () => {
                 className="flex items-start w-full px-4 py-2 hover:bg-gray-800 text-sm"
               >
                 {option.icon}
-                <div className="text-left">
+                <div className="ml-3 text-left">
                   <div>{option.label}</div>
                   <div className="text-gray-400 text-xs">
                     {option.description}

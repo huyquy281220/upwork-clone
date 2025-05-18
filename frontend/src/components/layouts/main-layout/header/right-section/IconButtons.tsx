@@ -8,46 +8,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Link from "next/link";
-
-type NotificationItem = {
-  id: string;
-  message: string;
-  time: string;
-};
-
-type HelpMenuItem = {
-  label: string;
-  href: string;
-};
+import { notifications } from "../data/navigation";
 
 export const IconButtons = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-  // Example notifications
-  const notifications: NotificationItem[] = [
-    {
-      id: "1",
-      message:
-        "A recent sign-in to your Upwork account (dc87e8a9) from an unknown device or browser.",
-      time: "11:28 AM",
-    },
-    {
-      id: "2",
-      message:
-        "A recent sign-in to your Upwork account (dc87e8a9) from an unknown device or browser.",
-      time: "Yesterday",
-    },
-    {
-      id: "3",
-      message:
-        "A recent sign-in to your Upwork account (dc87e8a9) from an unknown device or browser.",
-      time: "Yesterday",
-    },
-  ];
-
-  // Help menu items
-  const helpMenuItems: HelpMenuItem[] = [
+  // Help menu items from main navigation
+  const helpMenuItems = [
     { label: "Help center", href: "/help" },
     { label: "Your support requests", href: "/support-requests" },
     { label: "Upwork Updates", href: "/updates" },
@@ -77,7 +45,7 @@ export const IconButtons = () => {
           </button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-64 p-0 border-none shadow-menu bg-[#181818] text-white"
+          className="w-64 p-0 border-none shadow-menu bg-main text-white"
           align="end"
           sideOffset={15}
         >
@@ -109,7 +77,7 @@ export const IconButtons = () => {
           </button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-80 p-0 border-none shadow-menu bg-[#181818] text-white"
+          className="w-80 p-0 border-none shadow-menu bg-main text-white"
           align="end"
           sideOffset={15}
         >
@@ -127,6 +95,9 @@ export const IconButtons = () => {
                   </div>
                   <div>
                     <p className="text-sm">{notification.message}</p>
+                    <span className="text-xs text-gray-400">
+                      {notification.time}
+                    </span>
                   </div>
                 </div>
               </div>
