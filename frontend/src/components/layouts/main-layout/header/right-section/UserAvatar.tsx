@@ -12,7 +12,7 @@ import {
   userMenuSections,
   themeOptions as navigationThemeOptions,
 } from "../data/navigation";
-import { getDynamicIcon } from "../mobile/components/NavComponents";
+import { getDynamicIcon } from "../utils/getDynamicIcon";
 
 export const UserAvatar = () => {
   const { theme, setTheme } = useTheme();

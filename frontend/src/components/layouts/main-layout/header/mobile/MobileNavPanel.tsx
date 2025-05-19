@@ -20,8 +20,8 @@ import {
   SubMenuItem,
   ThemeOption,
   LinkItem,
-  getDynamicIcon,
 } from "./components/NavComponents";
+import { getDynamicIcon } from "../utils/getDynamicIcon";
 
 interface MobileNavPanelProps {
   isOpen: boolean;

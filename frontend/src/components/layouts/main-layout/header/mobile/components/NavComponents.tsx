@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
-import * as Icons from "lucide-react";
 
 // DropdownItem Component
 interface DropdownItemProps {
@@ -104,36 +103,3 @@ export const LinkItem = ({
     {hasDropdown && <ChevronDown size={20} />}
   </div>
 );
-
-// Render dynamic Lucide icon
-export const getDynamicIcon = (iconName: string, size: number = 20) => {
-  // Define a mapping of icon names to components
-  const iconMap: Record<string, React.ElementType> = {
-    // Common icons
-    Bell: Icons.Bell,
-    Briefcase: Icons.Briefcase,
-    ChevronDown: Icons.ChevronDown,
-    ChevronUp: Icons.ChevronUp,
-    CreditCard: Icons.CreditCard,
-    ExternalLink: Icons.ExternalLink,
-    FileText: Icons.FileText,
-    HelpCircle: Icons.HelpCircle,
-    LogOut: Icons.LogOut,
-    MessageSquare: Icons.MessageSquare,
-    Monitor: Icons.Monitor,
-    MonitorSmartphone: Icons.MonitorSmartphone,
-    Moon: Icons.Moon,
-    Settings: Icons.Settings,
-    Sun: Icons.Sun,
-    User: Icons.User,
-    Users: Icons.Users,
-  };
-
-  // Return the icon component or null if not found
-  const IconComponent = iconMap[iconName];
-  if (IconComponent) {
-    return <IconComponent size={size} />;
-  }
-
-  return null;
-};
