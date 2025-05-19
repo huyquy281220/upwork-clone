@@ -1,11 +1,13 @@
-import { menuHeader } from "@/constants/menu";
-// import { NavMenuItemProps } from "@/types";
+"use client";
+
+import { ClientMenuHeader, FreelancerMenuHeader } from "@/constants/menu";
 import { ChevronDown, Divide } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import BoxShadow from "@/components/common/BoxShadow";
-
+import { useUserStore } from "@/lib/store";
 export default function NavMenu() {
+  const { role } = useUserStore();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const handleMouseEnter = (menu: string) => {
@@ -15,6 +17,9 @@ export default function NavMenu() {
   const handleMouseLeave = () => {
     setActiveDropdown(null);
   };
+
+  const menuHeader =
+    role === "freelancer" ? FreelancerMenuHeader : ClientMenuHeader;
 
   return (
     <div className="text-white w-full hidden md:block">

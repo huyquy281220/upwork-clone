@@ -6,7 +6,7 @@ interface AspectRatioProps {
   className?: string;
 }
 
-export default function AspectRatio({
+export function AspectRatio({
   ratio = 1,
   children,
   className = "",

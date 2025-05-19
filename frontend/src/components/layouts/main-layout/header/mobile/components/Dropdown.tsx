@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import React from "react";
+import { ChevronDown } from "lucide-react";
 
 export default function AnimatedDropdown({
   children,
@@ -57,6 +58,11 @@ export const DropdownItem = ({
     <span className={isHighlighted ? "text-green-500" : "text-white"}>
       {title}
     </span>
-    {isExpanded ? <span>&#9650;</span> : <span>&#9660;</span>}
+    <ChevronDown
+      size={18}
+      className={`transition-transform duration-200 ${
+        isExpanded ? "rotate-180" : ""
+      }`}
+    />
   </div>
 );

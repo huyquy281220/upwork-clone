@@ -164,81 +164,6 @@ export const searchCategories: SearchCategory[] = [
   },
 ];
 
-// User menu items - for avatar dropdown
-export interface UserMenuItem {
-  id: string;
-  label: string;
-  iconName: string;
-  href?: string;
-}
-
-export interface UserMenuSection {
-  items: UserMenuItem[];
-  hasBorder?: boolean;
-}
-
-export const userMenuSections: UserMenuSection[] = [
-  {
-    items: [
-      {
-        id: "profile",
-        iconName: "User",
-        label: "Your profile",
-        href: "/profile",
-      },
-      {
-        id: "stats",
-        iconName: "ChevronDown",
-        label: "Stats and trends",
-        href: "/stats",
-      },
-    ],
-  },
-  {
-    hasBorder: true,
-    items: [
-      {
-        id: "membership",
-        iconName: "CreditCard",
-        label: "Membership plan",
-        href: "/membership",
-      },
-      {
-        id: "apps",
-        iconName: "Briefcase",
-        label: "Apps and Offers",
-        href: "/apps-offers",
-      },
-    ],
-  },
-  {
-    hasBorder: true,
-    items: [
-      {
-        id: "theme",
-        iconName: "MonitorSmartphone",
-        label: "Theme",
-      },
-      {
-        id: "settings",
-        iconName: "Settings",
-        label: "Account settings",
-        href: "/settings",
-      },
-    ],
-  },
-  {
-    hasBorder: true,
-    items: [
-      {
-        id: "logout",
-        iconName: "LogOut",
-        label: "Log out",
-      },
-    ],
-  },
-];
-
 // Theme options
 export interface ThemeOption {
   id: string;
@@ -335,5 +260,86 @@ export const notifications: NotificationItem[] = [
     id: "3",
     message: "Contract milestone payment of $350 has been released.",
     time: "Yesterday",
+  },
+];
+
+// User menu items - for avatar dropdown
+export interface UserMenuItem {
+  id: string;
+  label: string;
+  iconName: string;
+  href?: string;
+}
+
+export interface UserMenuSection {
+  items: UserMenuItem[];
+  hasBorder?: boolean;
+}
+
+export const freelancerMenuSections: UserMenuSection[] = [
+  {
+    items: [
+      {
+        id: "profile",
+        iconName: "User",
+        label: "Your profile",
+        href: "/profile",
+      },
+      {
+        id: "stats",
+        iconName: "ChevronDown",
+        label: "Stats and trends",
+        href: "/stats",
+      },
+    ],
+  },
+  {
+    hasBorder: true,
+    items: [
+      {
+        id: "membership",
+        iconName: "CreditCard",
+        label: "Membership plan",
+        href: "/membership",
+      },
+      {
+        id: "apps",
+        iconName: "Briefcase",
+        label: "Apps and Offers",
+        href: "/apps-offers",
+      },
+    ],
+  },
+  {
+    hasBorder: true,
+    items: [
+      {
+        id: "theme",
+        iconName: "MonitorSmartphone",
+        label: "Theme",
+      },
+      {
+        id: "settings",
+        iconName: "Settings",
+        label: "Account settings",
+        href: "/settings",
+      },
+    ],
+  },
+  {
+    hasBorder: true,
+    items: [
+      {
+        id: "logout",
+        iconName: "LogOut",
+        label: "Log out",
+      },
+    ],
+  },
+];
+
+export const clientMenuSections: UserMenuSection[] = [
+  {
+    items: [],
   },
 ];

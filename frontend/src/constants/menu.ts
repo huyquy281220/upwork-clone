@@ -1,4 +1,4 @@
-export const menuHeader = [
+export const FreelancerMenuHeader = [
   {
     title: "Find work",
     menu: [
@@ -90,6 +90,102 @@ export const menuHeader = [
       },
       {
         label: "Tax information",
+        link: "",
+      },
+    ],
+  },
+  {
+    title: "Messages",
+  },
+];
+export const ClientMenuHeader = [
+  {
+    title: "Hire talent",
+    menu: [
+      {
+        label: "Manage jobs and offers",
+        type: "divider",
+      },
+      {
+        label: "Job posts and proposals",
+        link: "",
+      },
+      {
+        label: "Pending offers",
+        link: "",
+      },
+      {
+        label: "Find freelancers",
+        type: "divider",
+      },
+      {
+        label: "Post a job",
+        link: "",
+      },
+      {
+        label: "Search for talent",
+        link: "",
+      },
+      {
+        label: "Talent you've hired",
+        link: "",
+      },
+      {
+        label: "Talent you've saved",
+        link: "",
+      },
+      {
+        label: "Bring talent to Upwork(Any hire)",
+        link: "",
+      },
+    ],
+  },
+  {
+    title: "Manage work",
+    menu: [
+      {
+        label: "Active and past work",
+        type: "divider",
+      },
+      {
+        label: "Your contracts",
+        link: "",
+      },
+      {
+        label: "Hourly contract activity",
+        type: "divider",
+      },
+      {
+        label: "Timesheets",
+        link: "",
+      },
+      {
+        label: "Time by freelancer",
+        link: "",
+      },
+      {
+        label: "Work diaries",
+        link: "",
+      },
+      {
+        label: "Custom export",
+        link: "",
+      },
+    ],
+  },
+  {
+    title: "Reports",
+    menu: [
+      {
+        label: "Weekly financial summary",
+        type: "divider",
+      },
+      {
+        label: "Transaction history",
+        link: "",
+      },
+      {
+        label: "Spending by activity",
         link: "",
       },
     ],

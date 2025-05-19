@@ -9,7 +9,7 @@ import { PopoverContent } from "@/components/ui/popover";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import {
-  userMenuSections,
+  freelancerMenuSections,
   themeOptions as navigationThemeOptions,
 } from "../data/navigation";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
@@ -149,7 +149,7 @@ export default function UserAvatar() {
         </div>
 
         {/* Menu items sections - using shared data structure */}
-        {userMenuSections.map((section, sectionIndex) => (
+        {freelancerMenuSections.map((section, sectionIndex) => (
           <div
             key={`section-${sectionIndex}`}
             className={cn(

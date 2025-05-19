@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import FooterLinks from "./FooterLinks";
 import SocialLinks from "./SocialLinks";

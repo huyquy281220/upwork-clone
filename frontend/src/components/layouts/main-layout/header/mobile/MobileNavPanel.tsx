@@ -50,7 +50,7 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
 
   return (
     <div
-      className={`fixed inset-x-0 top-14 bg-[#181818] text-white z-50 transform transition-transform duration-300 ${
+      className={`fixed inset-x-0 top-14 h-full bg-main text-white z-50 transform transition-transform duration-300 ${
         isOpen ? "opacity-100" : "opacity-0"
       }`}
       style={{ maxHeight: "100vh", overflowY: "auto" }}
