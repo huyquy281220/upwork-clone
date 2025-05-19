@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+import React from "react";
 
 interface AnimatedDropdownProps {
   isOpen: boolean;
@@ -34,3 +35,27 @@ export const AnimatedDropdown = ({
     </div>
   );
 };
+
+export interface DropdownItemProps {
+  title: string;
+  isHighlighted?: boolean;
+  isExpanded?: boolean;
+  onClick?: () => void;
+}
+
+export const DropdownItem = ({
+  title,
+  isHighlighted = false,
+  isExpanded = false,
+  onClick,
+}: DropdownItemProps) => (
+  <div
+    className="flex items-center justify-between px-4 py-3 cursor-pointer"
+    onClick={onClick}
+  >
+    <span className={isHighlighted ? "text-green-500" : "text-white"}>
+      {title}
+    </span>
+    {isExpanded ? <span>&#9650;</span> : <span>&#9660;</span>}
+  </div>
+);

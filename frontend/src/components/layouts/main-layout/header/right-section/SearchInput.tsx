@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/popover";
 import Link from "next/link";
 import { searchCategories } from "../data/navigation";
-import { getDynamicIcon } from "../utils/getDynamicIcon";
+import { getDynamicIcon } from "@/utils/getDynamicIcon";
 
 export const SearchInput = () => {
   const [isJobsOpen, setIsJobsOpen] = useState(false);

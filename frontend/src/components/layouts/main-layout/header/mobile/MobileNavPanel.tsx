@@ -14,14 +14,9 @@ import {
   ThemeOption as ThemeOptionType,
   SubMenuGroup,
 } from "../data/navigation";
-import { AnimatedDropdown } from "./components/Dropdown";
-import {
-  DropdownItem,
-  SubMenuItem,
-  ThemeOption,
-  LinkItem,
-} from "./components/NavComponents";
-import { getDynamicIcon } from "../utils/getDynamicIcon";
+import { AnimatedDropdown, DropdownItem } from "./components/Dropdown";
+import { SubMenuItem, ThemeOption, LinkItem } from "./components";
+import { getDynamicIcon } from "@/utils/getDynamicIcon";
 
 interface MobileNavPanelProps {
   isOpen: boolean;
