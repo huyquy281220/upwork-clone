@@ -8,10 +8,10 @@ interface MobileSearchPanelProps {
   onClose: () => void;
 }
 
-export const MobileSearchPanel = ({
+export default function MobileSearchPanel({
   isOpen,
   onClose,
-}: MobileSearchPanelProps) => {
+}: MobileSearchPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"Jobs" | "Talent" | "Projects">(
     "Jobs"
@@ -99,4 +99,4 @@ export const MobileSearchPanel = ({
       </div>
     </div>
   );
-};
+}

@@ -9,26 +9,28 @@ interface LinkItemProps {
   onClick?: () => void;
 }
 
-export const LinkItem = ({
+export default function LinkItem({
   icon,
   text,
   badge,
   hasDropdown = false,
   onClick,
-}: LinkItemProps) => (
-  <div
-    className="flex items-center justify-between cursor-pointer"
-    onClick={onClick}
-  >
-    <div className="flex items-center gap-3">
-      {icon}
-      <span>{text}</span>
-    </div>
-    {badge && (
-      <div className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-        {badge}
+}: LinkItemProps) {
+  return (
+    <div
+      className="flex items-center justify-between cursor-pointer"
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-3">
+        {icon}
+        <span>{text}</span>
       </div>
-    )}
-    {hasDropdown && <ChevronDown size={20} />}
-  </div>
-);
+      {badge && (
+        <div className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          {badge}
+        </div>
+      )}
+      {hasDropdown && <ChevronDown size={20} />}
+    </div>
+  );
+}

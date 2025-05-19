@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import { notifications } from "../data/navigation";
 
-export const IconButtons = () => {
+export default function IconButtons() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
@@ -116,4 +116,4 @@ export const IconButtons = () => {
       </Popover>
     </div>
   );
-};
+}

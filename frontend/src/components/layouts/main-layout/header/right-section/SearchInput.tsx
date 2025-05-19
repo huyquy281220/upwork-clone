@@ -11,7 +11,7 @@ import Link from "next/link";
 import { searchCategories } from "../data/navigation";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
 
-export const SearchInput = () => {
+export default function SearchInput() {
   const [isJobsOpen, setIsJobsOpen] = useState(false);
 
   return (
@@ -66,4 +66,4 @@ export const SearchInput = () => {
       </Popover>
     </div>
   );
-};
+}

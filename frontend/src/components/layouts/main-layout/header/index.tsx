@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { NavMenu } from "./NavMenu";
 import { Logo } from "@/assets/svg";
-import { RightSection } from "./right-section";
-import { MobileHeader } from "./mobile";
+import MobileHeader from "./mobile";
+import NavMenu from "./NavMenu";
+import RightSection from "./right-section";
 
 export default function MainHeader() {
   return (

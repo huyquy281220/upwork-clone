@@ -6,12 +6,14 @@ interface SubMenuItemProps {
   hasExternalLink?: boolean;
 }
 
-export const SubMenuItem = ({
+export default function SubMenuItem({
   title,
   hasExternalLink = false,
-}: SubMenuItemProps) => (
-  <div className="flex items-center justify-between px-8 py-3 text-sm">
-    <span className="text-white">{title}</span>
-    {hasExternalLink && <ExternalLink size={16} />}
-  </div>
-);
+}: SubMenuItemProps) {
+  return (
+    <div className="flex items-center justify-between px-8 py-3 text-sm">
+      <span className="text-white">{title}</span>
+      {hasExternalLink && <ExternalLink size={16} />}
+    </div>
+  );
+}

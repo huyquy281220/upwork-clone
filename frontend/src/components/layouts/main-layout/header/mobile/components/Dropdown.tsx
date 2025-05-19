@@ -3,38 +3,39 @@
 import { useRef, useEffect, useState } from "react";
 import React from "react";
 
-interface AnimatedDropdownProps {
-  isOpen: boolean;
-  children: React.ReactNode;
-  className?: string;
-}
-
-export const AnimatedDropdown = ({
-  isOpen,
+export default function AnimatedDropdown({
   children,
-  className = "",
-}: AnimatedDropdownProps) => {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState<number | undefined>(0);
+  isOpen,
+}: {
+  children: React.ReactNode;
+  isOpen: boolean;
+}) {
+  const [height, setHeight] = useState<number | undefined>(undefined);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      const contentHeight = contentRef.current?.scrollHeight;
+    if (isOpen && ref.current) {
+      const contentHeight = ref.current.scrollHeight;
       setHeight(contentHeight);
     } else {
       setHeight(0);
     }
-  }, [isOpen]);
+  }, [isOpen, children]);
 
   return (
     <div
-      className={`overflow-hidden transition-all duration-300 ease-in-out ${className}`}
-      style={{ height: height ? `${height}px` : "0px" }}
+      ref={ref}
+      style={{
+        maxHeight: height !== undefined ? height : undefined,
+        overflow: "hidden",
+        transition: "max-height 0.3s ease-in-out",
+      }}
+      aria-hidden={!isOpen}
     >
-      <div ref={contentRef}>{children}</div>
+      {children}
     </div>
   );
-};
+}
 
 export interface DropdownItemProps {
   title: string;

@@ -14,7 +14,7 @@ import {
   ThemeOption as ThemeOptionType,
   SubMenuGroup,
 } from "../data/navigation";
-import { AnimatedDropdown, DropdownItem } from "./components/Dropdown";
+import AnimatedDropdown, { DropdownItem } from "./components/Dropdown";
 import { SubMenuItem, ThemeOption, LinkItem } from "./components";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
 
@@ -27,7 +27,7 @@ interface NavItemWithGroups extends NavItem {
   subMenuGroups: SubMenuGroup[];
 }
 
-export const MobileNavPanel = ({ isOpen }: MobileNavPanelProps) => {
+export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
   // State for expanded menus
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(
     {}
@@ -193,4 +193,4 @@ export const MobileNavPanel = ({ isOpen }: MobileNavPanelProps) => {
       </div>
     </div>
   );
-};
+}

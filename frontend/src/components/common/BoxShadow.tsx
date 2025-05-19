@@ -7,12 +7,12 @@ interface BoxShadowProps {
   classNames?: string;
 }
 
-export const BoxShadow = ({
+export default function BoxShadow({
   withArrow = true,
   direction = "left",
   children,
   classNames,
-}: BoxShadowProps) => {
+}: BoxShadowProps) {
   if (!withArrow) {
     return <div className={clsx("shadow-menu", classNames)}>{children}</div>;
   }
@@ -28,4 +28,4 @@ export const BoxShadow = ({
       {children}
     </div>
   );
-};
+}

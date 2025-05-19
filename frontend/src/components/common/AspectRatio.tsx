@@ -6,7 +6,7 @@ interface AspectRatioProps {
   className?: string;
 }
 
-export function AspectRatio({
+export default function AspectRatio({
   ratio = 1,
   children,
   className = "",
@@ -22,8 +22,3 @@ export function AspectRatio({
     </div>
   );
 }
-
-// Example usage:
-// <AspectRatio ratio={16/9}>
-//   <img src="..." alt="..." className="w-full h-full object-cover" />
-// </AspectRatio>

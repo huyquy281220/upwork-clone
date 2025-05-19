@@ -1,11 +1,11 @@
-import { BoxShadow } from "@/components/common/BoxShadow";
 import { menuHeader } from "@/constants/menu";
 // import { NavMenuItemProps } from "@/types";
 import { ChevronDown, Divide } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import BoxShadow from "@/components/common/BoxShadow";
 
-export const NavMenu = () => {
+export default function NavMenu() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const handleMouseEnter = (menu: string) => {
@@ -75,4 +75,4 @@ export const NavMenu = () => {
       </div>
     </div>
   );
-};
+}

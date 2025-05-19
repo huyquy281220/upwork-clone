@@ -5,10 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Search, X } from "lucide-react";
 import { Logo } from "@/assets/svg";
-import { MobileNavPanel } from "./MobileNavPanel";
-import { MobileSearchPanel } from "./MobileSearchPanel";
+import MobileNavPanel from "./MobileNavPanel";
+import MobileSearchPanel from "./MobileSearchPanel";
 
-export const MobileHeader = () => {
+export default function MobileHeader() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -67,4 +67,4 @@ export const MobileHeader = () => {
       />
     </>
   );
-};
+}

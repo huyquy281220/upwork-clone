@@ -14,7 +14,7 @@ import {
 } from "../data/navigation";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
 
-export const UserAvatar = () => {
+export default function UserAvatar() {
   const { theme, setTheme } = useTheme();
   const [isOpenPopover, setIsOpenPopover] = useState(false);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
@@ -206,4 +206,4 @@ export const UserAvatar = () => {
       </PopoverContent>
     </Popover>
   );
-};
+}

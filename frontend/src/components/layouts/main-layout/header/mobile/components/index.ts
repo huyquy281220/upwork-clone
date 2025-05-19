@@ -1,3 +1,4 @@
-export { SubMenuItem } from "./SubMenuItem";
-export { ThemeOption } from "./ThemeOption";
-export { LinkItem } from "./LinkItem";
+export { default as AnimatedDropdown } from "./Dropdown";
+export { default as SubMenuItem } from "./SubMenuItem";
+export { default as ThemeOption } from "./ThemeOption";
+export { default as LinkItem } from "./LinkItem";
