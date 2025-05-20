@@ -36,7 +36,7 @@ export default function ClientDashboard() {
             Complete your profile to get personalized freelancer
             recommendations.
           </p>
-          <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+          <button className="px-4 py-2 bg-green-600  rounded hover:bg-green-700">
             Complete Profile
           </button>
         </div>

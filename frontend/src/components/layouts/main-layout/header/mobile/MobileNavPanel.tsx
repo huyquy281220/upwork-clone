@@ -1,66 +1,57 @@
 "use client";
 
-import { useState } from "react";
-import { User, Moon, ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import { User, Moon, ChevronDown, ChevronUp, Divide } from "lucide-react";
 import Image from "next/image";
 import { GoogleSvg } from "@/assets/svg";
 import {
-  mainNavItems,
   themeOptions,
   bottomLinks,
-  NavItem,
-  SubItem,
   BottomLink,
   ThemeOption as ThemeOptionType,
-  SubMenuGroup,
 } from "../data/navigation";
 import AnimatedDropdown, { DropdownItem } from "./components/Dropdown";
-import { SubMenuItem, ThemeOption, LinkItem } from "./components";
+import { ThemeOption, LinkItem } from "./components";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
-
+import Link from "next/link";
+import { useHeaderContentByRole } from "@/hooks/useHeaderContentByRole";
 interface MobileNavPanelProps {
   isOpen: boolean;
 }
 
-// Type guard for items with subMenuGroups
-interface NavItemWithGroups extends NavItem {
-  subMenuGroups: SubMenuGroup[];
-}
-
 export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
+  const { navHeader } = useHeaderContentByRole();
   // State for expanded menus
-  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(
-    {}
-  );
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState("dark");
 
-  // Toggle a menu's expanded state
-  const toggleMenu = (menuId: string) => {
-    setExpandedMenus((prev) => ({
-      ...prev,
-      [menuId]: !prev[menuId],
-    }));
-  };
+  useEffect(() => {
+    if (!isOpen) {
+      setExpandedMenu(null);
+    }
+  }, [isOpen]);
 
-  // Check if an item has grouped submenus (type guard)
-  const hasGroupedSubmenus = (item: NavItem): item is NavItemWithGroups => {
-    return "subMenuGroups" in item && Array.isArray(item.subMenuGroups);
+  // Toggle a menu's expanded state
+  const toggleMenu = (menuKey: string) => {
+    setExpandedMenu((prev) => (prev === menuKey ? null : menuKey));
   };
 
   return (
     <div
-      className={`fixed inset-x-0 top-14 h-full bg-main text-white z-50 transform transition-transform duration-300 ${
-        isOpen ? "opacity-100" : "opacity-0"
+      className={`md:hidden h-full dark:bg-main  ${
+        isOpen ? "block" : "hidden"
       }`}
       style={{ maxHeight: "100vh", overflowY: "auto" }}
     >
+      {/* <div className="h-[1000px] bg-red-600"></div> */}
       {/* User Profile Section */}
       <div className="border-b border-gray-700 px-4 py-3">
         <div className="flex items-center">
           <div className="mr-3 relative h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center overflow-hidden">
             {/* Fallback user icon if image is not available */}
-            <User className="text-white absolute" size={20} />
+            <User className=" absolute" size={20} />
 
             {/* Attempt to load user image */}
             <div className="absolute inset-0">
@@ -74,7 +65,7 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
             </div>
           </div>
           <div className="flex-grow">
-            <h3 className="text-white font-semibold">Hai Hai</h3>
+            <h3 className=" font-semibold">Hai Hai</h3>
             <p className="text-sm text-gray-400">Freelancer</p>
           </div>
           <button className="p-1">
@@ -85,56 +76,37 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
 
       {/* Main Navigation Items - Data-driven */}
       <nav>
-        {mainNavItems.map((item) => (
-          <div key={item.id} className="border-b border-gray-700">
+        {navHeader.map(({ title, menu }) => (
+          <div key={title} className="border-b border-gray-700">
             <DropdownItem
-              title={item.title}
-              isHighlighted={item.isHighlighted}
-              isExpanded={expandedMenus[item.id]}
-              onClick={() => toggleMenu(item.id)}
+              title={title}
+              isExpanded={expandedMenu === title}
+              isDropdown={menu ? true : false}
+              onClick={() => toggleMenu(title)}
             />
 
-            <AnimatedDropdown isOpen={expandedMenus[item.id]}>
-              <div className="bg-[#232323] py-1">
+            <AnimatedDropdown isOpen={expandedMenu === title}>
+              <div className="dark:bg-main py-1">
                 {/* Handle either grouped or simple subitems */}
-                {hasGroupedSubmenus(item)
-                  ? // Render grouped submenus
-                    item.subMenuGroups.map(
-                      (group: SubMenuGroup, groupIndex: number) => (
-                        <div key={groupIndex}>
-                          {/* Add a border-top for all but the first group */}
-                          {groupIndex > 0 && (
-                            <div className="py-1 border-t border-gray-700 mt-1"></div>
+                {menu &&
+                  menu.map(({ label, link, type }, index) => (
+                    <div key={label}>
+                      {type ? (
+                        <div>
+                          {index !== 0 && (
+                            <Divide className="w-full h-[1px] my-1 bg-[#333]" />
                           )}
-
-                          {/* Show group title if it exists */}
-                          {group.title && (
-                            <div className="px-4 py-2 text-gray-400 text-sm">
-                              {group.title}
-                            </div>
-                          )}
-
-                          {/* Render group items */}
-                          {group.items.map(
-                            (subItem: SubItem, subItemIndex: number) => (
-                              <SubMenuItem
-                                key={`${item.id}-${groupIndex}-${subItemIndex}`}
-                                title={subItem.title}
-                                hasExternalLink={subItem.hasExternalLink}
-                              />
-                            )
-                          )}
+                          <span className="ml-7 text-sm text-[#a5a5a5]">
+                            {label}
+                          </span>
                         </div>
-                      )
-                    )
-                  : // Render simple list of subitems
-                    item.subItems?.map((subItem: SubItem, index: number) => (
-                      <SubMenuItem
-                        key={`${item.id}-${index}`}
-                        title={subItem.title}
-                        hasExternalLink={subItem.hasExternalLink}
-                      />
-                    ))}
+                      ) : (
+                        <Link href={link ?? "/"}>
+                          <p className="ml-12 py-2  text-sm">{label}</p>
+                        </Link>
+                      )}
+                    </div>
+                  ))}
               </div>
             </AnimatedDropdown>
           </div>

@@ -1,12 +1,14 @@
 import SearchInput from "./SearchInput";
-import IconButtons from "./IconButtons";
 import UserAvatar from "./UserAvatar";
+import HelpCenter from "./HelpCenter";
+import Notification from "./Notification";
 
 export default function RightSection() {
   return (
     <div className="hidden md:flex items-center space-x-4">
       <SearchInput />
-      <IconButtons />
+      <HelpCenter />
+      <Notification />
       <UserAvatar />
     </div>
   );

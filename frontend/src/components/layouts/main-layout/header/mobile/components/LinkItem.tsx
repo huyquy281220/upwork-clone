@@ -26,7 +26,7 @@ export default function LinkItem({
         <span>{text}</span>
       </div>
       {badge && (
-        <div className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+        <div className="bg-red-500  text-xs rounded-full w-5 h-5 flex items-center justify-center">
           {badge}
         </div>
       )}

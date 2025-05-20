@@ -105,7 +105,7 @@ export default function SelectRole() {
           disabled={!selectedRole}
           className={`h-10 px-5 rounded-lg font-medium text-[14px] transition-colors ${
             selectedRole
-              ? "bg-[#108a00] text-white hover:bg-[#14a800]"
+              ? "bg-[#108a00]  hover:bg-[#14a800]"
               : "bg-[#e4eef3] text-[#37a000] cursor-not-allowed"
           }`}
         >

@@ -12,7 +12,7 @@ export default function SubMenuItem({
 }: SubMenuItemProps) {
   return (
     <div className="flex items-center justify-between px-8 py-3 text-sm">
-      <span className="text-white">{title}</span>
+      <span className="">{title}</span>
       {hasExternalLink && <ExternalLink size={16} />}
     </div>
   );

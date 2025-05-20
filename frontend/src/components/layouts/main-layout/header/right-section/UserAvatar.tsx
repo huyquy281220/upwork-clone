@@ -8,13 +8,12 @@ import { ChevronDown, ChevronLeft } from "lucide-react";
 import { PopoverContent } from "@/components/ui/popover";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import {
-  freelancerMenuSections,
-  themeOptions as navigationThemeOptions,
-} from "../data/navigation";
+import { themeOptions as navigationThemeOptions } from "../data/navigation";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
+import { useHeaderContentByRole } from "@/hooks/useHeaderContentByRole";
 
 export default function UserAvatar() {
+  const { avatarMenu } = useHeaderContentByRole();
   const { theme, setTheme } = useTheme();
   const [isOpenPopover, setIsOpenPopover] = useState(false);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
@@ -63,7 +62,7 @@ export default function UserAvatar() {
         <Link
           key={item.id}
           href={item.href}
-          className="flex items-center px-4 py-2 hover:bg-gray-800 text-sm"
+          className="flex items-center px-4 py-2 hover:bg-[#f1f1f1] text-sm"
         >
           {getDynamicIcon(item.iconName, 16)}
           <span className="ml-3">{item.label}</span>
@@ -76,7 +75,7 @@ export default function UserAvatar() {
           <div
             key={item.id}
             onClick={handleThemeClick}
-            className="flex items-center justify-between px-4 py-2 hover:bg-gray-800 text-sm cursor-pointer"
+            className="flex items-center justify-between px-4 py-2 hover:bg-[#f1f1f1] text-sm cursor-pointer"
           >
             <div className="flex items-center">
               {getDynamicIcon(item.iconName, 16)}
@@ -96,7 +95,7 @@ export default function UserAvatar() {
         <div
           key={item.id}
           onClick={() => console.log(`Action: ${item.id}`)}
-          className="flex items-center px-4 py-2 hover:bg-gray-800 text-sm cursor-pointer"
+          className="flex items-center px-4 py-2 hover:bg-[#f1f1f1] text-sm cursor-pointer"
         >
           {getDynamicIcon(item.iconName, 16)}
           <span className="ml-3">{item.label}</span>
@@ -121,7 +120,7 @@ export default function UserAvatar() {
       <PopoverContent
         align="end"
         sideOffset={15}
-        className="border-none shadow-menu bg-main text-white p-0 w-64"
+        className="border-none shadow-menu dark:bg-main  p-0 w-64"
       >
         {/* User info section */}
         <div className="p-4 border-b border-gray-700 flex items-center space-x-3">
@@ -135,7 +134,7 @@ export default function UserAvatar() {
             />
           </div>
           <div>
-            <h3 className="font-semibold text-white">Hai Hai</h3>
+            <h3 className="font-semibold ">Hai Hai</h3>
             <p className="text-sm text-gray-400">Freelancer</p>
           </div>
         </div>
@@ -149,7 +148,7 @@ export default function UserAvatar() {
         </div>
 
         {/* Menu items sections - using shared data structure */}
-        {freelancerMenuSections.map((section, sectionIndex) => (
+        {avatarMenu.map((section, sectionIndex) => (
           <div
             key={`section-${sectionIndex}`}
             className={cn(
@@ -165,7 +164,7 @@ export default function UserAvatar() {
         <div
           ref={themeMenuRef}
           className={cn(
-            "absolute left-0 bottom-0 w-64 bg-main shadow-menu -z-[1] border border-gray-700 rounded-md transition-transform duration-200 ease-in-out",
+            "absolute left-0 bottom-0 w-64 dark:bg-main shadow-menu -z-[1] border border-gray-700 rounded-md transition-transform duration-200 ease-in-out",
             showThemeMenu
               ? "translate-x-[-105%] opacity-100"
               : "translate-x-[-95%] opacity-0"
@@ -174,7 +173,7 @@ export default function UserAvatar() {
           <div className="p-2 border-b border-gray-700 flex items-center">
             <button
               onClick={() => setShowThemeMenu(false)}
-              className="p-1 hover:bg-gray-800 rounded-full"
+              className="p-1 hover:bg-[#f1f1f1] rounded-full"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -189,7 +188,7 @@ export default function UserAvatar() {
                   setTheme(option.value);
                   setShowThemeMenu(false);
                 }}
-                className="flex items-start w-full px-4 py-2 hover:bg-gray-800 text-sm"
+                className="flex items-start w-full px-4 py-2 hover:bg-[#f1f1f1] text-sm"
               >
                 {option.icon}
                 <div className="ml-3 text-left">

@@ -1,13 +1,13 @@
 "use client";
 
-import { ClientMenuHeader, FreelancerMenuHeader } from "@/constants/menu";
 import { ChevronDown, Divide } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import BoxShadow from "@/components/common/BoxShadow";
-import { useUserStore } from "@/lib/store";
+import { useHeaderContentByRole } from "@/hooks/useHeaderContentByRole";
+
 export default function NavMenu() {
-  const { role } = useUserStore();
+  const { navHeader } = useHeaderContentByRole();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const handleMouseEnter = (menu: string) => {
@@ -18,16 +18,13 @@ export default function NavMenu() {
     setActiveDropdown(null);
   };
 
-  const menuHeader =
-    role === "freelancer" ? FreelancerMenuHeader : ClientMenuHeader;
-
   return (
-    <div className="text-white w-full hidden md:block">
+    <div className="w-full hidden md:block">
       <div className="container mx-auto px-4">
         <nav className="flex items-center h-16">
           <div className="flex space-x-6 relative">
             {/* Find Work Dropdown */}
-            {menuHeader.map(({ title, menu }) => (
+            {navHeader.map(({ title, menu }) => (
               <div
                 key={title}
                 className="relative group"
@@ -39,7 +36,7 @@ export default function NavMenu() {
                     className={` ${
                       activeDropdown === title
                         ? "text-green-500"
-                        : "text-white hover:text-green-400"
+                        : " hover:text-green-400"
                     }`}
                   >
                     {title}
@@ -48,24 +45,26 @@ export default function NavMenu() {
                 </button>
 
                 {activeDropdown === title && menu ? (
-                  <BoxShadow classNames="absolute left-0 top-7 mt-1 bg-main rounded w-64 py-2 z-50">
+                  <BoxShadow classNames="absolute left-0 top-7 mt-1 dark:bg-main rounded w-64 py-2 z-50">
                     <div className="absolute left-0 -top-5 w-full h-5 bg-transparent" />
-                    {menu?.map(({ label, link, type }) => (
+                    {menu?.map(({ label, link, type }, index) => (
                       <div key={label} className="flex flex-col">
-                        <Link
-                          href={link ?? ""}
-                          className="text-white text-sm hover:bg-neutral-700 px-4 py-1 cursor-pointer"
-                        >
-                          {label}
-                        </Link>
-
-                        {type && (
+                        {type ? (
                           <div>
-                            <Divide className="w-full h-[1px] my-1 bg-[#333]" />
+                            {index !== 0 && (
+                              <Divide className="w-full h-[1px] my-1 bg-[#333]" />
+                            )}
                             <span className="pl-2 text-sm text-[#a5a5a5]">
                               {label}
                             </span>
                           </div>
+                        ) : (
+                          <Link
+                            href={link ?? ""}
+                            className="text-sm hover:bg-neutral-700 px-4 py-1 cursor-pointer"
+                          >
+                            {label}
+                          </Link>
                         )}
                       </div>
                     ))}

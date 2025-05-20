@@ -28,7 +28,7 @@ export default function MobileSearchPanel({
 
   return (
     <div
-      className={`fixed inset-y-0 right-0 w-full bg-main text-white z-50 transform transition-transform duration-300 ${
+      className={`md:hidden fixed inset-y-0 right-0 w-full dark:bg-main z-[51] transform transition-transform duration-300 ${
         isOpen ? "translate-x-0" : "translate-x-full"
       }`}
       style={{ maxHeight: "100vh", overflowY: "auto" }}
@@ -44,8 +44,8 @@ export default function MobileSearchPanel({
         </button>
 
         <div className="flex-grow relative">
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <Search size={16} className="text-gray-400" />
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none bg-transparent">
+            <Search size={16} className="text-gray-400 bg-transparent" />
           </div>
           <input
             type="text"

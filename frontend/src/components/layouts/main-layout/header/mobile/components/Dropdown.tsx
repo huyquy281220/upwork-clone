@@ -40,29 +40,37 @@ export default function AnimatedDropdown({
 
 export interface DropdownItemProps {
   title: string;
-  isHighlighted?: boolean;
   isExpanded?: boolean;
+  isDropdown?: boolean;
   onClick?: () => void;
 }
 
 export const DropdownItem = ({
   title,
-  isHighlighted = false,
   isExpanded = false,
+  isDropdown = true,
   onClick,
-}: DropdownItemProps) => (
-  <div
-    className="flex items-center justify-between px-4 py-3 cursor-pointer"
-    onClick={onClick}
-  >
-    <span className={isHighlighted ? "text-green-500" : "text-white"}>
-      {title}
-    </span>
-    <ChevronDown
-      size={18}
-      className={`transition-transform duration-200 ${
-        isExpanded ? "rotate-180" : ""
-      }`}
-    />
-  </div>
-);
+}: DropdownItemProps) => {
+  if (!isDropdown) {
+    return (
+      <div className="flex items-center justify-between px-4 py-3 cursor-pointer">
+        <span className={""}>{title}</span>
+      </div>
+    );
+  }
+  return (
+    <div
+      className="flex items-center justify-between px-4 py-3 cursor-pointer"
+      onClick={onClick}
+    >
+      <span className={""}>{title}</span>
+
+      <ChevronDown
+        size={18}
+        className={`transition-transform duration-200 ${
+          isExpanded ? "rotate-180" : ""
+        }`}
+      />
+    </div>
+  );
+};

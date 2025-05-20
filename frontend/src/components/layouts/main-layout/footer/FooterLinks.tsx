@@ -14,13 +14,13 @@ interface FooterLinksProps {
 export default function FooterLinks({ title, links }: FooterLinksProps) {
   return (
     <div>
-      <h3 className="font-medium text-white mb-4">{title}</h3>
+      <h3 className="font-medium  mb-4">{title}</h3>
       <ul className="space-y-2">
         {links.map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}
-              className="text-gray-400 hover:text-white text-sm transition-colors"
+              className="text-gray-400 hover: text-sm transition-colors"
             >
               {link.label}
             </Link>

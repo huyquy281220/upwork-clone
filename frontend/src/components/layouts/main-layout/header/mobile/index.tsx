@@ -2,15 +2,21 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Search, X } from "lucide-react";
-import { Logo } from "@/assets/svg";
 import MobileNavPanel from "./MobileNavPanel";
 import MobileSearchPanel from "./MobileSearchPanel";
+import { useScrollLock } from "@/hooks/useScrollLock";
+import { cn } from "@/lib/utils";
+import { Logo } from "@/components/icons/Logo";
 
 export default function MobileHeader() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  useScrollLock({
+    enabled: isNavOpen || isSearchOpen,
+    scrollbarGap: true,
+  });
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -25,8 +31,13 @@ export default function MobileHeader() {
   };
 
   return (
-    <>
-      <header className="bg-main text-white py-3 px-4 flex items-center justify-between md:hidden">
+    <div
+      className={cn(
+        "fixed inset-x-0 md:hidden z-50 dark:bg-red-500 overflow-y-auto",
+        isNavOpen || isSearchOpen ? "h-full" : ""
+      )}
+    >
+      <div className="py-3 px-4 flex items-center justify-between">
         {/* Left section - X or Menu icon */}
         <button
           onClick={toggleNav}
@@ -38,13 +49,7 @@ export default function MobileHeader() {
 
         {/* Center section - Logo */}
         <Link href="/" className="flex-1 flex justify-center">
-          <Image
-            src={Logo}
-            alt="Upwork"
-            width={100}
-            height={24}
-            className="h-6 w-auto"
-          />
+          <Logo className="w-24 h-6" />
         </Link>
 
         {/* Right section - Search icon */}
@@ -55,7 +60,7 @@ export default function MobileHeader() {
         >
           <Search size={24} />
         </button>
-      </header>
+      </div>
 
       {/* Navigation panel - slides from top */}
       <MobileNavPanel isOpen={isNavOpen} />
@@ -65,6 +70,6 @@ export default function MobileHeader() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
       />
-    </>
+    </div>
   );
 }

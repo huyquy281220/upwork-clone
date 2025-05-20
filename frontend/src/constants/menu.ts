@@ -1,4 +1,4 @@
-export const FreelancerMenuHeader = [
+export const freelancerNavHeader = [
   {
     title: "Find work",
     menu: [
@@ -98,7 +98,7 @@ export const FreelancerMenuHeader = [
     title: "Messages",
   },
 ];
-export const ClientMenuHeader = [
+export const clientNavHeader = [
   {
     title: "Hire talent",
     menu: [
@@ -192,5 +192,128 @@ export const ClientMenuHeader = [
   },
   {
     title: "Messages",
+  },
+];
+
+export const freelancerAvatarMenu = [
+  {
+    items: [
+      {
+        id: "profile",
+        iconName: "User",
+        label: "Your profile",
+        href: "/profile",
+      },
+      {
+        id: "stats",
+        iconName: "ChevronDown",
+        label: "Stats and trends",
+        href: "/stats",
+      },
+    ],
+  },
+  {
+    hasBorder: true,
+    items: [
+      {
+        id: "membership",
+        iconName: "CreditCard",
+        label: "Membership plan",
+        href: "/membership",
+      },
+      {
+        id: "apps",
+        iconName: "Briefcase",
+        label: "Apps and Offers",
+        href: "/apps-offers",
+      },
+    ],
+  },
+  {
+    hasBorder: true,
+    items: [
+      {
+        id: "theme",
+        iconName: "MonitorSmartphone",
+        label: "Theme",
+      },
+      {
+        id: "settings",
+        iconName: "Settings",
+        label: "Account settings",
+        href: "/settings",
+      },
+    ],
+  },
+  {
+    hasBorder: true,
+    items: [
+      {
+        id: "logout",
+        iconName: "LogOut",
+        label: "Log out",
+      },
+    ],
+  },
+];
+export const clientAvatarMenu = [
+  {
+    items: [
+      {
+        id: "profile",
+        iconName: "User",
+        label: "Your profile",
+        href: "/profile",
+      },
+      {
+        id: "stats",
+        iconName: "ChevronDown",
+        label: "Stats and trends",
+        href: "/stats",
+      },
+    ],
+  },
+  {
+    hasBorder: true,
+    items: [
+      {
+        id: "membership",
+        iconName: "CreditCard",
+        label: "Membership plan",
+        href: "/membership",
+      },
+      {
+        id: "apps",
+        iconName: "Briefcase",
+        label: "Invite a coworker",
+        href: "/apps-offers",
+      },
+    ],
+  },
+  {
+    hasBorder: true,
+    items: [
+      {
+        id: "theme",
+        iconName: "MonitorSmartphone",
+        label: "Theme",
+      },
+      {
+        id: "settings",
+        iconName: "Settings",
+        label: "Account settings",
+        href: "/settings",
+      },
+    ],
+  },
+  {
+    hasBorder: true,
+    items: [
+      {
+        id: "logout",
+        iconName: "LogOut",
+        label: "Log out",
+      },
+    ],
   },
 ];
