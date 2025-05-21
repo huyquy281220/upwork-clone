@@ -256,6 +256,7 @@ export const freelancerAvatarMenu = [
     ],
   },
 ];
+
 export const clientAvatarMenu = [
   {
     items: [
@@ -317,3 +318,5 @@ export const clientAvatarMenu = [
     ],
   },
 ];
+
+export const freelancerAvatarMenuMobile = [];

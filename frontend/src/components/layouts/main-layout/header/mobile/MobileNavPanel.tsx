@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { User, Moon, ChevronDown, ChevronUp, Divide } from "lucide-react";
+import {
+  User,
+  Moon,
+  ChevronDown,
+  ChevronUp,
+  Divide,
+  LogOut,
+  Bell,
+} from "lucide-react";
 import Image from "next/image";
 import { GoogleSvg } from "@/assets/svg";
 import {
@@ -9,6 +17,7 @@ import {
   bottomLinks,
   BottomLink,
   ThemeOption as ThemeOptionType,
+  notifications,
 } from "../data/navigation";
 import AnimatedDropdown, { DropdownItem } from "./components/Dropdown";
 import { ThemeOption, LinkItem } from "./components";
@@ -26,7 +35,7 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
 
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState("dark");
-
+  const [notificationOpen, setNotificationOpen] = useState(false);
   useEffect(() => {
     if (!isOpen) {
       setExpandedMenu(null);
@@ -40,12 +49,11 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
 
   return (
     <div
-      className={`md:hidden h-full dark:bg-main  ${
+      className={`md:hidden h-full pb-5 dark:bg-main  ${
         isOpen ? "block" : "hidden"
       }`}
       style={{ maxHeight: "100vh", overflowY: "auto" }}
     >
-      {/* <div className="h-[1000px] bg-red-600"></div> */}
       {/* User Profile Section */}
       <div className="border-b border-gray-700 px-4 py-3">
         <div className="flex items-center">
@@ -126,6 +134,46 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
           />
         ))}
 
+        {/* notifications */}
+        <div>
+          <div
+            className="flex items-center justify-between"
+            onClick={() => setNotificationOpen(!notificationOpen)}
+          >
+            <div className="flex items-center gap-3">
+              <Bell size={20} />
+              <span>Notifications</span>
+            </div>
+
+            <div className="bg-red-500  text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              5
+            </div>
+          </div>
+
+          <AnimatedDropdown isOpen={notificationOpen}>
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                className="border-b border-gray-700 p-4"
+              >
+                <div className="flex">
+                  <div className="mr-3 mt-1">
+                    <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
+                      <Bell className="w-4 h-4 bg-transparent" />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm">{notification.message}</p>
+                    <span className="text-xs text-gray-400">
+                      {notification.time}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </AnimatedDropdown>
+        </div>
+
         {/* Theme dropdown */}
         <div>
           <div
@@ -162,6 +210,8 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
             </div>
           </AnimatedDropdown>
         </div>
+
+        <LinkItem icon={<LogOut size={20} />} text="Logout" />
       </div>
     </div>
   );

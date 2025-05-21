@@ -94,31 +94,10 @@ export interface BottomLink {
 
 export const bottomLinks: BottomLink[] = [
   {
-    id: "messages",
-    text: "Messages",
-    iconName: "MessageSquare",
-  },
-  {
-    id: "notifications",
-    text: "Notifications",
-    iconName: "Bell",
-    badge: 5,
-  },
-  {
-    id: "chat",
-    text: "Chat with Uma",
-    iconName: "Settings",
-  },
-  {
     id: "account",
     text: "Account settings",
     iconName: "Settings",
     href: "/settings",
-  },
-  {
-    id: "logout",
-    text: "Log out",
-    iconName: "LogOut",
   },
 ];
 
