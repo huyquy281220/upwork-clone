@@ -48,7 +48,7 @@ export default function SearchInput() {
               <Link
                 key={category.id}
                 href={category.href}
-                className="flex items-start px-4 py-3 hover:bg-[#f1f1f1]"
+                className="flex items-start px-4 py-3 hover:bg-hover"
               >
                 <div className="mr-3 mt-1 text-gray-300">
                   {getDynamicIcon(category.iconName)}

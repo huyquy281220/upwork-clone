@@ -36,6 +36,8 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState("dark");
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [userAvatarOpen, setUserAvatarOpen] = useState(false);
+
   useEffect(() => {
     if (!isOpen) {
       setExpandedMenu(null);
@@ -55,8 +57,11 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
       style={{ maxHeight: "100vh", overflowY: "auto" }}
     >
       {/* User Profile Section */}
-      <div className="border-b border-gray-700 px-4 py-3">
-        <div className="flex items-center">
+      <div className="border-b border-gray-700 px-4 py-3 space-y-2">
+        <div
+          className="flex items-center"
+          onClick={() => setUserAvatarOpen(!userAvatarOpen)}
+        >
           <div className="mr-3 relative h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center overflow-hidden">
             {/* Fallback user icon if image is not available */}
             <User className=" absolute" size={20} />
@@ -80,6 +85,15 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
             <ChevronDown size={20} />
           </button>
         </div>
+
+        <AnimatedDropdown isOpen={userAvatarOpen}>
+          <div className="px-4 py-3 flex items-center justify-between">
+            <span className="text-sm">Online for messages</span>
+            <div className="w-8 h-4 bg-green-500 rounded-full flex items-center">
+              <div className="w-3 h-3 bg-white rounded-full ml-auto mr-0.5"></div>
+            </div>
+          </div>
+        </AnimatedDropdown>
       </div>
 
       {/* Main Navigation Items - Data-driven */}
@@ -122,8 +136,7 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
       </nav>
 
       {/* Bottom Links */}
-      <div className="px-4 py-2 space-y-3">
-        {/* Bottom links - data-driven */}
+      <div className="px-4 py-2 mt-2 space-y-5">
         {bottomLinks.map((link: BottomLink) => (
           <LinkItem
             key={link.id}

@@ -4,10 +4,12 @@
 
 [data-theme="dark"] {
   --background: #181818;
+  --background-hover: #282828;
   --foreground: white;
 }
 [data-theme="light"] {
   --background: white;
+  --background-hover: #f1f1f1;
   --foreground: #181818;
 }
 
@@ -69,13 +71,25 @@
 
 @layer base {
   * {
-    /* @apply dark:bg-main;
-    @apply border-border; */
+    /* @apply dark:bg-main; */
+    @apply border-border;
     @apply bg-background;
+    @apply text-foreground;
   }
   body {
     @apply bg-background text-foreground;
   }
+
+  .dark .menu-item:hover {
+    @apply bg-red-400;
+  }
+}
+
+span,
+p,
+title,
+svg {
+  background-color: transparent !important;
 }
 
 .arrow-up-left::before {

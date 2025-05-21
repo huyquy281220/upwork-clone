@@ -1,6 +1,6 @@
 "use client";
 
-import FreelancerLayout from "@/components/layouts/main-layout";
+import FreelancerLayout from "@/components/layouts";
 import { ChildrenProps } from "@/types";
 
 export default function FreelancerLayoutWrapper({ children }: ChildrenProps) {

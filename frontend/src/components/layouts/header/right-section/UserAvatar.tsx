@@ -62,7 +62,7 @@ export default function UserAvatar() {
         <Link
           key={item.id}
           href={item.href}
-          className="flex items-center px-4 py-2 hover:bg-[#f1f1f1] text-sm"
+          className="flex items-center px-4 py-2 hover:bg-hover text-sm"
         >
           {getDynamicIcon(item.iconName, 16)}
           <span className="ml-3">{item.label}</span>
@@ -75,9 +75,9 @@ export default function UserAvatar() {
           <div
             key={item.id}
             onClick={handleThemeClick}
-            className="flex items-center justify-between px-4 py-2 hover:bg-[#f1f1f1] text-sm cursor-pointer"
+            className="flex items-center justify-between px-4 py-2 hover:bg-hover text-sm cursor-pointer"
           >
-            <div className="flex items-center">
+            <div className="flex items-center bg-transparent">
               {getDynamicIcon(item.iconName, 16)}
               <span className="ml-3">{`Theme: ${getThemeDisplayText()}`}</span>
             </div>
@@ -95,7 +95,7 @@ export default function UserAvatar() {
         <div
           key={item.id}
           onClick={() => console.log(`Action: ${item.id}`)}
-          className="flex items-center px-4 py-2 hover:bg-[#f1f1f1] text-sm cursor-pointer"
+          className="flex items-center px-4 py-2 hover:bg-hover text-sm cursor-pointer"
         >
           {getDynamicIcon(item.iconName, 16)}
           <span className="ml-3">{item.label}</span>
@@ -173,7 +173,7 @@ export default function UserAvatar() {
           <div className="p-2 border-b border-gray-700 flex items-center">
             <button
               onClick={() => setShowThemeMenu(false)}
-              className="p-1 hover:bg-[#f1f1f1] rounded-full"
+              className="p-1 hover:bg-hover rounded-full"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -188,7 +188,7 @@ export default function UserAvatar() {
                   setTheme(option.value);
                   setShowThemeMenu(false);
                 }}
-                className="flex items-start w-full px-4 py-2 hover:bg-[#f1f1f1] text-sm"
+                className="flex items-start w-full px-4 py-2 hover:bg-hover text-sm"
               >
                 {option.icon}
                 <div className="ml-3 text-left">

@@ -20,6 +20,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        hover: "var(--background-hover)",
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
