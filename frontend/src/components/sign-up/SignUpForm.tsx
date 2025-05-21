@@ -6,6 +6,7 @@ import { Eye, EyeOff, ChevronDown } from "lucide-react";
 import { FormData } from "@/types";
 import { useSignup } from "@/hooks/useSignup";
 import { useRouter } from "next/navigation";
+import { useRoleStore } from "@/lib/store";
 
 interface SignupFormProps {
   onSubmit?: (data: FormData) => void;
@@ -13,6 +14,7 @@ interface SignupFormProps {
 
 export default function SignupForm({ onSubmit }: SignupFormProps) {
   const router = useRouter();
+  const { role } = useRoleStore();
   const { signup, isLoading, error } = useSignup();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({

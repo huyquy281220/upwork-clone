@@ -25,3 +25,13 @@ export const useUserStore = create<UserState>()(
     }
   )
 );
+
+interface RoleState {
+  role: UserRole;
+  setRole: (role: UserRole) => void;
+}
+
+export const useRoleStore = create<RoleState>()((set) => ({
+  role: "client",
+  setRole: (role: UserRole) => set({ role }),
+}));

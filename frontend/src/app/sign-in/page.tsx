@@ -2,34 +2,44 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, FormEvent } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 import { GoogleSvg } from "@/assets/svg";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import type { Resolver } from "react-hook-form";
+
+// Define validation schema using Zod
+const signInSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  rememberMe: z.boolean().default(false),
+});
+
+type SignInFormValues = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
   const router = useRouter();
   const { login, loginWithGoogle, isLoading, error } = useAuth();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormValues>({
+    resolver: zodResolver(signInSchema) as Resolver<SignInFormValues>,
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, checked, type } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: SignInFormValues) => {
     const result = await login({
-      email: formData.email,
-      password: formData.password,
+      email: data.email,
+      password: data.password,
       redirect: false,
     });
 
@@ -106,8 +116,8 @@ export default function SignIn() {
           <div className="flex-grow h-px bg-gray-300"></div>
         </div>
 
-        {/* Sign In Form */}
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
+        {/* Sign In Form with react-hook-form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
           <div>
             <label
               htmlFor="email"
@@ -117,15 +127,17 @@ export default function SignIn() {
             </label>
             <input
               id="email"
-              name="email"
+              {...register("email")}
               type="email"
               autoComplete="email"
-              required
-              value={formData.email}
-              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="Email address"
             />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -137,25 +149,25 @@ export default function SignIn() {
             </label>
             <input
               id="password"
-              name="password"
+              {...register("password")}
               type="password"
               autoComplete="current-password"
-              required
-              value={formData.password}
-              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="Password"
             />
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
                 id="rememberMe"
-                name="rememberMe"
+                {...register("rememberMe")}
                 type="checkbox"
-                checked={formData.rememberMe}
-                onChange={handleInputChange}
                 className="h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
               />
               <label
@@ -179,7 +191,7 @@ export default function SignIn() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-green-600 hover:bg-green-700  font-medium py-3 px-4 rounded-md mt-6"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-md mt-6"
           >
             {isLoading ? "Signing in..." : "Log In"}
           </button>

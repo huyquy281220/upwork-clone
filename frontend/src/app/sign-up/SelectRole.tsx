@@ -5,7 +5,7 @@ import Image from "next/image";
 import { AspectRatio } from "@/components/common/AspectRatio";
 import { ClientSvg, FreelancerSvg, Logo } from "@/assets/svg";
 import { useState } from "react";
-
+import { useRoleStore } from "@/lib/store";
 type Role = "client" | "freelancer";
 
 const btnText: Record<Role, string> = {
@@ -15,6 +15,7 @@ const btnText: Record<Role, string> = {
 
 export default function SelectRole() {
   const [selectedRole, setSelectedRole] = useState<Role>("client");
+  const { setRole } = useRoleStore();
 
   const handleRoleChange = (role: Role) => {
     setSelectedRole(role);
@@ -25,8 +26,7 @@ export default function SelectRole() {
       alert("Please select a role to continue");
       return;
     }
-    // Handle account creation based on selected role
-    console.log("Creating account as:", selectedRole);
+    setRole(selectedRole);
   };
 
   return (

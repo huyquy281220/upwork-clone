@@ -2,6 +2,8 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -16,22 +18,19 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          throw new Error("Email and password are required");
         }
 
         try {
           // Call your backend API to authenticate
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-              }),
-            }
-          );
+          const response = await fetch(`${API_URL}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          });
 
           if (!response.ok) {
             console.error("Login failed:", await response.text());
@@ -72,15 +71,46 @@ const handler = NextAuth({
       return token;
     },
 
-    async signIn({ account, profile }) {
-      console.log(account);
-      console.log(profile);
+    async signIn({ user, account }) {
+      // Handle Google sign-in
+      if (account?.provider === "google") {
+        try {
+          // Gọi API từ backend để xử lý đăng nhập Google
+          const response = await fetch(`${API_URL}/auth/google-signin`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: user.email,
+              name: user.name,
+              // image: user.image,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Google sign-in failed:", errorData);
+            return false;
+          }
+
+          const userData = await response.json();
+
+          // Cập nhật thông tin user từ phản hồi API
+          user.id = userData.id;
+          // user.role = userData.role;
+
+          return true;
+        } catch (error) {
+          console.error("Error during Google sign-in:", error);
+          return false;
+        }
+      }
+
       return true;
     },
   },
   pages: {
     signIn: "/sign-in",
-    error: "/auth/error",
+    error: "/sign-in",
   },
   session: {
     strategy: "jwt",
