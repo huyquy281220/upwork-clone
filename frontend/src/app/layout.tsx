@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+// import "./home.css";
 import "./globals.css";
-import ThemeProvider from "@/providers/ThemeProvider";
 import SessionWrapper from "@/providers/SessionWrapper";
 import QueryProvider from "@/providers/QueryProvider";
 import { LayoutWrapper } from "@/providers/LayoutWrapper";
@@ -33,9 +33,7 @@ export default function RootLayout({
       >
         <QueryProvider>
           <SessionWrapper>
-            <ThemeProvider>
-              <LayoutWrapper>{children}</LayoutWrapper>
-            </ThemeProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
           </SessionWrapper>
         </QueryProvider>
       </body>

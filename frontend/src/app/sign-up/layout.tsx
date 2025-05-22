@@ -1,6 +1,6 @@
 import "../globals.css";
 
-export default function SignInLayout({
+export default function SignUpLayout({
   children,
 }: {
   children: React.ReactNode;

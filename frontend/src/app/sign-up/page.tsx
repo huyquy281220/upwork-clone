@@ -5,6 +5,7 @@ import Link from "next/link";
 import SignupForm from "@/components/sign-up/SignUpForm";
 import { GoogleSvg } from "@/assets/svg";
 import { signIn } from "next-auth/react";
+import SwitchTheme from "@/components/common/SwitchTheme";
 
 export default function SignupPage() {
   const handleGoogleSignIn = () => {
@@ -12,8 +13,9 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center">
+    <div className="min-h-screen flex flex-col items-center">
       {/* Header */}
+      <SwitchTheme />
       <header className="w-full py-4 px-6 flex justify-between items-center">
         <div className="flex items-center">
           <Image
@@ -48,14 +50,14 @@ export default function SignupPage() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="w-full border border-gray-300 rounded-md py-2 px-4 flex items-center justify-center gap-2 bg-white hover:bg-gray-50 transition-colors"
+            className="w-full border border-gray-300 rounded-md py-2 px-4 flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
           >
             <Image
               src={GoogleSvg}
               alt="Google"
               width={20}
               height={20}
-              className="mr-2"
+              className="mr-2 bg-transparent"
             />
             <span className="flex-grow text-center text-gray-700 font-medium">
               Continue with Google

@@ -3,9 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { AspectRatio } from "@/components/common/AspectRatio";
-import { ClientSvg, FreelancerSvg, Logo } from "@/assets/svg";
+import { ClientSvg, FreelancerSvg } from "@/assets/svg";
 import { useState } from "react";
 import { useRoleStore } from "@/lib/store";
+import { Logo } from "@/components/icons/Logo";
+import { useRouter } from "next/navigation";
 type Role = "client" | "freelancer";
 
 const btnText: Record<Role, string> = {
@@ -14,6 +16,7 @@ const btnText: Record<Role, string> = {
 };
 
 export default function SelectRole() {
+  const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<Role>("client");
   const { setRole } = useRoleStore();
 
@@ -26,27 +29,26 @@ export default function SelectRole() {
       alert("Please select a role to continue");
       return;
     }
+    document.cookie = `role=${selectedRole}; path=/; max-age=3600`;
     setRole(selectedRole);
+    router.push("/sign-up");
   };
 
+  // setCookie("role", selectedRole);
   return (
-    <div className="min-h-screen flex flex-col items-center p-8 bg-white">
+    <div className="min-h-screen flex flex-col items-center p-8">
       {/* Logo */}
       <div className="w-full max-w-[1440px] mb-10">
         <div className="w-[102px] h-[28px]">
           <AspectRatio ratio={102 / 28}>
-            <Image
-              src={Logo}
-              alt="logo"
-              className="w-full h-full object-cover"
-            />
+            <Logo />
           </AspectRatio>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="w-full max-w-3xl flex flex-col items-center">
-        <h1 className="text-[32px] mb-12 text-center font-normal text-black">
+        <h1 className="text-[32px] mb-12 text-center font-normal ">
           Join as a client or freelancer
         </h1>
 
@@ -66,7 +68,7 @@ export default function SelectRole() {
                   <Image src={ClientSvg} alt="svg" />
                 </div>
                 <div>
-                  <h2 className="text-[28px] leading-none font-medium mb-1 text-black">
+                  <h2 className="text-[28px] leading-none font-medium mb-1 ">
                     I&apos;m a client, hiring for a project
                   </h2>
                 </div>
@@ -89,7 +91,7 @@ export default function SelectRole() {
                   <Image src={FreelancerSvg} alt="svg" />
                 </div>
                 <div>
-                  <h2 className="text-[28px] leading-none font-medium mb-1 text-black">
+                  <h2 className="text-[28px] leading-none font-medium mb-1 ">
                     I&apos;m a freelancer, looking for work
                   </h2>
                 </div>
