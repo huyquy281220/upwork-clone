@@ -54,14 +54,18 @@ export default function Header() {
             </button>
 
             <div className="hidden md:flex items-center space-x-3">
-              <Link
-                href="/login"
-                className="text-gray-700 hover:text-green-600 font-medium"
-              >
-                Log In
-              </Link>
-              <button className="bg-green-600 hover:bg-green-700 ">
-                Sign Up
+              <button>
+                <Link
+                  href="/sign-in"
+                  className="text-gray-700 hover:text-green-600 font-medium"
+                >
+                  Log In
+                </Link>
+              </button>
+              <button className="w-24 py-1 rounded-lg bg-green-600 hover:bg-green-700 ">
+                <Link href="/sign-up" className="text-white font-medium">
+                  Sign up
+                </Link>
               </button>
             </div>
 

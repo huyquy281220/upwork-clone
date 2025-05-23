@@ -31,7 +31,7 @@ export default function SelectRole() {
     }
     document.cookie = `role=${selectedRole}; path=/; max-age=3600`;
     setRole(selectedRole);
-    router.push("/sign-up");
+    router.replace("/sign-up");
   };
 
   // setCookie("role", selectedRole);
