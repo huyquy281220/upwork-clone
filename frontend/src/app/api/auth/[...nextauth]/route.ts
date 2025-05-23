@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { cookies } from "next/headers";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -73,6 +74,7 @@ const handler = NextAuth({
     },
 
     async signIn({ user, account }) {
+      const cookieStore = await cookies();
       // Handle Google sign-in
       if (account?.provider === "google") {
         try {
@@ -83,7 +85,9 @@ const handler = NextAuth({
             body: JSON.stringify({
               email: user.email,
               name: user.name,
-              // image: user.image,
+              role: cookieStore.get("role")?.value,
+              address: "",
+              password: "",
             }),
           });
 

@@ -3,6 +3,7 @@ import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
     return null;
   }
 
-  async logIn(email: string, pwd: string) {
+  async signIn(email: string, pwd: string) {
     try {
       const user = await this.userService.findOne(email);
       if (!user) {
@@ -62,6 +63,64 @@ export class AuthService {
       };
     } catch (error) {
       throw new UnauthorizedException('Wrong Email or Password');
+    }
+  }
+
+  async googleSignin(email: string, role: string, name: string) {
+    try {
+      // Check if user exists with this email
+      let user;
+      try {
+        user = await this.userService.findOne(email);
+      } catch (error) {
+        // User doesn't exist, create a new one
+        // Generate a random password for the user
+        const randomPassword = Math.random().toString(36).slice(-10);
+
+        user = await this.userService.create({
+          email,
+          fullName: name,
+          password: randomPassword,
+          address: '', // Required field but empty for Google users initially
+          role: role as Role,
+        });
+      }
+
+      // Generate tokens
+      const payload = {
+        sub: user.id,
+        username: user.fullName,
+        role: user.role,
+      };
+
+      const accessToken = await this.jwtService.signAsync(payload, {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '15m',
+      });
+
+      const refreshToken = await this.jwtService.signAsync(payload, {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: '7d',
+      });
+
+      // Store refresh token
+      await this.userService.updatePartial({
+        email: user.email,
+        refreshToken,
+      });
+
+      // Remove password from user object
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } = user;
+
+      // Return user info and tokens
+      return {
+        user: result,
+        accessToken,
+        refreshToken,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Google authentication failed');
     }
   }
 

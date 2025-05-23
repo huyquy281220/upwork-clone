@@ -37,10 +37,10 @@ export class AuthController {
   }
 
   @UseGuards(LocalAuthGuard)
-  @Post('login')
+  @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   async login(@Body() { email, password }: LoginDto, @Res() res: Response) {
-    const { accessToken, refreshToken } = await this.authService.logIn(
+    const { accessToken, refreshToken } = await this.authService.signIn(
       email,
       password,
     );
@@ -55,6 +55,14 @@ export class AuthController {
     });
 
     return res.json({ accessToken });
+  }
+
+  @Post('google-signin')
+  async googleSignin(
+    @Body()
+    { email, role, name }: { email: string; role: string; name: string },
+  ) {
+    return this.authService.googleSignin(email, role, name);
   }
 
   @UseGuards(JwtAuthGuard)
