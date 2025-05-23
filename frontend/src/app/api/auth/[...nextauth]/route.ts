@@ -48,6 +48,7 @@ const handler = NextAuth({
             name: data.user.fullName,
             image: data.user.avatarUrl,
             accessToken: data.accessToken,
+            role: data.user.role,
           };
         } catch (error) {
           console.error("Auth error:", error);
@@ -61,6 +62,7 @@ const handler = NextAuth({
       if (token) {
         // Add custom properties to session
         session.user.id = token.sub as string;
+        session.user.role = token.role as string;
         session.user.accessToken = token.accessToken as string;
       }
       return session;
@@ -101,7 +103,6 @@ const handler = NextAuth({
 
           // Cập nhật thông tin user từ phản hồi API
           user.id = userData.id;
-          // user.role = userData.role;
 
           return true;
         } catch (error) {

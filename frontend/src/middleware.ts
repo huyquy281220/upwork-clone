@@ -5,8 +5,6 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const roleSelected = request.cookies.get("role");
 
-  console.log(path === "/sign-up" && !roleSelected);
-
   if (path === "/sign-up" && !roleSelected) {
     const url = request.nextUrl.clone();
     url.pathname = "/sign-up/select-role";

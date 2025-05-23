@@ -9,23 +9,7 @@ import SwitchTheme from "@/components/common/SwitchTheme";
 
 export default function SignupPage() {
   const handleGoogleSignIn = async () => {
-    // const left = window.screenX + (window.outerWidth - 550) / 2;
-    // const top = window.screenY + (window.outerHeight - 650) / 2.5;
-
-    // window.open(
-    //   "/api/auth/signin/google",
-    //   "googleLoginPopup",
-    //   `left=${left},top=${top},width=550,height=650`
-    // );
-
-    // const res = await signIn("google", { callbackUrl: "/", redirect: false });
-
-    // console.log(res?.url);
-
-    // if (res?.url) {
-    //   window.open(res.url, "_blank", "width=500,height=600");
-    // }
-    signIn("google", { redirect: false });
+    signIn("google", { redirect: false, callbackUrl: "" });
   };
 
   return (

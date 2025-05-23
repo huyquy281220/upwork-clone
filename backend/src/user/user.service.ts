@@ -79,7 +79,7 @@ export class UserService {
           verificationToken,
           avatarUrl: '',
           phoneNumber: '',
-          role: data.role as unknown as Role,
+          role: data.role.toUpperCase() as unknown as Role,
         },
       });
     } catch (error) {

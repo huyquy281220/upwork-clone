@@ -120,6 +120,7 @@ export class AuthService {
         refreshToken,
       };
     } catch (error) {
+      console.log(error);
       throw new UnauthorizedException('Google authentication failed');
     }
   }

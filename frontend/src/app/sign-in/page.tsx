@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 import { GoogleSvg } from "@/assets/svg";
@@ -20,7 +19,6 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
-  const router = useRouter();
   const { login, loginWithGoogle, isLoading, error } = useAuth();
 
   const {
@@ -37,18 +35,15 @@ export default function SignIn() {
   });
 
   const onSubmit = async (data: SignInFormValues) => {
-    const result = await login({
+    await login({
       email: data.email,
       password: data.password,
       redirect: false,
     });
-
-    if (result.success) {
-      router.push(result.url || "/");
-    }
   };
 
   const handleGoogleSignIn = () => {
+    // The middleware will handle redirects
     loginWithGoogle();
   };
 

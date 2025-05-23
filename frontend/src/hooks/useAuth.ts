@@ -1,5 +1,6 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { getCookie } from "@/utils/cookies";
 
 interface SignInCredentials {
   email: string;
@@ -16,7 +17,7 @@ export function useAuth() {
     email,
     password,
     redirect = false,
-    callbackUrl = "/",
+    callbackUrl,
   }: SignInCredentials) => {
     setIsLoading(true);
     setError(null);
@@ -26,7 +27,7 @@ export function useAuth() {
         redirect,
         email,
         password,
-        callbackUrl,
+        callbackUrl: callbackUrl || getCallbackUrl(),
       });
 
       if (result?.error) {
@@ -53,8 +54,22 @@ export function useAuth() {
     }
   };
 
-  const loginWithGoogle = (callbackUrl = "/") => {
-    return signIn("google", { callbackUrl });
+  const loginWithGoogle = (callbackUrl = getCallbackUrl()) => {
+    return signIn("google", { callbackUrl, redirect: false });
+  };
+
+  // Helper function to get callback URL based on role cookie
+  const getCallbackUrl = () => {
+    const roleCookie =
+      typeof document !== "undefined" ? getCookie("role") : null;
+
+    if (roleCookie === "client") {
+      return "/client";
+    } else if (roleCookie === "freelancer") {
+      return "/freelancer";
+    } else {
+      return "/";
+    }
   };
 
   return {

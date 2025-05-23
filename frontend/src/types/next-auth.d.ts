@@ -6,6 +6,7 @@ declare module "next-auth" {
     user: {
       id: string;
       accessToken: string;
+      role: string;
     } & DefaultSession["user"];
   }
 
@@ -15,6 +16,7 @@ declare module "next-auth" {
     name?: string;
     image?: string;
     accessToken?: string;
+    role: string;
   }
 }
 
