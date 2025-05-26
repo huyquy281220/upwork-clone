@@ -11,6 +11,7 @@ import { EmailService } from 'src/message/email.service';
 import { LocalStrategy } from './strategy/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { JwtRefreshStrategy } from './strategy/jwt-refresh.strategy';
 
 @Module({
   imports: [UserModule, JwtModule, PrismaModule, MessageModule, PassportModule],
@@ -23,6 +24,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
     EmailService,
     LocalStrategy,
     JwtStrategy,
+    JwtRefreshStrategy,
   ],
 })
 export class AuthModule {}

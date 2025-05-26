@@ -4,7 +4,6 @@ import {
   Post,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
   HttpCode,
   HttpStatus,
@@ -28,7 +27,6 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
-    private readonly jwtService: JwtService,
   ) {}
 
   @Post('sign-up')
@@ -40,7 +38,7 @@ export class AuthController {
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   async login(@Body() { email, password }: LoginDto, @Res() res: Response) {
-    const { accessToken, refreshToken } = await this.authService.signIn(
+    const { accessToken, refreshToken, user } = await this.authService.signIn(
       email,
       password,
     );
@@ -54,7 +52,7 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.json({ accessToken });
+    return res.json({ accessToken, user });
   }
 
   @Post('google-signin')
@@ -83,19 +81,6 @@ export class AuthController {
     @Req() req: Request & { user: { email: string } },
     @Res() res: Response,
   ) {
-    const { email } = req.user;
-    const user = await this.userService.findOne(email);
-
-    if (!user?.refreshToken) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-
-    const payload = { sub: user.id, name: user.fullName };
-    const newAccessToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: '15m',
-    });
-
-    return res.json({ accessToken: newAccessToken });
+    return this.authService.refreshToken(req, res, req.user.email);
   }
 }

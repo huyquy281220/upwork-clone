@@ -1,8 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { Role } from '@prisma/client';
 
 @Injectable()
@@ -47,14 +51,13 @@ export class AuthService {
         expiresIn: '7d',
       });
 
-      // Only store the refresh token in the database, not the access token
-      await this.userService.updatePartial({
+      const updatedUser = await this.userService.updatePartial({
         email: user.email,
         refreshToken,
       });
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
+      const { password, verificationToken, ...result } = updatedUser;
 
       return {
         user: result,
@@ -104,14 +107,14 @@ export class AuthService {
       });
 
       // Store refresh token
-      await this.userService.updatePartial({
+      const updatedUser = await this.userService.updatePartial({
         email: user.email,
         refreshToken,
       });
 
       // Remove password from user object
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
+      const { password, verificationToken, ...result } = updatedUser;
 
       // Return user info and tokens
       return {
@@ -143,6 +146,35 @@ export class AuthService {
       return res.status(200).json({ message: 'Logged out successfully' });
     } catch (error) {
       throw new Error('Logout failed');
+    }
+  }
+
+  async refreshToken(req: Request, res: Response, email: string) {
+    try {
+      const refreshToken = req.cookies?.refresh_token;
+
+      if (!refreshToken) {
+        throw new BadRequestException('Refresh token not found');
+      }
+
+      const user = await this.userService.findOne(email);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      if (user.refreshToken !== refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      const payload = { sub: user.id, name: user.fullName };
+      const newAccessToken = await this.jwtService.signAsync(payload, {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '15m',
+      });
+
+      return res.json({ accessToken: newAccessToken });
+    } catch (error) {
+      throw new UnauthorizedException('Token refresh failed');
     }
   }
 }

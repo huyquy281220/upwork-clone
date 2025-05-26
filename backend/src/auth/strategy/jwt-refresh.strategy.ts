@@ -12,7 +12,10 @@ export class JwtRefreshStrategy extends PassportStrategy(
   constructor(private userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req) => req?.cookies?.refresh_token, // ✅ Lấy refresh token từ cookie
+        (req) => {
+          const token = req?.cookies?.refresh_token;
+          return token;
+        },
       ]),
       secretOrKey: process.env.JWT_REFRESH_SECRET,
       passReqToCallback: true,
@@ -23,10 +26,15 @@ export class JwtRefreshStrategy extends PassportStrategy(
     const refreshToken = req?.cookies?.refresh_token;
 
     const user = await this.userService.findById(payload.sub);
-    if (!user || user.refreshToken !== refreshToken) {
+
+    if (!user) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    return { id: user.id, username: user.fullName };
+    if (user.refreshToken !== refreshToken) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    return { id: user.id, username: user.fullName, email: user.email };
   }
 }
