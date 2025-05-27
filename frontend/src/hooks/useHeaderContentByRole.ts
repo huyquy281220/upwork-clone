@@ -4,15 +4,22 @@ import {
   clientAvatarMenu,
   freelancerAvatarMenu,
 } from "@/constants/menu";
-import { useUserStore } from "@/lib/store";
+import { getCookie } from "@/utils/cookies";
+import { useEffect } from "react";
+import { useState } from "react";
 
 export const useHeaderContentByRole = () => {
-  const { role } = useUserStore();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const roleCookie = getCookie("role");
+    setRole(roleCookie ?? "");
+  }, []);
 
   switch (role) {
-    case "client":
+    case "CLIENT":
       return { navHeader: clientNavHeader, avatarMenu: clientAvatarMenu };
-    case "freelancer":
+    case "FREELANCER":
       return {
         navHeader: freelancerNavHeader,
         avatarMenu: freelancerAvatarMenu,

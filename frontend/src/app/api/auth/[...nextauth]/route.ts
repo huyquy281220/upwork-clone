@@ -25,7 +25,7 @@ const handler = NextAuth({
 
         try {
           // Call your backend API to authenticate
-          const response = await fetch(`${API_URL}/auth/login`, {
+          const response = await fetch(`${API_URL}/auth/sign-in`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -41,12 +41,12 @@ const handler = NextAuth({
 
           const data = await response.json();
 
-          // Return the user object and token
+          // console.log(data);
           return {
             id: data.user.id,
             email: data.user.email,
             name: data.user.fullName,
-            image: data.user.avatarUrl,
+            // image: data.user.avatarUrl,
             accessToken: data.accessToken,
             role: data.user.role,
           };
@@ -60,7 +60,6 @@ const handler = NextAuth({
   callbacks: {
     async session({ session, token }) {
       if (token) {
-        // Add custom properties to session
         session.user.id = token.sub as string;
         session.user.role = token.role as string;
         session.user.accessToken = token.accessToken as string;
@@ -69,7 +68,7 @@ const handler = NextAuth({
     },
     async jwt({ token, user, account }) {
       if (account && user) {
-        // Add user information to the token
+        token.role = user.role;
         token.accessToken = account.access_token || user.accessToken;
       }
       return token;

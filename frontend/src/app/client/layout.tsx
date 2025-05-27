@@ -2,5 +2,5 @@
 import { ChildrenProps } from "@/types";
 
 export default function ClientLayoutWrapper({ children }: ChildrenProps) {
-  return <div>{children}</div>;
+  return <>{children}</>;
 }

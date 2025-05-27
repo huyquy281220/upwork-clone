@@ -31,11 +31,11 @@ export async function middleware(request: NextRequest) {
 
   // Role-based access
   if (path.startsWith("/client") && token.role !== "CLIENT") {
-    return NextResponse.redirect(new URL("/freelancer/dashboard", request.url));
+    return NextResponse.redirect(new URL("/freelancer/find-work", request.url));
   }
 
   if (path.startsWith("/freelancer") && token.role !== "FREELANCER") {
-    return NextResponse.redirect(new URL("/client/dashboard", request.url));
+    return NextResponse.redirect(new URL("/client", request.url));
   }
 
   return NextResponse.next();
@@ -43,6 +43,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/client",
     "/client/:path*",
     "/freelancer/:path*",
     "/sign-up/:path*",

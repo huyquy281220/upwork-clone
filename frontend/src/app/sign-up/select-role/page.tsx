@@ -5,39 +5,32 @@ import Image from "next/image";
 import { AspectRatio } from "@/components/common/AspectRatio";
 import { ClientSvg, FreelancerSvg } from "@/assets/svg";
 import { useState } from "react";
-import { useRoleStore } from "@/lib/store";
 import { Logo } from "@/components/icons/Logo";
 import { useRouter } from "next/navigation";
-type Role = "client" | "freelancer";
+import { setCookie } from "@/utils/cookies";
+
+type Role = "CLIENT" | "FREELANCER";
 
 const btnText: Record<Role, string> = {
-  client: "Join as a Client",
-  freelancer: "Apply as a Freelancer",
+  CLIENT: "Join as a Client",
+  FREELANCER: "Apply as a Freelancer",
 };
 
 export default function SelectRole() {
   const router = useRouter();
-  const [selectedRole, setSelectedRole] = useState<Role>("client");
-  const { setRole } = useRoleStore();
+  const [selectedRole, setSelectedRole] = useState<Role>("CLIENT");
 
   const handleRoleChange = (role: Role) => {
     setSelectedRole(role);
   };
 
   const handleCreateAccount = () => {
-    if (!selectedRole) {
-      alert("Please select a role to continue");
-      return;
-    }
-    document.cookie = `role=${selectedRole}; path=/; max-age=3600`;
-    setRole(selectedRole);
+    setCookie("role", selectedRole);
     router.replace("/sign-up");
   };
 
-  // setCookie("role", selectedRole);
   return (
     <div className="min-h-screen flex flex-col items-center p-8">
-      {/* Logo */}
       <div className="w-full max-w-[1440px] mb-10">
         <div className="w-[102px] h-[28px]">
           <AspectRatio ratio={102 / 28}>
@@ -59,8 +52,8 @@ export default function SelectRole() {
               type="radio"
               name="role"
               className="peer sr-only"
-              checked={selectedRole === "client"}
-              onChange={() => handleRoleChange("client")}
+              checked={selectedRole === "CLIENT"}
+              onChange={() => handleRoleChange("CLIENT")}
             />
             <div className="p-6 border rounded-lg hover:border-[#108a00] peer-checked:border-[#108a00] peer-checked:border-2">
               <div className="mb-4">
@@ -82,8 +75,8 @@ export default function SelectRole() {
               type="radio"
               name="role"
               className="peer sr-only"
-              checked={selectedRole === "freelancer"}
-              onChange={() => handleRoleChange("freelancer")}
+              checked={selectedRole === "FREELANCER"}
+              onChange={() => handleRoleChange("FREELANCER")}
             />
             <div className="p-6 border rounded-lg hover:border-[#108a00] peer-checked:border-[#108a00] peer-checked:border-2">
               <div className="mb-4">

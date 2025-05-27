@@ -38,12 +38,11 @@ export default function SignIn() {
     await login({
       email: data.email,
       password: data.password,
-      redirect: false,
+      redirect: true,
     });
   };
 
   const handleGoogleSignIn = () => {
-    // The middleware will handle redirects
     loginWithGoogle();
   };
 

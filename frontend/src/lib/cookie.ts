@@ -1,4 +1,3 @@
-// lib/auth.ts
 import Cookies from "js-cookie";
 
 const ACCESS_TOKEN_KEY = "accessToken";

@@ -1,94 +1,148 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff, ChevronDown } from "lucide-react";
-import { FormData } from "@/types";
-import { useSignup } from "@/hooks/useSignup";
 import { useRouter } from "next/navigation";
-import { useRoleStore } from "@/lib/store";
+import { useCountries } from "@/hooks/useCountries";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import type { Resolver } from "react-hook-form";
+import { getCookie } from "@/utils/cookies";
+import { signIn } from "next-auth/react";
 
-interface SignupFormProps {
-  onSubmit?: (data: FormData) => void;
-}
+const signUpSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  address: z.string().min(1, "Please select a country"),
+  emailUpdates: z.boolean().default(true),
+  agreeTerms: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the terms of service",
+  }),
+});
 
-export default function SignupForm({ onSubmit }: SignupFormProps) {
+type SignUpFormValues = z.infer<typeof signUpSchema>;
+
+export default function SignupForm() {
   const router = useRouter();
-  const { role } = useRoleStore();
-  const { signup, isLoading, error } = useSignup();
+  const countries = useCountries();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    country: "Vietnam",
-    emailUpdates: true,
-    agreeTerms: false,
+  // const onSubmit: SubmitHandler<SignUpFormValues> = (data) => console.log(data);
+
+  const countryNames = countries?.map((country) => country.name.common);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+    clearErrors,
+  } = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema) as Resolver<SignUpFormValues>,
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      address: "",
+      emailUpdates: true,
+      agreeTerms: false,
+    },
   });
-  const [formError, setFormError] = useState<string | null>(null);
 
   const togglePasswordVisibility = (): void => {
     setShowPassword(!showPassword);
   };
 
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ): void => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    // Clear any errors when user makes changes
-    setFormError(null);
-  };
-
-  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { name, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: checked,
-    });
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-
-    // If an onSubmit prop is provided, call it
-    if (onSubmit) {
-      onSubmit(formData);
-      return;
-    }
+  const onFormSubmit = async (data: SignUpFormValues) => {
+    clearErrors("root");
 
     try {
-      const result = await signup({
-        email: formData.email,
-        password: formData.password,
-        fullName: `${formData.firstName} ${formData.lastName}`,
-        role: "FREELANCER", // Default role, could be made configurable
+      const selectedRole = getCookie("role");
+
+      if (!selectedRole) {
+        setError("root", {
+          type: "manual",
+          message:
+            "Please select a role first. Redirecting to role selection...",
+        });
+        setTimeout(() => {
+          router.push("/sign-up/select-role");
+        }, 2000);
+        return;
+      }
+
+      const role = selectedRole.toUpperCase() as "CLIENT" | "FREELANCER";
+
+      // 1. Register user directly with the backend API
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-up`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password,
+            fullName: `${data.firstName} ${data.lastName}`,
+            address: data.address,
+            role: role,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const errorMessage = errorData.message || "Registration failed";
+
+        setError("root", {
+          type: "manual",
+          message: errorMessage,
+        });
+        return;
+      }
+
+      const signInResponse = await signIn("credentials", {
+        // redirect: false,
+        email: data.email,
+        password: data.password,
       });
 
-      if (result.success) {
-        router.push(result.callbackUrl || "/");
-      } else {
-        setFormError(result.message);
+      if (signInResponse?.error) {
+        setError("root", {
+          type: "manual",
+          message: signInResponse.error || "Sign in failed after registration",
+        });
+        return;
       }
-    } catch {
-      setFormError("An unexpected error occurred during signup");
+
+      const redirectUrl =
+        signInResponse?.url ||
+        (role === "CLIENT" ? "/client" : "/freelancer/find-work");
+      router.push(redirectUrl);
+    } catch (error) {
+      console.error("Signup error:", error);
+      setError("root", {
+        type: "manual",
+        message: "An unexpected error occurred. Please try again.",
+      });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
-      {(formError || error) && (
+    <form onSubmit={handleSubmit(onFormSubmit)} className="w-full space-y-4">
+      {/* Display root errors (general form errors) */}
+      {errors.root && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
-          {formError || error}
+          {errors.root.message}
         </div>
       )}
 
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-4">
         <div className="flex-1">
           <label
             htmlFor="firstName"
@@ -98,13 +152,17 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
           </label>
           <input
             id="firstName"
-            name="firstName"
+            {...register("firstName")}
             type="text"
-            value={formData.firstName}
-            onChange={handleInputChange}
+            autoComplete="given-name"
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
+            disabled={isSubmitting}
           />
+          {errors.firstName && (
+            <p className="mt-1 text-sm text-red-600">
+              {errors.firstName.message}
+            </p>
+          )}
         </div>
         <div className="flex-1">
           <label
@@ -115,17 +173,21 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
           </label>
           <input
             id="lastName"
-            name="lastName"
+            {...register("lastName")}
             type="text"
-            value={formData.lastName}
-            onChange={handleInputChange}
+            autoComplete="family-name"
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
+            disabled={isSubmitting}
           />
+          {errors.lastName && (
+            <p className="mt-1 text-sm text-red-600">
+              {errors.lastName.message}
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="mb-4">
+      <div>
         <label
           htmlFor="email"
           className="block text-sm font-medium text-gray-700 mb-1"
@@ -134,16 +196,18 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
         </label>
         <input
           id="email"
-          name="email"
+          {...register("email")}
           type="email"
-          value={formData.email}
-          onChange={handleInputChange}
+          autoComplete="email"
           className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          required
+          disabled={isSubmitting}
         />
+        {errors.email && (
+          <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+        )}
       </div>
 
-      <div className="mb-4">
+      <div>
         <label
           htmlFor="password"
           className="block text-sm font-medium text-gray-700 mb-1"
@@ -153,26 +217,29 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
         <div className="relative">
           <input
             id="password"
-            name="password"
+            {...register("password")}
             type={showPassword ? "text" : "password"}
-            value={formData.password}
-            onChange={handleInputChange}
+            autoComplete="new-password"
             placeholder="Password (8 or more characters)"
             className="w-full border border-gray-300 rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-green-500"
-            minLength={8}
-            required
+            disabled={isSubmitting}
           />
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            disabled={isSubmitting}
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         </div>
+        {errors.password && (
+          <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+        )}
       </div>
 
-      <div className="mb-4">
+      <div>
         <label
           htmlFor="country"
           className="block text-sm font-medium text-gray-700 mb-1"
@@ -181,34 +248,35 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
         </label>
         <div className="relative">
           <select
-            id="country"
-            name="country"
-            value={formData.country}
-            onChange={handleInputChange}
+            id="address"
+            {...register("address")}
             className="w-full border border-gray-300 rounded-md px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
+            disabled={isSubmitting}
           >
-            <option value="Vietnam">Vietnam</option>
-            <option value="United States">United States</option>
-            <option value="Canada">Canada</option>
-            <option value="United Kingdom">United Kingdom</option>
-            <option value="Australia">Australia</option>
+            <option value="">Select a country</option>
+            {countryNames?.sort().map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
           </select>
           <ChevronDown
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
             size={20}
           />
         </div>
+        {errors.address && (
+          <p className="mt-1 text-sm text-red-600">{errors.address.message}</p>
+        )}
       </div>
 
-      <div className="mb-4">
+      <div>
         <label className="flex items-start gap-2 cursor-pointer">
           <input
+            {...register("emailUpdates")}
             type="checkbox"
-            name="emailUpdates"
-            checked={formData.emailUpdates}
-            onChange={handleCheckboxChange}
             className="mt-1 h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
+            disabled={isSubmitting}
           />
           <span className="text-sm text-gray-700">
             Send me helpful emails to find rewarding work and job leads.
@@ -216,15 +284,13 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
         </label>
       </div>
 
-      <div className="mb-6">
+      <div>
         <label className="flex items-start gap-2 cursor-pointer">
           <input
+            {...register("agreeTerms")}
             type="checkbox"
-            name="agreeTerms"
-            checked={formData.agreeTerms}
-            onChange={handleCheckboxChange}
             className="mt-1 h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
-            required
+            disabled={isSubmitting}
           />
           <span className="text-sm text-gray-700">
             Yes, I understand and agree to the{" "}
@@ -242,14 +308,19 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
             .
           </span>
         </label>
+        {errors.agreeTerms && (
+          <p className="mt-1 text-sm text-red-600">
+            {errors.agreeTerms.message}
+          </p>
+        )}
       </div>
 
       <button
         type="submit"
-        className="w-full bg-green-600 hover:bg-green-700  font-medium py-3 px-4 rounded-md"
-        disabled={isLoading}
+        className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-md mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={isSubmitting}
       >
-        {isLoading ? "Creating account..." : "Create my account"}
+        {isSubmitting ? "Creating account..." : "Create my account"}
       </button>
     </form>
   );

@@ -1,6 +1,6 @@
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
-import { getCookie } from "@/utils/cookies";
+import { getCookie, setCookie } from "@/utils/cookies";
 
 interface SignInCredentials {
   email: string;
@@ -12,6 +12,7 @@ interface SignInCredentials {
 export function useAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   const login = async ({
     email,
@@ -38,9 +39,12 @@ export function useAuth() {
         };
       }
 
+      if (session?.user.role) {
+        setCookie("role", session.user.role);
+      }
+
       return {
         success: true,
-        url: result?.url,
       };
     } catch {
       const errorMessage = "An error occurred during sign in";
@@ -63,10 +67,12 @@ export function useAuth() {
     const roleCookie =
       typeof document !== "undefined" ? getCookie("role") : null;
 
-    if (roleCookie === "client") {
+    console.log(roleCookie);
+
+    if (roleCookie === "CLIENT") {
       return "/client";
-    } else if (roleCookie === "freelancer") {
-      return "/freelancer";
+    } else if (roleCookie === "FREELANCER") {
+      return "/freelancer/find-work";
     } else {
       return "/";
     }

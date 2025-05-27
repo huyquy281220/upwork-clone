@@ -87,5 +87,3 @@ export default function SignupPage() {
     </div>
   );
 }
-
-//title, skill, scope-time-level, budget(hours rate, fixed price,description)
