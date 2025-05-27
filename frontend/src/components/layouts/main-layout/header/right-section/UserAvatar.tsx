@@ -42,6 +42,10 @@ export default function UserAvatar() {
     setShowThemeMenu(!showThemeMenu);
   };
 
+  const handleLogout = () => {
+    console.log("logout");
+  };
+
   // Map the theme options from navigation to the format we need here
   const adaptedThemeOptions = navigationThemeOptions.map((option) => ({
     value: option.value,
@@ -94,7 +98,7 @@ export default function UserAvatar() {
       return (
         <div
           key={item.id}
-          onClick={() => console.log(`Action: ${item.id}`)}
+          onClick={item.id === "logout" ? handleLogout : undefined}
           className="flex items-center px-4 py-2 hover:bg-hover text-sm cursor-pointer"
         >
           {getDynamicIcon(item.iconName, 16)}
@@ -120,86 +124,88 @@ export default function UserAvatar() {
       <PopoverContent
         align="end"
         sideOffset={15}
-        className="border-none shadow-menu dark:bg-main  p-0 w-64"
+        className="border-none shadow-menu bg-transparent p-0 w-64"
       >
-        {/* User info section */}
-        <div className="p-4 border-b border-gray-700 flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full overflow-hidden">
-            <Image
-              src="/placeholder-avatar.jpg"
-              alt="User Avatar"
-              width={40}
-              height={40}
-              className="w-full h-full object-cover"
-            />
+        <div className="dark:bg-main">
+          {/* User info section */}
+          <div className="p-4 border-b border-gray-700 flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden">
+              <Image
+                src="/placeholder-avatar.jpg"
+                alt="User Avatar"
+                width={40}
+                height={40}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h3 className="font-semibold ">Hai Hai</h3>
+              <p className="text-sm text-gray-400">Freelancer</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-semibold ">Hai Hai</h3>
-            <p className="text-sm text-gray-400">Freelancer</p>
-          </div>
-        </div>
 
-        {/* Online status */}
-        <div className="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
-          <span className="text-sm">Online for messages</span>
-          <div className="w-8 h-4 bg-green-500 rounded-full flex items-center">
-            <div className="w-3 h-3 bg-white rounded-full ml-auto mr-0.5"></div>
+          {/* Online status */}
+          <div className="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+            <span className="text-sm">Online for messages</span>
+            <div className="w-8 h-4 bg-green-500 rounded-full flex items-center">
+              <div className="w-3 h-3 bg-white rounded-full ml-auto mr-0.5"></div>
+            </div>
           </div>
-        </div>
 
-        {/* Menu items sections - using shared data structure */}
-        {avatarMenu.map((section, sectionIndex) => (
+          {/* Menu items sections - using shared data structure */}
+          {avatarMenu.map((section, sectionIndex) => (
+            <div
+              key={`section-${sectionIndex}`}
+              className={cn(
+                "py-1",
+                section.hasBorder && "border-t border-gray-700"
+              )}
+            >
+              {section.items.map((item) => renderMenuItem(item))}
+            </div>
+          ))}
+
+          {/* Theme selector dropdown */}
           <div
-            key={`section-${sectionIndex}`}
+            ref={themeMenuRef}
             className={cn(
-              "py-1",
-              section.hasBorder && "border-t border-gray-700"
+              "absolute left-0 bottom-0 w-64 dark:bg-main shadow-menu -z-[1] border border-gray-700 rounded-md transition-transform duration-200 ease-in-out",
+              showThemeMenu
+                ? "translate-x-[-105%] opacity-100"
+                : "translate-x-[-95%] opacity-0"
             )}
           >
-            {section.items.map((item) => renderMenuItem(item))}
-          </div>
-        ))}
-
-        {/* Theme selector dropdown */}
-        <div
-          ref={themeMenuRef}
-          className={cn(
-            "absolute left-0 bottom-0 w-64 dark:bg-main shadow-menu -z-[1] border border-gray-700 rounded-md transition-transform duration-200 ease-in-out",
-            showThemeMenu
-              ? "translate-x-[-105%] opacity-100"
-              : "translate-x-[-95%] opacity-0"
-          )}
-        >
-          <div className="p-2 border-b border-gray-700 flex items-center">
-            <button
-              onClick={() => setShowThemeMenu(false)}
-              className="p-1 hover:bg-hover rounded-full"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <span className="ml-2 font-medium">Theme settings</span>
-          </div>
-
-          <div className="py-1">
-            {adaptedThemeOptions.map((option) => (
+            <div className="p-2 border-b border-gray-700 flex items-center">
               <button
-                key={option.value}
-                onClick={() => {
-                  setTheme(option.value);
-                  setShowThemeMenu(false);
-                }}
-                className="flex items-start w-full px-4 py-2 hover:bg-hover text-sm"
+                onClick={() => setShowThemeMenu(false)}
+                className="p-1 hover:bg-hover rounded-full"
               >
-                {option.icon}
-                <div className="ml-3 text-left">
-                  <div>{option.label}</div>
-                  <div className="text-gray-400 text-xs">
-                    {option.description}
-                  </div>
-                </div>
-                {theme === option.value && <span className="ml-auto">✓</span>}
+                <ChevronLeft className="h-4 w-4" />
               </button>
-            ))}
+              <span className="ml-2 font-medium">Theme settings</span>
+            </div>
+
+            <div className="py-1">
+              {adaptedThemeOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    setTheme(option.value);
+                    setShowThemeMenu(false);
+                  }}
+                  className="flex items-start w-full px-4 py-2 hover:bg-hover text-sm"
+                >
+                  {option.icon}
+                  <div className="ml-3 text-left">
+                    <div>{option.label}</div>
+                    <div className="text-gray-400 text-xs">
+                      {option.description}
+                    </div>
+                  </div>
+                  {theme === option.value && <span className="ml-auto">✓</span>}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </PopoverContent>

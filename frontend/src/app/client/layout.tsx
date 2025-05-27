@@ -1,4 +1,4 @@
-// import ClientLayout from "@/components/layouts/client-layout";
+import "@/app/globals.css";
 import { ChildrenProps } from "@/types";
 
 export default function ClientLayoutWrapper({ children }: ChildrenProps) {
