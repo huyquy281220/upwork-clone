@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import type { Resolver } from "react-hook-form";
-import { getCookie } from "@/utils/cookies";
+import { getCookie } from "@/lib/cookie";
 import { signIn } from "next-auth/react";
 
 const signUpSchema = z.object({

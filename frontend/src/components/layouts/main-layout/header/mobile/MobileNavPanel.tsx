@@ -24,12 +24,14 @@ import { ThemeOption, LinkItem } from "./components";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
 import Link from "next/link";
 import { useHeaderContentByRole } from "@/hooks/useHeaderContentByRole";
+import { useAuth } from "@/hooks/useAuth";
 interface MobileNavPanelProps {
   isOpen: boolean;
 }
 
 export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
   const { navHeader } = useHeaderContentByRole();
+  const { logout } = useAuth();
   // State for expanded menus
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
 
@@ -224,7 +226,11 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
           </AnimatedDropdown>
         </div>
 
-        <LinkItem icon={<LogOut size={20} />} text="Logout" />
+        <LinkItem
+          icon={<LogOut size={20} />}
+          text="Logout"
+          onClick={() => logout({ redirectTo: "/" })}
+        />
       </div>
     </div>
   );

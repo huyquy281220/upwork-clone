@@ -1,12 +1,17 @@
-import { signIn, useSession } from "next-auth/react";
+import { deleteAllCookies, getCookie, setCookie } from "@/lib/cookie";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
-import { getCookie, setCookie } from "@/utils/cookies";
 
 interface SignInCredentials {
   email: string;
   password: string;
   redirect?: boolean;
   callbackUrl?: string;
+}
+
+interface LogoutOptions {
+  redirectTo?: string;
+  clearStorage?: boolean;
 }
 
 export function useAuth() {
@@ -62,6 +67,29 @@ export function useAuth() {
     return signIn("google", { callbackUrl, redirect: false });
   };
 
+  const logout = async (options: LogoutOptions) => {
+    const { redirectTo = "/", clearStorage = true } = options;
+
+    setError(null);
+
+    try {
+      deleteAllCookies(["accessToken", "role"]);
+
+      if (clearStorage && typeof window !== "undefined") {
+        localStorage.clear();
+        sessionStorage.clear();
+      }
+
+      await signOut({ callbackUrl: redirectTo, redirect: true });
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   // Helper function to get callback URL based on role cookie
   const getCallbackUrl = () => {
     const roleCookie =
@@ -81,6 +109,7 @@ export function useAuth() {
   return {
     login,
     loginWithGoogle,
+    logout,
     isLoading,
     error,
   };

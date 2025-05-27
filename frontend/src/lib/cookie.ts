@@ -1,15 +1,41 @@
 import Cookies from "js-cookie";
 
-const ACCESS_TOKEN_KEY = "accessToken";
+// Cookie configuration interface
+interface CookieConfig {
+  expires?: number | Date;
+  path?: string;
+  domain?: string;
+  secure?: boolean;
+  sameSite?: "strict" | "lax" | "none";
+}
 
-export const setAccessToken = (token: string) => {
-  Cookies.set(ACCESS_TOKEN_KEY, token, { expires: 1 });
+// Default cookie options
+const DEFAULT_OPTIONS: CookieConfig = {
+  expires: 30, // 30 days
+  path: "/",
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
 };
 
-export const getAccessToken = () => {
-  return Cookies.get(ACCESS_TOKEN_KEY);
+// Generic cookie functions
+export const setCookie = (
+  key: string,
+  value: string,
+  options: CookieConfig = {}
+) => {
+  const config = { ...DEFAULT_OPTIONS, ...options };
+  Cookies.set(key, value, config);
 };
 
-export const removeAccessToken = () => {
-  Cookies.remove(ACCESS_TOKEN_KEY);
+export const getCookie = (key: string): string | undefined => {
+  return Cookies.get(key);
+};
+
+export const deleteCookie = (key: string, options: CookieConfig = {}) => {
+  const config = { path: "/", ...options };
+  Cookies.remove(key, config);
+};
+
+export const deleteAllCookies = (keys: string[]) => {
+  keys.forEach((cookie) => deleteCookie(cookie));
 };

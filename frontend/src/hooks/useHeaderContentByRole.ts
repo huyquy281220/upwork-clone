@@ -4,7 +4,7 @@ import {
   clientAvatarMenu,
   freelancerAvatarMenu,
 } from "@/constants/menu";
-import { getCookie } from "@/utils/cookies";
+import { getCookie } from "@/lib/cookie";
 import { useEffect } from "react";
 import { useState } from "react";
 

@@ -7,7 +7,7 @@ import { ClientSvg, FreelancerSvg } from "@/assets/svg";
 import { useState } from "react";
 import { Logo } from "@/components/icons/Logo";
 import { useRouter } from "next/navigation";
-import { setCookie } from "@/utils/cookies";
+import { setCookie } from "@/lib/cookie";
 
 type Role = "CLIENT" | "FREELANCER";
 

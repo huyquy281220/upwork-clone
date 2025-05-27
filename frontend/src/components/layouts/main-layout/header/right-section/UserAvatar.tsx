@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { themeOptions as navigationThemeOptions } from "../data/navigation";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
 import { useHeaderContentByRole } from "@/hooks/useHeaderContentByRole";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function UserAvatar() {
   const { avatarMenu } = useHeaderContentByRole();
@@ -18,7 +19,7 @@ export default function UserAvatar() {
   const [isOpenPopover, setIsOpenPopover] = useState(false);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const themeMenuRef = useRef<HTMLDivElement>(null);
-
+  const { logout } = useAuth();
   // Get display text for current theme
   const getThemeDisplayText = () => {
     switch (theme) {
@@ -43,7 +44,7 @@ export default function UserAvatar() {
   };
 
   const handleLogout = () => {
-    console.log("logout");
+    logout({ redirectTo: "/" });
   };
 
   // Map the theme options from navigation to the format we need here

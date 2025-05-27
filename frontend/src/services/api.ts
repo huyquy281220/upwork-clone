@@ -1,14 +1,9 @@
+import { deleteCookie, getCookie, setCookie } from "@/lib/cookie";
 import axios, {
   AxiosResponse,
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
-
-import {
-  getAccessToken,
-  setAccessToken,
-  removeAccessToken,
-} from "../lib/cookie";
 
 // Types
 interface RefreshTokenResponse {
@@ -23,7 +18,7 @@ interface QueueItem {
 
 // Create axios instance
 const api = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
   timeout: 10000,
 });
 
@@ -49,7 +44,7 @@ const processQueue = (
 // Request interceptor - Add access token to requests
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = getAccessToken();
+    const token = getCookie("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -96,7 +91,7 @@ api.interceptors.response.use(
       try {
         // Call refresh token endpoint
         const response: AxiosResponse<RefreshTokenResponse> = await axios.post(
-          "https://your-api-base-url.com/auth/refresh",
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
           {},
           {
             withCredentials: true, // Include cookies
@@ -104,7 +99,7 @@ api.interceptors.response.use(
         );
 
         const { accessToken } = response.data;
-        setAccessToken(accessToken);
+        setCookie("accessToken", accessToken);
 
         // Update authorization header for original request
         if (originalRequest) {
@@ -119,7 +114,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed - clear tokens and redirect to login
         processQueue(refreshError as AxiosError, null);
-        removeAccessToken();
+        deleteCookie("accessToken");
 
         // Redirect to login page or dispatch logout action
         window.location.href = "/login";
