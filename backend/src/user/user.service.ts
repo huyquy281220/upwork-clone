@@ -28,11 +28,15 @@ export class UserService {
         where: { id },
       });
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException(
+          'Account does not exist. Please sign up or try again later.',
+        );
       }
       return user;
     } catch (error) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(
+        'Account does not exist. Please sign up or try again later.',
+      );
     }
   }
 
@@ -42,11 +46,15 @@ export class UserService {
         where: { email },
       });
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException(
+          'Account does not exist. Please sign up or try again later.',
+        );
       }
       return user;
     } catch (error) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(
+        'Account does not exist. Please sign up or try again later.',
+      );
     }
   }
 
@@ -62,7 +70,7 @@ export class UserService {
       });
 
       if (user) {
-        throw new BadRequestException('Email da ton tai');
+        throw new BadRequestException('Email already exist');
       }
 
       const verificationToken = crypto.randomBytes(32).toString('hex');

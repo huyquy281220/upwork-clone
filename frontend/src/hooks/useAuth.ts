@@ -1,4 +1,4 @@
-import { deleteAllCookies, getCookie, setCookie } from "@/lib/cookie";
+import { deleteAllCookies, setCookie } from "@/lib/cookie";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -23,7 +23,6 @@ export function useAuth() {
     email,
     password,
     redirect = false,
-    callbackUrl,
   }: SignInCredentials) => {
     setIsLoading(true);
     setError(null);
@@ -33,7 +32,7 @@ export function useAuth() {
         redirect,
         email,
         password,
-        callbackUrl: callbackUrl || getCallbackUrl(),
+        callbackUrl: "/auth-redirect",
       });
 
       if (result?.error) {
@@ -42,10 +41,6 @@ export function useAuth() {
           success: false,
           error: result.error,
         };
-      }
-
-      if (session?.user.role) {
-        setCookie("role", session.user.role);
       }
 
       return {
@@ -63,11 +58,14 @@ export function useAuth() {
     }
   };
 
-  const loginWithGoogle = async (callbackUrl = getCallbackUrl()) => {
+  const loginWithGoogle = async () => {
     try {
-      await signIn("google", { callbackUrl, redirect: false });
+      await signIn("google", {
+        callbackUrl: "/auth-redirect",
+        redirect: false,
+      });
 
-      if (session?.user.role) {
+      if (session?.user) {
         setCookie("role", session.user.role);
       }
 
@@ -107,18 +105,18 @@ export function useAuth() {
     }
   };
 
-  const getCallbackUrl = () => {
-    const roleCookie =
-      typeof document !== "undefined" ? getCookie("role") : null;
+  // const getCallbackUrl = () => {
+  //   const roleCookie =
+  //     typeof document !== "undefined" ? getCookie("role") : null;
 
-    if (roleCookie === "CLIENT") {
-      return "/client";
-    } else if (roleCookie === "FREELANCER") {
-      return "/freelancer/find-work";
-    } else {
-      return "/";
-    }
-  };
+  //   if (roleCookie === "CLIENT") {
+  //     return "/client";
+  //   } else if (roleCookie === "FREELANCER") {
+  //     return "/freelancer/find-work";
+  //   } else {
+  //     return "/";
+  //   }
+  // };
 
   return {
     login,

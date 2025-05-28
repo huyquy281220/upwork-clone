@@ -76,7 +76,7 @@ export class AuthService {
 
       if (!existingUser && !role) {
         throw new NotFoundException(
-          'Account not exist. Please sign up or try again later.',
+          'Account does not exist. Please sign up or try again later.',
         );
       } else if (!existingUser && role) {
         const randomPassword = Math.random().toString(36).slice(-10);

@@ -118,15 +118,11 @@ const handler = NextAuth({
 
   events: {
     async signOut({ token }) {
-      console.log("🔍 SignOut event triggered");
-
       try {
         // Get access token from the token
         const accessToken = token?.accessToken;
 
         if (accessToken) {
-          console.log("🔍 Calling backend sign-out API");
-
           // Call backend API to clear refresh token
           const response = await fetch(`${API_URL}/auth/sign-out`, {
             method: "POST",
@@ -136,8 +132,6 @@ const handler = NextAuth({
             },
             credentials: "include", // Include cookies for refresh token
           });
-
-          console.log(response);
 
           if (response.ok) {
             console.log("✅ Backend sign-out successful");

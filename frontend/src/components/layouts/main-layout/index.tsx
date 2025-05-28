@@ -9,7 +9,12 @@ import ThemeProvider from "@/providers/ThemeProvider";
 export default function MainLayout({ children }: ChildrenProps) {
   const pathname = usePathname();
 
-  const noLayoutRoutes = ["/sign-in", "/sign-up", "/sign-up/select-role"];
+  const noLayoutRoutes = [
+    "/sign-in",
+    "/sign-up",
+    "/sign-up/select-role",
+    "/auth-redirect",
+  ];
 
   const isNoLayout = pathname ? noLayoutRoutes.includes(pathname) : false;
 
