@@ -8,6 +8,8 @@ import { useState } from "react";
 import { Logo } from "@/components/icons/Logo";
 import { useRouter } from "next/navigation";
 import { setCookie } from "@/lib/cookie";
+import { useGoogleStore } from "@/store/google";
+import { useAuth } from "@/hooks/useAuth";
 
 type Role = "CLIENT" | "FREELANCER";
 
@@ -18,7 +20,9 @@ const btnText: Record<Role, string> = {
 
 export default function SelectRole() {
   const router = useRouter();
+  const { loginWithGoogle } = useAuth();
   const [selectedRole, setSelectedRole] = useState<Role>("CLIENT");
+  const { isGoogleSignIn, setIsGoogleSignIn } = useGoogleStore();
 
   const handleRoleChange = (role: Role) => {
     setSelectedRole(role);
@@ -26,7 +30,13 @@ export default function SelectRole() {
 
   const handleCreateAccount = () => {
     setCookie("role", selectedRole);
-    router.replace("/sign-up");
+
+    if (isGoogleSignIn) {
+      loginWithGoogle();
+      setIsGoogleSignIn(false);
+    } else {
+      router.push("/sign-up");
+    }
   };
 
   return (
@@ -110,7 +120,7 @@ export default function SelectRole() {
         {/* Login Link */}
         <div className="mt-6  text-gray-600">
           Already have an account?{" "}
-          <Link href="/signin" className="text-[#108a00] underline">
+          <Link href="/sign-in" className="text-[#108a00] underline">
             Log In
           </Link>
         </div>

@@ -8,8 +8,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import type { Resolver } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
-// Define validation schema using Zod
 const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -19,7 +20,8 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
-  const { login, loginWithGoogle, isLoading, error } = useAuth();
+  const { login, loginWithGoogle, isLoading, error, setError } = useAuth();
+  const searchParams = useSearchParams();
 
   const {
     register,
@@ -45,6 +47,15 @@ export default function SignIn() {
   const handleGoogleSignIn = () => {
     loginWithGoogle();
   };
+
+  useEffect(() => {
+    const error = searchParams?.get("error");
+    const message = searchParams?.get("message");
+
+    if (error === "GoogleAuthFailed" && message) {
+      setError(decodeURIComponent(message));
+    }
+  }, [searchParams, setError]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center">

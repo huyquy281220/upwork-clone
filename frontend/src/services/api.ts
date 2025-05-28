@@ -117,7 +117,7 @@ api.interceptors.response.use(
         deleteCookie("accessToken");
 
         // Redirect to login page or dispatch logout action
-        window.location.href = "/login";
+        window.location.href = "/sign-in";
 
         return Promise.reject(refreshError);
       } finally {

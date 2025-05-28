@@ -79,7 +79,6 @@ const handler = NextAuth({
       // Handle Google sign-in
       if (account?.provider === "google") {
         try {
-          // Gọi API từ backend để xử lý đăng nhập Google
           const response = await fetch(`${API_URL}/auth/google-signin`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -94,14 +93,17 @@ const handler = NextAuth({
 
           if (!response.ok) {
             const errorData = await response.json();
-            console.error("Google sign-in failed:", errorData);
-            return false;
+
+            return `/sign-in?error=GoogleAuthFailed&message=${encodeURIComponent(
+              errorData.message || "Authentication failed"
+            )}`;
           }
 
           const userData = await response.json();
 
-          // Cập nhật thông tin user từ phản hồi API
-          user.id = userData.id;
+          user.id = userData.user?.id || userData.id;
+          user.role = userData.user?.role || userData.role;
+          user.accessToken = userData.accessToken;
 
           return true;
         } catch (error) {
@@ -113,6 +115,44 @@ const handler = NextAuth({
       return true;
     },
   },
+
+  events: {
+    async signOut({ token }) {
+      console.log("🔍 SignOut event triggered");
+
+      try {
+        // Get access token from the token
+        const accessToken = token?.accessToken;
+
+        if (accessToken) {
+          console.log("🔍 Calling backend sign-out API");
+
+          // Call backend API to clear refresh token
+          const response = await fetch(`${API_URL}/auth/sign-out`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            credentials: "include", // Include cookies for refresh token
+          });
+
+          console.log(response);
+
+          if (response.ok) {
+            console.log("✅ Backend sign-out successful");
+          } else {
+            console.warn("⚠️ Backend sign-out failed:", response.status);
+          }
+        } else {
+          console.warn("⚠️ No access token available for backend sign-out");
+        }
+      } catch (error) {
+        console.error("❌ Error during backend sign-out:", error);
+      }
+    },
+  },
+
   pages: {
     signIn: "/sign-in",
     error: "/sign-in",

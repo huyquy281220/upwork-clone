@@ -4,12 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import SignupForm from "@/components/sign-up/SignUpForm";
 import { GoogleSvg } from "@/assets/svg";
-import { signIn } from "next-auth/react";
 import SwitchTheme from "@/components/common/SwitchTheme";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function SignupPage() {
+  const { loginWithGoogle } = useAuth();
+
   const handleGoogleSignIn = async () => {
-    signIn("google", { redirect: false, callbackUrl: "" });
+    loginWithGoogle();
   };
 
   return (

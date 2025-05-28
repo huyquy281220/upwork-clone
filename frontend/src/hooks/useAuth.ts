@@ -63,8 +63,25 @@ export function useAuth() {
     }
   };
 
-  const loginWithGoogle = (callbackUrl = getCallbackUrl()) => {
-    return signIn("google", { callbackUrl, redirect: false });
+  const loginWithGoogle = async (callbackUrl = getCallbackUrl()) => {
+    try {
+      await signIn("google", { callbackUrl, redirect: false });
+
+      if (session?.user.role) {
+        setCookie("role", session.user.role);
+      }
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = async (options: LogoutOptions) => {
@@ -90,12 +107,9 @@ export function useAuth() {
     }
   };
 
-  // Helper function to get callback URL based on role cookie
   const getCallbackUrl = () => {
     const roleCookie =
       typeof document !== "undefined" ? getCookie("role") : null;
-
-    console.log(roleCookie);
 
     if (roleCookie === "CLIENT") {
       return "/client";
@@ -112,5 +126,6 @@ export function useAuth() {
     logout,
     isLoading,
     error,
+    setError,
   };
 }

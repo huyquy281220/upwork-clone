@@ -64,14 +64,14 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('logout')
+  @Post('sign-out')
   @HttpCode(HttpStatus.OK)
   async logout(
     @Req() req: Request & { user: { id: string } },
     @Res() res: Response,
   ) {
     const user = req.user;
-    return this.authService.logout(user.id, res);
+    return this.authService.signout(user.id, res);
   }
 
   @UseGuards(JwtRefreshGuard)

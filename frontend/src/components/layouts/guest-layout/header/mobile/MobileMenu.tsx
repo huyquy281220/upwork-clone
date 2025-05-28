@@ -26,7 +26,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
       </nav>
 
       <div className="mt-6 flex flex-col space-y-3">
-        <Link href="/login" className="w-full">
+        <Link href="/sign-in" className="w-full">
           <button className="w-full">Log In</button>
         </Link>
         <Link href="/signup" className="w-full">

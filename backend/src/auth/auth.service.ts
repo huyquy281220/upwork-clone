@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
@@ -71,29 +72,27 @@ export class AuthService {
 
   async googleSignin(email: string, role: string, name: string) {
     try {
-      // Check if user exists with this email
-      let user;
-      try {
-        user = await this.userService.findOne(email);
-      } catch (error) {
-        // User doesn't exist, create a new one
-        // Generate a random password for the user
-        const randomPassword = Math.random().toString(36).slice(-10);
+      const existingUser = await this.userService.findOne(email);
 
-        user = await this.userService.create({
+      if (!existingUser && !role) {
+        throw new NotFoundException(
+          'Account not exist. Please sign up or try again later.',
+        );
+      } else if (!existingUser && role) {
+        const randomPassword = Math.random().toString(36).slice(-10);
+        await this.userService.create({
           email,
           fullName: name,
           password: randomPassword,
-          address: '', // Required field but empty for Google users initially
+          address: '',
           role: role as Role,
         });
       }
 
-      // Generate tokens
       const payload = {
-        sub: user.id,
-        username: user.fullName,
-        role: user.role,
+        sub: existingUser.id,
+        username: existingUser.fullName,
+        role: existingUser.role,
       };
 
       const accessToken = await this.jwtService.signAsync(payload, {
@@ -108,11 +107,10 @@ export class AuthService {
 
       // Store refresh token
       const updatedUser = await this.userService.updatePartial({
-        email: user.email,
+        email: existingUser.email,
         refreshToken,
       });
 
-      // Remove password from user object
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, verificationToken, ...result } = updatedUser;
 
@@ -123,12 +121,17 @@ export class AuthService {
         refreshToken,
       };
     } catch (error) {
-      console.log(error);
-      throw new UnauthorizedException('Google authentication failed');
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException ||
+        error instanceof UnauthorizedException
+      ) {
+        throw error;
+      }
     }
   }
 
-  async logout(id: string, res: Response) {
+  async signout(id: string, res: Response) {
     try {
       // Only clear the refresh token, no need to clear access token from DB
       await this.userService.updatePartialById({
@@ -145,7 +148,7 @@ export class AuthService {
 
       return res.status(200).json({ message: 'Logged out successfully' });
     } catch (error) {
-      throw new Error('Logout failed');
+      throw new Error('Signout failed');
     }
   }
 
