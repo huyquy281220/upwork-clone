@@ -15,8 +15,17 @@ import { signIn } from "next-auth/react";
 const signUpSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(
+      /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).+$/,
+      "Password must contain at least one uppercase letter and one special character"
+    ),
   address: z.string().min(1, "Please select a country"),
   emailUpdates: z.boolean().default(true),
   agreeTerms: z.boolean().refine((val) => val === true, {

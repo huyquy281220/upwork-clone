@@ -12,8 +12,17 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 const signInSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(
+      /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).+$/,
+      "Password must contain at least one uppercase letter and one special character"
+    ),
   rememberMe: z.boolean().default(false),
 });
 
@@ -132,9 +141,7 @@ export default function SignIn() {
             </label>
             <input
               id="email"
-              {...register("email", {
-                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-              })}
+              {...register("email")}
               type="email"
               autoComplete="email"
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
