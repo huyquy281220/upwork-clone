@@ -18,7 +18,7 @@ export default function SearchInput() {
     <div className="flex items-center space-x-2 py-1 border border-gray-700 rounded-md">
       {/* Search Input */}
       <div className="relative">
-        <div className="dark:bg-main flex items-center rounded-md px-2 py-1.5">
+        <div className="bg-background flex items-center rounded-md px-2 py-1.5">
           <Search className="h-4 w-4 text-gray-400 mr-2" />
           <input
             type="text"
@@ -39,7 +39,7 @@ export default function SearchInput() {
           </button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-80 p-0 border-none shadow-menu dark:bg-main overflow-hidden"
+          className="w-80 p-0 border-none shadow-menu bg-background overflow-hidden"
           align="end"
           sideOffset={15}
         >

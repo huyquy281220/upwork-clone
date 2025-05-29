@@ -20,7 +20,7 @@ export default function BoxShadow({
   return (
     <div
       className={clsx(
-        "shadow-menu dark:bg-main",
+        "shadow-menu bg-background",
         direction === "left" ? "arrow-up-left" : "arrow-up-right",
         classNames
       )}

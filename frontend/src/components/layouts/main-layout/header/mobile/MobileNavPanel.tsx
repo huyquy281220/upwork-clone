@@ -53,7 +53,7 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
 
   return (
     <div
-      className={`md:hidden h-full pb-5 dark:bg-main  ${
+      className={`md:hidden h-full pb-5 bg-background  ${
         isOpen ? "block" : "hidden"
       }`}
       style={{ maxHeight: "100vh", overflowY: "auto" }}
@@ -110,7 +110,7 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
             />
 
             <AnimatedDropdown isOpen={expandedMenu === title}>
-              <div className="dark:bg-main py-1">
+              <div className="bg-background py-1">
                 {/* Handle either grouped or simple subitems */}
                 {menu &&
                   menu.map(({ label, link, type }, index) => (

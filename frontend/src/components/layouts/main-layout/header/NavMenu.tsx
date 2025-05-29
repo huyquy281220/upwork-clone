@@ -45,7 +45,7 @@ export default function NavMenu() {
                 </button>
 
                 {activeDropdown === title && menu ? (
-                  <BoxShadow classNames="absolute left-0 top-7 mt-1 dark:bg-main rounded w-64 py-2 z-50">
+                  <BoxShadow classNames="absolute left-0 top-7 mt-1 bg-background bg-background rounded w-64 py-2 z-50">
                     <div className="absolute left-0 -top-5 w-full h-5 bg-transparent" />
                     {menu?.map(({ label, link, type }, index) => (
                       <div key={label} className="flex flex-col">

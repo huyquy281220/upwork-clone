@@ -11,7 +11,7 @@ export default function MainHeader() {
       <MobileHeader />
 
       {/* Desktop Header - Hidden on small screens */}
-      <header className="dark:bg-main py-4 px-6 hidden md:flex items-center justify-between">
+      <header className="bg-background py-4 px-6 hidden md:flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center justify-between">
           <Link href="/" className="font-bold text-xl mr-6">

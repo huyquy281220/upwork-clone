@@ -125,9 +125,9 @@ export default function UserAvatar() {
       <PopoverContent
         align="end"
         sideOffset={15}
-        className="border-none shadow-menu bg-transparent p-0 w-64"
+        className="border-none shadow-menu bg-transparent p-0 w-64 overflow-hidden"
       >
-        <div className="dark:bg-main">
+        <div className="bg-background border">
           {/* User info section */}
           <div className="p-4 border-b border-gray-700 flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full overflow-hidden">
@@ -159,7 +159,7 @@ export default function UserAvatar() {
               key={`section-${sectionIndex}`}
               className={cn(
                 "py-1",
-                section.hasBorder && "border-t border-gray-700"
+                section.hasBorder && "border-t border-gray-700 bg-background"
               )}
             >
               {section.items.map((item) => renderMenuItem(item))}
@@ -170,7 +170,7 @@ export default function UserAvatar() {
           <div
             ref={themeMenuRef}
             className={cn(
-              "absolute left-0 bottom-0 w-64 dark:bg-main shadow-menu -z-[1] border border-gray-700 rounded-md transition-transform duration-200 ease-in-out",
+              "absolute left-0 bottom-0 w-64 bg-background shadow-menu -z-[1] border border-gray-700 rounded-md transition-transform duration-200 ease-in-out",
               showThemeMenu
                 ? "translate-x-[-105%] opacity-100"
                 : "translate-x-[-95%] opacity-0"

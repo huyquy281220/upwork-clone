@@ -28,7 +28,7 @@ export default function Notification() {
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-80 p-0 border-none shadow-menu dark:bg-main"
+        className="w-80 p-0 border-none shadow-menu bg-background"
         align="end"
         sideOffset={20}
       >

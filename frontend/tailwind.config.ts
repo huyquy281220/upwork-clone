@@ -19,6 +19,7 @@ export default {
       },
       colors: {
         background: "var(--background)",
+        subBackground: "var(--sub-background)",
         foreground: "var(--foreground)",
         hover: "var(--background-hover)",
         card: {
@@ -87,5 +88,6 @@ export default {
       },
     },
   },
+  safelist: ["hover:bg-hover"],
   plugins: [tailwindcssAnimate],
 } satisfies Config;

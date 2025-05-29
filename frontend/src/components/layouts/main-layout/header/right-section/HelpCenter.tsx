@@ -36,7 +36,7 @@ export default function HelpCenter() {
           </button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-64 p-0 border-none shadow-menu dark:bg-main "
+          className="w-64 p-0 border-none shadow-menu bg-background "
           align="end"
           sideOffset={20}
         >

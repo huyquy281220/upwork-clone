@@ -4,17 +4,21 @@
 
 [data-theme="dark"] {
   --background: #181818;
+  --sub-background: #1e1e1e;
   --background-hover: #282828;
   --foreground: white;
 }
 [data-theme="light"] {
   --background: white;
+  --sub-background: ##f9f9f9;
   --background-hover: #f1f1f1;
   --foreground: #181818;
 }
 
 @layer base {
   :root {
+    --background-hover: #f1f1f1;
+    --sub-background: ##f9f9f9;
     --background: white;
     --foreground: #181818;
     --card: 0 0% 100%;
@@ -42,6 +46,8 @@
     --radius: 0.5rem;
   }
   .dark {
+    --background-hover: #282828;
+    --sub-background: #1e1e1e;
     --background: #181818;
     --foreground: white;
     --card: 0 0% 3.9%;
@@ -69,9 +75,8 @@
   }
 }
 
-@layer base {
+/* @layer base {
   * {
-    /* @apply dark:bg-main; */
     @apply border-border;
     @apply bg-background;
     @apply text-foreground;
@@ -83,14 +88,21 @@
   .dark .menu-item:hover {
     @apply bg-red-400;
   }
+} */
+
+@layer base {
+  html,
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
-span,
+/* span,
 p,
 title,
 svg {
   background-color: transparent !important;
-}
+} */
 
 .arrow-up-left::before {
   content: "";

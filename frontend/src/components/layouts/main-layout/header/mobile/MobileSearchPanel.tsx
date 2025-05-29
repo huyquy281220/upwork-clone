@@ -28,7 +28,7 @@ export default function MobileSearchPanel({
 
   return (
     <div
-      className={`md:hidden fixed inset-y-0 right-0 w-full dark:bg-main z-[51] transform transition-transform duration-300 ${
+      className={`md:hidden fixed inset-y-0 right-0 w-full bg-background z-[51] transform transition-transform duration-300 ${
         isOpen ? "translate-x-0" : "translate-x-full"
       }`}
       style={{ maxHeight: "100vh", overflowY: "auto" }}

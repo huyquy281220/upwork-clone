@@ -30,3 +30,22 @@ export interface NavMenuItemProps {
     type?: string;
   };
 }
+
+export interface JobProps {
+  id: string;
+  title: string;
+  type: "Hourly" | "Fixed-price";
+  rate: string;
+  level: string;
+  duration: string;
+  description: string;
+  skills: string[];
+  paymentVerified: boolean;
+  rating?: number;
+  spent: string;
+  location: string;
+  proposals: string;
+  postedTime: string;
+  connects?: number;
+  isSaved: boolean;
+}
