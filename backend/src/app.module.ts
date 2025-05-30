@@ -10,9 +10,17 @@ import { EmailService } from './message/email.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-
+import { SavedJobsModule } from './saved-jobs/saved-jobs.module';
+import { SavedJobsService } from './saved-jobs/saved-jobs.service';
 @Module({
-  imports: [UserModule, PrismaModule, MessageModule, AuthModule, JwtModule],
+  imports: [
+    UserModule,
+    PrismaModule,
+    MessageModule,
+    AuthModule,
+    JwtModule,
+    SavedJobsModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
@@ -21,6 +29,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
     EmailService,
     AuthService,
     JwtService,
+    SavedJobsService,
   ],
 })
 export class AppModule {}

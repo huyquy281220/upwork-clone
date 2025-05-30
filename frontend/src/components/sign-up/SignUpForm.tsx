@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import type { Resolver } from "react-hook-form";
 import { getCookie } from "@/lib/cookie";
-import { signIn } from "next-auth/react";
+import { useAuth } from "@/hooks/useAuth";
 
 const signUpSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -39,6 +39,7 @@ export default function SignupForm() {
   const router = useRouter();
   const countries = useCountries();
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const { login } = useAuth();
   // const onSubmit: SubmitHandler<SignUpFormValues> = (data) => console.log(data);
 
   const countryNames = countries?.map((country) => country.name.common);
@@ -115,8 +116,8 @@ export default function SignupForm() {
         return;
       }
 
-      const signInResponse = await signIn("credentials", {
-        // redirect: false,
+      const signInResponse = await login({
+        redirect: true,
         email: data.email,
         password: data.password,
       });
@@ -129,10 +130,10 @@ export default function SignupForm() {
         return;
       }
 
-      const redirectUrl =
-        signInResponse?.url ||
-        (role === "CLIENT" ? "/client" : "/freelancer/find-work");
-      router.push(redirectUrl);
+      // const redirectUrl =
+      //   signInResponse?.url ||
+      //   (role === "CLIENT" ? "/client" : "/freelancer/find-work");
+      // router.push(redirectUrl);
     } catch (error) {
       console.error("Signup error:", error);
       setError("root", {

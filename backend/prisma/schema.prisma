@@ -8,116 +8,122 @@ datasource db {
 }
 
 model User {
-  id                String    @id @default(uuid())
-  fullName          String?
-  email             String    @unique
-  password          String?
-  role              Role
-  phoneNumber       String?
-  avatarUrl         String?
-  address           String?
-  verified          Boolean   @default(false)
-  verificationToken String?
-  refreshToken      String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  profile                 Profile?
-  jobs                    Job[]        @relation("ClientJobs")
-  proposals               Proposal[]   @relation("FreelancerProposals")
-  contractsAsClient       Contract[]   @relation("ClientContracts")
-  contractsAsFreelancer   Contract[]   @relation("FreelancerContracts")
-  sentMessages            Message[]    @relation("MessageSender")
-  receivedMessages        Message[]    @relation("MessageRecipient")
-  notifications           Notification[]
+  id                    String         @id @default(uuid())
+  email                 String         @unique
+  password              String?
+  role                  Role
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  avatarUrl             String?
+  fullName              String?
+  phoneNumber           String?
+  refreshToken          String?
+  address               String?
+  verificationToken     String?
+  verified              Boolean        @default(false)
+  contractsAsClient     Contract[]     @relation("ClientContracts")
+  contractsAsFreelancer Contract[]     @relation("FreelancerContracts")
+  jobs                  Job[]          @relation("ClientJobs")
+  receivedMessages      Message[]      @relation("MessageRecipient")
+  sentMessages          Message[]      @relation("MessageSender")
+  notifications         Notification[]
+  profile               Profile?
+  proposals             Proposal[]     @relation("FreelancerProposals")
+  savedJobs             UserSavedJob[] @relation("UserSavedJobs")
 }
 
 model Profile {
-  id           String   @id @default(uuid())
-  userId       String   @unique
-  title        String?
-  description  String?
-  hourlyRate   Float?
-  skills       String[]
-  experience   String?
-  user         User     @relation(fields: [userId], references: [id])
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  title       String?
+  description String?
+  hourlyRate  Float?
+  skills      String[]
+  experience  String?
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model Job {
-  id           String   @id @default(uuid())
+  id           String         @id @default(uuid())
   clientId     String
   title        String
   description  String
   category     String
   budget       Float
   type         JobType
+  createdAt    DateTime       @default(now())
   contracts    Contract[]
-  createdAt    DateTime @default(now())
-
-  client       User     @relation("ClientJobs", fields: [clientId], references: [id])
+  client       User           @relation("ClientJobs", fields: [clientId], references: [id])
   proposals    Proposal[]
+  savedByUsers UserSavedJob[] @relation("SavedJobs")
+}
+
+model UserSavedJob {
+  id        String   @id @default(uuid())
+  userId    String
+  jobId     String
+  createdAt DateTime @default(now())
+  job       Job      @relation("SavedJobs", fields: [jobId], references: [id])
+  user      User     @relation("UserSavedJobs", fields: [userId], references: [id])
+
+  @@unique([userId, jobId])
 }
 
 model Proposal {
-  id           String   @id @default(uuid())
+  id           String         @id @default(uuid())
   freelancerId String
   jobId        String
   coverLetter  String?
   hourlyRate   Float
   status       ProposalStatus
-  createdAt    DateTime @default(now())
-
-  freelancer   User     @relation("FreelancerProposals", fields: [freelancerId], references: [id])
-  job          Job      @relation(fields: [jobId], references: [id])
+  createdAt    DateTime       @default(now())
+  freelancer   User           @relation("FreelancerProposals", fields: [freelancerId], references: [id])
+  job          Job            @relation(fields: [jobId], references: [id])
 }
 
 model Contract {
-  id           String   @id @default(uuid())
+  id           String         @id @default(uuid())
   jobId        String
   clientId     String
   freelancerId String
   status       ContractStatus
   startedAt    DateTime
   completedAt  DateTime?
+  client       User           @relation("ClientContracts", fields: [clientId], references: [id])
+  freelancer   User           @relation("FreelancerContracts", fields: [freelancerId], references: [id])
+  job          Job            @relation(fields: [jobId], references: [id])
   payments     Payment[]
-
-  job          Job      @relation(fields: [jobId], references: [id])
-  client       User     @relation("ClientContracts", fields: [clientId], references: [id])
-  freelancer   User     @relation("FreelancerContracts", fields: [freelancerId], references: [id])
 }
 
 model Message {
-  id           String   @id @default(uuid())
-  senderId     String
-  recipientId  String
-  content      String
-  sentAt       DateTime @default(now())
-
-  sender       User     @relation("MessageSender", fields: [senderId], references: [id])
-  recipient    User     @relation("MessageRecipient", fields: [recipientId], references: [id])
+  id          String   @id @default(uuid())
+  senderId    String
+  recipientId String
+  content     String
+  sentAt      DateTime @default(now())
+  recipient   User     @relation("MessageRecipient", fields: [recipientId], references: [id])
+  sender      User     @relation("MessageSender", fields: [senderId], references: [id])
 }
 
 model Notification {
-  id         String   @id @default(uuid())
-  userId     String
-  content    String
-  read       Boolean  @default(false)
-  createdAt  DateTime @default(now())
-
-  user       User     @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  userId    String
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Payment {
-  id             String   @id @default(uuid())
-  contractId     String
-  amount         Float
-  currency       String   @default("USD")
-  status         PaymentStatus
-  method         PaymentMethod
-  paidAt         DateTime?
-  createdAt      DateTime @default(now())
-
-  contract       Contract @relation(fields: [contractId], references: [id])
+  id         String        @id @default(uuid())
+  contractId String
+  amount     Float
+  currency   String        @default("USD")
+  status     PaymentStatus
+  method     PaymentMethod
+  paidAt     DateTime?
+  createdAt  DateTime      @default(now())
+  contract   Contract      @relation(fields: [contractId], references: [id])
 }
 
 enum PaymentStatus {
