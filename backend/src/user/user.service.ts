@@ -9,7 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { EmailService } from 'src/message/email.service';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class UserService {
