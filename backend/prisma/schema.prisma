@@ -21,26 +21,44 @@ model User {
   address               String?
   verificationToken     String?
   verified              Boolean        @default(false)
-  contractsAsClient     Contract[]     @relation("ClientContracts")
-  contractsAsFreelancer Contract[]     @relation("FreelancerContracts")
-  jobs                  Job[]          @relation("ClientJobs")
+
+  clientProfile         ClientProfile?
+  freelancerProfile     FreelancerProfile?
+
   receivedMessages      Message[]      @relation("MessageRecipient")
   sentMessages          Message[]      @relation("MessageSender")
+  reviewsGiven          Review[]       @relation("Reviewer")
+  reviewsReceived       Review[]       @relation("Reviewee")
   notifications         Notification[]
-  profile               Profile?
-  proposals             Proposal[]     @relation("FreelancerProposals")
-  savedJobs             UserSavedJob[] @relation("UserSavedJobs")
 }
 
-model Profile {
-  id          String   @id @default(uuid())
-  userId      String   @unique
-  title       String?
-  description String?
-  hourlyRate  Float?
-  skills      String[]
-  experience  String?
-  user        User     @relation(fields: [userId], references: [id])
+model ClientProfile {
+  id          String     @id @default(uuid())
+  userId      String     @unique
+  user        User       @relation(fields: [userId], references: [id])
+  companyName String?
+  website     String?
+  industry    String?
+  
+  jobs        Job[]      @relation("ClientJobs")
+  contracts   Contract[] @relation("ClientContracts")
+}
+
+model FreelancerProfile {
+  id              String        @id @default(uuid())
+  userId          String        @unique
+  user            User          @relation(fields: [userId], references: [id])
+  hourlyRate      Float?
+  bio             String?
+  avatarUrl       String?
+  country         String?
+  language        String?
+  available       Boolean       @default(true)
+  
+  proposals       Proposal[]    @relation("FreelancerProposals")
+  contracts       Contract[]    @relation("FreelancerContracts")
+  skills          UserSkill[]   @relation("FreelancerSkills")
+  savedJobs       UserSavedJob[] @relation("FreelancerSavedJobs")
 }
 
 model Job {
@@ -53,46 +71,75 @@ model Job {
   type         JobType
   createdAt    DateTime       @default(now())
   contracts    Contract[]
-  client       User           @relation("ClientJobs", fields: [clientId], references: [id])
+  client       ClientProfile  @relation("ClientJobs", fields: [clientId], references: [userId])
   proposals    Proposal[]
+  skills       JobSkill[]
   savedByUsers UserSavedJob[] @relation("SavedJobs")
 }
 
 model UserSavedJob {
-  id        String   @id @default(uuid())
+  id        String            @id @default(uuid())
   userId    String
   jobId     String
-  createdAt DateTime @default(now())
-  job       Job      @relation("SavedJobs", fields: [jobId], references: [id])
-  user      User     @relation("UserSavedJobs", fields: [userId], references: [id])
+  createdAt DateTime          @default(now())
+  job       Job               @relation("SavedJobs", fields: [jobId], references: [id])
+  freelancer FreelancerProfile @relation("FreelancerSavedJobs", fields: [userId], references: [userId])
 
   @@unique([userId, jobId])
 }
 
+model Skill {
+  id        String   @id @default(uuid())
+  name      String      @unique
+  category  String?
+  users     UserSkill[]
+  jobs      JobSkill[]
+}
+
+model UserSkill {
+  userId      String
+  skillId     String
+  proficiency Int?
+  freelancer  FreelancerProfile @relation("FreelancerSkills", fields: [userId], references: [userId])
+  skill       Skill             @relation(fields: [skillId], references: [id])
+
+  @@id([userId, skillId])
+}
+
+model JobSkill {
+  jobId    String
+  skillId  String
+  job      Job   @relation(fields: [jobId], references: [id])
+  skill    Skill @relation(fields: [skillId], references: [id])
+
+  @@id([jobId, skillId])
+}
+
 model Proposal {
-  id           String         @id @default(uuid())
+  id           String            @id @default(uuid())
   freelancerId String
   jobId        String
   coverLetter  String?
   hourlyRate   Float
   status       ProposalStatus
-  createdAt    DateTime       @default(now())
-  freelancer   User           @relation("FreelancerProposals", fields: [freelancerId], references: [id])
-  job          Job            @relation(fields: [jobId], references: [id])
+  createdAt    DateTime          @default(now())
+  freelancer   FreelancerProfile @relation("FreelancerProposals", fields: [freelancerId], references: [userId])
+  job          Job               @relation(fields: [jobId], references: [id])
 }
 
 model Contract {
-  id           String         @id @default(uuid())
+  id           String            @id @default(uuid())
   jobId        String
   clientId     String
   freelancerId String
   status       ContractStatus
   startedAt    DateTime
   completedAt  DateTime?
-  client       User           @relation("ClientContracts", fields: [clientId], references: [id])
-  freelancer   User           @relation("FreelancerContracts", fields: [freelancerId], references: [id])
-  job          Job            @relation(fields: [jobId], references: [id])
+  client       ClientProfile     @relation("ClientContracts", fields: [clientId], references: [userId])
+  freelancer   FreelancerProfile @relation("FreelancerContracts", fields: [freelancerId], references: [userId])
+  job          Job               @relation(fields: [jobId], references: [id])
   payments     Payment[]
+  reviews      Review[]
 }
 
 model Message {
@@ -124,6 +171,21 @@ model Payment {
   paidAt     DateTime?
   createdAt  DateTime      @default(now())
   contract   Contract      @relation(fields: [contractId], references: [id])
+}
+
+model Review {
+  id            String        @id @default(uuid())
+  rating        Int
+  comment       String?
+  createdAt     DateTime  @default(now())
+  
+  // Relationships
+  contractId    String
+  reviewerId    String
+  revieweeId    String
+  contract      Contract  @relation(fields: [contractId], references: [id])
+  reviewer      User      @relation(fields: [reviewerId], references: [id], name: "Reviewer")
+  reviewee      User      @relation(fields: [revieweeId], references: [id], name: "Reviewee")
 }
 
 enum PaymentStatus {
