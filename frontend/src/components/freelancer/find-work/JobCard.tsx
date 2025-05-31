@@ -4,6 +4,7 @@ import { CheckCircle, Heart, MapPin, ThumbsDown } from "lucide-react";
 import type { JobProps } from "@/types";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface JobCardProps {
   job: JobProps;
@@ -13,6 +14,7 @@ interface JobCardProps {
 
 export function JobCard({ job, index, onSaveJob }: JobCardProps) {
   const [isSaved, setIsSaved] = useState(false);
+  const router = useRouter();
 
   return (
     <div
@@ -20,6 +22,7 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
         "group bg-background p-6 hover:bg-hover transition-colors duration-200 cursor-pointer border-b border-[#333]",
         index === 0 ? "border-t" : ""
       )}
+      onClick={() => router.push(`/freelancer/jobs/${job.id}`)}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="text-sm text-gray-500">Posted {job.postedTime}</div>
