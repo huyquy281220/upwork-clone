@@ -1,5 +1,5 @@
-import { deleteAllCookies, setCookie } from "@/lib/cookie";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { deleteAllCookies } from "@/lib/cookie";
+import { signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 
 interface SignInCredentials {
@@ -17,7 +17,6 @@ interface LogoutOptions {
 export function useAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { data: session } = useSession();
 
   const login = async ({
     email,
@@ -64,10 +63,6 @@ export function useAuth() {
         callbackUrl: "/auth-redirect",
         redirect: false,
       });
-
-      if (session?.user) {
-        setCookie("role", session.user.role);
-      }
 
       return {
         success: true,

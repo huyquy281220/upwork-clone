@@ -78,7 +78,8 @@ export class AuthService {
         throw new NotFoundException(
           'Account does not exist. Please sign up or try again later.',
         );
-      } else if (!existingUser && role) {
+      }
+      if (!existingUser && role) {
         const randomPassword = Math.random().toString(36).slice(-10);
         await this.userService.create({
           email,
@@ -105,7 +106,6 @@ export class AuthService {
         expiresIn: '7d',
       });
 
-      // Store refresh token
       const updatedUser = await this.userService.updatePartial({
         email: existingUser.email,
         refreshToken,
@@ -114,7 +114,6 @@ export class AuthService {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, verificationToken, ...result } = updatedUser;
 
-      // Return user info and tokens
       return {
         user: result,
         accessToken,
@@ -133,7 +132,6 @@ export class AuthService {
 
   async signout(id: string, res: Response) {
     try {
-      // Only clear the refresh token, no need to clear access token from DB
       await this.userService.updatePartialById({
         id,
         refreshToken: null,

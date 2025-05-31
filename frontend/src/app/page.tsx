@@ -1,15 +1,15 @@
-import CompaniesSection from "@/pages/home/Companies";
-import FindTalentSection from "@/pages/home/FindTalent";
-import FindWorkSection from "@/pages/home/FindWork";
-import TalentCategorySection from "@/pages/home/TalentCategory";
-import TopSkillsSection from "@/pages/home/TopSkills";
-import TrustedBrandsSection from "@/pages/home/TrustedBrands";
-import WhyUpworkSection from "@/pages/home/WhyUpwork";
-import WorkGameSection from "@/pages/home/WorkGame";
+import CompaniesSection from "@/pages-section/home/Companies";
+import FindTalentSection from "@/pages-section/home/FindTalent";
+import FindWorkSection from "@/pages-section/home/FindWork";
+import TalentCategorySection from "@/pages-section/home/TalentCategory";
+import TopSkillsSection from "@/pages-section/home/TopSkills";
+import TrustedBrandsSection from "@/pages-section/home/TrustedBrands";
+import WhyUpworkSection from "@/pages-section/home/WhyUpwork";
+import WorkGameSection from "@/pages-section/home/WorkGame";
 
 export default function Home() {
   return (
-    <div className="w-full">
+    <>
       <WorkGameSection />
       <TalentCategorySection />
       <CompaniesSection />
@@ -18,6 +18,6 @@ export default function Home() {
       <FindWorkSection />
       <TrustedBrandsSection />
       <TopSkillsSection />
-    </div>
+    </>
   );
 }

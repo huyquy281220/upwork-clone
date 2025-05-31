@@ -45,11 +45,7 @@ export class UserService {
       const user = await this.prismaService.user.findUnique({
         where: { email },
       });
-      if (!user) {
-        throw new NotFoundException(
-          'Account does not exist. Please sign up or try again later.',
-        );
-      }
+      if (!user) return null;
       return user;
     } catch (error) {
       throw new NotFoundException(

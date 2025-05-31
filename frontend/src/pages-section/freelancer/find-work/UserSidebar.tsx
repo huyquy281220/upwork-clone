@@ -2,10 +2,11 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/common/Card";
 import { ChevronDown, ChevronUp, Edit2, ExternalLink } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function UserSidebar() {
   const [showPromoteAds, setShowPromoteAds] = useState(false);
@@ -19,6 +20,10 @@ export function UserSidebar() {
   ) => {
     return () => setter((prev) => !prev);
   };
+
+  useEffect(() => {
+    console.log("showPreferences changed:", showPreferences);
+  }, [showPreferences]);
 
   return (
     <div className="space-y-4 hidden md:block">
@@ -66,9 +71,10 @@ export function UserSidebar() {
           </button>
 
           <div
-            className={`mt-3 space-y-3 overflow-hidden transition-all duration-300 ease-in-out ${
+            className={cn(
+              "mt-3 space-y-3 overflow-hidden transition-all duration-300 ease-in-out",
               showPromoteAds ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-            }`}
+            )}
           >
             <div className="flex justify-between items-center">
               <span>Availability badge</span>
@@ -102,9 +108,10 @@ export function UserSidebar() {
           </button>
 
           <div
-            className={`mt-3 overflow-hidden transition-all duration-300 ease-in-out ${
+            className={cn(
+              "mt-3 overflow-hidden transition-all duration-300 ease-in-out",
               showConnects ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
-            }`}
+            )}
           >
             <div className="flex items-center">
               <a href="#" className="text-green-600 font-medium">
@@ -132,9 +139,10 @@ export function UserSidebar() {
           </button>
 
           <div
-            className={`mt-3 space-y-3 overflow-hidden transition-all duration-300 ease-in-out ${
+            className={cn(
+              "mt-3 space-y-3 overflow-hidden transition-all duration-300 ease-in-out",
               showProposals ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-            }`}
+            )}
           >
             <a href="#" className="text-green-600 font-medium block">
               My Proposals
@@ -159,9 +167,10 @@ export function UserSidebar() {
           </button>
 
           <div
-            className={`mt-3 space-y-3 overflow-hidden transition-all duration-300 ease-in-out ${
+            className={cn(
+              "mt-3 space-y-3 overflow-hidden transition-all duration-300 ease-in-out",
               showProjectCatalog ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-            }`}
+            )}
           >
             <a href="#" className="text-green-600 font-medium block">
               My Project Dashboard
@@ -191,9 +200,10 @@ export function UserSidebar() {
           </button>
 
           <div
-            className={`mt-3 space-y-4 overflow-hidden transition-all duration-300 ease-in-out ${
+            className={cn(
+              "mt-3 space-y-4 overflow-hidden transition-all duration-300 ease-in-out",
               showPreferences ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-            }`}
+            )}
           >
             <div className="space-y-1">
               <div className="flex justify-between items-center">

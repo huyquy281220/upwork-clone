@@ -1,6 +1,5 @@
 // import { Banner } from "@/pages/freelancer/find-work/Banner";
-import { JobListing } from "@/pages/freelancer/find-work/JobListing";
-import { UserSidebar } from "@/pages/freelancer/find-work/UserSidebar";
+import { JobListing, UserSidebar } from "@/pages-section/freelancer/find-work";
 
 export default function FindWork() {
   return (

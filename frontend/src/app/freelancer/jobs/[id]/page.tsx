@@ -1,3 +1,19 @@
+import {
+  JobHeader,
+  JobDescription,
+  JobSkills,
+  JobActivity,
+  ClientRecentHistory,
+} from "@/pages-section/freelancer/jobs";
+
 export default function JobDetailPage() {
-  return <div>JobDetailPage</div>;
+  return (
+    <>
+      <JobHeader />
+      <JobDescription />
+      <JobSkills />
+      <JobActivity />
+      <ClientRecentHistory />
+    </>
+  );
 }
