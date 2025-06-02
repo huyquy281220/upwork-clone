@@ -16,7 +16,7 @@ export default function TestimonialCard({
   return (
     <div className={`${bgColor} text-white p-6 rounded-md`}>
       <p className="text-sm mb-6">&#34;{quote}&#34;</p>
-      <div className="text-xs">
+      <div className="mt-16 text-xs">
         <p className="font-medium">{author}</p>
         <p className="mt-1">{position}</p>
         <p>{company}</p>
