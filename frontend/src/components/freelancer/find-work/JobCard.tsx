@@ -22,7 +22,6 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
         "group bg-background p-6 hover:bg-hover transition-colors duration-200 cursor-pointer border-b border-[#333]",
         index === 0 ? "border-t" : ""
       )}
-      onClick={() => router.push(`/freelancer/jobs/${job.id}`)}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="text-sm text-gray-500">Posted {job.postedTime}</div>
@@ -42,7 +41,10 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
         </div>
       </div>
 
-      <h3 className="text-xl font-medium text-foreground mb-1 hover:underline group-hover:text-green-600">
+      <h3
+        className="text-xl font-medium text-foreground mb-1 hover:underline group-hover:text-green-600"
+        onClick={() => router.push(`/freelancer/jobs/${job.id}`)}
+      >
         {job.title}
       </h3>
 
