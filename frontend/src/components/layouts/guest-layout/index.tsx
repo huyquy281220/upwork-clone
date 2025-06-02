@@ -9,7 +9,7 @@ export default function GuestLayout({
   return (
     <div>
       <Header />
-      {children}
+      <div className="md:max-w-[80rem] mx-auto">{children}</div>
       <Footer />
     </div>
   );

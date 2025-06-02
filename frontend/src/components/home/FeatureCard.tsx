@@ -15,7 +15,7 @@ export default function FeatureCard({
       <div className="text-green-600 mt-1">{icon}</div>
       <div>
         <h3 className="font-medium">{title}</h3>
-        <p className="text-sm text-gray-600 mt-1">{description}</p>
+        <p className="text-sm text-slate-400 mt-1">{description}</p>
       </div>
     </div>
   );

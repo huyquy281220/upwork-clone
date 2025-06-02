@@ -33,11 +33,11 @@ export default function MobileHeader() {
   return (
     <div
       className={cn(
-        "fixed inset-x-0 md:hidden z-50 dark:bg-red-500 overflow-y-auto",
+        "fixed inset-x-0 md:hidden z-50 overflow-y-auto",
         isNavOpen || isSearchOpen ? "h-full" : ""
       )}
     >
-      <div className="py-3 px-4 flex items-center justify-between">
+      <div className="relative z-50 py-3 px-4 flex items-center justify-between bg-background">
         {/* Left section - X or Menu icon */}
         <button
           onClick={toggleNav}

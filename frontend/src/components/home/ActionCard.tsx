@@ -2,39 +2,27 @@ import Link from "next/link";
 
 interface ActionCardProps {
   title: string;
-  description: string;
   buttonText: string;
   buttonLink: string;
-  color?: "green" | "white";
 }
 
 export default function ActionCard({
   title,
-  description,
   buttonText,
   buttonLink,
-  color = "green",
 }: ActionCardProps) {
   return (
-    <div
-      className={`p-6 rounded-md ${
-        color === "green" ? "bg-green-600 text-white" : "bg-white text-gray-900"
-      }`}
-    >
-      <h3 className="font-bold text-lg mb-2">{title}</h3>
-      <p
-        className={`text-sm mb-4 ${
-          color === "green" ? "text-green-50" : "text-gray-600"
-        }`}
-      >
-        {description}
-      </p>
-      <button
-        className={
-          color === "green" ? "text-white border-white hover:bg-green-700" : ""
-        }
-      >
-        <Link href={buttonLink}>{buttonText}</Link>
+    <div className="p-6 rounded-md bg-[#14a800] text-gray-900 cursor-pointer group hover:bg-white">
+      <h3 className="font-bold text-white text-3xl mb-2 group-hover:text-[#14a800]">
+        {title}
+      </h3>
+      <button className="mt-4">
+        <Link
+          href={buttonLink}
+          className="text-lg font-semibold text-white group-hover:text-[#14a800]"
+        >
+          {buttonText}
+        </Link>
       </button>
     </div>
   );

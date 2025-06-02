@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
 import FeatureCard from "@/components/home/FeatureCard";
+import { PersonWithHeadsetImg } from "@/assets/images";
 
 const features = [
   {
@@ -27,8 +28,8 @@ export default function WhyUpworkSection() {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row gap-8 items-center">
-          <div className="md:w-1/2">
+        <div className="flex flex-col md:flex-row gap-8 items-center bg-secondary">
+          <div className="md:w-1/2 pl-4">
             <h2 className="text-3xl font-bold mb-6">
               Why businesses
               <br />
@@ -49,25 +50,21 @@ export default function WhyUpworkSection() {
 
           <div className="md:w-1/2">
             <div className="bg-green-600 text-white p-8 rounded-md">
-              <h3 className="font-bold mb-2">
+              <h3 className="text-2xl font-bold mb-2">
                 We&#39;re the world&#39;s work marketplace
               </h3>
 
               <div className="flex items-center gap-2 mb-2">
+                <span className="text-white text-xl">★</span>
                 <span className="text-xl font-bold">4.9/5</span>
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-yellow-400">
-                      ★
-                    </span>
-                  ))}
-                </div>
               </div>
 
-              <p className="text-sm font-medium mb-4">Awards winner</p>
+              <p className="text-sm font-medium mb-4">
+                Clients rate professionals on Upwork
+              </p>
 
               <Image
-                src="/placeholder.svg?height=300&width=200"
+                src={PersonWithHeadsetImg}
                 alt="Person illustration"
                 width={200}
                 height={300}

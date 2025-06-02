@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
 import FeatureCard from "@/components/home/FeatureCard";
+import { EnterpriseImg } from "@/assets/images";
 
 const features = [
   {
@@ -23,39 +24,37 @@ const features = [
 
 export default function CompaniesSection() {
   return (
-    <section className="py-16 bg-green-800 text-white rounded-lg">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="md:w-1/2">
-            <h2 className="text-3xl font-bold mb-6">
-              This is how
-              <br />
-              good companies
-              <br />
-              find good company.
-            </h2>
+    <section className="mx-auto bg-[#13544e] text-white rounded-lg overflow-hidden">
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="md:w-1/2 px-10 py-20">
+          <h2 className="text-[3rem] font-bold mb-6">
+            This is how
+            <br />
+            good companies
+            <br />
+            find good company.
+          </h2>
 
-            <div className="space-y-6">
-              {features.map((feature, index) => (
-                <FeatureCard
-                  key={index}
-                  icon={feature.icon}
-                  title={feature.title}
-                  description={feature.description}
-                />
-              ))}
-            </div>
+          <div className="space-y-6">
+            {features.map((feature, index) => (
+              <FeatureCard
+                key={index}
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+              />
+            ))}
           </div>
+        </div>
 
-          <div className="md:w-1/2">
-            <Image
-              src="/placeholder.svg?height=400&width=500"
-              alt="Person working at desk"
-              width={500}
-              height={400}
-              className="rounded-md"
-            />
-          </div>
+        <div className="md:w-1/2">
+          <Image
+            src={EnterpriseImg}
+            alt="Person working at desk"
+            width={500}
+            height={400}
+            className="w-full h-full"
+          />
         </div>
       </div>
     </section>

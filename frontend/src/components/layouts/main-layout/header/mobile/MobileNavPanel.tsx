@@ -53,10 +53,9 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
 
   return (
     <div
-      className={`md:hidden h-full pb-5 bg-background  ${
-        isOpen ? "block" : "hidden"
+      className={`md:hidden h-full pb-5 bg-background overflow-y-auto transition-transform duration-300 ${
+        isOpen ? "translate-y-0" : "-translate-y-full"
       }`}
-      style={{ maxHeight: "100vh", overflowY: "auto" }}
     >
       {/* User Profile Section */}
       <div className="border-b border-gray-700 px-4 py-3 space-y-2">

@@ -29,8 +29,8 @@ export default function MobileMenu({ links }: MobileMenuProps) {
         <Link href="/sign-in" className="w-full">
           <button className="w-full">Log In</button>
         </Link>
-        <Link href="/signup" className="w-full">
-          <button className="w-full bg-green-600 hover:bg-green-700 ">
+        <Link href="/sign-up" className="w-full">
+          <button className="w-full py-2 rounded-md bg-green-600 hover:bg-green-700 ">
             Sign Up
           </button>
         </Link>

@@ -1,6 +1,7 @@
 import CompaniesSection from "@/pages-section/home/Companies";
 import FindTalentSection from "@/pages-section/home/FindTalent";
 import FindWorkSection from "@/pages-section/home/FindWork";
+import HeroSection from "@/pages-section/home/Hero";
 import TalentCategorySection from "@/pages-section/home/TalentCategory";
 import TopSkillsSection from "@/pages-section/home/TopSkills";
 import TrustedBrandsSection from "@/pages-section/home/TrustedBrands";
@@ -10,6 +11,7 @@ import WorkGameSection from "@/pages-section/home/WorkGame";
 export default function Home() {
   return (
     <>
+      <HeroSection />
       <WorkGameSection />
       <TalentCategorySection />
       <CompaniesSection />

@@ -1,28 +1,29 @@
 import Image from "next/image";
-
+import { FindGreatWorkImg } from "@/assets/images";
 export default function FindWorkSection() {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col md:flex-row">
           <div className="md:w-1/2">
             <Image
-              src="/placeholder.svg?height=400&width=500"
+              src={FindGreatWorkImg}
               alt="Person working at desk"
               width={500}
               height={400}
-              className="rounded-md"
+              className="rounded-s-md w-full"
             />
           </div>
 
-          <div className="md:w-1/2 bg-blue-600 text-white p-8 rounded-md">
-            <h2 className="text-3xl font-bold mb-4">
+          <div className="md:w-1/2 flex flex-col justify-center bg-blue-600 text-white p-8 rounded-e-md">
+            <p className="text-3xl text-white font-semibold">For clients</p>
+            <h2 className="py-6 inline-block text-[4rem] leading-none font-bold mb-4">
               Find great
               <br />
               work
             </h2>
 
-            <p className="mb-6">
+            <p className="mb-6 text-lg">
               Meet clients you&#39;re excited to work with and take your career
               or business to new heights.
             </p>
@@ -50,8 +51,8 @@ export default function FindWorkSection() {
               </div>
             </div>
 
-            <button className="bg-white text-blue-600 hover:bg-gray-100">
-              Find Work
+            <button className="w-1/2 py-2 rounded-md bg-white text-blue-600 hover:bg-gray-100">
+              Find Opportunities
             </button>
           </div>
         </div>

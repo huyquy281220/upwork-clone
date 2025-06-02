@@ -18,6 +18,14 @@ const testimonials = [
     company: "Microsoft",
     bgColor: "bg-orange-600",
   },
+  {
+    quote:
+      "One of the advantages of utilizing freelancers is flexibility. Upwork makes quality, speed, and agility possible for our business.",
+    author: "Jane Doe",
+    position: "Director of Marketing",
+    company: "Google",
+    bgColor: "bg-main",
+  },
 ];
 
 export default function TrustedBrandsSection() {
