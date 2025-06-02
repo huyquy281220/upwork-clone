@@ -17,7 +17,7 @@ export default function FindWorkSection() {
 
           <div className="md:w-1/2 flex flex-col justify-center bg-blue-600 text-white p-8 rounded-e-md">
             <p className="text-3xl text-white font-semibold">For clients</p>
-            <h2 className="py-6 inline-block text-[4rem] leading-none font-bold mb-4">
+            <h2 className="py-6 inline-block text-3xl xl:text-[4rem] leading-none font-bold mb-4">
               Find great
               <br />
               work
