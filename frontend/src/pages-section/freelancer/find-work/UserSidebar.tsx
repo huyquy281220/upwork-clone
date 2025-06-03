@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card } from "@/components/common/Card";
+import { Card } from "@/components/ui/card";
 import { ChevronDown, ChevronUp, Edit2, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -147,7 +147,7 @@ export function UserSidebar() {
             <a href="#" className="text-green-600 font-medium block">
               My Proposals
             </a>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-foreground">
               Looking for work? Browse jobs and get started on a proposal.
             </p>
           </div>
@@ -179,7 +179,7 @@ export function UserSidebar() {
               <a href="#" className="text-green-600 font-medium">
                 Create a Catalog project
               </a>
-              <span className="text-sm text-gray-700 ml-1">
+              <span className="text-sm text-foreground ml-1">
                 for clients to purchase instantly
               </span>
             </div>
@@ -210,7 +210,7 @@ export function UserSidebar() {
                 <span className="font-medium">Hours per week</span>
                 <Edit2 className="h-4 w-4" />
               </div>
-              <p className="text-sm text-gray-700">More than 30 hrs/week</p>
+              <p className="text-sm text-foreground">More than 30 hrs/week</p>
             </div>
 
             <div className="space-y-1">
@@ -218,7 +218,7 @@ export function UserSidebar() {
                 <span className="font-medium">Profile Visibility</span>
                 <Edit2 className="h-4 w-4" />
               </div>
-              <p className="text-sm text-gray-700">Public</p>
+              <p className="text-sm text-foreground">Public</p>
             </div>
 
             <div className="space-y-1">
@@ -226,7 +226,7 @@ export function UserSidebar() {
                 <span className="font-medium">Job Preference</span>
                 <Edit2 className="h-4 w-4" />
               </div>
-              <p className="text-sm text-gray-700">No preference set</p>
+              <p className="text-sm text-foreground">No preference set</p>
             </div>
 
             <div className="space-y-1">

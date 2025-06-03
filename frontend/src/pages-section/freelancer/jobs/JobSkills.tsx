@@ -1,5 +1,5 @@
 import React from "react";
-import { SkillBadge } from "@/components/freelancer/jobs/SkillBadge";
+import { SkillBadge } from "@/components/common/SkillBadge";
 
 export const JobSkills = () => {
   const skills = [

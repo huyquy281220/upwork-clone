@@ -202,7 +202,7 @@ export const freelancerAvatarMenu = [
         id: "profile",
         iconName: "User",
         label: "Your profile",
-        href: "/profile",
+        href: "/",
       },
       {
         id: "stats",

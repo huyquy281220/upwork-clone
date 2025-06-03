@@ -6,6 +6,7 @@ import LogoMicrosoft from "./Microsoft.svg";
 import LogoAirbnb from "./Airbnb.svg";
 import LogoBissel from "./Bissel.svg";
 import LogoGlassdoor from "./Glassdoor.svg";
+import BagSvg from "./Bag.svg";
 
 export {
   Logo,
@@ -16,4 +17,5 @@ export {
   LogoAirbnb,
   LogoBissel,
   LogoGlassdoor,
+  BagSvg,
 };

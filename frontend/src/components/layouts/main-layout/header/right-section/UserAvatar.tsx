@@ -12,6 +12,7 @@ import { themeOptions as navigationThemeOptions } from "../data/navigation";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
 import { useHeaderContentByRole } from "@/hooks/useHeaderContentByRole";
 import { useAuth } from "@/hooks/useAuth";
+import { useSession } from "next-auth/react";
 
 export default function UserAvatar() {
   const { avatarMenu } = useHeaderContentByRole();
@@ -20,7 +21,8 @@ export default function UserAvatar() {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const themeMenuRef = useRef<HTMLDivElement>(null);
   const { logout } = useAuth();
-  // Get display text for current theme
+  const session = useSession();
+
   const getThemeDisplayText = () => {
     switch (theme) {
       case "dark":
@@ -66,7 +68,11 @@ export default function UserAvatar() {
       return (
         <Link
           key={item.id}
-          href={item.href}
+          href={
+            item.label === "Your profile"
+              ? `/freelancer/${session.data?.user.id}`
+              : item.href
+          }
           className="flex items-center px-4 py-2 hover:bg-hover text-sm"
         >
           {getDynamicIcon(item.iconName, 16)}

@@ -40,7 +40,7 @@ export class AuthService {
         throw new UnauthorizedException('Wrong Email or Password');
       }
 
-      const payload = { sub: user.id, username: user.fullName };
+      const payload = { sub: user.email, username: user.fullName };
 
       const accessToken = await this.jwtService.signAsync(payload, {
         secret: process.env.JWT_SECRET,
@@ -72,7 +72,7 @@ export class AuthService {
 
   async googleSignin(email: string, role: string, name: string) {
     try {
-      const existingUser = await this.userService.findOne(email);
+      let existingUser = await this.userService.findOne(email);
 
       if (!existingUser && !role) {
         throw new NotFoundException(
@@ -81,17 +81,19 @@ export class AuthService {
       }
       if (!existingUser && role) {
         const randomPassword = Math.random().toString(36).slice(-10);
-        await this.userService.create({
+        const user = await this.userService.create({
           email,
           fullName: name,
           password: randomPassword,
           address: '',
           role: role as Role,
         });
+
+        existingUser = user;
       }
 
       const payload = {
-        sub: existingUser.id,
+        sub: existingUser.email,
         username: existingUser.fullName,
         role: existingUser.role,
       };

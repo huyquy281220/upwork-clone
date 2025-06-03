@@ -26,13 +26,19 @@ export class UserService {
     try {
       const user = await this.prismaService.user.findUnique({
         where: { id },
+        include: {
+          clientProfile: true,
+          freelancerProfile: true,
+        },
       });
       if (!user) {
         throw new NotFoundException(
           'Account does not exist. Please sign up or try again later.',
         );
       }
-      return user;
+
+      const { password, refreshToken, verificationToken, ...result } = user;
+      return result;
     } catch (error) {
       throw new NotFoundException(
         'Account does not exist. Please sign up or try again later.',
@@ -44,6 +50,10 @@ export class UserService {
     try {
       const user = await this.prismaService.user.findUnique({
         where: { email },
+        include: {
+          clientProfile: true,
+          freelancerProfile: true,
+        },
       });
       if (!user) return null;
       return user;
@@ -84,6 +94,22 @@ export class UserService {
           avatarUrl: '',
           phoneNumber: '',
           role: data.role.toUpperCase() as unknown as Role,
+
+          ...(data.role === 'FREELANCER' && {
+            freelancerProfile: {
+              create: {},
+            },
+          }),
+
+          ...(data.role === 'CLIENT' && {
+            clientProfile: {
+              create: { companyName: '', website: '', industry: '' },
+            },
+          }),
+        },
+        include: {
+          clientProfile: true,
+          freelancerProfile: true,
         },
       });
     } catch (error) {
@@ -96,6 +122,10 @@ export class UserService {
       return this.prismaService.user.update({
         where: { id: data.id },
         data,
+        include: {
+          clientProfile: true,
+          freelancerProfile: true,
+        },
       });
     } catch (error) {
       console.log(error);
@@ -106,6 +136,10 @@ export class UserService {
       return this.prismaService.user.update({
         where: { email: data.email },
         data,
+        include: {
+          clientProfile: true,
+          freelancerProfile: true,
+        },
       });
     } catch (error) {
       console.log(error);
@@ -114,14 +148,35 @@ export class UserService {
 
   async delete(id: string) {
     try {
+      const user = await this.prismaService.user.findUnique({
+        where: { id },
+        include: {
+          clientProfile: true,
+          freelancerProfile: true,
+        },
+      });
+
+      if (user.clientProfile) {
+        await this.prismaService.clientProfile.delete({
+          where: { userId: id },
+        });
+      }
+
+      if (user.freelancerProfile) {
+        await this.prismaService.freelancerProfile.delete({
+          where: { userId: id },
+        });
+      }
+
       await this.prismaService.user.delete({
         where: {
-          id: id,
+          id,
         },
       });
 
       return `Deleted user ${id}`;
     } catch (error) {
+      console.log(error);
       return 'User not found';
     }
   }
@@ -141,6 +196,10 @@ export class UserService {
         data: {
           verified: true,
           verificationToken: null,
+        },
+        include: {
+          clientProfile: true,
+          freelancerProfile: true,
         },
       });
 
