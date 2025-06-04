@@ -10,11 +10,10 @@ import { cn } from "@/lib/utils";
 import { useUser } from "@/hooks/useUserInfo";
 import { useSession } from "next-auth/react";
 import JobSkeleton from "@/components/common/JobSkeleton";
-import { FreelancerProps } from "@/types/user";
-
+import { FreelancerUser } from "@/types/user";
 export function UserSidebar() {
   const { data: session } = useSession();
-  const { data: user, isLoading } = useUser<FreelancerProps>(
+  const { data: user, isLoading } = useUser<FreelancerUser>(
     session?.user.id ?? ""
   );
 
@@ -43,7 +42,9 @@ export function UserSidebar() {
             </AvatarFallback>
           </Avatar>
           <h3 className="font-semibold">{user?.fullName}</h3>
-          <p className="text-sm text-gray-600">{user?.title}</p>
+          <p className="text-sm text-gray-600">
+            {user?.freelancerProfile?.title}
+          </p>
         </div>
 
         <div className="mb-4">

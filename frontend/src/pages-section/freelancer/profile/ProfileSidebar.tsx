@@ -7,18 +7,17 @@ import { Button } from "@/components/ui/button";
 import JobSkeletion from "@/components/common/JobSkeleton";
 import { useUser } from "@/hooks/useUserInfo";
 import { useSession } from "next-auth/react";
-import { FreelancerProps } from "@/types/user";
 import CirclePencil from "@/components/common/CirclePencil";
 import { useState } from "react";
 import { AddLanguageModal } from "@/components/modals/freelancer/AddLanguageModal";
 import { AddEducationModal } from "@/components/modals/freelancer/AddEducationModal";
-
+import { FreelancerUser } from "@/types/user";
 export function ProfileSidebar() {
   const [addLanguageModalOpen, setAddLanguageModalOpen] = useState(false);
   const [addEducationModalOpen, setAddEducationModalOpen] = useState(false);
 
   const { data: session } = useSession();
-  const { data: user, isLoading } = useUser<FreelancerProps>(
+  const { data: user, isLoading } = useUser<FreelancerUser>(
     session?.user.id ?? ""
   );
 

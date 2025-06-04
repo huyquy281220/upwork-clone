@@ -1,28 +1,145 @@
-export interface UserProps {
+// frontend/src/types/user.ts
+
+// Enums
+export enum Role {
+  CLIENT = "CLIENT",
+  FREELANCER = "FREELANCER",
+}
+
+export enum Availability {
+  MORE_THAN_30 = "MORE_THAN_30",
+  LESS_THAN_30 = "LESS_THAN_30",
+  AS_NEEDED = "AS_NEEDED",
+  NONE = "NONE",
+}
+
+export enum JobType {
+  FIXED = "FIXED",
+  HOURLY = "HOURLY",
+}
+
+export enum ProposalStatus {
+  PENDING = "PENDING",
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED",
+}
+
+export enum ContractStatus {
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+}
+
+// Base interfaces
+export interface BaseUser {
   id: string;
-  fullName: string;
   email: string;
-  role: string;
-  address: string;
-  phone: string;
-  avatar: string;
+  role: Role;
   createdAt: string;
   updatedAt: string;
+  avatarUrl?: string;
+  fullName?: string;
+  phoneNumber?: string;
+  address?: string;
+  verified: boolean;
 }
 
-export interface ClientProps extends UserProps {
-  companyName: string;
+export interface ClientProfile {
+  id: string;
+  userId: string;
+  companyName?: string;
+  website?: string;
+  industry?: string;
 }
 
-export interface FreelancerProps extends UserProps {
+export interface FreelancerProfile {
+  id: string;
+  userId: string;
+  hourlyRate?: number;
+  title?: string;
+  overview?: string;
+  available: Availability;
+  skills?: UserSkill[];
+  savedJobs?: UserSavedJob[];
+}
+
+// Additional related interfaces
+export interface UserSkill {
+  userId: string;
+  skillId: string;
+  proficiency?: number;
+  skill: Skill;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  category?: string;
+}
+
+export interface UserSavedJob {
+  id: string;
+  userId: string;
+  jobId: string;
+  createdAt: string;
+  job: Job;
+}
+
+export interface Job {
+  id: string;
+  clientId: string;
   title: string;
-  skills: string[];
   description: string;
-  hourlyRate: number;
-  availability: string;
+  category: string;
+  budget: number;
+  type: JobType;
+  createdAt: string;
+  skills: JobSkill[];
 }
 
-export enum Role {
-  FREELANCER = "Freelancer",
-  CLIENT = "Client",
+export interface JobSkill {
+  jobId: string;
+  skillId: string;
+  skill: Skill;
 }
+
+// Combined User Types
+export interface ClientUser extends BaseUser {
+  role: Role.CLIENT;
+  clientProfile: ClientProfile;
+  freelancerProfile: null;
+}
+
+export interface FreelancerUser extends BaseUser {
+  role: Role.FREELANCER;
+  clientProfile: null;
+  freelancerProfile: FreelancerProfile;
+}
+
+export type User = ClientUser | FreelancerUser;
+
+// Update Input Types
+interface BaseUserUpdateInput {
+  email: string;
+  fullName?: string;
+  phoneNumber?: string;
+  address?: string;
+  avatarUrl?: string;
+}
+export interface ClientUserUpdateInput extends BaseUserUpdateInput {
+  clientProfile: {
+    companyName?: string;
+    website?: string;
+    industry?: string;
+  };
+}
+export interface FreelancerUserUpdateInput extends BaseUserUpdateInput {
+  freelancerProfile: {
+    title?: string;
+    hourlyRate?: number;
+    overview?: string;
+    available?: Availability;
+  };
+}
+
+export type UserUpdateInput = ClientUserUpdateInput | FreelancerUserUpdateInput;

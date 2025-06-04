@@ -14,7 +14,7 @@ import { useHeaderContentByRole } from "@/hooks/useHeaderContentByRole";
 import { useAuth } from "@/hooks/useAuth";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
-import { Role, UserProps } from "@/types/user";
+import { Role, User } from "@/types/user";
 import JobSkeleton from "@/components/common/JobSkeleton";
 
 export default function UserAvatar() {
@@ -25,7 +25,7 @@ export default function UserAvatar() {
   const themeMenuRef = useRef<HTMLDivElement>(null);
   const { logout } = useAuth();
   const { data: session } = useSession();
-  const { data: user, isLoading } = useUser<UserProps>(session?.user.id ?? "");
+  const { data: user, isLoading } = useUser<User>(session?.user.id ?? "");
 
   const getThemeDisplayText = () => {
     switch (theme) {
