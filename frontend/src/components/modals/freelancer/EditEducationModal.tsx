@@ -9,6 +9,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { SelectValue } from "@/components/ui/select";
+import { SelectItem, SelectTrigger } from "@/components/ui/select";
+import { SelectContent } from "@/components/ui/select";
+import { Select } from "@/components/ui/select";
 
 interface EditEducationModalProps {
   open: boolean;
@@ -106,7 +110,10 @@ export function EditEducationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-card text-card-foreground">
+      <DialogContent
+        className="sm:max-w-[600px] bg-card text-card-foreground"
+        showCloseButton={false}
+      >
         <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <DialogTitle className="text-xl font-semibold">
             Edit education
@@ -152,37 +159,31 @@ export function EditEducationModal({
               Dates Attended (Optional)
             </label>
             <div className="grid grid-cols-2 gap-4">
-              <select
-                id="fromYear"
-                value={fromYear}
-                onChange={(e) => setFromYear(e.target.value)}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-              >
-                <option value="" disabled>
-                  From
-                </option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+              <Select value={fromYear} onValueChange={setFromYear}>
+                <SelectTrigger className="bg-background border-border">
+                  <SelectValue placeholder="From" />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-              <select
-                id="toYear"
-                value={toYear}
-                onChange={(e) => setToYear(e.target.value)}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-              >
-                <option value="" disabled>
-                  To (or expected graduation year)
-                </option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+              <Select value={toYear} onValueChange={setToYear}>
+                <SelectTrigger className="bg-background border-border">
+                  <SelectValue placeholder="To (or expected graduation year)" />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -190,21 +191,18 @@ export function EditEducationModal({
             <label htmlFor="degree" className="text-sm font-medium">
               Degree (Optional)
             </label>
-            <select
-              id="degree"
-              value={degree}
-              onChange={(e) => setDegree(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-            >
-              <option value="" disabled>
-                Degree (Optional)
-              </option>
-              {degrees.map((deg) => (
-                <option key={deg} value={deg}>
-                  {deg}
-                </option>
-              ))}
-            </select>
+            <Select value={degree} onValueChange={setDegree}>
+              <SelectTrigger className="bg-background border-border">
+                <SelectValue placeholder="Degree (Optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                {degrees.map((deg) => (
+                  <SelectItem key={deg} value={deg}>
+                    {deg}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

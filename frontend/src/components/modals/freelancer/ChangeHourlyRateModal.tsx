@@ -40,7 +40,10 @@ export function ChangeHourlyRateModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-card text-card-foreground">
+      <DialogContent
+        className="sm:max-w-[500px] bg-card text-card-foreground"
+        showCloseButton={false}
+      >
         <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <DialogTitle className="text-xl font-semibold">
             Change hourly rate

@@ -9,6 +9,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface AddLanguageModalProps {
   open: boolean;
@@ -66,7 +73,10 @@ export function AddLanguageModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-card text-card-foreground">
+      <DialogContent
+        className="sm:max-w-[600px] bg-card text-card-foreground"
+        showCloseButton={false}
+      >
         <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <DialogTitle className="text-xl font-semibold">
             Add language
@@ -86,42 +96,36 @@ export function AddLanguageModal({
             <label htmlFor="language" className="text-sm font-medium">
               Language
             </label>
-            <select
-              id="language"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-            >
-              <option value="" disabled>
-                Search for language
-              </option>
-              {languages.map((lang) => (
-                <option key={lang} value={lang}>
-                  {lang}
-                </option>
-              ))}
-            </select>
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="bg-background border-border">
+                <SelectValue placeholder="Search for language" />
+              </SelectTrigger>
+              <SelectContent>
+                {languages.map((lang) => (
+                  <SelectItem key={lang} value={lang}>
+                    {lang}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
             <label htmlFor="proficiency" className="text-sm font-medium">
               Proficiency level
             </label>
-            <select
-              id="proficiency"
-              value={proficiency}
-              onChange={(e) => setProficiency(e.target.value)}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-            >
-              <option value="" disabled>
-                Search for proficiency level
-              </option>
-              {proficiencyLevels.map((level) => (
-                <option key={level.value} value={level.value}>
-                  {level.label}
-                </option>
-              ))}
-            </select>
+            <Select value={proficiency} onValueChange={setProficiency}>
+              <SelectTrigger className="bg-background border-border">
+                <SelectValue placeholder="Search for proficiency level" />
+              </SelectTrigger>
+              <SelectContent>
+                {proficiencyLevels.map((level) => (
+                  <SelectItem key={level.value} value={level.value}>
+                    {level.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

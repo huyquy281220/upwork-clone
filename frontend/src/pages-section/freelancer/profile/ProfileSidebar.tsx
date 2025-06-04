@@ -9,8 +9,14 @@ import { useUser } from "@/hooks/useUserInfo";
 import { useSession } from "next-auth/react";
 import { FreelancerProps } from "@/types/user";
 import CirclePencil from "@/components/common/CirclePencil";
+import { useState } from "react";
+import { AddLanguageModal } from "@/components/modals/freelancer/AddLanguageModal";
+import { AddEducationModal } from "@/components/modals/freelancer/AddEducationModal";
 
 export function ProfileSidebar() {
+  const [addLanguageModalOpen, setAddLanguageModalOpen] = useState(false);
+  const [addEducationModalOpen, setAddEducationModalOpen] = useState(false);
+
   const { data: session } = useSession();
   const { data: user, isLoading } = useUser<FreelancerProps>(
     session?.user.id ?? ""
@@ -92,7 +98,10 @@ export function ProfileSidebar() {
               <p className="font-medium">Languages</p>
               <div className="flex items-center gap-2">
                 <CirclePencil />
-                <CirclePlus className="w-8 h-8 text-green-600 stroke-1 cursor-pointer" />
+                <CirclePlus
+                  className="w-8 h-8 text-green-600 stroke-1 cursor-pointer"
+                  onClick={() => setAddLanguageModalOpen(true)}
+                />
               </div>
             </div>
 
@@ -107,7 +116,10 @@ export function ProfileSidebar() {
               <p className="font-medium">Education</p>
               <div className="flex items-center gap-2">
                 <CirclePencil />
-                <CirclePlus className="w-8 h-8 text-green-600 stroke-1 cursor-pointer" />
+                <CirclePlus
+                  className="w-8 h-8 text-green-600 stroke-1 cursor-pointer"
+                  onClick={() => setAddEducationModalOpen(true)}
+                />
               </div>
             </div>
 
@@ -130,6 +142,17 @@ export function ProfileSidebar() {
           </div>
         </CardContent>
       </Card>
+
+      <AddLanguageModal
+        open={addLanguageModalOpen}
+        onOpenChange={setAddLanguageModalOpen}
+        onSave={() => {}}
+      />
+      <AddEducationModal
+        open={addEducationModalOpen}
+        onOpenChange={setAddEducationModalOpen}
+        onSave={() => {}}
+      />
     </div>
   );
 }
