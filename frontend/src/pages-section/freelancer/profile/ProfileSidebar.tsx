@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { MapPin, Clock, Github } from "lucide-react";
+import { MapPin, Clock, Github, CirclePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import JobSkeletion from "@/components/common/JobSkeleton";
 import { useUser } from "@/hooks/useUserInfo";
@@ -90,7 +90,10 @@ export function ProfileSidebar() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <p className="font-medium">Languages</p>
-              <CirclePencil />
+              <div className="flex items-center gap-2">
+                <CirclePencil />
+                <CirclePlus className="w-8 h-8 text-green-600 stroke-1 cursor-pointer" />
+              </div>
             </div>
 
             <p className="text-sm text-muted-foreground">
@@ -102,7 +105,10 @@ export function ProfileSidebar() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <p className="font-medium">Education</p>
-              <CirclePencil />
+              <div className="flex items-center gap-2">
+                <CirclePencil />
+                <CirclePlus className="w-8 h-8 text-green-600 stroke-1 cursor-pointer" />
+              </div>
             </div>
 
             <p className="text-sm text-muted-foreground">

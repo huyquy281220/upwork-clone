@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import SignupForm from "@/components/sign-up/SignUpForm";
+import SignupForm from "@/components/forms/sign-up/SignUpForm";
 import { GoogleSvg } from "@/assets/svg";
 import SwitchTheme from "@/components/common/SwitchTheme";
 import { useAuth } from "@/hooks/useAuth";
