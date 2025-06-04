@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Role, User } from '@prisma/client';
+import { Prisma, Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { EmailService } from 'src/email/email.service';
@@ -136,11 +136,26 @@ export class UserService {
       console.log(error);
     }
   }
-  async updatePartial(data: Partial<User>) {
+
+  async updatePartial(data: Prisma.UserUpdateInput & { email: string }) {
     try {
+      const { clientProfile, freelancerProfile, ...userData } = data;
+
       return this.prismaService.user.update({
         where: { email: data.email },
-        data,
+        data: {
+          ...userData,
+          ...(clientProfile && {
+            clientProfile: {
+              update: clientProfile,
+            },
+          }),
+          ...(freelancerProfile && {
+            freelancerProfile: {
+              update: freelancerProfile,
+            },
+          }),
+        },
         include: {
           clientProfile: true,
           freelancerProfile: true,
@@ -148,6 +163,7 @@ export class UserService {
       });
     } catch (error) {
       console.log(error);
+      throw new BadRequestException('Failed to update user profile');
     }
   }
 

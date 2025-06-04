@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import {
@@ -30,13 +31,8 @@ export class UserController {
     return this.userService.findById(id);
   }
 
-  // @Post('create')
-  // async create(@Body() createUser: CreateUserDto) {
-  //   return this.userService.create(createUser);
-  // }
-
   @Patch('update')
-  async update(@Body() data: Partial<CreateUserDto>) {
+  async update(@Body() data: Prisma.UserUpdateInput & { email: string }) {
     return this.userService.updatePartial(data);
   }
 
