@@ -1,4 +1,4 @@
-export default function JobSkeletion() {
+export default function JobSkeleton() {
   return (
     <div className="p-6 rounded-lg max-w-4xl mx-auto">
       <div className="flex items-center space-x-4 mb-6">

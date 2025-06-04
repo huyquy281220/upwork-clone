@@ -88,8 +88,8 @@ export default function TrustedBrandsSection() {
             <button
               onClick={() => swiperRef.current?.slidePrev()}
               className={cn(
-                "p-1 bg-white rounded-full",
-                swiperRef.current?.allowSlidePrev ? "opacity-100" : "opacity-0"
+                "p-1 bg-white rounded-full"
+                // swiperRef.current?.allowSlidePrev ? "opacity-100" : "opacity-0"
               )}
             >
               <ArrowLeft className="text-[#14a800]" />
@@ -99,8 +99,8 @@ export default function TrustedBrandsSection() {
             <button
               onClick={() => swiperRef.current?.slideNext()}
               className={cn(
-                "p-1 bg-white rounded-full",
-                swiperRef.current?.allowSlideNext ? "opacity-100" : "opacity-0"
+                "p-1 bg-white rounded-full"
+                // swiperRef.current?.allowSlideNext ? "opacity-100" : "opacity-0"
               )}
             >
               <ArrowRight className="text-[#14a800]" />

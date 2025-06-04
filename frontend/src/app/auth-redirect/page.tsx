@@ -14,6 +14,7 @@ export default function Loading() {
   useEffect(() => {
     if (session?.user) {
       setCookie("role", session.user.role);
+      setCookie("accessToken", session.user.accessToken);
       setIsLoading(false);
     }
   }, [session]);

@@ -2,22 +2,21 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { MapPin, Clock, Pencil, Github } from "lucide-react";
+import { MapPin, Clock, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getUserById } from "@/services/userService";
-import { useQuery } from "@tanstack/react-query";
-import { usePathname } from "next/navigation";
-import JobSkeletion from "@/components/common/JobSkeletion";
+import JobSkeletion from "@/components/common/JobSkeleton";
+import { useUser } from "@/hooks/useUserInfo";
+import { useSession } from "next-auth/react";
+import { FreelancerProps } from "@/types/user";
+import CirclePencil from "@/components/common/CirclePencil";
 
 export function ProfileSidebar() {
-  const pathname = usePathname();
-  const id = pathname.split("/")[2];
-  const { data: user } = useQuery({
-    queryKey: ["user"],
-    queryFn: () => getUserById(id),
-  });
+  const { data: session } = useSession();
+  const { data: user, isLoading } = useUser<FreelancerProps>(
+    session?.user.id ?? ""
+  );
 
-  if (!user) return <JobSkeletion />;
+  if (isLoading) return <JobSkeletion />;
 
   return (
     <div className="space-y-6">
@@ -31,7 +30,7 @@ export function ProfileSidebar() {
             />
             <AvatarFallback>HH</AvatarFallback>
           </Avatar>
-          <h1 className="text-2xl font-bold">{user.fullName}</h1>
+          <h1 className="text-2xl font-bold">{user?.fullName}</h1>
           <div className="flex items-center justify-center gap-2 text-muted-foreground">
             <MapPin className="w-4 h-4" />
             <span>Hanoi, Vietnam</span>
@@ -80,7 +79,7 @@ export function ProfileSidebar() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <p className="font-medium">Hours per week</p>
-              <Pencil className="w-4 h-4 text-green-600 cursor-pointer" />
+              <CirclePencil />
             </div>
 
             <p className="text-sm text-muted-foreground">
@@ -91,7 +90,7 @@ export function ProfileSidebar() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <p className="font-medium">Languages</p>
-              <Pencil className="w-4 h-4 text-green-600 cursor-pointer" />
+              <CirclePencil />
             </div>
 
             <p className="text-sm text-muted-foreground">
@@ -103,7 +102,7 @@ export function ProfileSidebar() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <p className="font-medium">Education</p>
-              <Pencil className="w-4 h-4 text-green-600 cursor-pointer" />
+              <CirclePencil />
             </div>
 
             <p className="text-sm text-muted-foreground">

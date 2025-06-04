@@ -13,6 +13,9 @@ import { getDynamicIcon } from "@/utils/getDynamicIcon";
 import { useHeaderContentByRole } from "@/hooks/useHeaderContentByRole";
 import { useAuth } from "@/hooks/useAuth";
 import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUserInfo";
+import { Role, UserProps } from "@/types/user";
+import JobSkeleton from "@/components/common/JobSkeleton";
 
 export default function UserAvatar() {
   const { avatarMenu } = useHeaderContentByRole();
@@ -21,7 +24,8 @@ export default function UserAvatar() {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const themeMenuRef = useRef<HTMLDivElement>(null);
   const { logout } = useAuth();
-  const session = useSession();
+  const { data: session } = useSession();
+  const { data: user, isLoading } = useUser<UserProps>(session?.user.id ?? "");
 
   const getThemeDisplayText = () => {
     switch (theme) {
@@ -57,6 +61,8 @@ export default function UserAvatar() {
     icon: getDynamicIcon(option.iconName, 16),
   }));
 
+  if (isLoading) return <JobSkeleton />;
+
   // Render a menu item
   const renderMenuItem = (item: {
     id: string;
@@ -70,7 +76,7 @@ export default function UserAvatar() {
           key={item.id}
           href={
             item.label === "Your profile"
-              ? `/freelancer/${session.data?.user.id}`
+              ? `/freelancer/${session?.user.id}`
               : item.href
           }
           className="flex items-center px-4 py-2 hover:bg-hover text-sm"
@@ -146,8 +152,10 @@ export default function UserAvatar() {
               />
             </div>
             <div>
-              <h3 className="font-semibold ">Hai Hai</h3>
-              <p className="text-sm text-gray-400">Freelancer</p>
+              <h3 className="font-semibold ">{user?.fullName}</h3>
+              <p className="text-sm text-gray-400">
+                {user?.role ? Role[user.role as keyof typeof Role] : ""}
+              </p>
             </div>
           </div>
 

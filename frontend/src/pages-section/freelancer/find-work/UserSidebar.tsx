@@ -2,13 +2,22 @@
 
 import type React from "react";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { ChevronDown, ChevronUp, Edit2, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUser } from "@/hooks/useUserInfo";
+import { useSession } from "next-auth/react";
+import JobSkeleton from "@/components/common/JobSkeleton";
+import { FreelancerProps } from "@/types/user";
 
 export function UserSidebar() {
+  const { data: session } = useSession();
+  const { data: user, isLoading } = useUser<FreelancerProps>(
+    session?.user.id ?? ""
+  );
+
   const [showPromoteAds, setShowPromoteAds] = useState(false);
   const [showConnects, setShowConnects] = useState(false);
   const [showProposals, setShowProposals] = useState(false);
@@ -21,9 +30,7 @@ export function UserSidebar() {
     return () => setter((prev) => !prev);
   };
 
-  useEffect(() => {
-    console.log("showPreferences changed:", showPreferences);
-  }, [showPreferences]);
+  if (isLoading) return <JobSkeleton />;
 
   return (
     <div className="space-y-4 hidden md:block">
@@ -35,8 +42,8 @@ export function UserSidebar() {
               HH
             </AvatarFallback>
           </Avatar>
-          <h3 className="font-semibold">Hai H.</h3>
-          <p className="text-sm text-gray-600">web & design</p>
+          <h3 className="font-semibold">{user?.fullName}</h3>
+          <p className="text-sm text-gray-600">{user?.title}</p>
         </div>
 
         <div className="mb-4">

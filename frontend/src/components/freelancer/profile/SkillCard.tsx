@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Pencil } from "lucide-react";
 import { SkillBadge } from "@/components/common/SkillBadge";
+import CirclePencil from "@/components/common/CirclePencil";
 
 const skills = ["Web Application"];
 
@@ -10,7 +10,7 @@ export function SkillCard() {
       <CardHeader>
         <div className="flex items-center gap-3">
           <h3 className="text-xl font-semibold">Skills</h3>
-          <Pencil className="w-4 h-4 text-green-600 cursor-pointer" />
+          <CirclePencil />
         </div>
       </CardHeader>
       <CardContent>

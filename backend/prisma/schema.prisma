@@ -49,10 +49,7 @@ model FreelancerProfile {
   userId          String        @unique
   user            User          @relation(fields: [userId], references: [id])
   hourlyRate      Float?
-  // bio             String?
-  // avatarUrl       String?
-  // country         String?
-  // language        String?
+  title           String?
   available       Boolean       @default(true)
   
   proposals       Proposal[]    @relation("FreelancerProposals")
