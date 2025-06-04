@@ -122,27 +122,27 @@ export class UserService {
     }
   }
 
-  async updatePartialById(data: Partial<User>) {
-    try {
-      return this.prismaService.user.update({
-        where: { id: data.id },
-        data,
-        include: {
-          clientProfile: true,
-          freelancerProfile: true,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // async updatePartialById(data: Partial<User>) {
+  //   try {
+  //     return this.prismaService.user.update({
+  //       where: { id: data.id },
+  //       data,
+  //       include: {
+  //         clientProfile: true,
+  //         freelancerProfile: true,
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
-  async updatePartial(data: Prisma.UserUpdateInput & { email: string }) {
+  async updatePartialById(data: Prisma.UserUpdateInput & { id: string }) {
     try {
       const { clientProfile, freelancerProfile, ...userData } = data;
 
       return this.prismaService.user.update({
-        where: { email: data.email },
+        where: { id: data.id },
         data: {
           ...userData,
           ...(clientProfile && {

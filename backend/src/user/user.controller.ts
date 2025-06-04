@@ -32,8 +32,8 @@ export class UserController {
   }
 
   @Patch('update')
-  async update(@Body() data: Prisma.UserUpdateInput & { email: string }) {
-    return this.userService.updatePartial(data);
+  async update(@Body() data: Prisma.UserUpdateInput & { id: string }) {
+    return this.userService.updatePartialById(data);
   }
 
   @Delete('delete/:id')
