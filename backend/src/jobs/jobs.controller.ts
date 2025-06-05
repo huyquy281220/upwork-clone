@@ -8,34 +8,32 @@ import {
   Delete,
 } from '@nestjs/common';
 import { JobsService } from './jobs.service';
-import { Job } from '@prisma/client';
-
+import { CreateJobDto } from './dto/create-job.dto';
 @Controller('jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
-  @Get()
-  getJobs() {
-    return this.jobsService.getJobs();
-  }
-
   @Get(':id')
   getJobById(@Param('id') id: string) {
-    return this.jobsService.getJobById(id);
+    return this.jobsService.findOneJob(id);
   }
 
   @Post()
-  createJob(@Body() data: Job) {
-    return this.jobsService.createJob(data);
+  createJob(@Param('clientId') clientId: string, @Body() data: CreateJobDto) {
+    return this.jobsService.createJob(clientId, data);
   }
 
   @Put(':id')
-  updateJob(@Param('id') id: string, @Body() data: Job) {
-    return this.jobsService.updateJob(id, data);
+  updateJob(
+    @Param('id') id: string,
+    @Param('clientId') clientId: string,
+    @Body() data: CreateJobDto,
+  ) {
+    return this.jobsService.updateJob(id, clientId, data);
   }
 
   @Delete(':id')
-  deleteJob(@Param('id') id: string) {
-    return this.jobsService.deleteJob(id);
+  deleteJob(@Param('id') id: string, @Param('clientId') clientId: string) {
+    return this.jobsService.deleteJob(id, clientId);
   }
 }
