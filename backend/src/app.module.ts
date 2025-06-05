@@ -14,6 +14,7 @@ import { SavedJobsModule } from './saved-jobs/saved-jobs.module';
 import { SavedJobsService } from './saved-jobs/saved-jobs.service';
 import { LanguagesModule } from './languages/languages.module';
 import { SkillsModule } from './skills/skills.module';
+import { EducationModule } from './education/education.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SkillsModule } from './skills/skills.module';
     SavedJobsModule,
     LanguagesModule,
     SkillsModule,
+    EducationModule,
   ],
   controllers: [AppController],
   providers: [

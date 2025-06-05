@@ -2,7 +2,7 @@ import { Controller, Get, Patch, Param, Body } from '@nestjs/common';
 import { SkillsService } from './skills.service';
 import { UpdateSkillsDto } from './dto/update-skills.dto';
 
-@Controller('users/:userId/skills')
+@Controller('user/:userId/skills')
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 
