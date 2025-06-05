@@ -1,7 +1,7 @@
 import { ProposalStatus } from '@prisma/client';
 import { IsString, IsNumber, IsOptional, IsEnum } from 'class-validator';
 
-export class ProposalDto {
+export class UpdateProposalDto {
   @IsString()
   jobId: string;
 

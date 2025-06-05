@@ -4,14 +4,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ProposalDto } from './dto/proposal';
 import { ProposalStatus } from '@prisma/client';
+import { CreateProposalDto } from './dto/create-proposal';
+import { UpdateProposalDto } from './dto/update-proposal.dto';
 
 @Injectable()
 export class ProposalsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createProposal(freelancerId: string, data: ProposalDto) {
+  async createProposal(freelancerId: string, data: CreateProposalDto) {
     return this.prismaService.$transaction(async (tx) => {
       const freelancer = await tx.freelancerProfile.findUnique({
         where: { userId: freelancerId },
@@ -74,7 +75,11 @@ export class ProposalsService {
     return proposal;
   }
 
-  async updateProposal(id: string, freelancerId: string, data: ProposalDto) {
+  async updateProposal(
+    id: string,
+    freelancerId: string,
+    data: UpdateProposalDto,
+  ) {
     return this.prismaService.$transaction(async (tx) => {
       const proposal = await tx.proposal.findUnique({ where: { id } });
       if (!proposal) {
