@@ -52,8 +52,8 @@ export class AuthService {
         expiresIn: '7d',
       });
 
-      const updatedUser = await this.userService.updatePartial({
-        email: user.email,
+      const updatedUser = await this.userService.updatePartialById({
+        id: user.id,
         refreshToken,
       });
 
@@ -108,8 +108,8 @@ export class AuthService {
         expiresIn: '7d',
       });
 
-      const updatedUser = await this.userService.updatePartial({
-        email: existingUser.email,
+      const updatedUser = await this.userService.updatePartialById({
+        id: existingUser.id,
         refreshToken,
       });
 
