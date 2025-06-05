@@ -35,7 +35,7 @@ model User {
 model ClientProfile {
   id          String     @id @default(uuid())
   userId      String     @unique
-  user        User       @relation(fields: [userId], references: [id])
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   companyName String?
   website     String?
   industry    String?
@@ -47,7 +47,7 @@ model ClientProfile {
 model FreelancerProfile {
   id              String        @id @default(uuid())
   userId          String        @unique
-  user            User          @relation(fields: [userId], references: [id])
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   hourlyRate      Float?
   title           String?
   overview        String?
@@ -70,7 +70,7 @@ model Job {
   type         JobType
   createdAt    DateTime       @default(now())
   contracts    Contract[]
-  client       ClientProfile  @relation("ClientJobs", fields: [clientId], references: [userId])
+  client       ClientProfile  @relation("ClientJobs", fields: [clientId], references: [userId], onDelete: Cascade)
   proposals    Proposal[]
   skills       JobSkill[]
   savedByUsers UserSavedJob[] @relation("SavedJobs")
@@ -82,7 +82,7 @@ model UserSavedJob {
   jobId     String
   createdAt DateTime          @default(now())
   job       Job               @relation("SavedJobs", fields: [jobId], references: [id])
-  freelancer FreelancerProfile @relation("FreelancerSavedJobs", fields: [userId], references: [userId])
+  freelancer FreelancerProfile @relation("FreelancerSavedJobs", fields: [userId], references: [userId], onDelete: Cascade)
 
   @@unique([userId, jobId])
 }
@@ -110,7 +110,7 @@ model Language {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   
-  freelancer     FreelancerProfile @relation("FreelancerLanguages", fields: [freelancerId], references: [userId])
+  freelancer     FreelancerProfile @relation("FreelancerLanguages", fields: [freelancerId], references: [userId], onDelete: Cascade)
 }
 
 
@@ -126,7 +126,7 @@ model UserSkill {
   userId      String
   skillId     String
   proficiency Int?
-  freelancer  FreelancerProfile @relation("FreelancerSkills", fields: [userId], references: [userId])
+  freelancer  FreelancerProfile @relation("FreelancerSkills", fields: [userId], references: [userId], onDelete: Cascade)
   skill       Skill             @relation(fields: [skillId], references: [id])
 
   @@id([userId, skillId])
@@ -135,7 +135,7 @@ model UserSkill {
 model JobSkill {
   jobId    String
   skillId  String
-  job      Job   @relation(fields: [jobId], references: [id])
+  job      Job   @relation(fields: [jobId], references: [id], onDelete: Cascade)
   skill    Skill @relation(fields: [skillId], references: [id])
 
   @@id([jobId, skillId])
@@ -149,7 +149,7 @@ model Proposal {
   hourlyRate   Float
   status       ProposalStatus
   createdAt    DateTime          @default(now())
-  freelancer   FreelancerProfile @relation("FreelancerProposals", fields: [freelancerId], references: [userId])
+  freelancer   FreelancerProfile @relation("FreelancerProposals", fields: [freelancerId], references: [userId], onDelete: Cascade)
   job          Job               @relation(fields: [jobId], references: [id])
 }
 
@@ -184,7 +184,7 @@ model Notification {
   content   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Payment {

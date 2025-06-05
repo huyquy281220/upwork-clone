@@ -7,4 +7,7 @@ Module({
   imports: [PrismaModule],
   controllers: [JobsController],
   providers: [JobsService],
+  exports: [JobsService],
 });
+
+export class JobsModule {}

@@ -46,19 +46,16 @@ export class SkillsService {
         }
 
         // Update existing skills
-        for (const skill of toUpdate) {
-          await tx.userSkill.update({
-            where: {
-              userId_skillId: {
-                userId,
-                skillId: skill.skillId,
+        await Promise.all(
+          toUpdate.map((skill) =>
+            tx.userSkill.update({
+              where: { userId_skillId: { userId, skillId: skill.skillId } },
+              data: {
+                proficiency: skill.proficiency,
               },
-            },
-            data: {
-              proficiency: skill.proficiency,
-            },
-          });
-        }
+            }),
+          ),
+        );
 
         // Create new skills
         if (toCreate.length > 0) {

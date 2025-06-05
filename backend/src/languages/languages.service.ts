@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LanguageItemDto } from './dto/update-languages.dto';
 
@@ -8,6 +12,13 @@ export class LanguagesService {
 
   async updateUserLanguages(userId: string, languages: LanguageItemDto[]) {
     try {
+      const freelancer = await this.prismaService.freelancerProfile.findUnique({
+        where: { userId },
+      });
+      if (!freelancer) {
+        throw new NotFoundException(`Freelancer not found`);
+      }
+
       const existing = await this.prismaService.language.findMany({
         where: { freelancerId: userId },
       });
@@ -36,15 +47,17 @@ export class LanguagesService {
         }
 
         // Update existing languages
-        for (const lang of toUpdate) {
-          await tx.language.update({
-            where: { id: lang.id },
-            data: {
-              name: lang.name,
-              level: lang.level,
-            },
-          });
-        }
+        await Promise.all(
+          toUpdate.map((lang) =>
+            tx.language.update({
+              where: { id: lang.id },
+              data: {
+                name: lang.name,
+                level: lang.level,
+              },
+            }),
+          ),
+        );
 
         // Create new languages
         if (toCreate.length > 0) {

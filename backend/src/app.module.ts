@@ -15,12 +15,13 @@ import { SavedJobsService } from './saved-jobs/saved-jobs.service';
 import { LanguagesModule } from './languages/languages.module';
 import { SkillsModule } from './skills/skills.module';
 import { EducationModule } from './education/education.module';
-
+import { JobsModule } from './jobs/jobs.module';
 @Module({
   imports: [
     UserModule,
     PrismaModule,
     MessageModule,
+    JobsModule,
     AuthModule,
     JwtModule,
     SavedJobsModule,

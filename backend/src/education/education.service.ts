@@ -40,19 +40,21 @@ export class EducationService {
         }
 
         // UPDATE: Update education with ID
-        for (const edu of toUpdate) {
-          await tx.education.update({
-            where: { id: edu.id },
-            data: {
-              school: edu.school,
-              startYear: edu.startYear,
-              endYear: edu.endYear,
-              degree: edu.degree,
-              areaOfStudy: edu.areaOfStudy,
-              description: edu.description,
-            },
-          });
-        }
+        await Promise.all(
+          toUpdate.map((edu) =>
+            tx.education.update({
+              where: { id: edu.id },
+              data: {
+                school: edu.school,
+                startYear: edu.startYear,
+                endYear: edu.endYear,
+                degree: edu.degree,
+                areaOfStudy: edu.areaOfStudy,
+                description: edu.description,
+              },
+            }),
+          ),
+        );
 
         // CREATE: Create new education without ID
         if (toCreate.length > 0) {
