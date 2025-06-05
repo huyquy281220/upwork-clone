@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -16,30 +15,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { getLanguages } from "@/utils/getLanguages";
 
 interface AddLanguageModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (language: string, proficiency: string) => void;
 }
-
-const languages = [
-  "English",
-  "Spanish",
-  "French",
-  "German",
-  "Italian",
-  "Portuguese",
-  "Russian",
-  "Chinese (Mandarin)",
-  "Japanese",
-  "Korean",
-  "Arabic",
-  "Hindi",
-  "Dutch",
-  "Swedish",
-  "Norwegian",
-];
 
 const proficiencyLevels = [
   { value: "basic", label: "Basic" },
@@ -55,6 +52,16 @@ export function AddLanguageModal({
 }: AddLanguageModalProps) {
   const [language, setLanguage] = useState("");
   const [proficiency, setProficiency] = useState("");
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [languages, setLanguages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      const langs = await getLanguages();
+      setLanguages(langs);
+    };
+    fetchLanguages();
+  }, []);
 
   const handleSave = () => {
     if (language && proficiency) {
@@ -70,13 +77,10 @@ export function AddLanguageModal({
     setProficiency("");
     onOpenChange(false);
   };
-
+  console.log(languageOpen);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[600px] bg-card text-card-foreground"
-        showCloseButton={false}
-      >
+      <DialogContent className="sm:max-w-[500px] bg-card text-card-foreground">
         <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <DialogTitle className="text-xl font-semibold">
             Add language
@@ -96,18 +100,51 @@ export function AddLanguageModal({
             <label htmlFor="language" className="text-sm font-medium">
               Language
             </label>
-            <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="bg-background border-border">
-                <SelectValue placeholder="Search for language" />
-              </SelectTrigger>
-              <SelectContent>
-                {languages.map((lang) => (
-                  <SelectItem key={lang} value={lang}>
-                    {lang}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={languageOpen} onOpenChange={setLanguageOpen} modal>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={languageOpen}
+                  className="w-full justify-between bg-background border-border"
+                >
+                  {language || "Search for language"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0" align="start">
+                <Command>
+                  <CommandInput
+                    placeholder="Search language..."
+                    className="h-9"
+                    autoFocus
+                  />
+                  <CommandList>
+                    <CommandEmpty>No language found.</CommandEmpty>
+                    <CommandGroup>
+                      {languages.map((lang) => (
+                        <CommandItem
+                          key={lang}
+                          value={lang}
+                          onSelect={(currentValue) => {
+                            setLanguage(currentValue);
+                            setLanguageOpen(false);
+                          }}
+                        >
+                          {lang}
+                          <Check
+                            className={cn(
+                              "ml-auto h-4 w-4",
+                              language === lang ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="space-y-2">
