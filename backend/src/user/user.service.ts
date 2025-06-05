@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto';
 import { Prisma, Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
@@ -137,12 +137,12 @@ export class UserService {
   //   }
   // }
 
-  async updatePartialById(data: Prisma.UserUpdateInput & { id: string }) {
+  async updatePartialById(data: UpdateUserDto) {
     try {
-      const { clientProfile, freelancerProfile, ...userData } = data;
+      const { clientProfile, freelancerProfile, id, ...userData } = data;
 
       return this.prismaService.user.update({
-        where: { id: data.id },
+        where: { id },
         data: {
           ...userData,
           ...(clientProfile && {
