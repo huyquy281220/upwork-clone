@@ -12,6 +12,8 @@ import { AuthService } from './auth/auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { SavedJobsModule } from './saved-jobs/saved-jobs.module';
 import { SavedJobsService } from './saved-jobs/saved-jobs.service';
+import { LanguagesModule } from './languages/languages.module';
+
 @Module({
   imports: [
     UserModule,
@@ -20,6 +22,7 @@ import { SavedJobsService } from './saved-jobs/saved-jobs.service';
     AuthModule,
     JwtModule,
     SavedJobsModule,
+    LanguagesModule,
   ],
   controllers: [AppController],
   providers: [
