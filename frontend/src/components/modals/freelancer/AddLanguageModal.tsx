@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Command } from "@/components/ui/command";
+
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,27 +18,62 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getLanguages } from "@/utils/getLanguages";
 
 interface AddLanguageModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (language: string, proficiency: string) => void;
 }
+
+const languages = [
+  "English",
+  "Spanish",
+  "French",
+  "German",
+  "Italian",
+  "Portuguese",
+  "Russian",
+  "Chinese (Mandarin)",
+  "Japanese",
+  "Korean",
+  "Arabic",
+  "Hindi",
+  "Dutch",
+  "Swedish",
+  "Norwegian",
+  "Danish",
+  "Finnish",
+  "Polish",
+  "Czech",
+  "Hungarian",
+  "Romanian",
+  "Bulgarian",
+  "Croatian",
+  "Serbian",
+  "Slovak",
+  "Slovenian",
+  "Estonian",
+  "Latvian",
+  "Lithuanian",
+  "Greek",
+  "Turkish",
+  "Hebrew",
+  "Thai",
+  "Vietnamese",
+  "Indonesian",
+  "Malay",
+  "Filipino",
+  "Swahili",
+  "Afrikaans",
+];
 
 const proficiencyLevels = [
   { value: "basic", label: "Basic" },
@@ -52,16 +89,7 @@ export function AddLanguageModal({
 }: AddLanguageModalProps) {
   const [language, setLanguage] = useState("");
   const [proficiency, setProficiency] = useState("");
-  const [languageOpen, setLanguageOpen] = useState(false);
-  const [languages, setLanguages] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchLanguages = async () => {
-      const langs = await getLanguages();
-      setLanguages(langs);
-    };
-    fetchLanguages();
-  }, []);
+  const [commandDialogOpen, setCommandDialogOpen] = useState(false);
 
   const handleSave = () => {
     if (language && proficiency) {
@@ -77,112 +105,117 @@ export function AddLanguageModal({
     setProficiency("");
     onOpenChange(false);
   };
-  console.log(languageOpen);
+
+  const handleSelectLanguage = (selectedLanguage: string) => {
+    setLanguage(selectedLanguage);
+    setCommandDialogOpen(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-card text-card-foreground">
-        <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <DialogTitle className="text-xl font-semibold">
-            Add language
-          </DialogTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onOpenChange(false)}
-            className="h-6 w-6 rounded-full"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent
+          className="sm:max-w-[500px] bg-card text-card-foreground"
+          showCloseButton={false}
+        >
+          <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <DialogTitle className="text-xl font-semibold">
+              Add language
+            </DialogTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onOpenChange(false)}
+              className="h-6 w-6 rounded-full"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label htmlFor="language" className="text-sm font-medium">
-              Language
-            </label>
-            <Popover open={languageOpen} onOpenChange={setLanguageOpen} modal>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={languageOpen}
-                  className="w-full justify-between bg-background border-border"
-                >
-                  {language || "Search for language"}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0" align="start">
-                <Command>
-                  <CommandInput
-                    placeholder="Search language..."
-                    className="h-9"
-                    autoFocus
-                  />
-                  <CommandList>
-                    <CommandEmpty>No language found.</CommandEmpty>
-                    <CommandGroup>
-                      {languages.map((lang) => (
-                        <CommandItem
-                          key={lang}
-                          value={lang}
-                          onSelect={(currentValue) => {
-                            setLanguage(currentValue);
-                            setLanguageOpen(false);
-                          }}
-                        >
-                          {lang}
-                          <Check
-                            className={cn(
-                              "ml-auto h-4 w-4",
-                              language === lang ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label htmlFor="language" className="text-sm font-medium">
+                Language
+              </label>
+              <Button
+                variant="outline"
+                role="combobox"
+                className="w-full justify-between bg-background border-border hover:bg-background"
+                onClick={() => setCommandDialogOpen(true)}
+              >
+                {language || "Search for language"}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="proficiency" className="text-sm font-medium">
+                Proficiency level
+              </label>
+              <Select value={proficiency} onValueChange={setProficiency}>
+                <SelectTrigger className="bg-background border-border">
+                  <SelectValue placeholder="Search for proficiency level" />
+                </SelectTrigger>
+                <SelectContent>
+                  {proficiencyLevels.map((level) => (
+                    <SelectItem key={level.value} value={level.value}>
+                      {level.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="proficiency" className="text-sm font-medium">
-              Proficiency level
-            </label>
-            <Select value={proficiency} onValueChange={setProficiency}>
-              <SelectTrigger className="bg-background border-border">
-                <SelectValue placeholder="Search for proficiency level" />
-              </SelectTrigger>
-              <SelectContent>
-                {proficiencyLevels.map((level) => (
-                  <SelectItem key={level.value} value={level.value}>
-                    {level.label}
-                  </SelectItem>
+          <div className="flex justify-end gap-3 pt-6">
+            <Button
+              variant="ghost"
+              onClick={handleCancel}
+              className="text-green-600"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              className="bg-green-600 hover:bg-green-700"
+              disabled={!language || !proficiency}
+            >
+              Save
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={commandDialogOpen} onOpenChange={setCommandDialogOpen}>
+        <DialogContent className="overflow-hidden p-0 shadow-lg">
+          <DialogHeader className="px-4 pb-4 pt-5">
+            <DialogTitle>Select Language</DialogTitle>
+          </DialogHeader>
+          <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+            <CommandInput placeholder="Search language..." />
+            <CommandList className="max-h-[300px] overflow-y-auto">
+              <CommandEmpty>No language found.</CommandEmpty>
+              <CommandGroup heading="Languages">
+                {languages.map((lang) => (
+                  <CommandItem
+                    key={lang}
+                    value={lang}
+                    onSelect={() => handleSelectLanguage(lang)}
+                  >
+                    {lang}
+                    <Check
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        language === lang ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
                 ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-3 pt-6">
-          <Button
-            variant="ghost"
-            onClick={handleCancel}
-            className="text-green-600"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            className="bg-green-600 hover:bg-green-700"
-            disabled={!language || !proficiency}
-          >
-            Save
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
