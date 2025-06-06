@@ -16,6 +16,7 @@ import { LanguagesModule } from './languages/languages.module';
 import { SkillsModule } from './skills/skills.module';
 import { EducationModule } from './education/education.module';
 import { JobsModule } from './jobs/jobs.module';
+import { ContractsModule } from './contracts/contracts.module';
 @Module({
   imports: [
     UserModule,
@@ -28,6 +29,7 @@ import { JobsModule } from './jobs/jobs.module';
     LanguagesModule,
     SkillsModule,
     EducationModule,
+    ContractsModule,
   ],
   controllers: [AppController],
   providers: [
