@@ -12,28 +12,20 @@ import {
 } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
-import { ContractStatus, Role } from '@prisma/client';
+import { ContractStatus, Role as PrismaRole } from '@prisma/client';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-
-interface AuthenticatedUser {
-  id: string;
-  email: string;
-  role: Role;
-  clientProfile?: any;
-  freelancerProfile?: any;
-}
-
+import { AuthenticatedUser, Role } from 'src/types';
 @Controller('contracts')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
 
   @Post()
-  @Roles(Role.CLIENT)
+  @Roles(PrismaRole.CLIENT)
   @UsePipes(new ValidationPipe())
   create(
     @Body() createContractDto: CreateContractDto,
@@ -66,11 +58,14 @@ export class ContractsController {
 
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.contractsService.findOneContract(id, user.id, user.role);
+    // Convert custom Role enum to Prisma Role enum
+    const prismaRole =
+      user.role === Role.CLIENT ? PrismaRole.CLIENT : PrismaRole.FREELANCER;
+    return this.contractsService.findOneContract(id, user.id, prismaRole);
   }
 
   @Put(':id')
-  @Roles(Role.CLIENT)
+  @Roles(PrismaRole.CLIENT)
   @UsePipes(new ValidationPipe())
   update(
     @Param('id') id: string,
@@ -81,13 +76,13 @@ export class ContractsController {
   }
 
   @Put(':id/complete')
-  @Roles(Role.CLIENT)
+  @Roles(PrismaRole.CLIENT)
   complete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     return this.contractsService.completeContract(id, user.id);
   }
 
   @Put(':id/cancel')
-  @Roles(Role.CLIENT)
+  @Roles(PrismaRole.CLIENT)
   cancel(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     return this.contractsService.cancelContract(id, user.id);
   }
