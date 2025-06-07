@@ -182,7 +182,7 @@ model Notification {
   id        String   @id @default(uuid())
   userId    String
   content   String
-  read      Boolean  @default(false)
+  isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

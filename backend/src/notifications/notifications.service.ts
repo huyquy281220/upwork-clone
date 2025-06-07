@@ -1,0 +1,162 @@
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
+import { CreateNotificationDto } from './dto/create-notification.dto';
+
+@Injectable()
+export class NotificationsService {
+  constructor(private prisma: PrismaService) {}
+
+  async createNotification(data: CreateNotificationDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: data.userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${data.userId} not found`);
+    }
+
+    // Create notification
+    return this.prisma.notification.create({
+      data: {
+        userId: data.userId,
+        content: data.content,
+        isRead: false,
+      },
+      include: {
+        user: { select: { id: true, email: true } },
+      },
+    });
+  }
+
+  async findAllNotifications(params: {
+    skip?: number;
+    take?: number;
+    userId: string;
+    isRead?: boolean;
+  }) {
+    const { skip, take, userId, isRead } = params;
+
+    // Check if user exists
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const where: Prisma.NotificationWhereInput = { userId };
+    if (isRead !== undefined) where.isRead = isRead;
+
+    return this.prisma.notification.findMany({
+      skip,
+      take,
+      where,
+      include: {
+        user: { select: { id: true, email: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async findOneNotification(id: string, userId: string) {
+    const notification = await this.prisma.notification.findUnique({
+      where: { id },
+      include: {
+        user: { select: { id: true, email: true } },
+      },
+    });
+
+    if (!notification) {
+      throw new NotFoundException(`Notification with ID ${id} not found`);
+    }
+    if (notification.userId !== userId) {
+      throw new BadRequestException('User does not own this notification');
+    }
+
+    return notification;
+  }
+
+  async markAsRead(id: string, userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      // Check if notification and ownership
+      const notification = await tx.notification.findUnique({ where: { id } });
+      if (!notification) {
+        throw new NotFoundException(`Notification with ID ${id} not found`);
+      }
+      if (notification.userId !== userId) {
+        throw new BadRequestException('User does not own this notification');
+      }
+      if (notification.isRead) {
+        throw new BadRequestException('Notification is already read');
+      }
+
+      // Update status
+      return tx.notification.update({
+        where: { id },
+        data: { isRead: true },
+        include: {
+          user: { select: { id: true, email: true } },
+        },
+      });
+    });
+  }
+
+  async markAllAsRead(userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      // Update all unread notifications
+      await tx.notification.updateMany({
+        where: { userId, isRead: false },
+        data: { isRead: true },
+      });
+
+      // Return updated notifications
+      return tx.notification.findMany({
+        where: { userId },
+        include: {
+          user: { select: { id: true, email: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    });
+  }
+
+  async deleteNotification(id: string, userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const notification = await tx.notification.findUnique({ where: { id } });
+      if (!notification) {
+        throw new NotFoundException(`Notification with ID ${id} not found`);
+      }
+      if (notification.userId !== userId) {
+        throw new BadRequestException('User does not own this notification');
+      }
+
+      // Delete notification
+      await tx.notification.delete({ where: { id } });
+
+      return { message: `Notification ${id} deleted successfully` };
+    });
+  }
+
+  async deleteAllNotifications(userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      // Delete all notifications
+      await tx.notification.deleteMany({ where: { userId } });
+
+      return {
+        message: `All notifications for user ${userId} deleted successfully`,
+      };
+    });
+  }
+}
