@@ -30,6 +30,9 @@ model User {
   reviewsGiven          Review[]       @relation("Reviewer")
   reviewsReceived       Review[]       @relation("Reviewee")
   notifications         Notification[]
+
+  conversationsAsParticipant1 Conversation[] @relation("ConversationParticipant1")
+  conversationsAsParticipant2 Conversation[] @relation("ConversationParticipant2")
 }
 
 model ClientProfile {
@@ -176,6 +179,27 @@ model Message {
   sentAt      DateTime @default(now())
   recipient   User     @relation("MessageRecipient", fields: [recipientId], references: [id])
   sender      User     @relation("MessageSender", fields: [senderId], references: [id])
+
+  isRead      Boolean  @default(false)
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model Conversation {
+  id        String   @id @default(uuid())
+
+  participant1Id String
+  participant2Id String
+  participant1   User @relation("ConversationParticipant1", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2   User @relation("ConversationParticipant2", fields: [participant2Id], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+
+@@unique([participant1Id, participant2Id])
 }
 
 model Notification {

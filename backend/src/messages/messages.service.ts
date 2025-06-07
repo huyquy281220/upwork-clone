@@ -11,39 +11,42 @@ import { CreateMessageDto } from './dto/create-message.dto';
 export class MessagesService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Gửi một message mới trong conversation
-   */
   async createMessage(senderId: string, data: CreateMessageDto) {
     return this.prisma.$transaction(async (tx) => {
-      // Kiểm tra conversation và quyền truy cập
       const conversation = await tx.conversation.findUnique({
         where: { id: data.conversationId },
-        include: { participants: true },
+        include: { participant1: true, participant2: true },
       });
       if (!conversation) {
         throw new NotFoundException(
           `Conversation with ID ${data.conversationId} not found`,
         );
       }
-      const participantIds = conversation.participants.map((p) => p.userId);
+      const participantIds = [
+        conversation.participant1Id,
+        conversation.participant2Id,
+      ];
       if (!participantIds.includes(senderId)) {
         throw new BadRequestException(
           'User is not a participant in this conversation',
         );
       }
 
-      // Tạo message
+      // Get recipient ID (the other participant)
+      const recipientId = participantIds.find((id) => id !== senderId);
+
+      // Create message
       const message = await tx.message.create({
         data: {
           conversationId: data.conversationId,
           senderId,
+          recipientId,
           content: data.content,
           isRead: false,
         },
       });
 
-      // Tạo notification cho các participant khác
+      // Create notification for other participants
       const otherParticipants = participantIds.filter((id) => id !== senderId);
       if (otherParticipants.length > 0) {
         await tx.notification.createMany({
@@ -54,7 +57,7 @@ export class MessagesService {
         });
       }
 
-      // Cập nhật updatedAt của conversation
+      // Update conversation updatedAt
       await tx.conversation.update({
         where: { id: data.conversationId },
         data: { updatedAt: new Date() },
@@ -70,9 +73,6 @@ export class MessagesService {
     });
   }
 
-  /**
-   * Lấy danh sách message trong một conversation
-   */
   async findAllMessages(params: {
     skip?: number;
     take?: number;
@@ -82,17 +82,20 @@ export class MessagesService {
   }) {
     const { skip, take, conversationId, userId, isRead } = params;
 
-    // Kiểm tra conversation và quyền truy cập
+    // Check conversation and access
     const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
-      include: { participants: true },
+      include: { participant1: true, participant2: true },
     });
     if (!conversation) {
       throw new NotFoundException(
         `Conversation with ID ${conversationId} not found`,
       );
     }
-    const participantIds = conversation.participants.map((p) => p.userId);
+    const participantIds = [
+      conversation.participant1Id,
+      conversation.participant2Id,
+    ];
     if (!participantIds.includes(userId)) {
       throw new BadRequestException(
         'User is not a participant in this conversation',
@@ -110,20 +113,17 @@ export class MessagesService {
         sender: { select: { id: true, email: true } },
         conversation: { select: { id: true } },
       },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { sentAt: 'asc' },
     });
   }
 
-  /**
-   * Lấy chi tiết một message
-   */
   async findOneMessage(id: string, userId: string) {
     const message = await this.prisma.message.findUnique({
       where: { id },
       include: {
         sender: { select: { id: true, email: true } },
         conversation: {
-          select: { id: true, participants: { select: { userId: true } } },
+          select: { id: true, participant1: true, participant2: true },
         },
       },
     });
@@ -131,9 +131,10 @@ export class MessagesService {
     if (!message) {
       throw new NotFoundException(`Message with ID ${id} not found`);
     }
-    const participantIds = message.conversation.participants.map(
-      (p) => p.userId,
-    );
+    const participantIds = [
+      message.conversation.participant1.id,
+      message.conversation.participant2.id,
+    ];
     if (!participantIds.includes(userId)) {
       throw new BadRequestException(
         'User is not a participant in this conversation',
@@ -143,26 +144,24 @@ export class MessagesService {
     return message;
   }
 
-  /**
-   * Đánh dấu một message là đã đọc
-   */
   async markAsRead(id: string, userId: string) {
     return this.prisma.$transaction(async (tx) => {
-      // Kiểm tra message và quyền truy cập
+      // Check message and access
       const message = await tx.message.findUnique({
         where: { id },
         include: {
           conversation: {
-            select: { participants: { select: { userId: true } } },
+            select: { participant1: true, participant2: true },
           },
         },
       });
       if (!message) {
         throw new NotFoundException(`Message with ID ${id} not found`);
       }
-      const participantIds = message.conversation.participants.map(
-        (p) => p.userId,
-      );
+      const participantIds = [
+        message.conversation.participant1.id,
+        message.conversation.participant2.id,
+      ];
       if (!participantIds.includes(userId)) {
         throw new BadRequestException(
           'User is not a participant in this conversation',
@@ -177,7 +176,7 @@ export class MessagesService {
         throw new BadRequestException('Message is already read');
       }
 
-      // Cập nhật trạng thái
+      // Update status
       return tx.message.update({
         where: { id },
         data: { isRead: true },
@@ -189,29 +188,29 @@ export class MessagesService {
     });
   }
 
-  /**
-   * Đánh dấu tất cả message chưa đọc trong conversation là đã đọc
-   */
   async markAllAsRead(conversationId: string, userId: string) {
     return this.prisma.$transaction(async (tx) => {
-      // Kiểm tra conversation và quyền truy cập
+      // Check conversation and access
       const conversation = await tx.conversation.findUnique({
         where: { id: conversationId },
-        include: { participants: true },
+        include: { participant1: true, participant2: true },
       });
       if (!conversation) {
         throw new NotFoundException(
           `Conversation with ID ${conversationId} not found`,
         );
       }
-      const participantIds = conversation.participants.map((p) => p.userId);
+      const participantIds = [
+        conversation.participant1.id,
+        conversation.participant2.id,
+      ];
       if (!participantIds.includes(userId)) {
         throw new BadRequestException(
           'User is not a participant in this conversation',
         );
       }
 
-      // Cập nhật tất cả message chưa đọc của các sender khác
+      // Update all unread messages from other senders
       await tx.message.updateMany({
         where: {
           conversationId,
@@ -221,38 +220,36 @@ export class MessagesService {
         data: { isRead: true },
       });
 
-      // Trả về danh sách message đã cập nhật
+      // Return updated message list
       return tx.message.findMany({
         where: { conversationId },
         include: {
           sender: { select: { id: true, email: true } },
           conversation: { select: { id: true } },
         },
-        orderBy: { createdAt: 'asc' },
+        orderBy: { sentAt: 'asc' },
       });
     });
   }
 
-  /**
-   * Xóa một message
-   */
   async deleteMessage(id: string, userId: string) {
     return this.prisma.$transaction(async (tx) => {
-      // Kiểm tra message và quyền sở hữu
+      // Check message and ownership
       const message = await tx.message.findUnique({
         where: { id },
         include: {
           conversation: {
-            select: { participants: { select: { userId: true } } },
+            select: { participant1: true, participant2: true },
           },
         },
       });
       if (!message) {
         throw new NotFoundException(`Message with ID ${id} not found`);
       }
-      const participantIds = message.conversation.participants.map(
-        (p) => p.userId,
-      );
+      const participantIds = [
+        message.conversation.participant1.id,
+        message.conversation.participant2.id,
+      ];
       if (!participantIds.includes(userId)) {
         throw new BadRequestException(
           'User is not a participant in this conversation',
@@ -262,7 +259,7 @@ export class MessagesService {
         throw new BadRequestException('User is not the sender of this message');
       }
 
-      // Xóa message
+      // Delete message
       await tx.message.delete({ where: { id } });
 
       return { message: `Message ${id} deleted successfully` };
