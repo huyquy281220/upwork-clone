@@ -5,16 +5,27 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class ConversationsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+  ) {}
 
-  async createConversation(data: CreateConversationDto) {
+  async createConversation(data: CreateConversationDto, currentUserId: string) {
     return this.prisma.$transaction(async (tx) => {
       if (data.participantIds.length !== 2) {
         throw new BadRequestException(
           'Conversation must have exactly 2 participants',
+        );
+      }
+
+      // Ensure current user is one of the participants
+      if (!data.participantIds.includes(currentUserId)) {
+        throw new BadRequestException(
+          'You must be one of the conversation participants',
         );
       }
 
@@ -51,19 +62,18 @@ export class ConversationsService {
         },
       });
 
-      // Create notification for participants
-      await tx.notification.createMany({
-        data: data.participantIds.map((userId) => ({
-          userId,
-          content: `You have been added to a new conversation ${conversation.id}`,
-        })),
-      });
+      // Create notification for participants using notifications service
+      await this.notificationsService.notifyConversationCreated(
+        data.participantIds,
+        conversation.id,
+        tx,
+      );
 
       return tx.conversation.findUnique({
         where: { id: conversation.id },
         include: {
-          participant1: { select: { id: true, email: true } },
-          participant2: { select: { id: true, email: true } },
+          participant1: { select: { id: true, email: true, fullName: true } },
+          participant2: { select: { id: true, email: true, fullName: true } },
         },
       });
     });
@@ -89,10 +99,15 @@ export class ConversationsService {
         OR: [{ participant1Id: userId }, { participant2Id: userId }],
       },
       include: {
-        participant1: { select: { id: true, email: true } },
-        participant2: { select: { id: true, email: true } },
+        participant1: { select: { id: true, email: true, fullName: true } },
+        participant2: { select: { id: true, email: true, fullName: true } },
         messages: {
-          select: { id: true, content: true, sentAt: true },
+          select: {
+            id: true,
+            content: true,
+            sentAt: true,
+            sender: { select: { id: true, fullName: true } },
+          },
           orderBy: { sentAt: 'desc' },
           take: 1, // Get latest message
         },
@@ -105,8 +120,8 @@ export class ConversationsService {
     const conversation = await this.prisma.conversation.findUnique({
       where: { id },
       include: {
-        participant1: { select: { id: true, email: true } },
-        participant2: { select: { id: true, email: true } },
+        participant1: { select: { id: true, email: true, fullName: true } },
+        participant2: { select: { id: true, email: true, fullName: true } },
         messages: {
           select: {
             id: true,
@@ -114,7 +129,7 @@ export class ConversationsService {
             content: true,
             isRead: true,
             sentAt: true,
-            sender: { select: { id: true, email: true } },
+            sender: { select: { id: true, email: true, fullName: true } },
           },
           orderBy: { sentAt: 'asc' },
         },
@@ -124,13 +139,14 @@ export class ConversationsService {
     if (!conversation) {
       throw new NotFoundException(`Conversation with ID ${id} not found`);
     }
+
     const participantIds = [
       conversation.participant1Id,
       conversation.participant2Id,
     ];
     if (!participantIds.includes(userId)) {
       throw new BadRequestException(
-        'User is not a participant in this conversation',
+        'You are not a participant in this conversation',
       );
     }
 
@@ -141,33 +157,36 @@ export class ConversationsService {
     return this.prisma.$transaction(async (tx) => {
       const conversation = await tx.conversation.findUnique({
         where: { id },
-        include: { participant1: true, participant2: true },
+        include: {
+          participant1: { select: { id: true, fullName: true } },
+          participant2: { select: { id: true, fullName: true } },
+        },
       });
       if (!conversation) {
         throw new NotFoundException(`Conversation with ID ${id} not found`);
       }
+
       const participantIds = [
         conversation.participant1Id,
         conversation.participant2Id,
       ];
       if (!participantIds.includes(userId)) {
         throw new BadRequestException(
-          'User is not a participant in this conversation',
+          'You are not a participant in this conversation',
         );
       }
 
       // Delete conversation (messages will auto-delete due to onDelete: Cascade)
       await tx.conversation.delete({ where: { id } });
 
-      // Create notification for other participant
+      // Create notification for other participant using notifications service
       const otherParticipantId = participantIds.find((pid) => pid !== userId);
       if (otherParticipantId) {
-        await tx.notification.create({
-          data: {
-            userId: otherParticipantId,
-            content: `Conversation ${id} has been deleted`,
-          },
-        });
+        await this.notificationsService.notifyConversationDeleted(
+          otherParticipantId,
+          id,
+          tx,
+        );
       }
 
       return { message: `Conversation ${id} deleted successfully` };

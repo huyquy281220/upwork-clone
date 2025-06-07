@@ -94,6 +94,48 @@ export class NotificationsService {
     });
   }
 
+  // Conversation-specific notification methods
+  async notifyConversationCreated(
+    participantIds: string[],
+    conversationId: string,
+    tx?: any,
+  ) {
+    const prisma = tx || this.prisma;
+    return prisma.notification.createMany({
+      data: participantIds.map((userId) => ({
+        userId,
+        content: `You have been added to a new conversation`,
+        isRead: false,
+      })),
+    });
+  }
+
+  async notifyConversationDeleted(
+    userId: string,
+    conversationId: string,
+    tx?: any,
+  ) {
+    const prisma = tx || this.prisma;
+    return prisma.notification.create({
+      data: {
+        userId,
+        content: `A conversation has been deleted`,
+        isRead: false,
+      },
+    });
+  }
+
+  async notifyNewMessage(recipientId: string, senderName: string, tx?: any) {
+    const prisma = tx || this.prisma;
+    return prisma.notification.create({
+      data: {
+        userId: recipientId,
+        content: `You have a new message from ${senderName}`,
+        isRead: false,
+      },
+    });
+  }
+
   async findAllNotifications(params: {
     skip?: number;
     take?: number;
