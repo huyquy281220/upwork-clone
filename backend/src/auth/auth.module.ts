@@ -12,6 +12,8 @@ import { LocalStrategy } from './strategy/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtRefreshStrategy } from './strategy/jwt-refresh.strategy';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [UserModule, JwtModule, PrismaModule, MessageModule, PassportModule],
@@ -25,6 +27,8 @@ import { JwtRefreshStrategy } from './strategy/jwt-refresh.strategy';
     LocalStrategy,
     JwtStrategy,
     JwtRefreshStrategy,
+    RolesGuard,
   ],
+  exports: [JwtAuthGuard, JwtStrategy, RolesGuard],
 })
 export class AuthModule {}

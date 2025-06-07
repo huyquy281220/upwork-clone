@@ -5,8 +5,5 @@ export class CreateContractDto {
   jobId: string;
 
   @IsString()
-  clientId: string;
-
-  @IsString()
   freelancerId: string;
 }

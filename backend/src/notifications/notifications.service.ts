@@ -32,6 +32,68 @@ export class NotificationsService {
     });
   }
 
+  // Contract-specific notification methods
+  async notifyContractCreated(
+    freelancerId: string,
+    jobTitle: string,
+    tx?: any,
+  ) {
+    const prisma = tx || this.prisma;
+    return prisma.notification.create({
+      data: {
+        userId: freelancerId,
+        content: `You have been hired for the job "${jobTitle}"`,
+        isRead: false,
+      },
+    });
+  }
+
+  async notifyContractCompleted(
+    freelancerId: string,
+    jobTitle: string,
+    tx?: any,
+  ) {
+    const prisma = tx || this.prisma;
+    return prisma.notification.create({
+      data: {
+        userId: freelancerId,
+        content: `Contract for job "${jobTitle}" has been completed`,
+        isRead: false,
+      },
+    });
+  }
+
+  async notifyContractCancelled(
+    freelancerId: string,
+    jobTitle: string,
+    tx?: any,
+  ) {
+    const prisma = tx || this.prisma;
+    return prisma.notification.create({
+      data: {
+        userId: freelancerId,
+        content: `Contract for job "${jobTitle}" has been cancelled`,
+        isRead: false,
+      },
+    });
+  }
+
+  async notifyContractUpdated(
+    freelancerId: string,
+    jobTitle: string,
+    newStatus: string,
+    tx?: any,
+  ) {
+    const prisma = tx || this.prisma;
+    return prisma.notification.create({
+      data: {
+        userId: freelancerId,
+        content: `Contract for job "${jobTitle}" has been updated to ${newStatus}`,
+        isRead: false,
+      },
+    });
+  }
+
   async findAllNotifications(params: {
     skip?: number;
     take?: number;

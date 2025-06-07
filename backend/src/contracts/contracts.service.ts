@@ -3,44 +3,61 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { ContractStatus, Prisma } from '@prisma/client';
-import { CreateContractDto } from './dto/create-contract.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
+import { ContractStatus, Role } from '@prisma/client';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class ContractsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+  ) {}
 
-  async createContract(data: CreateContractDto) {
+  async createContract(data: CreateContractDto, clientId: string) {
     return this.prisma.$transaction(async (tx) => {
-      const client = await tx.clientProfile.findUnique({
-        where: { userId: data.clientId },
+      // Check if client exists
+      const client = await tx.user.findUnique({
+        where: { id: clientId },
+        include: { clientProfile: true },
       });
-      if (!client) {
-        throw new NotFoundException(
-          `Client with ID ${data.clientId} not found`,
-        );
+      if (!client || !client.clientProfile) {
+        throw new NotFoundException(`Client with ID ${clientId} not found`);
       }
-      const freelancer = await tx.freelancerProfile.findUnique({
-        where: { userId: data.freelancerId },
+
+      // Check if freelancer exists
+      const freelancer = await tx.user.findUnique({
+        where: { id: data.freelancerId },
+        include: { freelancerProfile: true },
       });
-      if (!freelancer) {
+      if (!freelancer || !freelancer.freelancerProfile) {
         throw new NotFoundException(
           `Freelancer with ID ${data.freelancerId} not found`,
         );
       }
-      const job = await tx.job.findUnique({ where: { id: data.jobId } });
+
+      // Check if job exists
+      const job = await tx.job.findUnique({
+        where: { id: data.jobId },
+        include: { client: true },
+      });
       if (!job) {
         throw new NotFoundException(`Job with ID ${data.jobId} not found`);
       }
-      if (job.clientId !== data.clientId) {
+
+      // Check if client owns the job
+      if (job.client.userId !== clientId) {
         throw new BadRequestException('Client does not own this job');
       }
 
       // Check if contract already exists for this job and freelancer
       const existingContract = await tx.contract.findFirst({
-        where: { jobId: data.jobId, freelancerId: data.freelancerId },
+        where: {
+          jobId: data.jobId,
+          freelancerId: data.freelancerId,
+        },
       });
       if (existingContract) {
         throw new BadRequestException(
@@ -52,29 +69,26 @@ export class ContractsService {
       const contract = await tx.contract.create({
         data: {
           jobId: data.jobId,
-          clientId: data.clientId,
+          clientId: clientId,
           freelancerId: data.freelancerId,
           status: ContractStatus.ACTIVE,
           startedAt: new Date(),
         },
-      });
-
-      // Create notification for freelancer
-      await tx.notification.create({
-        data: {
-          userId: data.freelancerId,
-          content: `A new contract has been created for job "${job.title}"`,
-        },
-      });
-
-      return tx.contract.findUnique({
-        where: { id: contract.id },
         include: {
           job: { select: { id: true, title: true } },
           client: { select: { userId: true, companyName: true } },
           freelancer: { select: { userId: true, title: true } },
         },
       });
+
+      // Create notification for freelancer using notifications service
+      await this.notificationsService.notifyContractCreated(
+        data.freelancerId,
+        job.title,
+        tx,
+      );
+
+      return contract;
     });
   }
 
@@ -88,7 +102,7 @@ export class ContractsService {
   }) {
     const { skip, take, clientId, freelancerId, jobId, status } = params;
 
-    const where: Prisma.ContractWhereInput = {};
+    const where: any = {};
     if (clientId) where.clientId = clientId;
     if (freelancerId) where.freelancerId = freelancerId;
     if (jobId) where.jobId = jobId;
@@ -99,7 +113,7 @@ export class ContractsService {
       take,
       where,
       include: {
-        job: { select: { id: true, title: true } },
+        job: { select: { id: true, title: true, description: true } },
         client: { select: { userId: true, companyName: true } },
         freelancer: { select: { userId: true, title: true } },
       },
@@ -107,15 +121,15 @@ export class ContractsService {
     });
   }
 
-  async findOneContract(id: string) {
+  async findOneContract(id: string, userId: string, userRole: Role) {
     const contract = await this.prisma.contract.findUnique({
       where: { id },
       include: {
-        job: { select: { id: true, title: true } },
+        job: { select: { id: true, title: true, description: true } },
         client: { select: { userId: true, companyName: true } },
         freelancer: { select: { userId: true, title: true } },
-        payments: { select: { id: true, amount: true, status: true } },
-        reviews: { select: { id: true, rating: true, comment: true } },
+        payments: true,
+        reviews: true,
       },
     });
 
@@ -123,71 +137,64 @@ export class ContractsService {
       throw new NotFoundException(`Contract with ID ${id} not found`);
     }
 
+    // Check if user has access to this contract
+    const hasAccess =
+      (userRole === Role.CLIENT && contract.clientId === userId) ||
+      (userRole === Role.FREELANCER && contract.freelancerId === userId);
+
+    if (!hasAccess) {
+      throw new BadRequestException('You do not have access to this contract');
+    }
+
     return contract;
   }
 
   async updateContract(id: string, clientId: string, data: UpdateContractDto) {
     return this.prisma.$transaction(async (tx) => {
-      const contract = await tx.contract.findUnique({ where: { id } });
+      const contract = await tx.contract.findUnique({
+        where: { id },
+        include: { job: { select: { title: true } } },
+      });
       if (!contract) {
         throw new NotFoundException(`Contract with ID ${id} not found`);
       }
       if (contract.clientId !== clientId) {
         throw new BadRequestException('Client does not own this contract');
       }
-
-      // Check if status is valid
-      if (data.status && data.status !== contract.status) {
-        if (
-          contract.status === ContractStatus.COMPLETED ||
-          contract.status === ContractStatus.CANCELLED
-        ) {
-          throw new BadRequestException(
-            'Cannot update a completed or cancelled contract',
-          );
-        }
+      if (contract.status === ContractStatus.COMPLETED) {
+        throw new BadRequestException('Cannot update completed contract');
+      }
+      if (contract.status === ContractStatus.CANCELLED) {
+        throw new BadRequestException('Cannot update cancelled contract');
       }
 
       // Update contract
-      await tx.contract.update({
+      const updatedContract = await tx.contract.update({
         where: { id },
-        data: {
-          status: data.status,
-          completedAt:
-            data.status === ContractStatus.COMPLETED ||
-            data.status === ContractStatus.CANCELLED
-              ? new Date()
-              : undefined,
-        },
-      });
-
-      // Create notification for freelancer if status changes
-      if (data.status && data.status !== contract.status) {
-        const job = await tx.job.findUnique({ where: { id: contract.jobId } });
-        if (job) {
-          await tx.notification.create({
-            data: {
-              userId: contract.freelancerId,
-              content: `Contract for job "${job.title}" updated to status ${data.status}`,
-            },
-          });
-        }
-      }
-
-      return tx.contract.findUnique({
-        where: { id },
+        data,
         include: {
           job: { select: { id: true, title: true } },
           client: { select: { userId: true, companyName: true } },
           freelancer: { select: { userId: true, title: true } },
         },
       });
+
+      // Create notification for freelancer if status changed
+      if (data.status && data.status !== contract.status) {
+        await this.notificationsService.notifyContractUpdated(
+          contract.freelancerId,
+          contract.job.title,
+          data.status,
+          tx,
+        );
+      }
+
+      return updatedContract;
     });
   }
 
   async completeContract(id: string, clientId: string) {
     return this.prisma.$transaction(async (tx) => {
-      // Check if contract and ownership
       const contract = await tx.contract.findUnique({
         where: { id },
         include: { job: { select: { title: true } } },
@@ -211,13 +218,12 @@ export class ContractsService {
         },
       });
 
-      // Create notification for freelancer
-      await tx.notification.create({
-        data: {
-          userId: contract.freelancerId,
-          content: `Contract for job "${contract.job.title}" has been completed`,
-        },
-      });
+      // Create notification for freelancer using notifications service
+      await this.notificationsService.notifyContractCompleted(
+        contract.freelancerId,
+        contract.job.title,
+        tx,
+      );
 
       return tx.contract.findUnique({
         where: { id },
@@ -255,13 +261,12 @@ export class ContractsService {
         },
       });
 
-      // Create notification for freelancer
-      await tx.notification.create({
-        data: {
-          userId: contract.freelancerId,
-          content: `Contract for job "${contract.job.title}" has been cancelled`,
-        },
-      });
+      // Create notification for freelancer using notifications service
+      await this.notificationsService.notifyContractCancelled(
+        contract.freelancerId,
+        contract.job.title,
+        tx,
+      );
 
       return tx.contract.findUnique({
         where: { id },

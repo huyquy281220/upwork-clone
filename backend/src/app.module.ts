@@ -12,6 +12,9 @@ import { SkillsModule } from './skills/skills.module';
 import { EducationModule } from './education/education.module';
 import { JobsModule } from './jobs/jobs.module';
 import { ContractsModule } from './contracts/contracts.module';
+import { ConversationsModule } from './conversation/conversation.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ProposalsModule } from './proposals/proposals.module';
 @Module({
   imports: [
     UserModule,
@@ -25,6 +28,9 @@ import { ContractsModule } from './contracts/contracts.module';
     SkillsModule,
     EducationModule,
     ContractsModule,
+    ConversationsModule,
+    ProposalsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
