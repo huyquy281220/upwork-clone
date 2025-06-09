@@ -112,8 +112,6 @@ model Language {
   name           String
   level          LanguageLevel
   freelancerId   String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
   
   freelancer     FreelancerProfile @relation("FreelancerLanguages", fields: [freelancerId], references: [userId], onDelete: Cascade)
 }

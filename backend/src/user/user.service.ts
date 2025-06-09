@@ -22,7 +22,13 @@ export class UserService {
     return await this.prismaService.user.findMany({
       include: {
         clientProfile: true,
-        freelancerProfile: true,
+        freelancerProfile: {
+          include: {
+            languages: true,
+            education: true,
+            skills: true,
+          },
+        },
       },
     });
   }

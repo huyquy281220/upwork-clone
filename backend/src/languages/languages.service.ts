@@ -10,86 +10,115 @@ import { LanguageItemDto } from './dto/update-languages.dto';
 export class LanguagesService {
   constructor(private prismaService: PrismaService) {}
 
-  async updateUserLanguages(userId: string, languages: LanguageItemDto[]) {
-    try {
-      const freelancer = await this.prismaService.freelancerProfile.findUnique({
-        where: { userId },
-      });
-      if (!freelancer) {
-        throw new NotFoundException(`Freelancer not found`);
-      }
-
-      const existing = await this.prismaService.language.findMany({
-        where: { freelancerId: userId },
-      });
-
-      // 2. Determine operations
-      const existingIds = existing.map((l) => l.id);
-      const incomingIds = languages.filter((l) => l.id).map((l) => l.id);
-
-      // Languages to delete (exist but not in incoming)
-      const toDelete = existingIds.filter((id) => !incomingIds.includes(id));
-
-      // Languages to update (have ID)
-      const toUpdate = languages.filter(
-        (l) => l.id && existingIds.includes(l.id),
-      );
-
-      // Languages to create (no ID)
-      const toCreate = languages.filter((l) => !l.id);
-
-      // 3. Execute operations in transaction
-      return this.prismaService.$transaction(async (tx) => {
-        if (toDelete.length > 0) {
-          await tx.language.deleteMany({
-            where: { id: { in: toDelete } },
-          });
-        }
-
-        // Update existing languages
-        await Promise.all(
-          toUpdate.map((lang) =>
-            tx.language.update({
-              where: { id: lang.id },
-              data: {
-                name: lang.name,
-                level: lang.level,
-              },
-            }),
-          ),
-        );
-
-        // Create new languages
-        if (toCreate.length > 0) {
-          await tx.language.createMany({
-            data: toCreate.map((lang) => ({
-              name: lang.name,
-              level: lang.level,
-              freelancerId: userId,
-            })),
-          });
-        }
-
-        // Return updated user with languages
-        return tx.user.findUnique({
-          where: { id: userId },
-          include: {
-            freelancerProfile: {
-              include: { languages: true },
-            },
-          },
-        });
-      });
-    } catch (error) {
-      console.error('Error updating languages:', error);
-      throw new BadRequestException('Failed to update languages');
+  async createUserLanguages(userId: string, languages: LanguageItemDto[]) {
+    const freelancer = await this.prismaService.freelancerProfile.findUnique({
+      where: { userId },
+    });
+    if (!freelancer) {
+      throw new NotFoundException(`Freelancer with ID ${userId} not found`);
     }
+
+    // Check if new languages have IDs
+    if (languages.some((lang) => lang.id)) {
+      throw new BadRequestException('New languages must not have IDs');
+    }
+
+    // Create new languages
+    if (languages.length > 0) {
+      await this.prismaService.language.createMany({
+        data: languages.map((lang) => ({
+          name: lang.name,
+          level: lang.level,
+          freelancerId: userId,
+        })),
+      });
+    }
+
+    // Return user with languages
+    return this.prismaService.user.findUnique({
+      where: { id: userId },
+      include: {
+        freelancerProfile: {
+          include: { languages: true },
+        },
+      },
+    });
   }
 
-  async getUserLanguages(userId: string) {
-    return this.prismaService.language.findMany({
-      where: { freelancerId: userId },
-      orderBy: { createdAt: 'asc' },
+  async updateUserLanguages(userId: string, languages: LanguageItemDto[]) {
+    const freelancer = await this.prismaService.freelancerProfile.findUnique({
+      where: { userId },
+    });
+    if (!freelancer) {
+      throw new NotFoundException(`Freelancer with ID ${userId} not found`);
+    }
+
+    // Check input data
+    if (languages.some((lang) => !lang.id)) {
+      throw new BadRequestException('All languages to update must have IDs');
+    }
+
+    // Check if languages exist
+    const existing = await this.prismaService.language.findMany({
+      where: { freelancerId: userId, id: { in: languages.map((l) => l.id!) } },
+    });
+    if (existing.length !== languages.length) {
+      throw new NotFoundException('Some languages not found');
+    }
+
+    // Update languages
+    await Promise.all(
+      languages.map((lang) =>
+        this.prismaService.language.update({
+          where: { id: lang.id },
+          data: {
+            name: lang.name,
+            level: lang.level,
+          },
+        }),
+      ),
+    );
+
+    // Return user with languages
+    return this.prismaService.user.findUnique({
+      where: { id: userId },
+      include: {
+        freelancerProfile: {
+          include: { languages: true },
+        },
+      },
+    });
+  }
+
+  async deleteUserLanguages(userId: string, languageIds: string[]) {
+    const freelancer = await this.prismaService.freelancerProfile.findUnique({
+      where: { userId },
+    });
+    if (!freelancer) {
+      throw new NotFoundException(`Freelancer with ID ${userId} not found`);
+    }
+
+    // Check if languages exist
+    const existing = await this.prismaService.language.findMany({
+      where: { freelancerId: userId, id: { in: languageIds } },
+    });
+    if (existing.length !== languageIds.length) {
+      throw new NotFoundException('Some languages not found');
+    }
+
+    // Delete languages
+    await this.prismaService.language.deleteMany({
+      where: { id: { in: languageIds } },
+    });
+
+    // Return user with languages
+    return this.prismaService.user.findUnique({
+      where: { id: userId },
+      include: {
+        freelancerProfile: {
+          include: { languages: true },
+        },
+      },
     });
   }
 }
