@@ -28,6 +28,7 @@ import { RolesGuard } from './guards/roles.guard';
     JwtStrategy,
     JwtRefreshStrategy,
     RolesGuard,
+    JwtAuthGuard,
   ],
   exports: [JwtAuthGuard, JwtStrategy, RolesGuard],
 })

@@ -77,6 +77,8 @@ model Job {
   proposals    Proposal[]
   skills       JobSkill[]
   savedByUsers UserSavedJob[] @relation("SavedJobs")
+
+  conversations Conversation[]
 }
 
 model UserSavedJob {
@@ -177,6 +179,8 @@ model Message {
   recipientId String
   content     String
   sentAt      DateTime @default(now())
+  readAt      DateTime?
+  deliveredAt DateTime?
   recipient   User     @relation("MessageRecipient", fields: [recipientId], references: [id])
   sender      User     @relation("MessageSender", fields: [senderId], references: [id])
 
@@ -189,6 +193,9 @@ model Message {
 model Conversation {
   id        String   @id @default(uuid())
 
+  jobId String
+  job Job @relation(fields: [jobId], references: [id])
+
   participant1Id String
   participant2Id String
   participant1   User @relation("ConversationParticipant1", fields: [participant1Id], references: [id], onDelete: Cascade)
@@ -199,7 +206,10 @@ model Conversation {
 
   messages Message[]
 
-@@unique([participant1Id, participant2Id])
+  @@unique([jobId, participant1Id, participant2Id])
+  @@index([participant1Id])
+  @@index([participant2Id])
+  @@index([jobId])
 }
 
 model Notification {

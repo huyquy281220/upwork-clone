@@ -9,6 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ConversationsService } from './conversation.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
@@ -16,6 +17,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AuthenticatedUser } from 'src/types';
+
 @Controller('conversations')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ConversationsController {
@@ -38,17 +40,29 @@ export class ConversationsController {
     @CurrentUser() user: AuthenticatedUser,
     @Query('skip') skip?: string,
     @Query('take') take?: string,
+    @Query('jobId') jobId?: string,
   ) {
     return this.conversationsService.findAllConversations({
       skip: skip ? parseInt(skip) : undefined,
       take: take ? parseInt(take) : undefined,
       userId: user.id,
+      jobId,
     });
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.conversationsService.findOneConversation(id, user.id);
+  findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 50,
+  ) {
+    return this.conversationsService.findOneConversation(
+      id,
+      user.id,
+      page,
+      limit,
+    );
   }
 
   @Delete(':id')
