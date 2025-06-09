@@ -1,7 +1,7 @@
-import { getCountries } from "@/services/countries";
+import { getLanguages } from "@/services/countries";
 
-export const getLanguages = async () => {
-  const countries = await getCountries();
+export const getLanguagesWithoutDuplicates = async () => {
+  const countries = await getLanguages();
 
   const languageSet = new Set<string>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,5 +10,5 @@ export const getLanguages = async () => {
     langs.forEach((lang) => languageSet.add(lang as string));
   });
 
-  return Array.from(languageSet);
+  return Array.from(languageSet).sort();
 };

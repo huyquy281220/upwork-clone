@@ -2,7 +2,7 @@
 
 import { Command } from "@/components/ui/command";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -26,54 +26,13 @@ import {
 } from "@/components/ui/command";
 import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getLanguagesWithoutDuplicates } from "@/utils/getLanguages";
 
 interface AddLanguageModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (language: string, proficiency: string) => void;
 }
-
-const languages = [
-  "English",
-  "Spanish",
-  "French",
-  "German",
-  "Italian",
-  "Portuguese",
-  "Russian",
-  "Chinese (Mandarin)",
-  "Japanese",
-  "Korean",
-  "Arabic",
-  "Hindi",
-  "Dutch",
-  "Swedish",
-  "Norwegian",
-  "Danish",
-  "Finnish",
-  "Polish",
-  "Czech",
-  "Hungarian",
-  "Romanian",
-  "Bulgarian",
-  "Croatian",
-  "Serbian",
-  "Slovak",
-  "Slovenian",
-  "Estonian",
-  "Latvian",
-  "Lithuanian",
-  "Greek",
-  "Turkish",
-  "Hebrew",
-  "Thai",
-  "Vietnamese",
-  "Indonesian",
-  "Malay",
-  "Filipino",
-  "Swahili",
-  "Afrikaans",
-];
 
 const proficiencyLevels = [
   { value: "basic", label: "Basic" },
@@ -90,6 +49,15 @@ export function AddLanguageModal({
   const [language, setLanguage] = useState("");
   const [proficiency, setProficiency] = useState("");
   const [commandDialogOpen, setCommandDialogOpen] = useState(false);
+  const [languages, setLanguages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      const response = await getLanguagesWithoutDuplicates();
+      setLanguages(response);
+    };
+    fetchLanguages();
+  }, []);
 
   const handleSave = () => {
     if (language && proficiency) {
