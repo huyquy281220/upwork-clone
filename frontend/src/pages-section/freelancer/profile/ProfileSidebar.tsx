@@ -11,7 +11,7 @@ import CirclePencil from "@/components/common/CirclePencil";
 import { AddLanguageModal } from "@/components/modals/freelancer/AddLanguageModal";
 import { AddEducationModal } from "@/components/modals/freelancer/AddEducationModal";
 import { FreelancerUser } from "@/types/user";
-// import { EditLanguagesModal } from "@/components/modals/freelancer/EditLanguageModal";
+import { EditLanguagesModal } from "@/components/modals/freelancer/EditLanguageModal";
 import { useModalManager } from "@/hooks/useModalManager";
 
 export function ProfileSidebar() {
@@ -96,7 +96,7 @@ export function ProfileSidebar() {
             <div className="flex justify-between items-center mb-2">
               <p className="font-medium">Languages</p>
               <div className="flex items-center gap-2">
-                <CirclePencil />
+                <CirclePencil onEdit={() => openModal("editLanguage")} />
                 <CirclePlus
                   className="w-8 h-8 text-green-600 stroke-1 cursor-pointer"
                   onClick={() => openModal("addLanguage")}
@@ -114,7 +114,7 @@ export function ProfileSidebar() {
             <div className="flex justify-between items-center mb-2">
               <p className="font-medium">Education</p>
               <div className="flex items-center gap-2">
-                <CirclePencil />
+                <CirclePencil onEdit={() => openModal("editEducation")} />
                 <CirclePlus
                   className="w-8 h-8 text-green-600 stroke-1 cursor-pointer"
                   onClick={() => openModal("addEducation")}
@@ -147,13 +147,13 @@ export function ProfileSidebar() {
         onOpenChange={() => closeModal()}
       />
 
-      {/* <EditLanguagesModal
-        open={editLanguagesModalOpen}
-        onOpenChange={setEditLanguagesModalOpen}
-        currentLanguage={}
-        currentProficiency={}
+      <EditLanguagesModal
+        open={isModalOpen("editLanguage")}
+        onOpenChange={() => closeModal()}
+        currentLanguage={""}
+        currentProficiency={""}
         onSave={() => {}}
-      /> */}
+      />
 
       <AddEducationModal
         open={isModalOpen("addEducation")}

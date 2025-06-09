@@ -80,8 +80,9 @@ export function EditLanguagesModal({
               id="language"
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="bg-background border-border"
-              placeholder="Enter language"
+              className="bg-background w-[217px] h-[38px] rounded-md cursor-not-allowed"
+              // placeholder="Enter language"
+              disabled
             />
           </div>
 
