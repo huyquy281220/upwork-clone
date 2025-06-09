@@ -18,7 +18,7 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.userService.findOne(email);
+    const user = await this.userService.findByEmail(email);
     const isMatch = await bcrypt.compare(pass, user.password);
     if (user && isMatch) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -30,7 +30,7 @@ export class AuthService {
 
   async signIn(email: string, pwd: string) {
     try {
-      const user = await this.userService.findOne(email);
+      const user = await this.userService.findByEmail(email);
       if (!user) {
         throw new UnauthorizedException('Wrong Email or Password');
       }
@@ -72,7 +72,7 @@ export class AuthService {
 
   async googleSignin(email: string, role: string, name: string) {
     try {
-      let existingUser = await this.userService.findOne(email);
+      let existingUser = await this.userService.findByEmail(email);
 
       if (!existingUser && !role) {
         throw new NotFoundException(
@@ -160,7 +160,7 @@ export class AuthService {
         throw new BadRequestException('Refresh token not found');
       }
 
-      const user = await this.userService.findOne(email);
+      const user = await this.userService.findByEmail(email);
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
