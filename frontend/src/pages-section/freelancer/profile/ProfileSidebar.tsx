@@ -8,20 +8,20 @@ import JobSkeletion from "@/components/common/JobSkeleton";
 import { useUser } from "@/hooks/useUserInfo";
 import { useSession } from "next-auth/react";
 import CirclePencil from "@/components/common/CirclePencil";
-import { useState } from "react";
 import { AddLanguageModal } from "@/components/modals/freelancer/AddLanguageModal";
 import { AddEducationModal } from "@/components/modals/freelancer/AddEducationModal";
 import { FreelancerUser } from "@/types/user";
-export function ProfileSidebar() {
-  const [addLanguageModalOpen, setAddLanguageModalOpen] = useState(false);
-  const [addEducationModalOpen, setAddEducationModalOpen] = useState(false);
+// import { EditLanguagesModal } from "@/components/modals/freelancer/EditLanguageModal";
+import { useModalManager } from "@/hooks/useModalManager";
 
-  const { data: session } = useSession();
+export function ProfileSidebar() {
+  const { openModal, closeModal, isModalOpen } = useModalManager();
+  const { data: session, status } = useSession();
   const { data: user, isLoading } = useUser<FreelancerUser>(
     session?.user.id ?? ""
   );
 
-  if (isLoading) return <JobSkeletion />;
+  if (isLoading || status === "loading") return <JobSkeletion />;
 
   return (
     <div className="space-y-6">
@@ -99,7 +99,7 @@ export function ProfileSidebar() {
                 <CirclePencil />
                 <CirclePlus
                   className="w-8 h-8 text-green-600 stroke-1 cursor-pointer"
-                  onClick={() => setAddLanguageModalOpen(true)}
+                  onClick={() => openModal("addLanguage")}
                 />
               </div>
             </div>
@@ -117,7 +117,7 @@ export function ProfileSidebar() {
                 <CirclePencil />
                 <CirclePlus
                   className="w-8 h-8 text-green-600 stroke-1 cursor-pointer"
-                  onClick={() => setAddEducationModalOpen(true)}
+                  onClick={() => openModal("addEducation")}
                 />
               </div>
             </div>
@@ -143,13 +143,21 @@ export function ProfileSidebar() {
       </Card>
 
       <AddLanguageModal
-        open={addLanguageModalOpen}
-        onOpenChange={setAddLanguageModalOpen}
-        onSave={() => {}}
+        open={isModalOpen("addLanguage")}
+        onOpenChange={() => closeModal()}
       />
+
+      {/* <EditLanguagesModal
+        open={editLanguagesModalOpen}
+        onOpenChange={setEditLanguagesModalOpen}
+        currentLanguage={}
+        currentProficiency={}
+        onSave={() => {}}
+      /> */}
+
       <AddEducationModal
-        open={addEducationModalOpen}
-        onOpenChange={setAddEducationModalOpen}
+        open={isModalOpen("addEducation")}
+        onOpenChange={() => closeModal()}
         onSave={() => {}}
       />
     </div>

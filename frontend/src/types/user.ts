@@ -13,6 +13,13 @@ export enum Availability {
   NONE = "NONE",
 }
 
+export enum Proficiency {
+  BASIC = "BASIC",
+  CONVERSATIONAL = "CONVERSATIONAL",
+  FLUENT = "FLUENT",
+  NATIVE = "NATIVE",
+}
+
 export enum JobType {
   FIXED = "FIXED",
   HOURLY = "HOURLY",
@@ -61,6 +68,10 @@ export interface FreelancerProfile {
   available: Availability;
   skills?: UserSkill[];
   savedJobs?: UserSavedJob[];
+  languages?: {
+    name: string;
+    proficiency: string;
+  }[];
 }
 
 // Additional related interfaces

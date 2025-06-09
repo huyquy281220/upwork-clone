@@ -24,32 +24,39 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getLanguagesWithoutDuplicates } from "@/utils/getLanguages";
+import { useUser } from "@/hooks/useUserInfo";
+import { FreelancerUser } from "@/types/user";
+import { useSession } from "next-auth/react";
+import api from "@/services/api";
 
 interface AddLanguageModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (language: string, proficiency: string) => void;
 }
 
 const proficiencyLevels = [
-  { value: "basic", label: "Basic" },
-  { value: "conversational", label: "Conversational" },
-  { value: "fluent", label: "Fluent" },
-  { value: "native", label: "Native or Bilingual" },
+  { value: "BASIC", label: "Basic" },
+  { value: "CONVERSATIONAL", label: "Conversational" },
+  { value: "FLUENT", label: "Fluent" },
+  { value: "NATIVE", label: "Native or Bilingual" },
 ];
 
 export function AddLanguageModal({
   open,
   onOpenChange,
-  onSave,
 }: AddLanguageModalProps) {
+  const { data: session } = useSession();
+  const { data: user } = useUser<FreelancerUser>(session?.user?.id ?? "");
+
   const [language, setLanguage] = useState("");
   const [proficiency, setProficiency] = useState("");
   const [commandDialogOpen, setCommandDialogOpen] = useState(false);
   const [languages, setLanguages] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -59,18 +66,55 @@ export function AddLanguageModal({
     fetchLanguages();
   }, []);
 
-  const handleSave = () => {
-    if (language && proficiency) {
-      onSave(language, proficiency);
+  const handleSave = async () => {
+    if (!language || !proficiency || !session?.user?.id) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Create new language object
+      const newLanguage = {
+        name: language,
+        level: proficiency,
+      };
+
+      // Get current user languages and add the new one
+      const currentLanguages = user?.freelancerProfile?.languages || [];
+      const updatedLanguages = [...currentLanguages, newLanguage];
+
+      // Call API to update languages
+      const response = await api.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/${session.user.id}/languages`,
+        {
+          languages: updatedLanguages,
+        }
+      );
+
+      if (response.status !== 200) {
+        const errorData = response.data;
+        throw new Error(errorData.message || "Failed to add language");
+      }
+
+      // Reset form state
       setLanguage("");
       setProficiency("");
+
+      // Close modal and call success callback
       onOpenChange(false);
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Failed to add language"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
     setLanguage("");
     setProficiency("");
+    setError(null);
     onOpenChange(false);
   };
 
@@ -99,6 +143,12 @@ export function AddLanguageModal({
               <X className="h-4 w-4" />
             </Button>
           </DialogHeader>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+              {error}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -146,9 +196,16 @@ export function AddLanguageModal({
             <Button
               onClick={handleSave}
               className="bg-green-600 hover:bg-green-700"
-              disabled={!language || !proficiency}
+              disabled={!language || !proficiency || isLoading}
             >
-              Save
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save"
+              )}
             </Button>
           </div>
         </DialogContent>
