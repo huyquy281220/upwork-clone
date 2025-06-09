@@ -39,7 +39,13 @@ export class UserService {
         where: { id },
         include: {
           clientProfile: true,
-          freelancerProfile: true,
+          freelancerProfile: {
+            include: {
+              languages: true,
+              education: true,
+              skills: true,
+            },
+          },
         },
       });
       if (!user) {

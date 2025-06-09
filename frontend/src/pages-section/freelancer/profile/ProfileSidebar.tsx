@@ -13,6 +13,8 @@ import { AddEducationModal } from "@/components/modals/freelancer/AddEducationMo
 import { FreelancerUser } from "@/types/user";
 import { EditLanguagesModal } from "@/components/modals/freelancer/EditLanguageModal";
 import { useModalManager } from "@/hooks/useModalManager";
+import { useState } from "react";
+import { LanguageData } from "@/types/modals";
 
 export function ProfileSidebar() {
   const { openModal, closeModal, isModalOpen } = useModalManager();
@@ -20,6 +22,8 @@ export function ProfileSidebar() {
   const { data: user, isLoading } = useUser<FreelancerUser>(
     session?.user.id ?? ""
   );
+
+  const [currentLanguages, setCurrentLanguages] = useState<LanguageData[]>([]);
 
   if (isLoading || status === "loading") return <JobSkeletion />;
 
@@ -104,10 +108,14 @@ export function ProfileSidebar() {
               </div>
             </div>
 
-            <p className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">English: </span>
-              Basic
-            </p>
+            {currentLanguages.map(({ language, proficiency }) => (
+              <p className="text-sm text-muted-foreground" key={language}>
+                <span className="font-medium text-foreground">
+                  {language}:{" "}
+                </span>
+                {proficiency}
+              </p>
+            ))}
           </div>
 
           <div>
@@ -150,9 +158,7 @@ export function ProfileSidebar() {
       <EditLanguagesModal
         open={isModalOpen("editLanguage")}
         onOpenChange={() => closeModal()}
-        currentLanguage={""}
-        currentProficiency={""}
-        onSave={() => {}}
+        onSave={setCurrentLanguages}
       />
 
       <AddEducationModal

@@ -121,6 +121,18 @@ export function AddLanguageModal({
   const handleSelectLanguage = (selectedLanguage: string) => {
     setLanguage(selectedLanguage);
     setCommandDialogOpen(false);
+
+    setTimeout(() => {
+      const mainDialog = document.querySelector('[data-dialog="main"]');
+      if (mainDialog) {
+        const firstFocusable = mainDialog.querySelector(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (firstFocusable) {
+          (firstFocusable as HTMLElement).focus();
+        }
+      }
+    }, 100);
   };
 
   return (
@@ -129,6 +141,7 @@ export function AddLanguageModal({
         <DialogContent
           className="sm:max-w-[500px] bg-card text-card-foreground"
           showCloseButton={false}
+          data-dialog="main"
         >
           <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <DialogTitle className="text-xl font-semibold">
@@ -212,11 +225,29 @@ export function AddLanguageModal({
       </Dialog>
 
       <Dialog open={commandDialogOpen} onOpenChange={setCommandDialogOpen}>
-        <DialogContent className="overflow-hidden p-0 shadow-lg">
+        <DialogContent
+          data-dialog="language-selector"
+          className="overflow-hidden p-0 shadow-lg"
+          onCloseAutoFocus={(e) => {
+            // Prevent auto focus when closing
+            e.preventDefault();
+
+            // Manual focus to main dialog
+            setTimeout(() => {
+              const mainDialog = document.querySelector('[data-dialog="main"]');
+              const selectTrigger = mainDialog?.querySelector(
+                '[data-focusable="true"]'
+              );
+              if (selectTrigger) {
+                (selectTrigger as HTMLElement).focus();
+              }
+            }, 50);
+          }}
+        >
           <DialogHeader className="px-4 pb-4 pt-5">
             <DialogTitle>Select Language</DialogTitle>
           </DialogHeader>
-          <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+          <Command>
             <CommandInput placeholder="Search language..." />
             <CommandList className="max-h-[300px] overflow-y-auto">
               <CommandEmpty>No language found.</CommandEmpty>

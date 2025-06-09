@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,13 +16,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { X } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useUserLanguages } from "@/hooks/useUserInfo";
+import api from "@/services/api";
+import { LanguageData } from "@/types/modals";
 
 interface EditLanguagesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  currentLanguage: string;
-  currentProficiency: string;
-  onSave: (language: string, proficiency: string) => void;
+  onSave: Dispatch<SetStateAction<LanguageData[]>>;
 }
 
 const proficiencyLevels = [
@@ -35,21 +37,62 @@ const proficiencyLevels = [
 export function EditLanguagesModal({
   open,
   onOpenChange,
-  currentLanguage,
-  currentProficiency,
   onSave,
 }: EditLanguagesModalProps) {
-  const [language, setLanguage] = useState(currentLanguage);
-  const [proficiency, setProficiency] = useState(currentProficiency);
+  const { data: session } = useSession();
+  const { data: languages } = useUserLanguages(session?.user?.id ?? "");
 
-  const handleSave = () => {
-    onSave(language, proficiency);
-    onOpenChange(false);
+  console.log(languages);
+
+  const [proficiencyChanges, setProficiencyChanges] = useState<
+    Record<string, string>
+  >({});
+
+  console.log(proficiencyChanges);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSave = async () => {
+    if (!languages) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Create new language object
+      const updatedLanguages = languages.map((lang) => ({
+        name: lang.language,
+        level: proficiencyChanges[lang.id!] || lang.proficiency,
+      }));
+
+      const response = await api.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/${session?.user?.id}/languages`,
+        {
+          languages: updatedLanguages,
+        }
+      );
+
+      if (response.status !== 200) {
+        const errorData = response.data;
+        throw new Error(errorData.message || "Failed to update languages");
+      }
+
+      // Reset changes
+      setProficiencyChanges({});
+
+      // Close modal and call success callback
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error updating languages:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to update languages"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
-    setLanguage(currentLanguage);
-    setProficiency(currentProficiency);
     onOpenChange(false);
   };
 
@@ -73,35 +116,53 @@ export function EditLanguagesModal({
           </Button>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <p>Language</p>
-            <input
-              id="language"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-background w-[217px] h-[38px] rounded-md cursor-not-allowed"
-              // placeholder="Enter language"
-              disabled
-            />
-          </div>
+        {languages && languages.length > 0 ? (
+          languages?.map(({ language, proficiency, id }) => (
+            <div className="grid grid-cols-2 gap-4" key={id}>
+              <div className="space-y-2">
+                <p>Language</p>
+                <input
+                  id="language"
+                  value={language}
+                  className="bg-background w-[217px] h-[38px] rounded-md cursor-not-allowed"
+                  // placeholder="Enter language"
+                  disabled
+                />
+              </div>
 
-          <div className="space-y-2">
-            <p>Proficiency level</p>
-            <Select value={proficiency} onValueChange={setProficiency}>
-              <SelectTrigger className="bg-background border-border">
-                <SelectValue placeholder="Select proficiency" />
-              </SelectTrigger>
-              <SelectContent>
-                {proficiencyLevels.map((level) => (
-                  <SelectItem key={level.value} value={level.value}>
-                    {level.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <div className="space-y-2">
+                <p>Proficiency level</p>
+                <Select
+                  value={proficiency}
+                  onValueChange={(value) =>
+                    setProficiencyChanges({
+                      ...proficiencyChanges,
+                      [id!]: value,
+                    })
+                  }
+                >
+                  <SelectTrigger className="bg-background border-border">
+                    <SelectValue
+                      // placeholder="Select proficiency"
+                      defaultValue={proficiency}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {proficiencyLevels.map((level) => (
+                      <SelectItem key={level.value} value={level.value}>
+                        {level.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full">
+            <p className="text-sm text-muted-foreground">No languages found</p>
           </div>
-        </div>
+        )}
 
         <div className="flex justify-end gap-3 pt-6">
           <Button

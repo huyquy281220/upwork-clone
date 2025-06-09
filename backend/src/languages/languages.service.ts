@@ -10,6 +10,12 @@ import { LanguageItemDto } from './dto/update-languages.dto';
 export class LanguagesService {
   constructor(private prismaService: PrismaService) {}
 
+  async getUserLanguages(userId: string) {
+    return this.prismaService.language.findMany({
+      where: { freelancerId: userId },
+    });
+  }
+
   async createUserLanguages(userId: string, languages: LanguageItemDto[]) {
     const freelancer = await this.prismaService.freelancerProfile.findUnique({
       where: { userId },

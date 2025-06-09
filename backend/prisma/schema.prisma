@@ -110,7 +110,7 @@ model Education {
 model Language {
   id             String   @id @default(uuid())
   name           String
-  level          LanguageLevel
+  proficiency          LanguageProficiency
   freelancerId   String
   
   freelancer     FreelancerProfile @relation("FreelancerLanguages", fields: [freelancerId], references: [userId], onDelete: Cascade)
@@ -253,7 +253,7 @@ enum Availability {
   NONE
 }
 
-enum LanguageLevel {
+enum LanguageProficiency {
   BASIC
   CONVERSATIONAL
   FLUENT
