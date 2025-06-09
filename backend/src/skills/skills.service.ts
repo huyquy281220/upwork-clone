@@ -180,4 +180,17 @@ export class SkillsService {
       });
     });
   }
+
+  async getUserSkills(userId: string) {
+    return this.prismaService.userSkill.findMany({
+      where: { userId },
+      include: { skill: true },
+    });
+  }
+
+  async getAllSkills() {
+    return this.prismaService.skill.findMany({
+      orderBy: { name: 'asc' },
+    });
+  }
 }
