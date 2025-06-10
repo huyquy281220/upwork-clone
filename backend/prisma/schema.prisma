@@ -110,7 +110,7 @@ model Education {
 model Language {
   id             String   @id @default(uuid())
   name           String
-  proficiency          LanguageProficiency
+  proficiency    LanguageProficiency
   freelancerId   String
   
   freelancer     FreelancerProfile @relation("FreelancerLanguages", fields: [freelancerId], references: [userId], onDelete: Cascade)

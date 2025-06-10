@@ -17,6 +17,7 @@ export class LanguagesService {
   }
 
   async createUserLanguages(userId: string, languages: LanguageItemDto[]) {
+    console.log(languages);
     const freelancer = await this.prismaService.freelancerProfile.findUnique({
       where: { userId },
     });
@@ -24,9 +25,17 @@ export class LanguagesService {
       throw new NotFoundException(`Freelancer with ID ${userId} not found`);
     }
 
-    // Check if new languages have IDs
-    if (languages.some((lang) => lang.id)) {
-      throw new BadRequestException('New languages must not have IDs');
+    // Check if languages already exist
+    const existingLanguages = await this.prismaService.language.findMany({
+      where: {
+        name: {
+          in: languages.map((lang) => lang.name),
+        },
+      },
+    });
+
+    if (existingLanguages.length > 0) {
+      throw new BadRequestException('Languages already exist');
     }
 
     // Create new languages
@@ -34,7 +43,7 @@ export class LanguagesService {
       await this.prismaService.language.createMany({
         data: languages.map((lang) => ({
           name: lang.name,
-          level: lang.level,
+          proficiency: lang.proficiency,
           freelancerId: userId,
         })),
       });
@@ -79,7 +88,7 @@ export class LanguagesService {
           where: { id: lang.id },
           data: {
             name: lang.name,
-            level: lang.level,
+            proficiency: lang.proficiency,
           },
         }),
       ),

@@ -1,6 +1,17 @@
-import { Controller, Get, Patch, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Param,
+  Body,
+  Post,
+  Delete,
+} from '@nestjs/common';
 import { LanguagesService } from './languages.service';
-import { UpdateLanguagesDto } from './dto/update-languages.dto';
+import {
+  LanguageItemDto,
+  UpdateLanguagesDto,
+} from './dto/update-languages.dto';
 
 @Controller('user/:userId/languages')
 export class LanguagesController {
@@ -11,7 +22,29 @@ export class LanguagesController {
     return this.languagesService.getUserLanguages(userId);
   }
 
-  @Patch()
+  @Post('/create')
+  async createUserLanguages(
+    @Param('userId') userId: string,
+    @Body() createLanguagesDto: LanguageItemDto[],
+  ) {
+    return this.languagesService.createUserLanguages(
+      userId,
+      createLanguagesDto,
+    );
+  }
+
+  @Delete('/delete')
+  async deleteUserLanguages(
+    @Param('userId') userId: string,
+    @Body() deleteLanguagesDto: string[],
+  ) {
+    return this.languagesService.deleteUserLanguages(
+      userId,
+      deleteLanguagesDto,
+    );
+  }
+
+  @Patch('/update')
   async updateUserLanguages(
     @Param('userId') userId: string,
     @Body() updateLanguagesDto: UpdateLanguagesDto,

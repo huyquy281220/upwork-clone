@@ -6,7 +6,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { LanguageLevel } from '@prisma/client';
+import { LanguageProficiency } from '@prisma/client';
 
 export class LanguageItemDto {
   @IsOptional()
@@ -16,8 +16,8 @@ export class LanguageItemDto {
   @IsString()
   name: string;
 
-  @IsEnum(LanguageLevel)
-  level: LanguageLevel;
+  @IsEnum(LanguageProficiency)
+  proficiency: LanguageProficiency;
 }
 
 export class UpdateLanguagesDto {
