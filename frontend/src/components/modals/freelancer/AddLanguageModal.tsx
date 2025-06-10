@@ -76,7 +76,7 @@ export function AddLanguageModal({
       // Create new language object
       const newLanguage = {
         name: language,
-        level: proficiency,
+        proficiency,
       };
 
       // Get current user languages and add the new one
@@ -84,7 +84,7 @@ export function AddLanguageModal({
       const updatedLanguages = [...currentLanguages, newLanguage];
 
       // Call API to update languages
-      const response = await api.patch(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/user/${session.user.id}/languages`,
         {
           languages: updatedLanguages,

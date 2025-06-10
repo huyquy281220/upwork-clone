@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,12 +19,11 @@ import { X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useUserLanguages } from "@/hooks/useUserInfo";
 import api from "@/services/api";
-import { LanguageData } from "@/types/modals";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EditLanguagesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: Dispatch<SetStateAction<LanguageData[]>>;
 }
 
 const proficiencyLevels = [
@@ -37,26 +36,21 @@ const proficiencyLevels = [
 export function EditLanguagesModal({
   open,
   onOpenChange,
-  onSave,
 }: EditLanguagesModalProps) {
   const { data: session } = useSession();
   const { data: languages } = useUserLanguages(session?.user?.id ?? "");
-
-  console.log(languages);
+  const queryClient = useQueryClient();
 
   const [proficiencyChanges, setProficiencyChanges] = useState<
     Record<string, string>
   >({});
 
-  console.log(proficiencyChanges);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSave = async () => {
     if (!languages) return;
 
     setIsLoading(true);
-    setError(null);
 
     try {
       // Create new language object
@@ -77,6 +71,10 @@ export function EditLanguagesModal({
         throw new Error(errorData.message || "Failed to update languages");
       }
 
+      await queryClient.invalidateQueries({
+        queryKey: ["user", session?.user?.id],
+      });
+
       // Reset changes
       setProficiencyChanges({});
 
@@ -84,9 +82,6 @@ export function EditLanguagesModal({
       onOpenChange(false);
     } catch (error) {
       console.error("Error updating languages:", error);
-      setError(
-        error instanceof Error ? error.message : "Failed to update languages"
-      );
     } finally {
       setIsLoading(false);
     }
@@ -176,7 +171,7 @@ export function EditLanguagesModal({
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
           >
-            Save
+            {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>
