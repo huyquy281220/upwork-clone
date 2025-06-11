@@ -13,7 +13,7 @@ type ModalState =
   | { type: "editEducation" }
   | { type: "title" }
   | { type: "profileOverview" }
-  | { type: "changeHourlyRate" };
+  | { type: "availability" };
 
 export const useModalManager = () => {
   const [modalState, setModalState] = useState<ModalState>({

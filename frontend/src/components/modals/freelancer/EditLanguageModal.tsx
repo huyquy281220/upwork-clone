@@ -27,10 +27,10 @@ interface EditLanguagesModalProps {
 }
 
 const proficiencyLevels = [
-  { value: "basic", label: "Basic" },
-  { value: "conversational", label: "Conversational" },
-  { value: "fluent", label: "Fluent" },
-  { value: "native", label: "Native or Bilingual" },
+  { value: "BASIC", label: "Basic" },
+  { value: "CONVERSATIONAL", label: "Conversational" },
+  { value: "FLUENT", label: "Fluent" },
+  { value: "NATIVE", label: "Native or Bilingual" },
 ];
 
 export function EditLanguagesModal({
@@ -55,15 +55,14 @@ export function EditLanguagesModal({
     try {
       // Create new language object
       const updatedLanguages = languages.map((lang) => ({
-        name: lang.language,
-        level: proficiencyChanges[lang.id!] || lang.proficiency,
+        id: lang.id,
+        name: lang.name,
+        proficiency: proficiencyChanges[lang.id!] || lang.proficiency,
       }));
 
       const response = await api.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/user/${session?.user?.id}/languages`,
-        {
-          languages: updatedLanguages,
-        }
+        `${process.env.NEXT_PUBLIC_API_URL}/user/${session?.user?.id}/languages/update`,
+        updatedLanguages
       );
 
       if (response.status !== 200) {
@@ -112,23 +111,27 @@ export function EditLanguagesModal({
         </DialogHeader>
 
         {languages && languages.length > 0 ? (
-          languages?.map(({ language, proficiency, id }) => (
+          languages.map(({ name, proficiency, id }, index) => (
             <div className="grid grid-cols-2 gap-4" key={id}>
               <div className="space-y-2">
                 <p>Language</p>
-                <input
-                  id="language"
-                  value={language}
-                  className="bg-background w-[217px] h-[38px] rounded-md cursor-not-allowed"
-                  // placeholder="Enter language"
-                  disabled
-                />
+                <div className="relative">
+                  <input
+                    id={`language-${index}`}
+                    value={name}
+                    className="bg-background w-[217px] h-[38px] px-2 rounded-md cursor-not-allowed"
+                    readOnly
+                    disabled
+                  />
+                  <div className="absolute inset-0 bg-black/30 rounded-md pointer-events-none" />
+                </div>
               </div>
 
               <div className="space-y-2">
                 <p>Proficiency level</p>
                 <Select
-                  value={proficiency}
+                  // value={proficiency}
+                  defaultValue={proficiency}
                   onValueChange={(value) =>
                     setProficiencyChanges({
                       ...proficiencyChanges,
@@ -138,8 +141,7 @@ export function EditLanguagesModal({
                 >
                   <SelectTrigger className="bg-background border-border">
                     <SelectValue
-                      // placeholder="Select proficiency"
-                      defaultValue={proficiency}
+                    // placeholder={proficiency}
                     />
                   </SelectTrigger>
                   <SelectContent>

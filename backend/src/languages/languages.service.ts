@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { LanguageItemDto } from './dto/update-languages.dto';
+import { LanguageItemDto } from './dto/create-languages.dto';
 
 @Injectable()
 export class LanguagesService {
@@ -17,7 +17,6 @@ export class LanguagesService {
   }
 
   async createUserLanguages(userId: string, languages: LanguageItemDto[]) {
-    console.log(languages);
     const freelancer = await this.prismaService.freelancerProfile.findUnique({
       where: { userId },
     });
@@ -54,13 +53,18 @@ export class LanguagesService {
       where: { id: userId },
       include: {
         freelancerProfile: {
-          include: { languages: true },
+          include: {
+            languages: {
+              orderBy: { name: 'asc' },
+            },
+          },
         },
       },
     });
   }
 
   async updateUserLanguages(userId: string, languages: LanguageItemDto[]) {
+    console.log(languages);
     const freelancer = await this.prismaService.freelancerProfile.findUnique({
       where: { userId },
     });
@@ -99,7 +103,11 @@ export class LanguagesService {
       where: { id: userId },
       include: {
         freelancerProfile: {
-          include: { languages: true },
+          include: {
+            languages: {
+              orderBy: { name: 'asc' },
+            },
+          },
         },
       },
     });

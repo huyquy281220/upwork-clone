@@ -8,10 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { LanguagesService } from './languages.service';
-import {
-  LanguageItemDto,
-  UpdateLanguagesDto,
-} from './dto/update-languages.dto';
+import { UpdateLanguagesDto } from './dto/update-languages.dto';
+import { LanguageItemDto } from './dto/create-languages.dto';
 
 @Controller('user/:userId/languages')
 export class LanguagesController {
@@ -47,11 +45,11 @@ export class LanguagesController {
   @Patch('/update')
   async updateUserLanguages(
     @Param('userId') userId: string,
-    @Body() updateLanguagesDto: UpdateLanguagesDto,
+    @Body() updateLanguagesDto: LanguageItemDto[],
   ) {
     return this.languagesService.updateUserLanguages(
       userId,
-      updateLanguagesDto.languages,
+      updateLanguagesDto,
     );
   }
 }

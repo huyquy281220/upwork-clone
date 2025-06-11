@@ -27,8 +27,6 @@ import {
 import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getLanguagesWithoutDuplicates } from "@/utils/getLanguages";
-import { useUser } from "@/hooks/useUserInfo";
-import { FreelancerUser } from "@/types/user";
 import { useSession } from "next-auth/react";
 import api from "@/services/api";
 
@@ -49,7 +47,6 @@ export function AddLanguageModal({
   onOpenChange,
 }: AddLanguageModalProps) {
   const { data: session } = useSession();
-  const { data: user } = useUser<FreelancerUser>(session?.user?.id ?? "");
 
   const [language, setLanguage] = useState("");
   const [proficiency, setProficiency] = useState("");
@@ -78,20 +75,13 @@ export function AddLanguageModal({
         name: language,
         proficiency,
       };
-
-      // Get current user languages and add the new one
-      const currentLanguages = user?.freelancerProfile?.languages || [];
-      const updatedLanguages = [...currentLanguages, newLanguage];
-
       // Call API to update languages
       const response = await api.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/user/${session.user.id}/languages`,
-        {
-          languages: updatedLanguages,
-        }
+        `${process.env.NEXT_PUBLIC_API_URL}/user/${session.user.id}/languages/create`,
+        [newLanguage]
       );
 
-      if (response.status !== 200) {
+      if (response.status !== 201) {
         const errorData = response.data;
         throw new Error(errorData.message || "Failed to add language");
       }

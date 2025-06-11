@@ -13,6 +13,8 @@ import { AddEducationModal } from "@/components/modals/freelancer/AddEducationMo
 import { FreelancerUser } from "@/types/user";
 import { EditLanguagesModal } from "@/components/modals/freelancer/EditLanguageModal";
 import { useModalManager } from "@/hooks/useModalManager";
+import { EditEducationModal } from "@/components/modals/freelancer/EditEducationModal";
+import { AvailabilityModal } from "@/components/modals/freelancer/AvailabilityModal";
 
 export function ProfileSidebar() {
   const { openModal, closeModal, isModalOpen } = useModalManager();
@@ -86,7 +88,7 @@ export function ProfileSidebar() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <p className="font-medium">Hours per week</p>
-              <CirclePencil />
+              <CirclePencil onEdit={() => openModal("availability")} />
             </div>
 
             <p className="text-sm text-muted-foreground">
@@ -161,6 +163,21 @@ export function ProfileSidebar() {
         open={isModalOpen("addEducation")}
         onOpenChange={() => closeModal()}
         onSave={() => {}}
+      />
+
+      <EditEducationModal
+        open={isModalOpen("editEducation")}
+        onOpenChange={() => closeModal()}
+        onSave={() => {}}
+        education={user?.freelancerProfile?.education ?? null}
+      />
+
+      <AvailabilityModal
+        open={isModalOpen("availability")}
+        onOpenChange={() => closeModal()}
+        onSave={() => {}}
+        currentAvailability={user?.freelancerProfile?.availability ?? null}
+        currentContractToHire={user?.freelancerProfile?.contractToHire ?? null}
       />
     </div>
   );

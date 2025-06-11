@@ -50,7 +50,6 @@ const degrees = [
 export function AddEducationModal({
   open,
   onOpenChange,
-  onSave,
 }: AddEducationModalProps) {
   const [school, setSchool] = useState("");
   const [fromYear, setFromYear] = useState("");
@@ -59,18 +58,31 @@ export function AddEducationModal({
   const [areaOfStudy, setAreaOfStudy] = useState("");
   const [description, setDescription] = useState("");
 
-  const handleSave = () => {
-    if (school) {
-      onSave({
-        school,
-        fromYear: fromYear || undefined,
-        toYear: toYear || undefined,
-        degree: degree || undefined,
-        areaOfStudy: areaOfStudy || undefined,
-        description: description || undefined,
-      });
-      resetForm();
-      onOpenChange(false);
+  const handleSave = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/${session?.user?.id}/education/create`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            school,
+            fromYear,
+            toYear,
+            degree,
+            areaOfStudy,
+            description,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to add education");
+      }
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error adding education:", error);
     }
   };
 

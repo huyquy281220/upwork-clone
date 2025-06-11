@@ -2,7 +2,7 @@ import { Availability, Proficiency } from "./user";
 
 export interface LanguageData {
   id?: string;
-  language: string;
+  name: string;
   proficiency: Proficiency;
 }
 
