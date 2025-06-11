@@ -4,11 +4,22 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { EducationItemDto } from './dto/update-education.dto';
+import { EducationItemDto } from './dto/education.dto';
 
 @Injectable()
 export class EducationService {
   constructor(private prismaService: PrismaService) {}
+
+  async getUserEducation(userId: string) {
+    const freelancer = await this.prismaService.freelancerProfile.findUnique({
+      where: { userId },
+      include: { education: true },
+    });
+    if (!freelancer) {
+      throw new NotFoundException(`Freelancer with ID ${userId} not found`);
+    }
+    return freelancer.education;
+  }
 
   /**
    * Create multiple new education records for a freelancer

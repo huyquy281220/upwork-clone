@@ -1,32 +1,35 @@
-import { Controller, Patch, Param, Body, Post } from '@nestjs/common';
+import { Controller, Patch, Param, Body, Post, Get } from '@nestjs/common';
 import { EducationService } from './education.service';
-import {
-  EducationItemDto,
-  UpdateEducationDto,
-} from './dto/update-education.dto';
+import { EducationItemDto } from './dto/education.dto';
 
 @Controller('user/:userId/education')
 export class EducationController {
   constructor(private readonly educationService: EducationService) {}
 
-  @Post()
-  async createUserEducation(
-    @Param('userId') userId: string,
-    @Body() createEducationDto: EducationItemDto,
-  ) {
-    return this.educationService.createUserEducation(userId, [
-      createEducationDto,
-    ]);
+  @Get()
+  async getUserEducation(@Param('userId') userId: string) {
+    return this.educationService.getUserEducation(userId);
   }
 
-  @Patch()
+  @Post('/create')
+  async createUserEducation(
+    @Param('userId') userId: string,
+    @Body() createEducationDto: EducationItemDto[],
+  ) {
+    return this.educationService.createUserEducation(
+      userId,
+      createEducationDto,
+    );
+  }
+
+  @Patch('/update')
   async updateUserEducation(
     @Param('userId') userId: string,
-    @Body() updateEducationDto: UpdateEducationDto,
+    @Body() updateEducationDto: EducationItemDto[],
   ) {
     return this.educationService.updateUserEducation(
       userId,
-      updateEducationDto.education,
+      updateEducationDto,
     );
   }
 }

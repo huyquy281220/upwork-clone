@@ -41,10 +41,3 @@ export class EducationItemDto {
   @IsString()
   description?: string;
 }
-
-export class UpdateEducationDto {
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => EducationItemDto)
-  education: EducationItemDto[];
-}
