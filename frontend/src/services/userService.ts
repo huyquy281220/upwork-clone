@@ -16,3 +16,8 @@ export const getUserLanguages = async (id: string) => {
   const response = await api.get(`${apiURL}/user/${id}/languages`);
   return response.data;
 };
+
+export const getUserEducation = async (id: string) => {
+  const response = await api.get(`${apiURL}/user/${id}/education`);
+  return response.data;
+};

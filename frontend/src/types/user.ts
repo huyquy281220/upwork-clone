@@ -72,6 +72,7 @@ export interface FreelancerProfile {
     name: string;
     proficiency: string;
   }[];
+  education?: Education[];
 }
 
 // Additional related interfaces
@@ -80,6 +81,16 @@ export interface UserSkill {
   skillId: string;
   proficiency?: number;
   skill: Skill;
+}
+
+export interface Education {
+  id: string;
+  school: string;
+  startYear: number;
+  endYear: number;
+  degree: string;
+  areaOfStudy: string;
+  description: string;
 }
 
 export interface Skill {

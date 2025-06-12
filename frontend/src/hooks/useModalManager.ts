@@ -10,7 +10,7 @@ type ModalState =
   | { type: "addLanguage" }
   | { type: "editLanguage" }
   | { type: "addEducation" }
-  | { type: "editEducation" }
+  | { type: "editEducation"; id: string }
   | { type: "title" }
   | { type: "profileOverview" }
   | { type: "availability" };
@@ -21,8 +21,15 @@ export const useModalManager = () => {
   });
 
   const openModal = useCallback(
-    <T extends Exclude<ModalState["type"], null>>(modalType: T) => {
-      setModalState({ type: modalType });
+    <T extends Exclude<ModalState["type"], null>>(
+      modalType: T,
+      id?: string
+    ) => {
+      if (modalType === "editEducation") {
+        setModalState({ type: modalType, id: id ?? "" });
+      } else {
+        setModalState({ type: modalType });
+      }
     },
     []
   );
@@ -38,10 +45,18 @@ export const useModalManager = () => {
     [modalState.type]
   );
 
+  const getModalId = useCallback(() => {
+    if (modalState.type === "editEducation") {
+      return modalState.id;
+    }
+    return null;
+  }, [modalState]);
+
   return {
     modalState,
     openModal,
     closeModal,
     isModalOpen,
+    getModalId,
   };
 };

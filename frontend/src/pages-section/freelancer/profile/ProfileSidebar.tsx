@@ -15,9 +15,10 @@ import { EditLanguagesModal } from "@/components/modals/freelancer/EditLanguageM
 import { useModalManager } from "@/hooks/useModalManager";
 import { EditEducationModal } from "@/components/modals/freelancer/EditEducationModal";
 import { AvailabilityModal } from "@/components/modals/freelancer/AvailabilityModal";
+import CircleTrash from "@/components/common/CircleTrash";
 
 export function ProfileSidebar() {
-  const { openModal, closeModal, isModalOpen } = useModalManager();
+  const { openModal, closeModal, isModalOpen, getModalId } = useModalManager();
   const { data: session, status } = useSession();
   const { data: user, isLoading } = useUser<FreelancerUser>(
     session?.user.id ?? ""
@@ -26,6 +27,7 @@ export function ProfileSidebar() {
   if (isLoading || status === "loading") return <JobSkeletion />;
 
   const currentLanguages = user?.freelancerProfile?.languages;
+  const educations = user?.freelancerProfile?.education;
 
   return (
     <div className="space-y-6">
@@ -121,7 +123,6 @@ export function ProfileSidebar() {
             <div className="flex justify-between items-center mb-2">
               <p className="font-medium">Education</p>
               <div className="flex items-center gap-2">
-                <CirclePencil onEdit={() => openModal("editEducation")} />
                 <CirclePlus
                   className="w-8 h-8 text-green-600 stroke-1 cursor-pointer"
                   onClick={() => openModal("addEducation")}
@@ -129,11 +130,27 @@ export function ProfileSidebar() {
               </div>
             </div>
 
-            <p className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">
-                Bachelor of Science in Computer Science
-              </span>
-            </p>
+            {educations?.map(
+              ({ id, school, startYear, endYear, degree, areaOfStudy }) => (
+                <div key={school} className="mb-2">
+                  <div className="flex justify-between items-center">
+                    <p className="font-medium text-foreground">{school}</p>
+                    <div className="flex gap-1">
+                      <CirclePencil
+                        onEdit={() => openModal("editEducation", id)}
+                      />
+                      <CircleTrash />
+                    </div>
+                  </div>
+                  <p className="text-sm text-[#a5a5a5]">
+                    {degree}, {areaOfStudy}
+                  </p>
+                  <p className="text-sm text-[#a5a5a5]">
+                    {startYear} - {endYear}
+                  </p>
+                </div>
+              )
+            )}
           </div>
 
           <div>
@@ -168,8 +185,7 @@ export function ProfileSidebar() {
       <EditEducationModal
         open={isModalOpen("editEducation")}
         onOpenChange={() => closeModal()}
-        onSave={() => {}}
-        education={user?.freelancerProfile?.education ?? null}
+        educationId={getModalId() ?? ""}
       />
 
       <AvailabilityModal

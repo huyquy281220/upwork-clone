@@ -11,8 +11,8 @@ export interface EducationData {
   school: string;
   areaOfStudy: string;
   degree: string;
-  dateFrom: string;
-  dateTo: string;
+  startYear: number;
+  endYear: number;
   description?: string;
 }
 

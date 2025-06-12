@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSession } from "next-auth/react";
+import api from "@/services/api";
 
 interface AddEducationModalProps {
   open: boolean;
@@ -25,8 +27,8 @@ interface AddEducationModalProps {
 
 interface EducationData {
   school: string;
-  fromYear?: string;
-  toYear?: string;
+  fromYear?: number;
+  toYear?: number;
   degree?: string;
   areaOfStudy?: string;
   description?: string;
@@ -51,48 +53,47 @@ export function AddEducationModal({
   open,
   onOpenChange,
 }: AddEducationModalProps) {
-  const [school, setSchool] = useState("");
-  const [fromYear, setFromYear] = useState("");
-  const [toYear, setToYear] = useState("");
-  const [degree, setDegree] = useState("");
-  const [areaOfStudy, setAreaOfStudy] = useState("");
-  const [description, setDescription] = useState("");
+  const { data: session } = useSession();
+
+  const [educationForm, setEducationForm] = useState({
+    school: "",
+    fromYear: 0,
+    toYear: 0,
+    degree: "",
+    areaOfStudy: "",
+    description: "",
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
     try {
-      const response = await fetch(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/user/${session?.user?.id}/education/create`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            school,
-            fromYear,
-            toYear,
-            degree,
-            areaOfStudy,
-            description,
-          }),
-        }
+        [educationForm]
       );
 
-      if (!response.ok) {
+      if (response.status !== 201) {
         throw new Error("Failed to add education");
       }
 
-      const data = await response.json();
-      console.log(data);
+      onOpenChange(false);
     } catch (error) {
       console.error("Error adding education:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const resetForm = () => {
-    setSchool("");
-    setFromYear("");
-    setToYear("");
-    setDegree("");
-    setAreaOfStudy("");
-    setDescription("");
+    setEducationForm({
+      school: "",
+      fromYear: 0,
+      toYear: 0,
+      degree: "",
+      areaOfStudy: "",
+      description: "",
+    });
   };
 
   const handleCancel = () => {
@@ -128,8 +129,13 @@ export function AddEducationModal({
             <input
               id="school"
               type="text"
-              value={school}
-              onChange={(e) => setSchool(e.target.value)}
+              value={educationForm.school}
+              onChange={(e) =>
+                setEducationForm({
+                  ...educationForm,
+                  school: e.target.value,
+                })
+              }
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
               placeholder="Ex: Northwestern University"
             />
@@ -140,7 +146,12 @@ export function AddEducationModal({
               Dates Attended (Optional)
             </label>
             <div className="grid grid-cols-2 gap-4">
-              <Select value={fromYear} onValueChange={setFromYear}>
+              <Select
+                value={educationForm.fromYear.toString()}
+                onValueChange={(value) =>
+                  setEducationForm({ ...educationForm, fromYear: +value })
+                }
+              >
                 <SelectTrigger className="bg-background border-border">
                   <SelectValue placeholder="From" />
                 </SelectTrigger>
@@ -153,7 +164,12 @@ export function AddEducationModal({
                 </SelectContent>
               </Select>
 
-              <Select value={toYear} onValueChange={setToYear}>
+              <Select
+                value={educationForm.toYear.toString()}
+                onValueChange={(value) =>
+                  setEducationForm({ ...educationForm, toYear: +value })
+                }
+              >
                 <SelectTrigger className="bg-background border-border">
                   <SelectValue placeholder="To (or expected graduation year)" />
                 </SelectTrigger>
@@ -172,7 +188,12 @@ export function AddEducationModal({
             <label htmlFor="degree" className="text-sm font-medium">
               Degree (Optional)
             </label>
-            <Select value={degree} onValueChange={setDegree}>
+            <Select
+              value={educationForm.degree}
+              onValueChange={(value) =>
+                setEducationForm({ ...educationForm, degree: value })
+              }
+            >
               <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Degree (Optional)" />
               </SelectTrigger>
@@ -193,8 +214,13 @@ export function AddEducationModal({
             <input
               id="areaOfStudy"
               type="text"
-              value={areaOfStudy}
-              onChange={(e) => setAreaOfStudy(e.target.value)}
+              value={educationForm.areaOfStudy}
+              onChange={(e) =>
+                setEducationForm({
+                  ...educationForm,
+                  areaOfStudy: e.target.value,
+                })
+              }
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
               placeholder="Ex: Computer Science"
             />
@@ -206,8 +232,13 @@ export function AddEducationModal({
             </label>
             <textarea
               id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={educationForm.description}
+              onChange={(e) =>
+                setEducationForm({
+                  ...educationForm,
+                  description: e.target.value,
+                })
+              }
               className="w-full min-h-[100px] rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
               placeholder="Describe your education, achievements, or relevant coursework..."
             />
@@ -225,9 +256,9 @@ export function AddEducationModal({
           <Button
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
-            disabled={!school}
+            disabled={!educationForm.school}
           >
-            Save
+            {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

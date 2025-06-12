@@ -13,22 +13,13 @@ import { SelectValue } from "@/components/ui/select";
 import { SelectItem, SelectTrigger } from "@/components/ui/select";
 import { SelectContent } from "@/components/ui/select";
 import { Select } from "@/components/ui/select";
+import { useSession } from "next-auth/react";
+import { useUserEducation } from "@/hooks/useUserInfo";
 
 interface EditEducationModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  education: EducationData | null;
-  onSave: (education: EducationData) => void;
-}
-
-interface EducationData {
-  id?: string;
-  school: string;
-  fromYear?: string;
-  toYear?: string;
-  degree?: string;
-  areaOfStudy?: string;
-  description?: string;
+  educationId: string;
 }
 
 const years = Array.from({ length: 50 }, (_, i) =>
@@ -49,63 +40,49 @@ const degrees = [
 export function EditEducationModal({
   open,
   onOpenChange,
-  education,
-  onSave,
+  educationId,
 }: EditEducationModalProps) {
-  const [school, setSchool] = useState("");
-  const [fromYear, setFromYear] = useState("");
-  const [toYear, setToYear] = useState("");
-  const [degree, setDegree] = useState("");
-  const [areaOfStudy, setAreaOfStudy] = useState("");
-  const [description, setDescription] = useState("");
+  const { data: session } = useSession();
+  const { data: educations } = useUserEducation(session?.user?.id ?? "");
+
+  const [educationForm, setEducationForm] = useState({
+    school: "",
+    startYear: 0,
+    endYear: 0,
+    degree: "",
+    areaOfStudy: "",
+    description: "",
+  });
+
+  const education = educations?.find((e) => e.id === educationId);
 
   useEffect(() => {
     if (education) {
-      setSchool(education.school || "");
-      setFromYear(education.fromYear || "");
-      setToYear(education.toYear || "");
-      setDegree(education.degree || "");
-      setAreaOfStudy(education.areaOfStudy || "");
-      setDescription(education.description || "");
+      setEducationForm({
+        school: education.school || "",
+        startYear: education.startYear || 0,
+        endYear: education.endYear || 0,
+        degree: education.degree || "",
+        areaOfStudy: education.areaOfStudy || "",
+        description: education.description || "",
+      });
     }
   }, [education]);
 
-  const handleSave = () => {
-    if (school && education) {
-      onSave({
-        ...education,
-        school,
-        fromYear: fromYear || undefined,
-        toYear: toYear || undefined,
-        degree: degree || undefined,
-        areaOfStudy: areaOfStudy || undefined,
-        description: description || undefined,
-      });
-      onOpenChange(false);
-    }
-  };
+  const handleSave = () => {};
 
   const handleCancel = () => {
     if (education) {
-      setSchool(education.school || "");
-      setFromYear(education.fromYear || "");
-      setToYear(education.toYear || "");
-      setDegree(education.degree || "");
-      setAreaOfStudy(education.areaOfStudy || "");
-      setDescription(education.description || "");
+      setEducationForm({
+        school: education.school || "",
+        startYear: education.startYear || 0,
+        endYear: education.endYear || 0,
+        degree: education.degree || "",
+        areaOfStudy: education.areaOfStudy || "",
+        description: education.description || "",
+      });
     }
     onOpenChange(false);
-  };
-
-  const clearField = (field: string) => {
-    switch (field) {
-      case "school":
-        setSchool("");
-        break;
-      case "areaOfStudy":
-        setAreaOfStudy("");
-        break;
-    }
   };
 
   return (
@@ -116,7 +93,7 @@ export function EditEducationModal({
       >
         <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <DialogTitle className="text-xl font-semibold">
-            Edit education
+            Edit education {educationId}
           </DialogTitle>
           <Button
             variant="ghost"
@@ -137,15 +114,19 @@ export function EditEducationModal({
               <input
                 id="school"
                 type="text"
-                value={school}
-                onChange={(e) => setSchool(e.target.value)}
+                value={educationForm.school}
+                onChange={(e) =>
+                  setEducationForm({ ...educationForm, school: e.target.value })
+                }
                 className="w-full rounded-md border border-border bg-background px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
                 placeholder="Ex: Northwestern University"
               />
-              {school && (
+              {educationForm.school && (
                 <button
                   type="button"
-                  onClick={() => clearField("school")}
+                  onClick={() =>
+                    setEducationForm({ ...educationForm, school: "" })
+                  }
                   className="absolute right-2 top-1/2 -translate-y-1/2 h-5 w-5 rounded-full flex items-center justify-center hover:bg-muted"
                 >
                   <X className="h-3 w-3" />
@@ -159,7 +140,12 @@ export function EditEducationModal({
               Dates Attended (Optional)
             </label>
             <div className="grid grid-cols-2 gap-4">
-              <Select value={fromYear} onValueChange={setFromYear}>
+              <Select
+                value={educationForm.startYear.toString()}
+                onValueChange={(value) =>
+                  setEducationForm({ ...educationForm, startYear: +value })
+                }
+              >
                 <SelectTrigger className="bg-background border-border">
                   <SelectValue placeholder="From" />
                 </SelectTrigger>
@@ -172,7 +158,12 @@ export function EditEducationModal({
                 </SelectContent>
               </Select>
 
-              <Select value={toYear} onValueChange={setToYear}>
+              <Select
+                value={educationForm.endYear.toString()}
+                onValueChange={(value) =>
+                  setEducationForm({ ...educationForm, endYear: +value })
+                }
+              >
                 <SelectTrigger className="bg-background border-border">
                   <SelectValue placeholder="To (or expected graduation year)" />
                 </SelectTrigger>
@@ -191,7 +182,12 @@ export function EditEducationModal({
             <label htmlFor="degree" className="text-sm font-medium">
               Degree (Optional)
             </label>
-            <Select value={degree} onValueChange={setDegree}>
+            <Select
+              value={educationForm.degree}
+              onValueChange={(value) =>
+                setEducationForm({ ...educationForm, degree: value })
+              }
+            >
               <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Degree (Optional)" />
               </SelectTrigger>
@@ -213,15 +209,22 @@ export function EditEducationModal({
               <input
                 id="areaOfStudy"
                 type="text"
-                value={areaOfStudy}
-                onChange={(e) => setAreaOfStudy(e.target.value)}
+                value={educationForm.areaOfStudy}
+                onChange={(e) =>
+                  setEducationForm({
+                    ...educationForm,
+                    areaOfStudy: e.target.value,
+                  })
+                }
                 className="w-full rounded-md border border-border bg-background px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
                 placeholder="Ex: Computer Science"
               />
-              {areaOfStudy && (
+              {educationForm.areaOfStudy && (
                 <button
                   type="button"
-                  onClick={() => clearField("areaOfStudy")}
+                  onClick={() =>
+                    setEducationForm({ ...educationForm, areaOfStudy: "" })
+                  }
                   className="absolute right-2 top-1/2 -translate-y-1/2 h-5 w-5 rounded-full flex items-center justify-center hover:bg-muted"
                 >
                   <X className="h-3 w-3" />
@@ -236,8 +239,13 @@ export function EditEducationModal({
             </label>
             <textarea
               id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={educationForm.description}
+              onChange={(e) =>
+                setEducationForm({
+                  ...educationForm,
+                  description: e.target.value,
+                })
+              }
               className="w-full min-h-[100px] rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
               placeholder="Describe your education, achievements, or relevant coursework..."
             />
@@ -255,7 +263,7 @@ export function EditEducationModal({
           <Button
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
-            disabled={!school}
+            disabled={!educationForm.school}
           >
             Save
           </Button>
