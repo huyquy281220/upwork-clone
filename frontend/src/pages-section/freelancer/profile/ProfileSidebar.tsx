@@ -42,12 +42,16 @@ export function ProfileSidebar() {
             <AvatarFallback>HH</AvatarFallback>
           </Avatar>
           <h1 className="text-2xl font-bold">{user?.fullName}</h1>
-          <div className="flex items-center justify-center gap-2 text-muted-foreground">
-            <MapPin className="w-4 h-4" />
-            <span>Hanoi, Vietnam</span>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              <span>Hanoi, Vietnam</span>
+            </div>
             <span>•</span>
-            <Clock className="w-4 h-4" />
-            <span>4:32 pm local time</span>
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>4:32 pm local time</span>
+            </div>
           </div>
           <div className="flex justify-center gap-2 pt-6">
             <Button
