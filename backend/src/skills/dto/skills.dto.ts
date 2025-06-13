@@ -19,10 +19,3 @@ export class SkillItemDto {
   @Max(5)
   proficiency?: number;
 }
-
-export class UpdateSkillsDto {
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => SkillItemDto)
-  skills: SkillItemDto[];
-}

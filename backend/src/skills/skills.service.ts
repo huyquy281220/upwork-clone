@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { SkillItemDto } from './dto/update-skills.dto';
+import { SkillItemDto } from './dto/skills.dto';
 
 @Injectable()
 export class SkillsService {
@@ -23,11 +23,6 @@ export class SkillsService {
     });
     if (!freelancer) {
       throw new NotFoundException(`Freelancer with ID ${userId} not found`);
-    }
-
-    // Validate input: all skills must have skillId
-    if (skills.some((skill) => !skill.skillId)) {
-      throw new BadRequestException('All skills must have a skillId');
     }
 
     // Check if all skillIds exist
