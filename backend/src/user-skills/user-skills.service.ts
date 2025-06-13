@@ -15,6 +15,9 @@ export class UserSkillsService {
       select: {
         userId: true,
         proficiency: true,
+        skill: {
+          select: { name: true },
+        },
       },
     });
   }

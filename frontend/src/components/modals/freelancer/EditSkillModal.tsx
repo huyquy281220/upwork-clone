@@ -11,28 +11,34 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
-import { getAllSkills } from "@/services/skills";
+import { getAllSkills, getUserSkills } from "@/services/skills";
 import { Skill } from "@/types";
-
+import { UserSkill } from "@/types/user";
+import { useSession } from "next-auth/react";
+import api from "@/services/api";
 export interface SkillsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedSkills?: string[];
 }
 
-export function SkillsModal({
-  open,
-  onOpenChange,
-  selectedSkills = [],
-}: SkillsModalProps) {
+export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
+  const { data: session } = useSession();
   const { data: skills } = useQuery<Skill[]>({
     queryKey: ["skills"],
     queryFn: () => getAllSkills(),
   });
 
-  const [userSkills, setUserSkills] = useState<string[]>(selectedSkills);
+  const { data: userSkills } = useQuery<UserSkill[]>({
+    queryKey: ["user-skills"],
+    queryFn: () => getUserSkills(session?.user.id ?? ""),
+  });
+
+  const skills2 = userSkills?.map((skill) => skill.skill.name);
+
+  const [skillSelected, setSkillSelected] = useState<string[]>(skills2 ?? []);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const MAX_SKILLS = 15;
@@ -53,23 +59,42 @@ export function SkillsModal({
   }, [searchTerm, skills]);
 
   const handleAddSkill = (skill: string) => {
-    if (userSkills.length < MAX_SKILLS && !userSkills.includes(skill)) {
-      setUserSkills([...userSkills, skill]);
+    if (skillSelected.length < MAX_SKILLS && !skillSelected.includes(skill)) {
+      setSkillSelected([...skillSelected, skill]);
       setSearchTerm("");
       inputRef.current?.focus();
     }
   };
 
   const handleRemoveSkill = (skill: string) => {
-    setUserSkills(userSkills.filter((s) => s !== skill));
+    setSkillSelected(skillSelected.filter((s) => s !== skill));
   };
 
-  const handleSave = () => {
-    onOpenChange(false);
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      const newSkills = skills
+        ?.filter((skill) => skillSelected.includes(skill.name))
+        .map((skill) => skill.id);
+
+      const response = await api.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/user-skills/${session?.user.id}/create`,
+        newSkills
+      );
+
+      if (response.status !== 201) {
+        throw new Error("Failed to save skills");
+      }
+
+      onOpenChange(false);
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCloseModal = () => {
-    setUserSkills(selectedSkills);
     setSearchTerm("");
     onOpenChange(false);
   };
@@ -96,7 +121,7 @@ export function SkillsModal({
 
             <div className="relative">
               <div className="flex flex-wrap gap-2 p-2 min-h-10 rounded-md border border-gray-700 bg-transparent">
-                {userSkills.map((skill, index) => (
+                {skillSelected.map((skill, index) => (
                   <Badge
                     key={index}
                     variant="secondary"
@@ -154,7 +179,7 @@ export function SkillsModal({
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-500 text-foreground"
           >
-            Save
+            {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>
