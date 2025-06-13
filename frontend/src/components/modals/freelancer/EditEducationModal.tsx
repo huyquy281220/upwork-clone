@@ -15,6 +15,8 @@ import { SelectContent } from "@/components/ui/select";
 import { Select } from "@/components/ui/select";
 import { useSession } from "next-auth/react";
 import { useUserEducation } from "@/hooks/useUserInfo";
+import api from "@/services/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EditEducationModalProps {
   open: boolean;
@@ -46,6 +48,7 @@ export function EditEducationModal({
   const { data: educations } = useUserEducation(session?.user?.id ?? "");
 
   const [educationForm, setEducationForm] = useState({
+    id: "",
     school: "",
     startYear: 0,
     endYear: 0,
@@ -54,11 +57,16 @@ export function EditEducationModal({
     description: "",
   });
 
+  const queryClient = useQueryClient();
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const education = educations?.find((e) => e.id === educationId);
 
   useEffect(() => {
     if (education) {
       setEducationForm({
+        id: education.id ?? "",
         school: education.school || "",
         startYear: education.startYear || 0,
         endYear: education.endYear || 0,
@@ -69,11 +77,34 @@ export function EditEducationModal({
     }
   }, [education]);
 
-  const handleSave = () => {};
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/${session?.user?.id}/education/update`,
+        [educationForm]
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Failed to update education");
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: ["userEducation", session?.user?.id],
+      });
+
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error updating education:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleCancel = () => {
     if (education) {
       setEducationForm({
+        id: education.id ?? "",
         school: education.school || "",
         startYear: education.startYear || 0,
         endYear: education.endYear || 0,
@@ -265,7 +296,7 @@ export function EditEducationModal({
             className="bg-green-600 hover:bg-green-700"
             disabled={!educationForm.school}
           >
-            Save
+            {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>
