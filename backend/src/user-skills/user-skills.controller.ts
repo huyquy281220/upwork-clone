@@ -6,12 +6,18 @@ import {
   Body,
   UsePipes,
   ValidationPipe,
+  Get,
 } from '@nestjs/common';
 import { UserSkillsService } from './user-skills.service';
 
 @Controller('user-skills/:userId')
 export class UserSkillsController {
   constructor(private readonly userSkillsService: UserSkillsService) {}
+
+  @Get()
+  async getUserSkills(@Param('userId') userId: string) {
+    return this.userSkillsService.getUserSkills(userId);
+  }
 
   @Post('/create')
   @UsePipes(new ValidationPipe())

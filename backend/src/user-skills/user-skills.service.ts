@@ -9,6 +9,16 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UserSkillsService {
   constructor(private prismaService: PrismaService) {}
 
+  async getUserSkills(userId: string) {
+    return this.prismaService.userSkill.findMany({
+      where: { userId },
+      select: {
+        userId: true,
+        proficiency: true,
+      },
+    });
+  }
+
   /**
    * Synchronize skill associations for a freelancer
    * Adds new skills and removes existing skills not in the input list
