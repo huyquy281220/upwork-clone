@@ -50,7 +50,7 @@ export class SkillsService {
           data: skills.map((skill) => ({
             userId,
             skillId: skill.skillId,
-            proficiency: skill.proficiency,
+            // proficiency: skill.proficiency,
           })),
         });
       }
@@ -106,7 +106,7 @@ export class SkillsService {
           tx.userSkill.update({
             where: { userId_skillId: { userId, skillId: skill.skillId } },
             data: {
-              proficiency: skill.proficiency,
+              // proficiency: skill.proficiency,
             },
           }),
         ),

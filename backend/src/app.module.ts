@@ -15,6 +15,7 @@ import { ContractsModule } from './contracts/contracts.module';
 import { ConversationsModule } from './conversation/conversation.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ProposalsModule } from './proposals/proposals.module';
+import { UserSkillsModule } from './user-skills/user-skills.module';
 @Module({
   imports: [
     UserModule,
@@ -31,6 +32,7 @@ import { ProposalsModule } from './proposals/proposals.module';
     ConversationsModule,
     ProposalsModule,
     NotificationsModule,
+    UserSkillsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
