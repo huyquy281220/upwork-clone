@@ -49,3 +49,9 @@ export interface JobProps {
   connects?: number;
   isSaved: boolean;
 }
+
+export interface Skill {
+  id: string;
+  name: string;
+  categoryName: string;
+}

@@ -10,72 +10,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-
-// Sample skills data
-const SKILLS_DATA = {
-  "Web Application": [
-    "Web Development",
-    "Frontend",
-    "Backend",
-    "Full Stack",
-    "React",
-    "Angular",
-    "Vue",
-    "Node.js",
-  ],
-  Data: [
-    "Data Lake",
-    "Data Chart",
-    "Data Cloud",
-    "Data Entry",
-    "Data Model",
-    "Data Point",
-    "Data Backup",
-    "Data Center",
-    "Data Mining",
-    "Data Binding",
-  ],
-  AI: [
-    "AI Bot",
-    "AI Policy",
-    "AI Builder",
-    "AI Chatbot",
-    "AI Trading",
-    "AI Platform",
-    "AI Security",
-    "AI Classifier",
-    "AI Compliance",
-    "AI Consulting",
-  ],
-  Computer: [
-    "Computer Science",
-    "Computer Vision",
-    "Computer Graphics",
-    "Computer Architecture",
-  ],
-  Design: [
-    "UI Design",
-    "UX Design",
-    "Graphic Design",
-    "Web Design",
-    "Mobile Design",
-  ],
-};
+import { useQuery } from "@tanstack/react-query";
+import { getAllSkills } from "@/services/skills";
+import { Skill } from "@/types";
 
 export interface SkillsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedSkills?: string[];
-  onSave: (skills: string[]) => void;
 }
 
 export function SkillsModal({
   open,
   onOpenChange,
   selectedSkills = [],
-  onSave,
 }: SkillsModalProps) {
-  const [skills, setSkills] = useState<string[]>(selectedSkills);
+  const { data: skills } = useQuery<Skill[]>({
+    queryKey: ["skills"],
+    queryFn: () => getAllSkills(),
+  });
+
+  const [userSkills, setUserSkills] = useState<string[]>(selectedSkills);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -84,47 +39,38 @@ export function SkillsModal({
 
   useEffect(() => {
     if (searchTerm) {
-      const results: string[] = [];
+      const results =
+        skills
+          ?.filter((skill) =>
+            skill.name.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((skill) => skill.name) ?? [];
 
-      Object.entries(SKILLS_DATA).forEach(([category, categorySkills]) => {
-        if (category.toLowerCase().includes(searchTerm.toLowerCase())) {
-          results.push(...categorySkills);
-        } else {
-          const filteredSkills = categorySkills.filter((skill) =>
-            skill.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-          results.push(...filteredSkills);
-        }
-      });
-
-      setSearchResults([...new Set(results)]);
+      setSearchResults(results);
     } else {
       setSearchResults([]);
     }
-  }, [searchTerm]);
+  }, [searchTerm, skills]);
 
   const handleAddSkill = (skill: string) => {
-    if (skills.length < MAX_SKILLS && !skills.includes(skill)) {
-      setSkills([...skills, skill]);
+    if (userSkills.length < MAX_SKILLS && !userSkills.includes(skill)) {
+      setUserSkills([...userSkills, skill]);
       setSearchTerm("");
       inputRef.current?.focus();
     }
   };
 
   const handleRemoveSkill = (skill: string) => {
-    setSkills(skills.filter((s) => s !== skill));
+    setUserSkills(userSkills.filter((s) => s !== skill));
   };
 
   const handleSave = () => {
-    onSave(skills);
     onOpenChange(false);
   };
 
   const handleCloseModal = () => {
-    console.log(selectedSkills);
-    setSkills(selectedSkills);
+    setUserSkills(selectedSkills);
     setSearchTerm("");
-    console.log("test");
     onOpenChange(false);
   };
 
@@ -150,9 +96,9 @@ export function SkillsModal({
 
             <div className="relative">
               <div className="flex flex-wrap gap-2 p-2 min-h-10 rounded-md border border-gray-700 bg-transparent">
-                {skills.map((skill) => (
+                {userSkills.map((skill, index) => (
                   <Badge
-                    key={skill}
+                    key={index}
                     variant="secondary"
                     className="bg-background text-foreground flex items-center gap-1 py-1.5 border border-gray-700"
                   >
@@ -177,9 +123,9 @@ export function SkillsModal({
 
               {searchResults.length > 0 && (
                 <div className="absolute z-10 w-full mt-1 max-h-60 overflow-auto rounded-md border border-gray-700 bg-background">
-                  {searchResults.map((skill) => (
+                  {searchResults.map((skill, index) => (
                     <button
-                      key={skill}
+                      key={index}
                       className="w-full text-left px-3 py-2 hover:bg-gray-800 focus:bg-gray-800 focus:outline-none"
                       onClick={() => handleAddSkill(skill)}
                     >

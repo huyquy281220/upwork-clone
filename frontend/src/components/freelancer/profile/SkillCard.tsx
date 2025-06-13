@@ -30,7 +30,6 @@ export function SkillCard() {
       <SkillsModal
         open={isModalOpen("skills")}
         onOpenChange={() => closeModal()}
-        onSave={() => {}}
       />
     </>
   );
