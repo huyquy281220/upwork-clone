@@ -17,6 +17,13 @@ import { EditEducationModal } from "@/components/modals/freelancer/EditEducation
 import { AvailabilityModal } from "@/components/modals/freelancer/AvailabilityModal";
 import CircleTrash from "@/components/common/CircleTrash";
 
+const availabilityOptions = {
+  MORE_THAN_30: "More than 30 hrs/week",
+  LESS_THAN_30: "Less than 30 hrs/week",
+  AS_NEEDED: "As needed - open to offers",
+  NONE: "None",
+};
+
 export function ProfileSidebar() {
   const { openModal, closeModal, isModalOpen, getModalId } = useModalManager();
   const { data: session, status } = useSession();
@@ -96,9 +103,10 @@ export function ProfileSidebar() {
               <p className="font-medium">Hours per week</p>
               <CirclePencil onEdit={() => openModal("availability")} />
             </div>
-
             <p className="text-sm text-muted-foreground">
-              Less than 30 hrs/week
+              {user?.freelancerProfile?.available
+                ? availabilityOptions[user.freelancerProfile.available]
+                : "Not specified"}
             </p>
           </div>
 
@@ -195,8 +203,6 @@ export function ProfileSidebar() {
       <AvailabilityModal
         open={isModalOpen("availability")}
         onOpenChange={() => closeModal()}
-        onSave={() => {}}
-        currentAvailability={user?.freelancerProfile?.availability ?? null}
         currentContractToHire={user?.freelancerProfile?.contractToHire ?? null}
       />
     </div>

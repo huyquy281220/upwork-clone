@@ -9,39 +9,68 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUserInfo";
+import { Availability, User } from "@/types/user";
+import api from "@/services/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AvailabilityModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  currentAvailability: string;
   currentContractToHire: boolean;
-  onSave: (availability: string, contractToHire: boolean) => void;
 }
 
 const availabilityOptions = [
-  { value: "more-than-30", label: "More than 30 hrs/week" },
-  { value: "less-than-30", label: "Less than 30 hrs/week" },
-  { value: "as-needed", label: "As needed - open to offers" },
-  { value: "none", label: "None" },
+  { value: "MORE_THAN_30", label: "More than 30 hrs/week" },
+  { value: "LESS_THAN_30", label: "Less than 30 hrs/week" },
+  { value: "AS_NEEDED", label: "As needed - open to offers" },
+  { value: "NONE", label: "None" },
 ];
 
 export function AvailabilityModal({
   open,
   onOpenChange,
-  currentAvailability,
   currentContractToHire,
-  onSave,
 }: AvailabilityModalProps) {
-  const [availability, setAvailability] = useState(currentAvailability);
-  const [contractToHire, setContractToHire] = useState(currentContractToHire);
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
+  const { data: user } = useUser<User>(session?.user?.id ?? "");
 
-  const handleSave = () => {
-    onSave(availability, contractToHire);
-    onOpenChange(false);
+  console.log(user);
+
+  const [availability, setAvailability] = useState(
+    user?.freelancerProfile?.available
+  );
+  const [contractToHire, setContractToHire] = useState(currentContractToHire);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/update`,
+        { available: availability, id: session?.user?.id }
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Failed to update availability");
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: ["user", session?.user?.id],
+      });
+
+      onOpenChange(false);
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
-    setAvailability(currentAvailability);
+    setAvailability(user?.freelancerProfile?.available);
     setContractToHire(currentContractToHire);
     onOpenChange(false);
   };
@@ -88,7 +117,9 @@ export function AvailabilityModal({
                       name="availability"
                       value={option.value}
                       checked={availability === option.value}
-                      onChange={() => setAvailability(option.value)}
+                      onChange={() =>
+                        setAvailability(option.value as Availability)
+                      }
                       className="h-4 w-4 text-green-600 focus:ring-green-600"
                     />
                     <label htmlFor={option.value} className="text-sm">
@@ -138,7 +169,7 @@ export function AvailabilityModal({
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
           >
-            Save
+            {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>
