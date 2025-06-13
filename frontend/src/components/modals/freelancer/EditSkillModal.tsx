@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllSkills, getUserSkills } from "@/services/skills";
 import { Skill } from "@/types";
 import { UserSkill } from "@/types/user";
@@ -32,6 +32,8 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
     queryKey: ["user-skills"],
     queryFn: () => getUserSkills(session?.user.id ?? ""),
   });
+
+  const queryClient = useQueryClient();
 
   const skills2 = userSkills?.map((skill) => skill.skill.name);
 
@@ -85,6 +87,10 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
       if (response.status !== 201) {
         throw new Error("Failed to save skills");
       }
+
+      await queryClient.invalidateQueries({
+        queryKey: ["user-skills", session?.user.id],
+      });
 
       onOpenChange(false);
     } catch (error) {

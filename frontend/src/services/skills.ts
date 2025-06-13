@@ -8,7 +8,6 @@ export const getAllSkills = async () => {
 };
 
 export const getUserSkills = async (userId: string) => {
-  console.log(userId);
   const response = await api.get(`${apiURL}/user-skills/${userId}`);
   return response.data;
 };

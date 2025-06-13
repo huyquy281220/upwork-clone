@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { useSession } from "next-auth/react";
 import api from "@/services/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AddEducationModalProps {
   open: boolean;
@@ -64,6 +65,8 @@ export function AddEducationModal({
     description: "",
   });
 
+  const queryClient = useQueryClient();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
@@ -76,6 +79,10 @@ export function AddEducationModal({
       if (response.status !== 201) {
         throw new Error("Failed to add education");
       }
+
+      await queryClient.invalidateQueries({
+        queryKey: ["userEducation", session?.user?.id],
+      });
 
       onOpenChange(false);
     } catch (error) {
