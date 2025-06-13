@@ -28,7 +28,6 @@ export class EducationService {
    * @returns Updated user with freelancer profile and education
    */
   async createUserEducation(userId: string, education: EducationItemDto[]) {
-    console.log(education);
     // Check if freelancer exists
     const freelancer = await this.prismaService.freelancerProfile.findUnique({
       where: { userId },
@@ -123,7 +122,11 @@ export class EducationService {
         where: { id: userId },
         include: {
           freelancerProfile: {
-            include: { education: true },
+            include: {
+              education: {
+                orderBy: { createdAt: 'asc' },
+              },
+            },
           },
         },
       });
