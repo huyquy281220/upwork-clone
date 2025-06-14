@@ -47,7 +47,6 @@ export interface JobProps {
   proposals: string;
   postedTime: string;
   connects?: number;
-  isSaved: boolean;
 }
 
 export interface Skill {
