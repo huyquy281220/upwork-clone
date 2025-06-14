@@ -13,9 +13,12 @@ import { UserSkill } from "@/types/user";
 export function SkillCard() {
   const { data: session } = useSession();
 
+  const userId = session?.user.id;
+
   const { data: userSkills } = useQuery<UserSkill[]>({
     queryKey: ["user-skills", session?.user.id],
-    queryFn: () => getUserSkills(session?.user.id ?? ""),
+    queryFn: () => getUserSkills(userId ?? ""),
+    enabled: !!userId,
   });
   const { openModal, closeModal, isModalOpen } = useModalManager();
 

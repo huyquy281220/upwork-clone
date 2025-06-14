@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,9 +32,15 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
   const { data: userSkills } = useQuery<UserSkill[]>({
     queryKey: ["user-skills"],
     queryFn: () => getUserSkills(session?.user.id ?? ""),
+    enabled: !!session?.user.id,
   });
 
-  const skills2 = userSkills?.map((skill) => skill.skill.name);
+  console.log(session?.user.id);
+
+  const skills2 = useMemo(
+    () => userSkills?.map((skill) => skill.skill.name) ?? [],
+    [userSkills]
+  );
 
   const [skillSelected, setSkillSelected] = useState<string[]>(skills2 ?? []);
   const [searchTerm, setSearchTerm] = useState("");
@@ -43,6 +49,10 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const MAX_SKILLS = 15;
+
+  useEffect(() => {
+    setSkillSelected(skills2 ?? []);
+  }, [skills2]);
 
   useEffect(() => {
     if (searchTerm) {
