@@ -31,7 +31,7 @@ export default function MainLayout({ children }: ChildrenProps) {
       <div className="w-full max-w-[120rem] mx-auto">
         <div className="max-w-[100rem] mx-auto">
           <MainHeader />
-          {children}
+          <div className="pt-11 md:pt-0">{children}</div>
           <Footer />
         </div>
       </div>
