@@ -1,4 +1,4 @@
-import ActionCard from "@/components/home/ActionCard";
+import ActionCard from "@/pages-section/home/components/ActionCard";
 
 const actionCards = [
   {

@@ -1,9 +1,9 @@
 "use client";
 
-import { JobCard } from "@/components/freelancer/find-work/JobCard";
+import { JobCard } from "@/pages-section/freelancer/find-work/components/JobCard";
 import { jobsData } from "./__mock__/jobs";
 import { JobSearch } from "./JobSearch";
-import { JobFilters } from "@/components/freelancer/find-work/JobFilters";
+import { JobFilters } from "@/pages-section/freelancer/find-work/components/JobFilters";
 import { useState } from "react";
 import { parsePostedTime } from "@/utils/parsePostedTime";
 import type { JobProps } from "@/types";

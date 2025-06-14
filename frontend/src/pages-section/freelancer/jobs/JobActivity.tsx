@@ -1,5 +1,5 @@
 import React from "react";
-import { JobMetaData } from "@/components/freelancer/jobs/JobMetadata";
+import { JobMetaData } from "@/pages-section/freelancer/jobs/components/JobMetadata";
 import { UserRound, MessageCircle, Eye } from "lucide-react";
 
 export const JobActivity = () => {

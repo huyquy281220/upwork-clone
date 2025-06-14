@@ -1,7 +1,7 @@
 "use client";
 
-import SectionHeading from "@/components/home/SectionHeading";
-import TestimonialCard from "@/components/home/TestimonialCard";
+import SectionHeading from "@/pages-section/home/components/SectionHeading";
+import TestimonialCard from "@/pages-section/home/components/TestimonialCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ArrowRight } from "lucide-react";
 import { ArrowLeft } from "lucide-react";

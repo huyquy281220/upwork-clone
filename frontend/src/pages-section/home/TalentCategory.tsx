@@ -1,5 +1,5 @@
-import CategoryCard from "@/components/home/CategoryCard";
-import SectionHeading from "@/components/home/SectionHeading";
+import CategoryCard from "@/pages-section/home/components/CategoryCard";
+import SectionHeading from "@/pages-section/home/components/SectionHeading";
 
 const categories = [
   {

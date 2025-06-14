@@ -1,4 +1,4 @@
-import { JobMetaData } from "@/components/freelancer/jobs/JobMetadata";
+import { JobMetaData } from "@/pages-section/freelancer/jobs/components/JobMetadata";
 import { Building, Calendar, Clock, Wallet } from "lucide-react";
 import React from "react";
 

@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  ServiceCard,
-  PortfolioCard,
-  SkillCard,
-} from "@/components/freelancer/profile";
 import { ChangeHourlyRateModal } from "@/components/modals/freelancer/ChangeHourlyRateModal";
 import { ProfileOverviewModal } from "@/components/modals/freelancer/ProfileOverviewModal";
 import { TitleModal } from "@/components/modals/freelancer/TitleModal";
@@ -12,6 +7,9 @@ import { useModalManager } from "@/hooks/useModalManager";
 import { useUser } from "@/hooks/useUserInfo";
 import { User } from "@/types/user";
 import { useSession } from "next-auth/react";
+import { ServiceCard } from "./components/ServiceCard";
+import { PortfolioCard } from "./components/PortfolioCard";
+import { SkillCard } from "./components/SkillCard";
 
 export function MainContent() {
   const { data: session } = useSession();

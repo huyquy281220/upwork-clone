@@ -1,11 +1,9 @@
 import {
-  CertificationCard,
-  EmploymentHistoryCard,
-} from "@/components/freelancer/profile";
-import {
   ProfileSidebar,
   MainContent,
 } from "@/pages-section/freelancer/profile";
+import { CertificationCard } from "@/pages-section/freelancer/profile/components/CertificationCard";
+import { EmploymentHistoryCard } from "@/pages-section/freelancer/profile/components/EmploymentHistoryCard";
 
 export default async function FreelancerProfile() {
   return (

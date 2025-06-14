@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
-import FeatureCard from "@/components/home/FeatureCard";
+import FeatureCard from "@/pages-section/home/components/FeatureCard";
 import { PersonWithHeadsetImg } from "@/assets/images";
 
 const features = [
