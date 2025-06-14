@@ -16,6 +16,7 @@ import { useModalManager } from "@/hooks/useModalManager";
 import { EditEducationModal } from "@/components/modals/freelancer/EditEducationModal";
 import { AvailabilityModal } from "@/components/modals/freelancer/AvailabilityModal";
 import CircleTrash from "@/components/common/CircleTrash";
+import useLocalTime from "@/hooks/useLocalTime";
 
 const availabilityOptions = {
   MORE_THAN_30: "More than 30 hrs/week",
@@ -30,6 +31,8 @@ export function ProfileSidebar() {
   const { data: user, isLoading } = useUser<FreelancerUser>(
     session?.user.id ?? ""
   );
+
+  const { time, location } = useLocalTime();
 
   if (isLoading || status === "loading") return <JobSkeletion />;
 
@@ -52,12 +55,12 @@ export function ProfileSidebar() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-2 text-muted-foreground">
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
-              <span>Hanoi, Vietnam</span>
+              <span>{location}</span>
             </div>
             <span>•</span>
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
-              <span>4:32 pm local time</span>
+              <span>{time}</span>
             </div>
           </div>
           <div className="flex justify-center gap-2 pt-6">

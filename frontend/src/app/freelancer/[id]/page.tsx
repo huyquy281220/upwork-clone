@@ -7,7 +7,7 @@ import {
   MainContent,
 } from "@/pages-section/freelancer/profile";
 
-export default function FreelancerProfile() {
+export default async function FreelancerProfile() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 py-6">

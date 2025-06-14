@@ -35,8 +35,6 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
     enabled: !!session?.user.id,
   });
 
-  console.log(session?.user.id);
-
   const skills2 = useMemo(
     () => userSkills?.map((skill) => skill.skill.name) ?? [],
     [userSkills]
