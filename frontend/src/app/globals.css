@@ -7,12 +7,14 @@
   --sub-background: #1e1e1e;
   --background-hover: #282828;
   --foreground: white;
+  --arrow-up-color: #181818;
 }
 [data-theme="light"] {
   --background: white;
   --sub-background: ##f9f9f9;
   --background-hover: #f1f1f1;
   --foreground: #181818;
+  --arrow-up-color: white;
 }
 
 @layer base {
@@ -107,9 +109,11 @@ svg {
 .arrow-up-left::before {
   content: "";
   position: absolute;
-  top: -6px;
+  top: -5px;
   left: 2rem;
-  border: 8px solid #181818;
+  width: 8px;
+  height: 8px;
+  /* border: 1px solid var(--arrow-up-color); */
   transform: rotate(135deg);
   box-shadow: -2px 2px 3px -1px #ffffff1f;
   z-index: -1;
@@ -120,7 +124,7 @@ svg {
   position: absolute;
   top: -6px;
   right: 0.5rem;
-  border: 8px solid #181818;
+  border: 8px solid var(--arrow-up-color);
   transform: rotate(135deg);
   box-shadow: -2px 2px 3px -1px #ffffff1f;
   z-index: -1;

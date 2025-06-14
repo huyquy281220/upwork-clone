@@ -18,7 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 interface AvailabilityModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  currentContractToHire: boolean;
+  // currentContractToHire: boolean;
 }
 
 const availabilityOptions = [
@@ -31,8 +31,8 @@ const availabilityOptions = [
 export function AvailabilityModal({
   open,
   onOpenChange,
-  currentContractToHire,
-}: AvailabilityModalProps) {
+}: // currentContractToHire,
+AvailabilityModalProps) {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const { data: user } = useUser<User>(session?.user?.id ?? "");
@@ -40,7 +40,7 @@ export function AvailabilityModal({
   const [availability, setAvailability] = useState(
     user?.freelancerProfile?.available
   );
-  const [contractToHire, setContractToHire] = useState(currentContractToHire);
+  // const [contractToHire, setContractToHire] = useState(currentContractToHire);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
@@ -69,7 +69,7 @@ export function AvailabilityModal({
 
   const handleCancel = () => {
     setAvailability(user?.freelancerProfile?.available);
-    setContractToHire(currentContractToHire);
+    // setContractToHire(currentContractToHire);
     onOpenChange(false);
   };
 
@@ -135,8 +135,8 @@ export function AvailabilityModal({
               <input
                 type="checkbox"
                 id="contract-to-hire"
-                checked={contractToHire}
-                onChange={(e) => setContractToHire(e.target.checked)}
+                checked={false}
+                // onChange={(e) => setContractToHire(e.target.checked)}
                 className="h-4 w-4 mt-1 text-green-600 focus:ring-green-600 rounded"
               />
               <div className="space-y-1">

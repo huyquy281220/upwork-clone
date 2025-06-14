@@ -203,7 +203,7 @@ export function ProfileSidebar() {
       <AvailabilityModal
         open={isModalOpen("availability")}
         onOpenChange={() => closeModal()}
-        currentContractToHire={user?.freelancerProfile?.contractToHire ?? null}
+        // currentContractToHire={user?.freelancerProfile?.contractToHire ?? null}
       />
     </div>
   );

@@ -9,7 +9,7 @@ interface BoxShadowProps {
 
 export default function BoxShadow({
   withArrow = true,
-  direction = "left",
+  // direction = "left",
   children,
   classNames,
 }: BoxShadowProps) {
@@ -21,7 +21,7 @@ export default function BoxShadow({
     <div
       className={clsx(
         "shadow-menu bg-background",
-        direction === "left" ? "arrow-up-left" : "arrow-up-right",
+        // direction === "left" ? "arrow-up-left" : "arrow-up-right",
         classNames
       )}
     >
