@@ -9,28 +9,44 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X, Info } from "lucide-react";
+import api from "@/services/api";
 
 interface ChangeHourlyRateModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentRate: number;
-  onSave: (rate: number) => void;
+  userId: string;
 }
 
 export function ChangeHourlyRateModal({
   open,
   onOpenChange,
   currentRate,
-  onSave,
+  userId,
 }: ChangeHourlyRateModalProps) {
   const [hourlyRate, setHourlyRate] = useState(currentRate);
-
+  const [isLoading, setIsLoading] = useState(false);
   const serviceFee = hourlyRate * 0.1; // 10% service fee
   const youReceive = hourlyRate - serviceFee;
 
-  const handleSave = () => {
-    onSave(hourlyRate);
-    onOpenChange(false);
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/update`,
+        { id: userId, freelancerProfile: { hourlyRate } }
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Failed to update hourly rate");
+      }
+
+      onOpenChange(false);
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -147,7 +163,7 @@ export function ChangeHourlyRateModal({
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
           >
-            Save
+            {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

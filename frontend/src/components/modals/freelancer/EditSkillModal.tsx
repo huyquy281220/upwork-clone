@@ -22,6 +22,7 @@ export interface SkillsModalProps {
 }
 
 export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const { data: skills } = useQuery<Skill[]>({
     queryKey: ["skills"],
@@ -32,8 +33,6 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
     queryKey: ["user-skills"],
     queryFn: () => getUserSkills(session?.user.id ?? ""),
   });
-
-  const queryClient = useQueryClient();
 
   const skills2 = userSkills?.map((skill) => skill.skill.name);
 

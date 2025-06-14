@@ -37,8 +37,6 @@ export function AvailabilityModal({
   const { data: session } = useSession();
   const { data: user } = useUser<User>(session?.user?.id ?? "");
 
-  console.log(user);
-
   const [availability, setAvailability] = useState(
     user?.freelancerProfile?.available
   );

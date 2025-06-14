@@ -9,25 +9,46 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import api from "@/services/api";
 
 interface TitleModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentTitle: string;
-  onSave: (title: string) => void;
+  userId: string;
 }
 
 export function TitleModal({
   open,
   onOpenChange,
   currentTitle,
-  onSave,
+  userId,
 }: TitleModalProps) {
+  const queryClient = useQueryClient();
   const [title, setTitle] = useState(currentTitle);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSave = () => {
-    onSave(title);
-    onOpenChange(false);
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/update`,
+        { id: userId, freelancerProfile: { title } }
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Failed to update title");
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+
+      onOpenChange(false);
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -88,7 +109,7 @@ export function TitleModal({
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
           >
-            Save
+            {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

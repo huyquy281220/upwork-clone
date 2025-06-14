@@ -14,7 +14,7 @@ export function SkillCard() {
   const { data: session } = useSession();
 
   const { data: userSkills } = useQuery<UserSkill[]>({
-    queryKey: ["user-skills"],
+    queryKey: ["user-skills", session?.user.id],
     queryFn: () => getUserSkills(session?.user.id ?? ""),
   });
   const { openModal, closeModal, isModalOpen } = useModalManager();

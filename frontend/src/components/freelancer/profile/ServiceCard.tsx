@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import CirclePencil from "@/components/common/CirclePencil";
 
@@ -5,14 +7,18 @@ interface ServiceCardProps {
   title: string;
   price: string;
   description: string;
-  verified: boolean;
+  onEditTitle: () => void;
+  onEditRate: () => void;
+  onEditOverview: () => void;
 }
 
 export function ServiceCard({
   title,
   price,
   description,
-  verified,
+  onEditTitle,
+  onEditRate,
+  onEditOverview,
 }: ServiceCardProps) {
   return (
     <Card className="relative">
@@ -20,21 +26,24 @@ export function ServiceCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <h3 className="text-xl font-semibold">{title}</h3>
-            {verified && <CirclePencil />}
+            {/* {verified && <CirclePencil />} */}
+            <CirclePencil onEdit={onEditTitle} />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-green-600">{price}</span>
+            <span className="text-2xl font-bold text-foreground">
+              ${Number(price).toFixed(2)}/hr
+            </span>
             <div className="flex gap-1">
-              <CirclePencil />
+              <CirclePencil onEdit={onEditRate} />
             </div>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         <div className="flex items-center justify-between">
-          <p className="text-muted-foreground leading-relaxed">{description}</p>
+          <p className="text-foreground leading-relaxed">{description}</p>
           <div className="flex gap-1">
-            <CirclePencil />
+            <CirclePencil onEdit={onEditOverview} />
           </div>
         </div>
       </CardContent>

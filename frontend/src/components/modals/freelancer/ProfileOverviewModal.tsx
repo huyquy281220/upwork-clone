@@ -9,27 +9,48 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import api from "@/services/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ProfileOverviewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentOverview: string;
-  onSave: (overview: string) => void;
+  userId: string;
 }
 
 export function ProfileOverviewModal({
   open,
   onOpenChange,
   currentOverview,
-  onSave,
+  userId,
 }: ProfileOverviewModalProps) {
   const [overview, setOverview] = useState(currentOverview);
+  const [isLoading, setIsLoading] = useState(false);
   const maxLength = 5000;
   const remainingChars = maxLength - overview.length;
+  const queryClient = useQueryClient();
 
-  const handleSave = () => {
-    onSave(overview);
-    onOpenChange(false);
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/update`,
+        { id: userId, freelancerProfile: { overview } }
+      );
+
+      if (response.status !== 200) {
+        throw new Error("Failed to update overview");
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+
+      onOpenChange(false);
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -103,7 +124,7 @@ export function ProfileOverviewModal({
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
           >
-            Save
+            {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>
