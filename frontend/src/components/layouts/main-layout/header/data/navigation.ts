@@ -22,7 +22,6 @@ export interface SearchCategory {
   title: string;
   description: string;
   iconName: string;
-  href: string;
 }
 
 export const searchCategories: SearchCategory[] = [
@@ -31,21 +30,21 @@ export const searchCategories: SearchCategory[] = [
     title: "Jobs",
     description: "Apply to jobs posted by clients",
     iconName: "Briefcase",
-    href: "/jobs",
+    // href: "/jobs",
   },
   {
     id: "talent",
     title: "Talent",
     description: "Find freelancers and agencies",
     iconName: "Users",
-    href: "/talent",
+    // href: "/talent",
   },
   {
     id: "projects",
     title: "Projects",
     description: "See projects from other pros",
     iconName: "FileText",
-    href: "/projects",
+    // href: "/projects",
   },
 ];
 

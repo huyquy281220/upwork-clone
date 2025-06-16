@@ -20,9 +20,6 @@ export function JobSearchFilters() {
     jobType: true,
     fixedPrice: true,
     proposals: true,
-    clientInfo: true,
-    location: true,
-    timeZone: true,
     projectLength: true,
     hoursPerWeek: true,
     duration: true,
@@ -157,66 +154,6 @@ export function JobSearchFilters() {
             </div>
           ))}
         </div>
-      </FilterSection>
-
-      {/* Client info */}
-      <FilterSection
-        title="Client info"
-        isExpanded={expandedSections.clientInfo}
-        onToggle={() => toggleSection("clientInfo")}
-      >
-        <div className="space-y-3">
-          {[
-            { label: "My previous clients", count: 234 },
-            { label: "Payment verified", count: 5432 },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center space-x-2">
-              <Checkbox id={item.label.replace(/\s/g, "").toLowerCase()} />
-              <label
-                htmlFor={item.label.replace(/\s/g, "").toLowerCase()}
-                className="text-sm text-foreground cursor-pointer"
-              >
-                {item.label} ({item.count.toLocaleString()})
-              </label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* Client location */}
-      <FilterSection
-        title="Client location"
-        isExpanded={expandedSections.location}
-        onToggle={() => toggleSection("location")}
-      >
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Select client location" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="us">United States</SelectItem>
-            <SelectItem value="uk">United Kingdom</SelectItem>
-            <SelectItem value="ca">Canada</SelectItem>
-          </SelectContent>
-        </Select>
-      </FilterSection>
-
-      {/* Client time zone */}
-      <FilterSection
-        title="Client time zone"
-        isExpanded={expandedSections.timeZone}
-        onToggle={() => toggleSection("timeZone")}
-      >
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Select client time zone" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="est">EST</SelectItem>
-            <SelectItem value="pst">PST</SelectItem>
-            <SelectItem value="gmt">GMT</SelectItem>
-          </SelectContent>
-        </Select>
       </FilterSection>
 
       {/* Project length */}

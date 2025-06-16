@@ -7,12 +7,37 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import Link from "next/link";
 import { searchCategories } from "../data/navigation";
 import { getDynamicIcon } from "@/utils/getDynamicIcon";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useRouter } from "next/navigation";
 
 export default function SearchInput() {
+  const router = useRouter();
   const [isJobsOpen, setIsJobsOpen] = useState(false);
+  const [searchType, setSearchType] = useState("jobs");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  const handleSearch = () => {
+    switch (searchType) {
+      case "jobs":
+        console.log("jobs");
+        router.push(`/search/jobs?query=${debouncedSearchQuery}`);
+        break;
+      case "talent":
+        console.log("talent");
+        router.push(`/search/talent?query=${debouncedSearchQuery}`);
+        break;
+      case "projects":
+        console.log("projects");
+        router.push(`/search/projects?query=${debouncedSearchQuery}`);
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <div className="flex items-center space-x-2 py-1 border border-gray-700 rounded-md">
@@ -24,6 +49,13 @@ export default function SearchInput() {
             type="text"
             placeholder="Search"
             className="bg-transparent  text-sm w-52 focus:outline-none"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
           />
         </div>
       </div>
@@ -45,10 +77,10 @@ export default function SearchInput() {
         >
           <div>
             {searchCategories.map((category) => (
-              <Link
+              <div
                 key={category.id}
-                href={category.href}
                 className="flex items-start px-4 py-3 hover:bg-hover"
+                onClick={() => setSearchType(category.id)}
               >
                 <div className="mr-3 mt-1 text-gray-300">
                   {getDynamicIcon(category.iconName)}
@@ -59,7 +91,7 @@ export default function SearchInput() {
                     {category.description}
                   </p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </PopoverContent>
