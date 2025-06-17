@@ -113,7 +113,7 @@ export class JobsService {
       }
 
       // Update job
-      const updatedJob = await tx.job.update({
+      await tx.job.update({
         where: { id },
         data: {
           title: data.title,
@@ -164,6 +164,17 @@ export class JobsService {
       await tx.job.delete({ where: { id } });
 
       return { message: `Job ${id} deleted successfully` };
+    });
+  }
+
+  async searchJobs(query: string) {
+    return this.prisma.job.findMany({
+      where: {
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { description: { contains: query, mode: 'insensitive' } },
+        ],
+      },
     });
   }
 }
