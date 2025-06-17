@@ -25,11 +25,44 @@ export function JobSearchFilters() {
     duration: true,
   });
 
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, string | undefined>
+  >({
+    experience: undefined,
+    jobType: undefined,
+    fixedPrice: undefined,
+    proposals: undefined,
+    projectLength: undefined,
+    hoursPerWeek: undefined,
+    duration: undefined,
+  });
+
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
       ...prev,
       [section]: !prev[section],
     }));
+  };
+
+  const handleCheckboxChange = (section: string, label: string) => {
+    setSelectedFilters((prev) => {
+      const updatedFilters = {
+        ...prev,
+        [section]: prev[section] === label ? undefined : label,
+      };
+
+      const params = new URLSearchParams();
+      Object.entries(updatedFilters).forEach(([key, value]) => {
+        if (value) params.set(key, value);
+      });
+
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+
+      // use pushState to shallow update URL
+      window.history.pushState({}, "", newUrl);
+
+      return updatedFilters;
+    });
   };
 
   return (
@@ -67,7 +100,13 @@ export function JobSearchFilters() {
             { label: "Expert", count: 1829 },
           ].map((item) => (
             <div key={item.label} className="flex items-center space-x-2">
-              <Checkbox id={item.label.toLowerCase().replace(" ", "-")} />
+              <Checkbox
+                id={item.label.toLowerCase().replace(" ", "-")}
+                checked={selectedFilters.experience === item.label}
+                onCheckedChange={() =>
+                  handleCheckboxChange("experience", item.label)
+                }
+              />
               <label
                 htmlFor={item.label.toLowerCase().replace(" ", "-")}
                 className="text-sm text-foreground cursor-pointer"
@@ -91,7 +130,13 @@ export function JobSearchFilters() {
             { label: "Fixed-Price", count: 2578 },
           ].map((item) => (
             <div key={item.label} className="flex items-center space-x-2">
-              <Checkbox id={item.label.toLowerCase().replace("-", "")} />
+              <Checkbox
+                id={item.label.toLowerCase().replace("-", "")}
+                checked={selectedFilters.jobType === item.label}
+                onCheckedChange={() =>
+                  handleCheckboxChange("jobType", item.label)
+                }
+              />
               <label
                 htmlFor={item.label.toLowerCase().replace("-", "")}
                 className="text-sm text-foreground cursor-pointer"
@@ -117,7 +162,13 @@ export function JobSearchFilters() {
             { label: "$5K+", count: 321 },
           ].map((item) => (
             <div key={item.label} className="flex items-center space-x-2">
-              <Checkbox id={item.label.replace(/[$\s]/g, "").toLowerCase()} />
+              <Checkbox
+                id={item.label.replace(/[$\s]/g, "").toLowerCase()}
+                checked={selectedFilters.fixedPrice === item.label}
+                onCheckedChange={() =>
+                  handleCheckboxChange("fixedPrice", item.label)
+                }
+              />
               <label
                 htmlFor={item.label.replace(/[$\s]/g, "").toLowerCase()}
                 className="text-sm text-foreground cursor-pointer"
@@ -144,7 +195,13 @@ export function JobSearchFilters() {
             { label: "20 to 50", count: 543 },
           ].map((item) => (
             <div key={item.label} className="flex items-center space-x-2">
-              <Checkbox id={item.label.replace(/\s/g, "").toLowerCase()} />
+              <Checkbox
+                id={item.label.replace(/\s/g, "").toLowerCase()}
+                checked={selectedFilters.proposals === item.label}
+                onCheckedChange={() =>
+                  handleCheckboxChange("proposals", item.label)
+                }
+              />
               <label
                 htmlFor={item.label.replace(/\s/g, "").toLowerCase()}
                 className="text-sm text-foreground cursor-pointer"
@@ -170,7 +227,13 @@ export function JobSearchFilters() {
             { label: "More than 6 months", count: 987 },
           ].map((item) => (
             <div key={item.label} className="flex items-center space-x-2">
-              <Checkbox id={item.label.replace(/\s/g, "").toLowerCase()} />
+              <Checkbox
+                id={item.label.replace(/\s/g, "").toLowerCase()}
+                checked={selectedFilters.projectLength === item.label}
+                onCheckedChange={() =>
+                  handleCheckboxChange("projectLength", item.label)
+                }
+              />
               <label
                 htmlFor={item.label.replace(/\s/g, "").toLowerCase()}
                 className="text-sm text-foreground cursor-pointer"
@@ -194,7 +257,13 @@ export function JobSearchFilters() {
             { label: "More than 30 hrs/week", count: 2345 },
           ].map((item) => (
             <div key={item.label} className="flex items-center space-x-2">
-              <Checkbox id={item.label.replace(/[\s/]/g, "").toLowerCase()} />
+              <Checkbox
+                id={item.label.replace(/[\s/]/g, "").toLowerCase()}
+                checked={selectedFilters.hoursPerWeek === item.label}
+                onCheckedChange={() =>
+                  handleCheckboxChange("hoursPerWeek", item.label)
+                }
+              />
               <label
                 htmlFor={item.label.replace(/[\s/]/g, "").toLowerCase()}
                 className="text-sm text-foreground cursor-pointer"
@@ -215,7 +284,13 @@ export function JobSearchFilters() {
         <div className="space-y-3">
           {[{ label: "Contract-to-hire roles", count: 1234 }].map((item) => (
             <div key={item.label} className="flex items-center space-x-2">
-              <Checkbox id={item.label.replace(/[\s-]/g, "").toLowerCase()} />
+              <Checkbox
+                id={item.label.replace(/[\s-]/g, "").toLowerCase()}
+                checked={selectedFilters.duration === item.label}
+                onCheckedChange={() =>
+                  handleCheckboxChange("duration", item.label)
+                }
+              />
               <label
                 htmlFor={item.label.replace(/[\s-]/g, "").toLowerCase()}
                 className="text-sm text-foreground cursor-pointer"
