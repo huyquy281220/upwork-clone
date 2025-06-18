@@ -69,11 +69,20 @@ model Job {
   title        String
   description  String
   category     String
-  budget       Float
-  type         JobType
+  jobType      JobType
+  projectLength String
+  hoursPerWeek  String
+  experienceLevel String
+  jobDuration     String
+  numProposals      Int @default(0)
+  hourlyRateMin     Float?
+  hourlyRateMax     Float?
+  fixedPrice     Float?
+  contractToHire Boolean @default(false)
+
   createdAt    DateTime       @default(now())
   contracts    Contract[]
-  client       ClientProfile  @relation("ClientJobs", fields: [clientId], references: [userId], onDelete: Cascade)
+  client       ClientProfile  @relation("ClientJobs", fields: [clientId], references: [id], onDelete: Cascade)
   proposals    Proposal[]
   skills       JobSkill[]
   savedByUsers UserSavedJob[] @relation("SavedJobs")
@@ -284,7 +293,7 @@ enum Role {
 }
 
 enum JobType {
-  FIXED
+  FIXED_PRICE
   HOURLY
 }
 

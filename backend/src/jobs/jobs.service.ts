@@ -5,61 +5,65 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateJobDto } from './dto/create-job.dto';
+import { JobType } from '@prisma/client';
 
 @Injectable()
 export class JobsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createJob(clientId: string, data: CreateJobDto) {
+    const {
+      jobType,
+      hourlyRateMin,
+      hourlyRateMax,
+      fixedPrice,
+      skills,
+      ...rest
+    } = data;
+
+    const client = await this.prisma.clientProfile.findUnique({
+      where: { userId: clientId },
+    });
+
+    if (!client) {
+      throw new NotFoundException('Client not found');
+    }
+
+    // Validate job type and rates
+    if (jobType === JobType.HOURLY && (!hourlyRateMin || !hourlyRateMax)) {
+      throw new BadRequestException('Hourly jobs require an hourly rate');
+    }
+    if (jobType === JobType.FIXED_PRICE && !fixedPrice) {
+      throw new BadRequestException('Fixed-Price jobs require a fixed price');
+    }
+
     return this.prisma.$transaction(async (tx) => {
-      const client = await tx.clientProfile.findUnique({
-        where: { userId: clientId },
-      });
-      if (!client) {
-        throw new NotFoundException(`Client with ID ${clientId} not found`);
-      }
-
-      if (data.skillIds && data.skillIds.length > 0) {
-        const skills = await tx.skill.findMany({
-          where: { id: { in: data.skillIds } },
-        });
-        if (skills.length !== data.skillIds.length) {
-          throw new BadRequestException('Some skills not found');
-        }
-      }
-
-      // Create job
       const job = await tx.job.create({
         data: {
-          clientId,
-          title: data.title,
-          description: data.description,
-          category: data.category,
-          budget: data.budget,
-          type: data.type,
+          ...rest,
+          client: {
+            connect: {
+              id: clientId,
+            },
+          },
+          jobType,
+          hourlyRateMin: jobType === JobType.HOURLY ? hourlyRateMin : null,
+          hourlyRateMax: jobType === JobType.HOURLY ? hourlyRateMax : null,
+          fixedPrice: jobType === JobType.FIXED_PRICE ? fixedPrice : null,
         },
       });
 
-      // Link skills to job
-      if (data.skillIds && data.skillIds.length > 0) {
+      // If skills are provided, create JobSkill records
+      if (skills && skills.length > 0) {
         await tx.jobSkill.createMany({
-          data: data.skillIds.map((skillId) => ({
+          data: skills.map((skill) => ({
             jobId: job.id,
-            skillId,
+            skillId: skill.skillId,
           })),
         });
       }
 
-      // Return job with skills
-      return tx.job.findUnique({
-        where: { id: job.id },
-        include: {
-          skills: {
-            select: { skill: { select: { id: true, name: true } } },
-          },
-          client: { select: { userId: true, companyName: true } },
-        },
-      });
+      return job;
     });
   }
 
@@ -92,11 +96,11 @@ export class JobsService {
       }
 
       // Check skills if exists
-      if (data.skillIds) {
+      if (data.skills) {
         const skills = await tx.skill.findMany({
-          where: { id: { in: data.skillIds } },
+          where: { id: { in: data.skills.map((skill) => skill.skillId) } },
         });
-        if (skills.length !== data.skillIds.length) {
+        if (skills.length !== data.skills.length) {
           throw new BadRequestException('Some skills not found');
         }
 
@@ -105,9 +109,9 @@ export class JobsService {
 
         // Add new skills
         await tx.jobSkill.createMany({
-          data: data.skillIds.map((skillId) => ({
+          data: data.skills.map((skill) => ({
             jobId: id,
-            skillId,
+            skillId: skill.skillId,
           })),
         });
       }
@@ -119,8 +123,7 @@ export class JobsService {
           title: data.title,
           description: data.description,
           category: data.category,
-          budget: data.budget,
-          type: data.type,
+          jobType: data.jobType,
         },
       });
 

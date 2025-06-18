@@ -24,12 +24,12 @@ export class JobsController {
     return this.jobsService.searchJobs(query);
   }
 
-  @Post()
-  createJob(@Param('clientId') clientId: string, @Body() data: CreateJobDto) {
+  @Post('/create/:id')
+  createJob(@Param('id') clientId: string, @Body() data: CreateJobDto) {
     return this.jobsService.createJob(clientId, data);
   }
 
-  @Put(':id')
+  @Put('/update/:id')
   updateJob(
     @Param('id') id: string,
     @Param('clientId') clientId: string,
@@ -38,7 +38,7 @@ export class JobsController {
     return this.jobsService.updateJob(id, clientId, data);
   }
 
-  @Delete(':id')
+  @Delete('/delete/:id')
   deleteJob(@Param('id') id: string, @Param('clientId') clientId: string) {
     return this.jobsService.deleteJob(id, clientId);
   }

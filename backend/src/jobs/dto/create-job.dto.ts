@@ -1,17 +1,19 @@
-import { JobType } from '@prisma/client';
 import {
   IsArray,
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
-  MaxLength,
-  Min,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { JobDuration } from './enums.dto';
+import { HoursPerWeek } from './enums.dto';
+import { ExperienceLevel, ProjectLength } from './enums.dto';
+import { JobType } from '@prisma/client';
 
 export class JobSkillDto {
   @IsNotEmpty()
@@ -20,30 +22,51 @@ export class JobSkillDto {
 }
 
 export class CreateJobDto {
-  @IsNotEmpty()
+  // @IsString()
+  // clientId: string;
+
   @IsString()
-  @MaxLength(100)
   title: string;
 
-  @IsNotEmpty()
   @IsString()
-  @MaxLength(5000)
   description: string;
 
-  @IsNotEmpty()
   @IsString()
-  @MaxLength(50)
   category: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  budget: number;
+  @IsString()
+  experienceLevel: ExperienceLevel;
 
-  @IsNotEmpty()
   @IsEnum(JobType)
-  type: JobType;
+  jobType: JobType;
+
+  @IsOptional()
+  @IsNumber()
+  hourlyRateMin?: number;
+
+  @IsOptional()
+  @IsNumber()
+  hourlyRateMax?: number;
+
+  @IsOptional()
+  @IsNumber()
+  fixedPrice?: number;
+
+  @IsString()
+  projectLength: ProjectLength;
+
+  @IsString()
+  hoursPerWeek: HoursPerWeek;
+
+  @IsString()
+  jobDuration: JobDuration;
+
+  @IsBoolean()
+  contractToHire: boolean;
 
   @IsArray()
-  skillIds: string[];
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => JobSkillDto)
+  skills: JobSkillDto[];
 }
