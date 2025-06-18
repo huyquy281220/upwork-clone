@@ -6,6 +6,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { JobType } from '@prisma/client';
+import { UpdateJobDto } from './dto/update-job.dto';
 
 @Injectable()
 export class JobsService {
@@ -84,7 +85,17 @@ export class JobsService {
     return job;
   }
 
-  async updateJob(id: string, clientId: string, data: CreateJobDto) {
+  async findAllJobs(clientId: string) {
+    console.log(clientId);
+    return this.prisma.job.findMany({
+      where: { clientId },
+      include: {
+        skills: { select: { skill: { select: { id: true, name: true } } } },
+      },
+    });
+  }
+
+  async updateJob(id: string, clientId: string, data: UpdateJobDto) {
     return this.prisma.$transaction(async (tx) => {
       // Check job and client
       const job = await tx.job.findUnique({ where: { id } });

@@ -22,9 +22,6 @@ export class JobSkillDto {
 }
 
 export class CreateJobDto {
-  // @IsString()
-  // clientId: string;
-
   @IsString()
   title: string;
 

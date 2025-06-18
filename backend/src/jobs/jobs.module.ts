@@ -3,11 +3,10 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { JobsController } from './jobs.controller';
 import { JobsService } from './jobs.service';
 
-Module({
+@Module({
   imports: [PrismaModule],
   controllers: [JobsController],
   providers: [JobsService],
   exports: [JobsService],
-});
-
+})
 export class JobsModule {}
