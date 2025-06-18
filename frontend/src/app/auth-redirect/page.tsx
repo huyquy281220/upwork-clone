@@ -22,7 +22,7 @@ export default function Loading() {
   if (isLoading === false) {
     switch (currentRole) {
       case "CLIENT":
-        redirect("/client");
+        redirect("/client/dashboard");
       case "FREELANCER":
         redirect("/freelancer/find-work");
     }

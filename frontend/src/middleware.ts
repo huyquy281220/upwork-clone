@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (path.startsWith("/freelancer") && token.role !== "FREELANCER") {
-    return NextResponse.redirect(new URL("/client", request.url));
+    return NextResponse.redirect(new URL("/client/dashboard", request.url));
   }
 
   return NextResponse.next();

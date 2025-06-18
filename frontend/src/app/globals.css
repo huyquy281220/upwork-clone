@@ -129,3 +129,25 @@ svg {
   box-shadow: -2px 2px 3px -1px #ffffff1f;
   z-index: -1;
 }
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .consultant-slider {
+    padding: 0 40px;
+    margin: 0 -40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .consultant-slider {
+    padding: 0 20px;
+    margin: 0 -20px;
+  }
+}
