@@ -10,6 +10,7 @@ import * as z from "zod";
 import type { Resolver } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { Logo } from "@/components/icons/Logo";
 
 const signInSchema = z.object({
   email: z
@@ -71,13 +72,7 @@ export default function SignIn() {
       {/* Header */}
       <header className="w-full py-4 px-6 flex justify-between items-center">
         <div className="flex items-center">
-          <Image
-            src="/upwork-logo.svg"
-            alt="Upwork"
-            width={100}
-            height={30}
-            className="h-8 w-auto"
-          />
+          <Logo className="w-[108px] h-[28px]" />
         </div>
         <div className="flex items-center gap-4">
           <Link href="#" className="text-green-700 hover:underline text-sm">

@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import SignupForm from "@/components/forms/sign-up/SignUpForm";
 import { GoogleSvg } from "@/assets/svg";
-import SwitchTheme from "@/components/common/SwitchTheme";
 import { useAuth } from "@/hooks/useAuth";
+import { Logo } from "@/components/icons/Logo";
 
 export default function SignupPage() {
   const { loginWithGoogle } = useAuth();
@@ -17,16 +17,9 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex flex-col items-center">
       {/* Header */}
-      <SwitchTheme />
       <header className="w-full py-4 px-6 flex justify-between items-center">
         <div className="flex items-center">
-          <Image
-            src="/upwork-logo.svg"
-            alt="Upwork"
-            width={100}
-            height={30}
-            className="h-8 w-auto"
-          />
+          <Logo className="w-[108px] h-[28px]" />
         </div>
         <div className="flex items-center gap-4">
           <Link href="#" className="text-green-700 hover:underline text-sm">

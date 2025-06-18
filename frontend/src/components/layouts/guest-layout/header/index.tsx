@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
 import MobileMenu from "./mobile/MobileMenu";
 import { Logo } from "@/components/icons/Logo";
+import { useRouter } from "next/navigation";
+import { deleteCookie, getCookie } from "@/lib/cookie";
 
 const navLinks = [
   { label: "Find Talent", href: "#", hasDropdown: true },
@@ -14,7 +16,15 @@ const navLinks = [
 ];
 
 export default function Header() {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleSignUp = () => {
+    if (getCookie("role")) {
+      deleteCookie("role");
+    }
+    router.push("/sign-up");
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
@@ -49,10 +59,11 @@ export default function Header() {
                   Log In
                 </Link>
               </button>
-              <button className="px-4 py-1 rounded-lg bg-green-600 hover:bg-green-700 ">
-                <Link href="/sign-up" className="text-white font-medium">
-                  Sign up
-                </Link>
+              <button
+                className="px-4 py-1 rounded-lg bg-green-600 hover:bg-green-700"
+                onClick={handleSignUp}
+              >
+                <p className="text-white font-medium">Sign up</p>
               </button>
             </div>
 
