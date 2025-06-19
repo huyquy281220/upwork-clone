@@ -32,25 +32,28 @@ export interface NavMenuItemProps {
 }
 
 export interface JobProps {
-  id: string;
   title: string;
-  type: "Hourly" | "Fixed-price";
-  rate: string;
-  level: string;
-  duration: string;
   description: string;
+  // category: string;
+  experienceLevel: string;
+  jobType: "FIXED_PRICE" | "HOURLY";
+  hourlyRateMin?: number;
+  hourlyRateMax?: number;
+  fixedPrice?: number;
+  projectLength: string;
+  hoursPerWeek: string;
+  jobDuration: string;
+  contractToHire: boolean;
   skills: string[];
-  paymentVerified: boolean;
-  rating?: number;
-  spent: string;
-  location: string;
-  proposals: string;
-  postedTime: string;
-  connects?: number;
 }
 
 export interface Skill {
   id: string;
   name: string;
   categoryName: string;
+}
+
+export interface StepProps {
+  jobData: JobProps;
+  updateJobData: (updates: Partial<JobProps>) => void;
 }
