@@ -68,13 +68,18 @@ export default function JobPostingWrapper({
 
   const handleSubmit = async () => {
     if (validateCurrentStep(currentStep, jobData)) {
-      const res = await api.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/jobs/${session?.user.id}/create`,
-        jobData
-      );
-      console.log(res.data);
+      try {
+        const res = await api.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/jobs/${session?.user.id}/create`,
+          jobData
+        );
 
-      return res.data;
+        if (res.status === 201) {
+          router.push("/client/dashboard");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
