@@ -52,14 +52,6 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.cookie('role', user.role, {
-      httpOnly: false, // Allow client-side access
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
-    });
-
     return res.json({ accessToken, user });
   }
 
@@ -78,14 +70,6 @@ export class AuthController {
       sameSite: 'strict',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.cookie('role', user.role, {
-      httpOnly: false, // Allow client-side access
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
     });
 
     return res.json({ accessToken, user });
