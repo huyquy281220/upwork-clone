@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import { useJobPostingContext } from "@/store/JobPostingContext";
 import api from "@/services/api";
 import { useSession } from "next-auth/react";
-import { useUser } from "@/hooks/useUserInfo";
-import { User } from "@/types/user";
 import { toast } from "sonner";
 interface JobPostingWizardProps {
   children: React.ReactNode;
@@ -20,10 +18,7 @@ export default function JobPostingWrapper({
 }: JobPostingWizardProps) {
   const router = useRouter();
   const { data: session } = useSession();
-  const { data: user } = useUser<User>(session?.user.id ?? "");
   const { jobData } = useJobPostingContext();
-
-  console.log(user);
 
   const getNextRoute = () => {
     switch (currentStep) {
