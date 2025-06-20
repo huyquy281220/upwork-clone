@@ -1,9 +1,9 @@
 "use client";
 
-import { useJobPosting } from "@/hooks/useJobPosting";
+import { useJobPostingContext } from "@/store/JobPostingContext";
 
 export default function StepOne() {
-  const { jobData, updateJobData } = useJobPosting();
+  const { jobData, updateJobData } = useJobPostingContext();
 
   return (
     <div className="grid grid-cols-2 gap-28 mx-auto">

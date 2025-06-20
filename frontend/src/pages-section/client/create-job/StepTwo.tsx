@@ -1,48 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Search, X, Info } from "lucide-react";
-import { useJobPosting } from "@/hooks/useJobPosting";
-
-const POPULAR_SKILLS = [
-  "Microsoft Windows",
-  "Russian",
-  "Translation",
-  "Smartphone",
-  "Android",
-  "Arabic",
-  "Mobile App Development",
-  "Java",
-  "English",
-  "iOS",
-  "Data Entry",
-  "Web Development",
-  "SQLite",
-  "PHP",
-  "Web Design",
-  "HTML",
-  "Python",
-  "Usability Testing",
-  "In-App Purchases",
-  "Camera",
-];
-
-const SKILL_SUGGESTIONS = [
-  "Website Translation",
-  "Web & Mobile Design Consultation",
-  "Web API",
-  "Web Accessibility",
-  "Web Analytics",
-  "Web Analytics Bug Fix",
-  "Web Analytics Report",
-  "Web Analytics Software",
-];
+import { useJobPostingContext } from "@/store/JobPostingContext";
+import { useQueryClient } from "@tanstack/react-query";
+import { Skill } from "@/types";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function Step2Skills() {
-  const { jobData, updateJobData } = useJobPosting();
+  const queryClient = useQueryClient();
+
+  const skills = queryClient.getQueryData<Skill[]>(["skills"]);
+
+  const { jobData, updateJobData } = useJobPostingContext();
   const [skillSearch, setSkillSearch] = useState("");
   const [showSkillDropdown, setShowSkillDropdown] = useState(false);
+
+  const debouncedSkillSearch = useDebounce(skillSearch, 500);
+
+  const popularSkills = useMemo(() => {
+    return skills?.filter((skill) =>
+      skill.name.toLowerCase().includes(jobData.title)
+    );
+  }, [jobData.title, skills]);
+
+  useEffect(() => {
+    setShowSkillDropdown(debouncedSkillSearch.length > 0);
+  }, [debouncedSkillSearch]);
 
   const addSkill = (skill: string) => {
     if (!jobData.skills.includes(skill)) {
@@ -72,26 +57,25 @@ export default function Step2Skills() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
           <input
             value={skillSearch}
-            onChange={(e) => {
-              setSkillSearch(e.target.value);
-              setShowSkillDropdown(e.target.value.length > 0);
-            }}
+            onChange={(e) => setSkillSearch(e.target.value)}
             className="w-full bg-gray-800 border-gray-600 text-white pl-12 py-3"
             placeholder="Search skills"
           />
           {showSkillDropdown && (
             <div className="absolute top-full left-0 right-0 bg-gray-800 border border-gray-600 rounded-b-md max-h-60 overflow-y-auto z-10">
-              {SKILL_SUGGESTIONS.filter((skill) =>
-                skill.toLowerCase().includes(skillSearch.toLowerCase())
-              ).map((skill) => (
-                <button
-                  key={skill}
-                  onClick={() => addSkill(skill)}
-                  className="w-full text-left px-4 py-2 text-white hover:bg-gray-700"
-                >
-                  {skill}
-                </button>
-              ))}
+              {skills
+                ?.filter((skill) =>
+                  skill.name.toLowerCase().includes(skillSearch.toLowerCase())
+                )
+                .map((skill) => (
+                  <button
+                    key={skill.id}
+                    onClick={() => addSkill(skill.id)}
+                    className="w-full text-left px-4 py-2 text-white hover:bg-gray-700"
+                  >
+                    {skill.name}
+                  </button>
+                ))}
             </div>
           )}
         </div>
@@ -107,21 +91,23 @@ export default function Step2Skills() {
               Selected skills
             </h3>
             <div className="flex flex-wrap gap-2">
-              {jobData.skills.map((skill) => (
-                <Badge
-                  key={skill}
-                  variant="secondary"
-                  className="bg-gray-700 text-white px-3 py-1"
-                >
-                  {skill}
-                  <button
-                    onClick={() => removeSkill(skill)}
-                    className="ml-2 hover:text-red-400"
+              {skills
+                ?.filter((skill) => jobData.skills.includes(skill.id))
+                .map((skill) => (
+                  <Badge
+                    key={skill.id}
+                    variant="secondary"
+                    className="bg-gray-700 text-white px-3 py-1"
                   >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
+                    {skill.name}
+                    <button
+                      onClick={() => removeSkill(skill.id)}
+                      className="ml-2 hover:text-red-400"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
             </div>
           </div>
         )}
@@ -131,13 +117,13 @@ export default function Step2Skills() {
             Popular skills for General Translation Services
           </h3>
           <div className="flex flex-wrap gap-2">
-            {POPULAR_SKILLS.map((skill) => (
+            {popularSkills?.map((skill) => (
               <button
-                key={skill}
-                onClick={() => addSkill(skill)}
+                key={skill.id}
+                onClick={() => addSkill(skill.id)}
                 className="bg-gray-700 text-white px-3 py-2 rounded-full text-sm hover:bg-gray-600 flex items-center"
               >
-                {skill}
+                {skill.name}
                 <span className="ml-2 text-lg">+</span>
               </button>
             ))}

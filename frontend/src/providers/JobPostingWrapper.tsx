@@ -3,7 +3,11 @@
 import { NavigationFooter } from "../pages-section/client/create-job";
 import { validateCurrentStep } from "@/utils/jobStepsValidation";
 import { useRouter } from "next/navigation";
-import { useJobPosting } from "@/hooks/useJobPosting";
+import { useJobPostingContext } from "@/store/JobPostingContext";
+import api from "@/services/api";
+import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUserInfo";
+import { User } from "@/types/user";
 interface JobPostingWizardProps {
   children: React.ReactNode;
   currentStep: number;
@@ -14,18 +18,22 @@ export default function JobPostingWrapper({
   currentStep,
 }: JobPostingWizardProps) {
   const router = useRouter();
-  const { jobData } = useJobPosting();
+  const { data: session } = useSession();
+  const { data: user } = useUser<User>(session?.user.id ?? "");
+  const { jobData } = useJobPostingContext();
+
+  console.log(user);
 
   const getNextRoute = () => {
     switch (currentStep) {
       case 1:
-        return "/step2";
+        return "skills";
       case 2:
-        return "/step3";
+        return "duration";
       case 3:
-        return "/step4";
+        return "budget";
       case 4:
-        return "/step5";
+        return "description";
       case 5:
         return "/client/dashboard";
       default:
@@ -36,13 +44,13 @@ export default function JobPostingWrapper({
   const getPrevRoute = () => {
     switch (currentStep) {
       case 2:
-        return "/step1";
+        return "title";
       case 3:
-        return "/step2";
+        return "skills";
       case 4:
-        return "/step3";
+        return "duration";
       case 5:
-        return "/step4";
+        return "budget";
       default:
         return "/client/dashboard";
     }
@@ -50,18 +58,23 @@ export default function JobPostingWrapper({
 
   const handleNext = () => {
     if (validateCurrentStep(currentStep, jobData)) {
-      router.push(getNextRoute());
+      router.push(`/client/post-job/${getNextRoute()}`);
     }
   };
 
   const handlePrev = () => {
-    router.push(getPrevRoute());
+    router.push(`/client/post-job/${getPrevRoute()}`);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateCurrentStep(currentStep, jobData)) {
-      alert("Job posted!");
-      console.log("Job data:", jobData);
+      const res = await api.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/jobs/${session?.user.id}/create`,
+        jobData
+      );
+      console.log(res.data);
+
+      return res.data;
     }
   };
 

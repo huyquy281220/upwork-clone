@@ -1,5 +1,7 @@
 import Footer from "./footer";
 import Header from "./header";
+import { Suspense } from "react";
+import Loading from "@/components/common/Loading";
 
 export default function GuestLayout({
   children,
@@ -9,7 +11,9 @@ export default function GuestLayout({
   return (
     <div>
       <Header />
-      <div className="md:max-w-[80rem] mx-auto">{children}</div>
+      <div className="md:max-w-[80rem] mx-auto">
+        <Suspense fallback={<Loading />}>{children}</Suspense>
+      </div>
       <Footer />
     </div>
   );

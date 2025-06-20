@@ -7,9 +7,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 import { JobDuration } from './enums.dto';
 import { HoursPerWeek } from './enums.dto';
 import { ExperienceLevel, ProjectLength } from './enums.dto';
@@ -28,8 +26,9 @@ export class CreateJobDto {
   @IsString()
   description: string;
 
-  @IsString()
-  category: string;
+  // @IsOptional()
+  // @IsString()
+  // category: string;
 
   @IsString()
   experienceLevel: ExperienceLevel;
@@ -63,7 +62,6 @@ export class CreateJobDto {
 
   @IsArray()
   @IsNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => JobSkillDto)
-  skills: JobSkillDto[];
+  @IsString({ each: true })
+  skills: string[];
 }

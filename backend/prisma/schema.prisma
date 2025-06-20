@@ -68,7 +68,7 @@ model Job {
   clientId     String
   title        String
   description  String
-  category     String
+  // category     String
   jobType      JobType
   projectLength String
   hoursPerWeek  String

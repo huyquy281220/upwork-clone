@@ -2,10 +2,11 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, DollarSign } from "lucide-react";
-import { useJobPosting } from "@/hooks/useJobPosting";
+import { useJobPostingContext } from "@/store/JobPostingContext";
+import { JobType } from "@/types";
 
 export default function Step4Budget() {
-  const { jobData, updateJobData } = useJobPosting();
+  const { jobData, updateJobData } = useJobPostingContext();
 
   return (
     <div className="grid grid-cols-2 gap-12  mx-auto">
@@ -23,17 +24,17 @@ export default function Step4Budget() {
         <div className="flex gap-4 mb-8">
           <Card
             className={`flex-1 cursor-pointer transition-all ${
-              jobData.jobType === "HOURLY"
+              jobData.jobType === JobType.HOURLY
                 ? "bg-gray-700 border-green-500"
                 : "bg-gray-800 border-gray-600 hover:border-gray-500"
             }`}
-            onClick={() => updateJobData({ jobType: "HOURLY" })}
+            onClick={() => updateJobData({ jobType: JobType.HOURLY })}
           >
             <CardContent className="p-6 flex items-center">
               <Clock className="w-6 h-6 text-green-400 mr-3" />
               <div>
                 <div className="text-white font-semibold">Hourly rate</div>
-                {jobData.jobType === "HOURLY" && (
+                {jobData.jobType === JobType.HOURLY && (
                   <div className="w-3 h-3 bg-green-400 rounded-full mt-2"></div>
                 )}
               </div>
@@ -42,17 +43,17 @@ export default function Step4Budget() {
 
           <Card
             className={`flex-1 cursor-pointer transition-all ${
-              jobData.jobType === "FIXED_PRICE"
+              jobData.jobType === JobType.FIXED_PRICE
                 ? "bg-gray-700 border-green-500"
                 : "bg-gray-800 border-gray-600 hover:border-gray-500"
             }`}
-            onClick={() => updateJobData({ jobType: "FIXED_PRICE" })}
+            onClick={() => updateJobData({ jobType: JobType.FIXED_PRICE })}
           >
             <CardContent className="p-6 flex items-center">
               <DollarSign className="w-6 h-6 text-white mr-3" />
               <div>
                 <div className="text-white font-semibold">Fixed price</div>
-                {jobData.jobType === "FIXED_PRICE" && (
+                {jobData.jobType === JobType.FIXED_PRICE && (
                   <div className="w-3 h-3 bg-green-400 rounded-full mt-2"></div>
                 )}
               </div>
@@ -61,7 +62,7 @@ export default function Step4Budget() {
         </div>
 
         {/* Hourly Rate */}
-        {jobData.jobType === "HOURLY" && (
+        {jobData.jobType === JobType.HOURLY && (
           <div>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
@@ -141,7 +142,7 @@ export default function Step4Budget() {
         )}
 
         {/* Fixed Price */}
-        {jobData.jobType === "FIXED_PRICE" && (
+        {jobData.jobType === JobType.FIXED_PRICE && (
           <div>
             <p className="text-gray-300 mb-6">
               Set a price for the project and pay at the end, or you can divide

@@ -1,4 +1,4 @@
-import type { JobProps } from "@/types";
+import { JobType, type JobProps } from "@/types";
 
 export const validateStep1 = (jobData: JobProps): boolean => {
   return jobData.title.trim().length > 0;
@@ -10,15 +10,16 @@ export const validateStep2 = (jobData: JobProps): boolean => {
 
 export const validateStep3 = (jobData: JobProps): boolean => {
   return (
-    jobData.projectLength !== "" &&
-    jobData.hoursPerWeek !== "" &&
-    jobData.experienceLevel !== "" &&
-    jobData.jobDuration !== ""
+    jobData.projectLength !== null &&
+    jobData.hoursPerWeek !== null &&
+    jobData.experienceLevel !== null &&
+    jobData.jobDuration !== null &&
+    jobData.contractToHire !== null
   );
 };
 
 export const validateStep4 = (jobData: JobProps): boolean => {
-  if (jobData.jobType === "HOURLY") {
+  if (jobData.jobType === JobType.HOURLY) {
     return (
       jobData.hourlyRateMin !== undefined &&
       jobData.hourlyRateMax !== undefined &&
@@ -28,7 +29,7 @@ export const validateStep4 = (jobData: JobProps): boolean => {
     );
   }
 
-  if (jobData.jobType === "FIXED_PRICE") {
+  if (jobData.jobType === JobType.FIXED_PRICE) {
     return jobData.fixedPrice !== undefined && jobData.fixedPrice > 0;
   }
 
@@ -36,7 +37,7 @@ export const validateStep4 = (jobData: JobProps): boolean => {
 };
 
 export const validateStep5 = (jobData: JobProps): boolean => {
-  return jobData.description.trim().length >= 50; // Minimum 50 characters for description
+  return jobData.description.trim().length >= 0;
 };
 
 export const validateCurrentStep = (

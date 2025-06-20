@@ -44,7 +44,7 @@ export class JobsService {
           ...rest,
           client: {
             connect: {
-              id: clientId,
+              userId: clientId,
             },
           },
           jobType,
@@ -59,7 +59,7 @@ export class JobsService {
         await tx.jobSkill.createMany({
           data: skills.map((skill) => ({
             jobId: job.id,
-            skillId: skill.skillId,
+            skillId: skill,
           })),
         });
       }
@@ -133,7 +133,6 @@ export class JobsService {
         data: {
           title: data.title,
           description: data.description,
-          category: data.category,
           jobType: data.jobType,
         },
       });

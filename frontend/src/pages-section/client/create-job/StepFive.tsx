@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Paperclip } from "lucide-react";
-import { useJobPosting } from "@/hooks/useJobPosting";
+import { useJobPostingContext } from "@/store/JobPostingContext";
 
 export default function Step5Description() {
-  const { jobData, updateJobData } = useJobPosting();
+  const { jobData, updateJobData } = useJobPostingContext();
 
   return (
     <div className="grid grid-cols-2 gap-12  mx-auto">
@@ -31,15 +31,11 @@ export default function Step5Description() {
         <textarea
           value={jobData.description}
           onChange={(e) => updateJobData({ description: e.target.value })}
-          className="bg-gray-800 border-gray-600 text-white min-h-[200px] mb-2"
-          placeholder="It's OK if you don't know much about the specifics of the work you need done. Freelancers can always send you questions in their proposals and you can connect later to interview them and discuss the details. However, including more detail may help you attract freelancers that are a better match for your job. Good details to include:
-
-          Project scope and deliverables
-          Deadline expectations
-          Required experience"
+          className="w-full bg-gray-800 border-gray-600 text-white min-h-[200px] p-2 mb-2 rounded-md"
+          maxLength={49490}
         />
         <div className="text-right text-gray-400 text-sm mb-6">
-          49,490 characters left
+          {49490 - jobData.description.length} characters left
         </div>
 
         <div className="mb-6">
