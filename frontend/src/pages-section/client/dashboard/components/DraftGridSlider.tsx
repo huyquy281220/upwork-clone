@@ -8,20 +8,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
+import { JobProps } from "@/types";
 
-interface Draft {
-  id: number;
-  title: string;
-  status: string;
-  description: string;
-  icon: string;
-}
-
-interface DraftGridSliderProps {
-  drafts: Draft[];
-}
-
-export function DraftGridSlider({ drafts }: DraftGridSliderProps) {
+export function DraftGridSlider({ drafts }: { drafts: JobProps[] }) {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -49,8 +38,8 @@ export function DraftGridSlider({ drafts }: DraftGridSliderProps) {
         }}
         className="draft-grid-slider"
       >
-        {drafts.map((draft) => (
-          <SwiperSlide key={draft.id}>
+        {drafts.map((draft, index) => (
+          <SwiperSlide key={index}>
             <DraftCard {...draft} />
           </SwiperSlide>
         ))}

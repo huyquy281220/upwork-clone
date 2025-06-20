@@ -1,42 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Languages, List, MoreHorizontal } from "lucide-react";
-
-interface DraftListItemProps {
-  title: string;
-  status: string;
-  description: string;
-  icon: string;
-  isLast?: boolean;
-}
+import { FileText, MoreHorizontal } from "lucide-react";
+import { JobProps } from "@/types";
 
 export function DraftListItem({
   title,
-  status,
   description,
-  icon,
   isLast,
-}: DraftListItemProps) {
-  const getIcon = () => {
-    switch (icon) {
-      case "translate":
-        return <Languages className="w-5 h-5 text-muted-foreground" />;
-      case "list":
-        return <List className="w-5 h-5 text-muted-foreground" />;
-      default:
-        return <List className="w-5 h-5 text-muted-foreground" />;
-    }
-  };
-
+}: JobProps & { isLast: boolean }) {
   return (
     <div
-      className={`flex items-center gap-4 p-4 bg-card hover:bg-muted/50 transition-colors ${
-        !isLast ? "border-b border-border" : ""
+      className={`flex items-center gap-4 p-4 bg-card hover:bg-muted/50 transition-colors border-b border-border ${
+        isLast ? "border-b-0" : ""
       }`}
     >
       {/* Icon */}
       <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
-        {getIcon()}
+        <FileText className="w-5 h-5 text-muted-foreground" />
       </div>
 
       {/* Content */}
@@ -47,7 +27,7 @@ export function DraftListItem({
             variant="secondary"
             className="bg-blue-600/20 text-blue-400 border-blue-600/30"
           >
-            {status}
+            <p>Draft job post</p>
           </Badge>
         </div>
         <p className="text-sm text-muted-foreground">{description}</p>

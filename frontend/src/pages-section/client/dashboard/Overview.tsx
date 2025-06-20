@@ -9,44 +9,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { JobProps } from "@/types";
 
-const drafts = [
-  {
-    id: 1,
-    title: "Test2",
-    status: "Draft job post",
-    description: "Add details to your draft",
-    icon: "translate",
-  },
-  {
-    id: 2,
-    title: "Test",
-    status: "Draft job post",
-    description: "Add details to your draft",
-    icon: "list",
-  },
-  {
-    id: 3,
-    title: "Test",
-    status: "Draft job post",
-    description: "Add details to your draft",
-    icon: "list",
-  },
-  {
-    id: 4,
-    title: "Test",
-    status: "Draft job post",
-    description: "Add details to your draft",
-    icon: "list",
-  },
-];
-
 export function OverviewSection() {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
   const jobs = queryClient.getQueryData<JobProps[]>(["jobs", session?.user.id]);
-
-  console.log(jobs);
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
@@ -83,14 +50,14 @@ export function OverviewSection() {
       </div>
 
       {viewMode === "grid" ? (
-        <DraftGridSlider drafts={drafts} />
+        <DraftGridSlider drafts={jobs ?? []} />
       ) : (
         <div className="space-y-0 border border-border rounded-lg overflow-hidden">
-          {drafts.map((draft, index) => (
+          {jobs?.map((job, index) => (
             <DraftListItem
-              key={draft.id}
-              {...draft}
-              isLast={index === drafts.length - 1}
+              key={index}
+              {...job}
+              isLast={index === jobs.length - 1}
             />
           ))}
         </div>
