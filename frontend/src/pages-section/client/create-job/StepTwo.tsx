@@ -21,7 +21,7 @@ export default function Step2Skills() {
 
   const popularSkills = useMemo(() => {
     return skills?.filter((skill) =>
-      skill.name.toLowerCase().includes(jobData.title)
+      skill.name.toLowerCase().includes(jobData.title.toLowerCase())
     );
   }, [jobData.title, skills]);
 

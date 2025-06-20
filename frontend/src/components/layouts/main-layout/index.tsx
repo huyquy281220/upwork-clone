@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import ThemeProvider from "@/providers/ThemeProvider";
 import { Suspense } from "react";
 import Loading from "@/components/common/Loading";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function MainLayout({ children }: ChildrenProps) {
   const pathname = usePathname();
@@ -37,6 +38,19 @@ export default function MainLayout({ children }: ChildrenProps) {
           <MainHeader />
           <div className="pt-11 md:pt-0">
             <Suspense fallback={<Loading />}>{children}</Suspense>
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                style: {
+                  background: "rgb(22,163,74)",
+                  color: "white",
+                  fontSize: "1rem",
+                },
+                classNames: {
+                  description: "text-sm",
+                },
+              }}
+            />
           </div>
           <Footer />
         </div>
