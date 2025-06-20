@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { useJobPostingContext } from "@/store/JobPostingContext";
 import api from "@/services/api";
 import { useSession } from "next-auth/react";
-import { toast } from "sonner";
+import { useState } from "react";
+import { ModernToast } from "@/components/common/ModernToast";
+import { ToastProps } from "@/types";
 interface JobPostingWizardProps {
   children: React.ReactNode;
   currentStep: number;
@@ -19,6 +21,14 @@ export default function JobPostingWrapper({
   const router = useRouter();
   const { data: session } = useSession();
   const { jobData, resetJobData } = useJobPostingContext();
+  const [activeToasts, setActiveToasts] = useState(false);
+  const [toast, setToast] = useState<ToastProps>({
+    title: "",
+    description: "",
+    duration: 1500,
+    position: "top-center",
+    type: "success",
+  });
 
   const getNextRoute = () => {
     switch (currentStep) {
@@ -72,18 +82,25 @@ export default function JobPostingWrapper({
 
         if (res.status === 201) {
           resetJobData();
-          toast.success("Job posted successfully", {
+          setToast((prev) => ({
+            ...prev,
+            title: "Job posted successfully",
             description: "Redirecting to dashboard",
-          });
+          }));
+          setActiveToasts(true);
           setTimeout(() => {
             router.push("/client/dashboard");
-          }, 1000);
+          }, 2000);
         }
       } catch (error) {
         console.log(error);
-        toast.error("Error posting job", {
+        setToast((prev) => ({
+          ...prev,
+          title: "Error posting job",
           description: "Please try again",
-        });
+          type: "error",
+        }));
+        setActiveToasts(true);
       }
     }
   };
@@ -93,7 +110,7 @@ export default function JobPostingWrapper({
   return (
     <div className="min-h-screen bg-background">
       <div className="px-6 py-12">{children}</div>
-
+      {activeToasts && <ModernToast {...toast} />}
       <NavigationFooter
         currentStep={currentStep}
         isNextDisabled={isNextDisabled}

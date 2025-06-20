@@ -2,6 +2,20 @@ export interface PageProps {
   children: React.ReactNode;
 }
 
+export interface ToastProps {
+  title: string;
+  description?: string;
+  duration?: number;
+  position?:
+    | "top-left"
+    | "top-right"
+    | "top-center"
+    | "bottom-left"
+    | "bottom-right"
+    | "bottom-center";
+  type?: "success" | "error";
+}
+
 export interface FormData {
   firstName: string;
   lastName: string;
