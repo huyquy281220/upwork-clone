@@ -1,10 +1,10 @@
 "use client";
 
-import { DraftCard } from "./components/DraftCard";
 import { DraftListItem } from "./components/DraftListItem";
 import { Button } from "@/components/ui/button";
 import { Grid, List } from "lucide-react";
 import { useState } from "react";
+import { DraftGridSlider } from "./components/DraftGridSlider";
 
 const drafts = [
   {
@@ -23,6 +23,13 @@ const drafts = [
   },
   {
     id: 3,
+    title: "Test",
+    status: "Draft job post",
+    description: "Add details to your draft",
+    icon: "list",
+  },
+  {
+    id: 4,
     title: "Test",
     status: "Draft job post",
     description: "Add details to your draft",
@@ -66,11 +73,7 @@ export function OverviewSection() {
       </div>
 
       {viewMode === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {drafts.map((draft) => (
-            <DraftCard key={draft.id} {...draft} />
-          ))}
-        </div>
+        <DraftGridSlider drafts={drafts} />
       ) : (
         <div className="space-y-0 border border-border rounded-lg overflow-hidden">
           {drafts.map((draft, index) => (
