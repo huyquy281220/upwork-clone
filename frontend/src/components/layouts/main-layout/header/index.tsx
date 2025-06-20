@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import MobileHeader from "./mobile";
 import NavMenu from "./NavMenu";
@@ -28,7 +30,8 @@ export default function MainHeader() {
         {/* Logo */}
         <div className="flex items-center justify-between">
           <Link
-            href={getRedirectUrlByRole() ?? "/"}
+            // href={"/client/dashboard"}
+            href={getRedirectUrlByRole()!}
             className="font-bold text-xl mr-6"
           >
             <Logo className="w-24 h-6" />
