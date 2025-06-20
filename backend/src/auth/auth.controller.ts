@@ -52,6 +52,14 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    res.cookie('role', user.role, {
+      httpOnly: false, // Allow client-side access
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
+    });
+
     return res.json({ accessToken, user });
   }
 
@@ -59,8 +67,28 @@ export class AuthController {
   async googleSignin(
     @Body()
     { email, role, name }: { email: string; role: string; name: string },
+    @Res() res: Response,
   ) {
-    return this.authService.googleSignin(email, role, name);
+    const { accessToken, refreshToken, user } =
+      await this.authService.googleSignin(email, role, name);
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie('role', user.role, {
+      httpOnly: false, // Allow client-side access
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({ accessToken, user });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -71,6 +99,8 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const user = req.user;
+    res.clearCookie('refresh_token');
+    res.clearCookie('role');
     return this.authService.signout(user.id, res);
   }
 
