@@ -8,6 +8,7 @@ import api from "@/services/api";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
 import { User } from "@/types/user";
+import { toast } from "sonner";
 interface JobPostingWizardProps {
   children: React.ReactNode;
   currentStep: number;
@@ -75,10 +76,18 @@ export default function JobPostingWrapper({
         );
 
         if (res.status === 201) {
-          router.push("/client/dashboard");
+          toast.success("Job posted successfully", {
+            description: "Redirecting to dashboard",
+          });
+          setTimeout(() => {
+            router.push("/client/dashboard");
+          }, 1000);
         }
       } catch (error) {
         console.log(error);
+        toast.error("Error posting job", {
+          description: "Please try again",
+        });
       }
     }
   };
