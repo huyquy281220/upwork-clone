@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, MoreHorizontal } from "lucide-react";
+import { Edit, FileText } from "lucide-react";
 import { JobProps } from "@/types";
 
 export function DraftListItem({
@@ -42,8 +42,8 @@ export function DraftListItem({
         >
           Fill in draft
         </Button>
-        <Button variant="ghost" size="sm" className="p-2">
-          <MoreHorizontal className="w-4 h-4" />
+        <Button variant="outline" size="sm" className="p-2">
+          <Edit className="w-4 h-4 text-green-600" />
         </Button>
       </div>
     </div>
