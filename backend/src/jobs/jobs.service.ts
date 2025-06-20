@@ -86,9 +86,8 @@ export class JobsService {
   }
 
   async findAllJobs(clientId: string) {
-    console.log(clientId);
     return this.prisma.job.findMany({
-      where: { clientId },
+      where: { client: { userId: clientId } },
       include: {
         skills: { select: { skill: { select: { id: true, name: true } } } },
       },

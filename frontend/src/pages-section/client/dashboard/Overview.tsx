@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Grid, List } from "lucide-react";
 import { useState } from "react";
 import { DraftGridSlider } from "./components/DraftGridSlider";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { JobProps } from "@/types";
 
 const drafts = [
   {
@@ -38,6 +41,13 @@ const drafts = [
 ];
 
 export function OverviewSection() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  const jobs = queryClient.getQueryData<JobProps[]>(["jobs", session?.user.id]);
+
+  console.log(jobs);
+
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   return (

@@ -18,7 +18,7 @@ export default function JobPostingWrapper({
 }: JobPostingWizardProps) {
   const router = useRouter();
   const { data: session } = useSession();
-  const { jobData } = useJobPostingContext();
+  const { jobData, resetJobData } = useJobPostingContext();
 
   const getNextRoute = () => {
     switch (currentStep) {
@@ -71,6 +71,7 @@ export default function JobPostingWrapper({
         );
 
         if (res.status === 201) {
+          resetJobData();
           toast.success("Job posted successfully", {
             description: "Redirecting to dashboard",
           });
