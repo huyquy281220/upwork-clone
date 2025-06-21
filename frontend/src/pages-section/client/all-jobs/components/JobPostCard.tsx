@@ -12,6 +12,7 @@ import { useState } from "react";
 import { ToastProps } from "@/types";
 import { formatRelativeTime } from "@/utils/getRelativeTime";
 import { formatDraftSaved } from "@/utils/getLocalTime";
+import { useRouter } from "next/navigation";
 
 interface JobPostCardProps {
   title: string;
@@ -26,6 +27,8 @@ export function JobPostCard({
   createdTime,
   currentPage,
 }: JobPostCardProps) {
+  const router = useRouter();
+
   const { data: session } = useSession();
   const { data: user } = useUser<ClientUser>(session?.user.id ?? "");
   const queryClient = useQueryClient();
@@ -84,6 +87,9 @@ export function JobPostCard({
             variant="outline"
             size="sm"
             className="bg-transparent border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+            onClick={() => {
+              router.push(`/client/job-post/review/${jobId}`);
+            }}
           >
             Edit draft
           </Button>
