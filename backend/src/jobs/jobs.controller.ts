@@ -7,6 +7,7 @@ import {
   Delete,
   Query,
   Patch,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
@@ -15,14 +16,20 @@ import { UpdateJobDto } from './dto/update-job.dto';
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
-  @Get('/:clientId/get-all-jobs')
-  getAllJobs(
+  @Get('/:clientId/get-jobs-with-pagination')
+  getJobsWithPagination(
     @Param('clientId') clientId: string,
-    @Query('limit') limit: number,
-    @Query('page') page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('page', ParseIntPipe) page: number,
   ) {
-    return this.jobsService.findAllJobs(clientId, limit, page);
+    return this.jobsService.getJobsWithPagination(clientId, limit, page);
   }
+
+  @Get('/:clientId/get-all-jobs')
+  getAllJobs(@Param('clientId') clientId: string) {
+    return this.jobsService.getAllJobs(clientId);
+  }
+
   @Get('/:id')
   getJobById(@Param('id') id: string) {
     return this.jobsService.findOneJob(id);

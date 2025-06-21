@@ -17,9 +17,15 @@ interface JobPostCardProps {
   title: string;
   jobId: string;
   createdTime: string;
+  currentPage: number;
 }
 
-export function JobPostCard({ title, jobId, createdTime }: JobPostCardProps) {
+export function JobPostCard({
+  title,
+  jobId,
+  createdTime,
+  currentPage,
+}: JobPostCardProps) {
   const { data: session } = useSession();
   const { data: user } = useUser<ClientUser>(session?.user.id ?? "");
   const queryClient = useQueryClient();
@@ -45,7 +51,7 @@ export function JobPostCard({ title, jobId, createdTime }: JobPostCardProps) {
         }));
         setActiveToasts(true);
         await queryClient.invalidateQueries({
-          queryKey: ["jobs", session?.user.id],
+          queryKey: ["jobs-with-pagination", session?.user.id, currentPage],
         });
       }
     } catch (error) {

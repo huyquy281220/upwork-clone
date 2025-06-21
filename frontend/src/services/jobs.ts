@@ -2,10 +2,19 @@ import api from "./api";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const getAllJobsByUserId = async (userId: string, page: number) => {
+export const getJobsWithPagination = async (
+  userId: string,
+  page: number,
+  limit: number
+) => {
   const response = await api.get(
-    `${apiURL}/jobs/${userId}/get-all-jobs?limit=10&page=${page}`
+    `${apiURL}/jobs/${userId}/get-jobs-with-pagination?limit=${limit}&page=${page}`
   );
+  return response.data;
+};
+
+export const getAllJobs = async (userId: string) => {
+  const response = await api.get(`${apiURL}/jobs/${userId}/get-all-jobs`);
   return response.data;
 };
 

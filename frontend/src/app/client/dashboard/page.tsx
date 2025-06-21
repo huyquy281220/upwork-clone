@@ -1,6 +1,6 @@
 "use client";
 
-import { getAllJobsByUserId } from "@/services/jobs";
+import { getAllJobs } from "@/services/jobs";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
@@ -16,7 +16,7 @@ export default function DashboardPage() {
   const { data: session } = useSession();
   useQuery({
     queryKey: ["jobs", session?.user.id],
-    queryFn: () => getAllJobsByUserId(session?.user.id ?? ""),
+    queryFn: () => getAllJobs(session?.user.id ?? ""),
     enabled: !!session?.user.id,
   });
 

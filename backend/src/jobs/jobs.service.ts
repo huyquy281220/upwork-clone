@@ -85,15 +85,40 @@ export class JobsService {
     return job;
   }
 
-  async findAllJobs(clientId: string, limit: number, page: number) {
+  async getJobsWithPagination(clientId: string, limit: number, page: number) {
+    try {
+      const [jobs, totalJobs] = await this.prisma.$transaction([
+        this.prisma.job.findMany({
+          where: { client: { userId: clientId } },
+          include: {
+            skills: { select: { skill: { select: { id: true, name: true } } } },
+          },
+          orderBy: { createdAt: 'desc' },
+          take: limit,
+          skip: (page - 1) * limit,
+        }),
+        this.prisma.job.count({
+          where: { client: { userId: clientId } },
+        }),
+      ]);
+
+      return {
+        data: jobs,
+        // totalJobsCount: totalJobs,
+        totalPages: Math.ceil(totalJobs / limit),
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getAllJobs(clientId: string) {
     return this.prisma.job.findMany({
       where: { client: { userId: clientId } },
       include: {
         skills: { select: { skill: { select: { id: true, name: true } } } },
       },
       orderBy: { createdAt: 'desc' },
-      take: limit,
-      skip: (page - 1) * limit,
     });
   }
 
