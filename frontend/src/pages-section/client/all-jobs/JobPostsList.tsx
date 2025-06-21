@@ -9,6 +9,7 @@ export function JobPostsList({ jobPosts }: { jobPosts: JobProps[] }) {
           key={index}
           title={jobPost.title}
           createdTime={jobPost.createdAt}
+          jobId={jobPost.id}
         />
       ))}
     </div>

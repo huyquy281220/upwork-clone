@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, DollarSign } from "lucide-react";
 import { useJobPostingContext } from "@/store/JobPostingContext";
-import { JobType } from "@/types";
+import { JobType } from "@/types/jobs";
 
 export default function Step4Budget() {
   const { jobData, updateJobData } = useJobPostingContext();

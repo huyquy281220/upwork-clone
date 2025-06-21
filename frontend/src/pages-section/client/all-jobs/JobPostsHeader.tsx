@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import Link from "next/link";
 
 export function JobPostsHeader() {
   return (
@@ -16,9 +16,12 @@ export function JobPostsHeader() {
         <h1 className="text-2xl font-semibold text-foreground">
           All job posts
         </h1>
-        <Button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md w-fit">
+        <Link
+          href="/client/job-post/title"
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md w-fit"
+        >
           Post a new job
-        </Button>
+        </Link>
       </div>
 
       <div className="relative flex-1">

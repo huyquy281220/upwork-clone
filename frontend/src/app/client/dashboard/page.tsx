@@ -1,5 +1,8 @@
 "use client";
 
+import { getAllJobsByUserId } from "@/services/jobs";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import {
   WelcomeSection,
   LastStepsSection,
@@ -8,9 +11,6 @@ import {
   OverviewSection,
   ConsultationSection,
 } from "@/pages-section/client/dashboard";
-import { getAllJobsByUserId } from "@/services/jobs";
-import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
   const { data: session } = useSession();

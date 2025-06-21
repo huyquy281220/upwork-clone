@@ -169,8 +169,8 @@ export class JobsService {
 
       // Delete related records
       await tx.jobSkill.deleteMany({ where: { jobId: id } });
-      await tx.userSavedJob.deleteMany({ where: { jobId: id } });
-      await tx.proposal.deleteMany({ where: { jobId: id } });
+      // await tx.userSavedJob.deleteMany({ where: { jobId: id } });
+      // await tx.proposal.deleteMany({ where: { jobId: id } });
 
       // Delete job
       await tx.job.delete({ where: { id } });

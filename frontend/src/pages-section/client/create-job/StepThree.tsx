@@ -2,12 +2,12 @@
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Edit } from "lucide-react";
-import { ExperienceLevel, JobDuration, ProjectLength } from "@/types";
+import { ExperienceLevel, JobDuration, ProjectLength } from "@/types/jobs";
 import { useJobPostingContext } from "@/store/JobPostingContext";
 
 export default function Step3Scope() {
   const { jobData, updateJobData } = useJobPostingContext();
-  console.log(jobData);
+
   return (
     <div className="grid grid-cols-2 gap-12  mx-auto">
       <div>
