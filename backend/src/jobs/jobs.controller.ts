@@ -16,8 +16,12 @@ export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
   @Get('/:clientId/get-all-jobs')
-  getAllJobs(@Param('clientId') clientId: string) {
-    return this.jobsService.findAllJobs(clientId);
+  getAllJobs(
+    @Param('clientId') clientId: string,
+    @Query('limit') limit: number,
+    @Query('page') page: number,
+  ) {
+    return this.jobsService.findAllJobs(clientId, limit, page);
   }
   @Get('/:id')
   getJobById(@Param('id') id: string) {

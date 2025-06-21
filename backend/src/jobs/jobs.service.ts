@@ -85,12 +85,15 @@ export class JobsService {
     return job;
   }
 
-  async findAllJobs(clientId: string) {
+  async findAllJobs(clientId: string, limit: number, page: number) {
     return this.prisma.job.findMany({
       where: { client: { userId: clientId } },
       include: {
         skills: { select: { skill: { select: { id: true, name: true } } } },
       },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: (page - 1) * limit,
     });
   }
 

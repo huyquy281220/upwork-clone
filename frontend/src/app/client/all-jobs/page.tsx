@@ -13,7 +13,7 @@ export default function AllJobsPage() {
 
   const { data: jobPosts } = useQuery({
     queryKey: ["jobs", session?.user.id],
-    queryFn: () => getAllJobsByUserId(session?.user.id ?? ""),
+    queryFn: () => getAllJobsByUserId(session?.user.id ?? "", currentPage),
     enabled: !!session?.user.id,
   });
 

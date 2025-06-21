@@ -2,8 +2,10 @@ import api from "./api";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const getAllJobsByUserId = async (userId: string) => {
-  const response = await api.get(`${apiURL}/jobs/${userId}/get-all-jobs`);
+export const getAllJobsByUserId = async (userId: string, page: number) => {
+  const response = await api.get(
+    `${apiURL}/jobs/${userId}/get-all-jobs?limit=10&page=${page}`
+  );
   return response.data;
 };
 
