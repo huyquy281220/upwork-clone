@@ -10,6 +10,8 @@ import { ClientUser } from "@/types/user";
 import { ModernToast } from "@/components/common/ModernToast";
 import { useState } from "react";
 import { ToastProps } from "@/types";
+import { formatRelativeTime } from "@/utils/getRelativeTime";
+import { formatDraftSaved } from "@/utils/getLocalTime";
 
 interface JobPostCardProps {
   title: string;
@@ -64,9 +66,11 @@ export function JobPostCard({ title, jobId, createdTime }: JobPostCardProps) {
         <div className="space-y-2 flex-1">
           <h3 className="text-lg font-medium text-foreground">{title}</h3>
           <p className="text-sm text-muted-foreground">
-            Created {createdTime} by You
+            Created {formatRelativeTime(createdTime)} by You
           </p>
-          <p className="text-sm text-muted-foreground"></p>
+          <p className="text-sm text-foreground">
+            {formatDraftSaved(createdTime)}
+          </p>
         </div>
 
         <div className="flex items-center gap-2 sm:flex-shrink-0">
