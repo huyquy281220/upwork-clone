@@ -8,6 +8,7 @@ import { DraftGridSlider } from "./components/DraftGridSlider";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { JobProps } from "@/types/jobs";
+import Link from "next/link";
 
 export function OverviewSection() {
   const { data: session } = useSession();
@@ -21,10 +22,13 @@ export function OverviewSection() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-medium text-foreground">Overview</h2>
-        <Button variant="ghost" className="text-green-600 hover:text-green-700">
+        <Link
+          href="/client/all-jobs"
+          className="inline-flex items-center text-sm text-green-600 hover:text-green-700"
+        >
           View all resources
           <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
+        </Link>
       </div>
       <div className="flex justify-end">
         <div className="flex items-center bg-muted rounded-lg p-1">
