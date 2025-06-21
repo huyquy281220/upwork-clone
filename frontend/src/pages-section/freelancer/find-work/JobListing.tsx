@@ -6,7 +6,7 @@ import { JobSearch } from "./JobSearch";
 import { JobFilters } from "@/pages-section/freelancer/find-work/components/JobFilters";
 import { useState } from "react";
 import { parsePostedTime } from "@/utils/parsePostedTime";
-import type { JobProps } from "@/types";
+import type { JobProps } from "@/types/jobs";
 
 const filterTabs = [
   { id: "best-matches", label: "Best Matches" },

@@ -1,4 +1,4 @@
-import type { JobProps } from "@/types";
+import type { JobProps } from "@/types/jobs";
 
 export const mockJobs: JobProps[] = [
   {

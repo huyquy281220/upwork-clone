@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, FileText } from "lucide-react";
-import { JobProps } from "@/types";
+import { JobProps } from "@/types/jobs";
 
 export function DraftListItem({
   title,

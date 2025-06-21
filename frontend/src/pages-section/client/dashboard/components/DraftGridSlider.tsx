@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { JobProps } from "@/types";
+import { JobProps } from "@/types/jobs";
 
 export function DraftGridSlider({ drafts }: { drafts: JobProps[] }) {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);

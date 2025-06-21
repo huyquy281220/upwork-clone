@@ -1,14 +1,14 @@
-import { JobType, type JobProps } from "@/types";
+import { CreateJobProps } from "@/types/jobs";
 
-export const validateStep1 = (jobData: JobProps): boolean => {
+export const validateStep1 = (jobData: CreateJobProps): boolean => {
   return jobData.title.trim().length > 0;
 };
 
-export const validateStep2 = (jobData: JobProps): boolean => {
+export const validateStep2 = (jobData: CreateJobProps): boolean => {
   return jobData.skills.length >= 1; // At least 1 skill required
 };
 
-export const validateStep3 = (jobData: JobProps): boolean => {
+export const validateStep3 = (jobData: CreateJobProps): boolean => {
   return (
     jobData.projectLength !== null &&
     jobData.hoursPerWeek !== null &&
@@ -18,8 +18,8 @@ export const validateStep3 = (jobData: JobProps): boolean => {
   );
 };
 
-export const validateStep4 = (jobData: JobProps): boolean => {
-  if (jobData.jobType === JobType.HOURLY) {
+export const validateStep4 = (jobData: CreateJobProps): boolean => {
+  if (jobData.jobType === "HOURLY") {
     return (
       jobData.hourlyRateMin !== undefined &&
       jobData.hourlyRateMax !== undefined &&
@@ -29,20 +29,20 @@ export const validateStep4 = (jobData: JobProps): boolean => {
     );
   }
 
-  if (jobData.jobType === JobType.FIXED_PRICE) {
+  if (jobData.jobType === "FIXED_PRICE") {
     return jobData.fixedPrice !== undefined && jobData.fixedPrice > 0;
   }
 
   return false;
 };
 
-export const validateStep5 = (jobData: JobProps): boolean => {
+export const validateStep5 = (jobData: CreateJobProps): boolean => {
   return jobData.description.trim().length >= 0;
 };
 
 export const validateCurrentStep = (
   step: number,
-  jobData: JobProps
+  jobData: CreateJobProps
 ): boolean => {
   switch (step) {
     case 1:

@@ -7,10 +7,10 @@ import {
   HoursPerWeek,
   JobType,
   ProjectLength,
-  type JobProps,
-} from "@/types";
+  type CreateJobProps,
+} from "@/types/jobs";
 
-const initialJobData: JobProps = {
+const initialJobData: CreateJobProps = {
   title: "",
   skills: [],
   experienceLevel: ExperienceLevel.DEFAULT,
@@ -26,10 +26,10 @@ const initialJobData: JobProps = {
 };
 
 export function useJobPosting() {
-  const [jobData, setJobData] = useState<JobProps>(initialJobData);
+  const [jobData, setJobData] = useState<CreateJobProps>(initialJobData);
 
   // Update job data
-  const updateJobData = useCallback((updates: Partial<JobProps>) => {
+  const updateJobData = useCallback((updates: Partial<CreateJobProps>) => {
     setJobData((prev) => ({ ...prev, ...updates }));
   }, []);
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { CheckCircle, Heart, MapPin, ThumbsDown } from "lucide-react";
-import type { JobProps } from "@/types";
+import { Heart, ThumbsDown } from "lucide-react";
+import type { JobProps } from "@/types/jobs";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
       )}
     >
       <div className="flex justify-between items-start mb-2">
-        <div className="text-sm text-gray-500">Posted {job.postedTime}</div>
+        <div className="text-sm text-gray-500">Posted {job.createdAt}</div>
         <div className="flex space-x-2">
           <button className="p-1 rounded">
             <ThumbsDown />
@@ -49,7 +49,7 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
       </h3>
 
       <div className="text-sm text-gray-600 mb-4">
-        {job.type} - {job.level} - {job.duration}
+        {job.jobType} - {job.experienceLevel} - {job.jobDuration}
       </div>
 
       <p className="mb-4 line-clamp-3">{job.description}</p>
@@ -72,14 +72,14 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
       </div>
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-        {job.paymentVerified && (
+        {/* {job.paymentVerified && (
           <div className="flex items-center">
             <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
             <span>Payment verified</span>
           </div>
-        )}
+        )} */}
 
-        {job.rating && (
+        {/* {job.rating && (
           <div className="flex items-center">
             <div className="flex mr-1">
               {[...Array(5)].map((_, i) => (
@@ -99,12 +99,12 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
         <div className="flex items-center">
           <MapPin className="h-4 w-4 mr-1" />
           <span>{job.location}</span>
-        </div>
+        </div> */}
       </div>
 
-      <div className="mt-4 text-sm text-gray-600">
+      {/* <div className="mt-4 text-sm text-gray-600">
         Proposals: {job.proposals}
-      </div>
+      </div> */}
     </div>
   );
 }

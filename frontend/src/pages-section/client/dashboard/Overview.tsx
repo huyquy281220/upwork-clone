@@ -2,12 +2,12 @@
 
 import { DraftListItem } from "./components/DraftListItem";
 import { Button } from "@/components/ui/button";
-import { Grid, List } from "lucide-react";
+import { ArrowRight, Grid, List } from "lucide-react";
 import { useState } from "react";
 import { DraftGridSlider } from "./components/DraftGridSlider";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { JobProps } from "@/types";
+import { JobProps } from "@/types/jobs";
 
 export function OverviewSection() {
   const { data: session } = useSession();
@@ -18,9 +18,15 @@ export function OverviewSection() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-medium text-foreground">Overview</h2>
+        <Button variant="ghost" className="text-green-600 hover:text-green-700">
+          View all resources
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+      <div className="flex justify-end">
         <div className="flex items-center bg-muted rounded-lg p-1">
           <Button
             variant={viewMode === "grid" ? "default" : "ghost"}
