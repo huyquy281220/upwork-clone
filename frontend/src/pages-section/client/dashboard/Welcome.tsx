@@ -43,7 +43,7 @@ export function WelcomeSection() {
       </h1>
       <Button
         className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md w-fit"
-        onClick={() => router.push("/client/post-job/title")}
+        onClick={() => router.push("/client/job-post/title")}
       >
         + Post a job
       </Button>

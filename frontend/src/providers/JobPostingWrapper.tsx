@@ -64,12 +64,12 @@ export default function JobPostingWrapper({
 
   const handleNext = () => {
     if (validateCurrentStep(currentStep, jobData)) {
-      router.push(`/client/post-job/${getNextRoute()}`);
+      router.push(`/client/job-post/${getNextRoute()}`);
     }
   };
 
   const handlePrev = () => {
-    router.push(`/client/post-job/${getPrevRoute()}`);
+    router.push(`/client/job-post/${getPrevRoute()}`);
   };
 
   const handleSubmit = async () => {
