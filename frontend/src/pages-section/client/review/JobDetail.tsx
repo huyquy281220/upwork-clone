@@ -26,6 +26,7 @@ import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
 import { getSkillsByJobId } from "@/services/skills";
 import { Skill } from "@/types";
+import { LoadingComp } from "@/components/common/LoadingComp";
 
 export default function JobDetail() {
   const queryClient = useQueryClient();
@@ -38,17 +39,19 @@ export default function JobDetail() {
   const params = useParams();
   const jobId = params.jobId as string;
 
-  const { data: skillsInJob } = useQuery<Skill[]>({
+  const { data: skillsInJob, isLoading: isSkillsLoading } = useQuery<Skill[]>({
     queryKey: ["skills-in-job", jobId],
     queryFn: () => getSkillsByJobId(jobId),
     enabled: !!jobId,
   });
 
-  const { data: jobDetail } = useQuery<JobProps>({
-    queryKey: ["job-detail", jobId],
-    queryFn: () => getJobById(jobId),
-    enabled: !!jobId,
-  });
+  const { data: jobDetail, isLoading: isJobDetailLoading } = useQuery<JobProps>(
+    {
+      queryKey: ["job-detail", jobId],
+      queryFn: () => getJobById(jobId),
+      enabled: !!jobId,
+    }
+  );
 
   const clientInfo = queryClient.getQueryData<ClientUser>([
     "user",
@@ -79,12 +82,12 @@ export default function JobDetail() {
       );
 
       if (res.status === 200) {
+        resetJobData();
         showSuccessToast(
           "Job posted successfully",
           "Redirecting to dashboard",
           1400
         );
-        resetJobData();
         setTimeout(() => {
           router.push("/client/dashboard");
         }, 1600);
@@ -95,8 +98,8 @@ export default function JobDetail() {
     }
   };
 
-  if (!jobDetail || !skillsInJob) {
-    return <div>Loading...</div>;
+  if (isJobDetailLoading || isSkillsLoading) {
+    return <LoadingComp progress={50} />;
   }
 
   return (
@@ -163,9 +166,8 @@ export default function JobDetail() {
         <div className="flex flex-col sm:flex-row gap-4 justify-between items-center pt-6">
           <Button
             variant="outline"
-            // onClick={onBack}
-            // disabled={isLoading}
-            className="w-full sm:w-auto bg-white border-gray-300 text-gray-900 hover:bg-gray-50"
+            onClick={() => router.back()}
+            className="w-full sm:w-auto bg-white border-gray-300 text-gray-900"
           >
             Back
           </Button>
@@ -173,10 +175,8 @@ export default function JobDetail() {
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button
               onClick={handlePostJob}
-              // disabled={isLoading}
               className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
             >
-              {/* {isLoading ? "Posting..." : "Post this job"} */}
               Post this job
             </Button>
           </div>
@@ -200,7 +200,7 @@ export default function JobDetail() {
         <EditSkillsModal
           isOpen={isModalOpen("edit-skills")}
           onClose={() => closeModal()}
-          currentSkills={skillsInJob}
+          currentSkills={skillsInJob ?? []}
           jobTitle={jobData.title}
           onSave={(skills) => handleUpdate("skills", skills)}
         />
