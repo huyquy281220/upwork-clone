@@ -38,14 +38,14 @@ export function JobPostCard({
       const res = await deleteJobById(jobId, user?.clientProfile.id ?? "");
 
       if (res.status === 200) {
-        showSuccessToast("Job deleted", "Your job has been deleted");
+        showSuccessToast("Job deleted", "Your job has been deleted", 1500);
         await queryClient.invalidateQueries({
           queryKey: ["jobs-with-pagination", session?.user.id, currentPage],
         });
       }
     } catch (error) {
       console.log(error);
-      showErrorToast("Error deleting job", "Please try again");
+      showErrorToast("Error deleting job", "Please try again", 1500);
     }
   };
 

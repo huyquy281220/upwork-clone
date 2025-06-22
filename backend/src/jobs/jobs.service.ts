@@ -128,7 +128,6 @@ export class JobsService {
   }
 
   async updateJob(id: string, clientId: string, data: UpdateJobDto) {
-    console.log(clientId);
     return this.prisma.$transaction(async (tx) => {
       // Check job and client
       const job = await tx.job.findUnique({ where: { id } });

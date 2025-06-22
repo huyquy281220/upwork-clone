@@ -31,7 +31,7 @@ export default function Step3Scope() {
           >
             <div className="flex items-start space-x-3">
               <RadioGroupItem
-                value="LARGE"
+                value="Large"
                 id="LARGE"
                 className="mt-1 border-2 border-gray-400"
               />
@@ -50,7 +50,7 @@ export default function Step3Scope() {
             </div>
             <div className="flex items-start space-x-3">
               <RadioGroupItem
-                value="MEDIUM"
+                value="Medium"
                 id="MEDIUM"
                 className="mt-1 border-2 border-gray-400"
               />
@@ -69,7 +69,7 @@ export default function Step3Scope() {
             </div>
             <div className="flex items-start space-x-3">
               <RadioGroupItem
-                value="SMALL"
+                value="Small"
                 id="SMALL"
                 className="mt-1 border-2 border-gray-400"
               />

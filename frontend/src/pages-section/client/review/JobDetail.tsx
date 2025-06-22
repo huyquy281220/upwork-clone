@@ -82,13 +82,13 @@ export default function JobDetail() {
       );
 
       if (res.status === 200) {
-        resetJobData();
         showSuccessToast(
           "Job posted successfully",
           "Redirecting to dashboard",
           1400
         );
         setTimeout(() => {
+          resetJobData();
           router.push("/client/dashboard");
         }, 1600);
       }
@@ -99,7 +99,11 @@ export default function JobDetail() {
   };
 
   if (isJobDetailLoading || isSkillsLoading) {
-    return <LoadingComp progress={50} />;
+    return (
+      <LoadingComp
+        progress={isJobDetailLoading || isSkillsLoading ? 30 : 100}
+      />
+    );
   }
 
   return (
@@ -145,7 +149,6 @@ export default function JobDetail() {
             <ScopeSection
               projectLength={jobData.projectLength}
               experienceLevel={jobData.experienceLevel}
-              hoursPerWeek={jobData.hoursPerWeek}
               jobDuration={jobData.jobDuration}
               contractToHire={jobData.contractToHire}
               onEdit={() => openModal("edit-scope")}

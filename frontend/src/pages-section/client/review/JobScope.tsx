@@ -1,18 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type {
-  ExperienceLevel,
-  ProjectLength,
-  HoursPerWeek,
-  JobDuration,
-} from "@/types/jobs";
+import type { ExperienceLevel, ProjectLength, JobDuration } from "@/types/jobs";
 import CirclePencil from "@/components/common/CirclePencil";
 
 interface ScopeSectionProps {
   projectLength: ProjectLength;
   experienceLevel: ExperienceLevel;
-  hoursPerWeek: HoursPerWeek;
   jobDuration: JobDuration;
   contractToHire: boolean;
   onEdit?: () => void;
@@ -21,7 +15,6 @@ interface ScopeSectionProps {
 export function ScopeSection({
   projectLength,
   experienceLevel,
-  hoursPerWeek,
   jobDuration,
   contractToHire,
   onEdit,
@@ -30,7 +23,6 @@ export function ScopeSection({
     projectLength,
     jobDuration,
     experienceLevel,
-    hoursPerWeek,
     contractToHire ? "Contract-to-hire opportunity" : "Contract work",
   ].join(", ");
 

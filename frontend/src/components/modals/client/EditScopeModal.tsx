@@ -67,12 +67,12 @@ export function EditScopeModal({
                 <div className="flex items-start space-x-3">
                   <RadioGroupItem
                     value={ProjectLength.LARGE}
-                    id="large"
+                    id="Large"
                     className="mt-1"
                   />
                   <div>
                     <label
-                      htmlFor="large"
+                      htmlFor="Large"
                       className="text-base font-medium cursor-pointer"
                     >
                       Large
@@ -86,12 +86,12 @@ export function EditScopeModal({
                 <div className="flex items-start space-x-3">
                   <RadioGroupItem
                     value={ProjectLength.MEDIUM}
-                    id="medium"
+                    id="Medium"
                     className="mt-1"
                   />
                   <div>
                     <label
-                      htmlFor="medium"
+                      htmlFor="Medium"
                       className="text-base font-medium cursor-pointer"
                     >
                       Medium
@@ -104,12 +104,12 @@ export function EditScopeModal({
                 <div className="flex items-start space-x-3">
                   <RadioGroupItem
                     value={ProjectLength.SMALL}
-                    id="small"
+                    id="Small"
                     className="mt-1"
                   />
                   <div>
                     <label
-                      htmlFor="small"
+                      htmlFor="Small"
                       className="text-base font-medium cursor-pointer"
                     >
                       Small
@@ -182,33 +182,27 @@ export function EditScopeModal({
                 <div className="flex items-center space-x-3">
                   <RadioGroupItem
                     value={HoursPerWeek.MORE_THAN_30}
-                    id="more30"
+                    id="More than 30 hrs/week"
                   />
-                  <label htmlFor="more30" className="text-base cursor-pointer">
+                  <label
+                    htmlFor="More than 30 hrs/week"
+                    className="text-base cursor-pointer"
+                  >
                     More than 30 hrs/week
                   </label>
                 </div>
                 <div className="flex items-center space-x-3">
                   <RadioGroupItem
                     value={HoursPerWeek.LESS_THAN_30}
-                    id="less30"
+                    id="Less than 30 hrs/week"
                   />
-                  <label htmlFor="less30" className="text-base cursor-pointer">
+                  <label
+                    htmlFor="Less than 30 hrs/week"
+                    className="text-base cursor-pointer"
+                  >
                     Less than 30 hrs/week
                   </label>
                 </div>
-                {/* <div className="flex items-center space-x-3">
-                  <RadioGroupItem
-                    value={HoursPerWeek.AS_NEEDED}
-                    id="asneeded"
-                  />
-                  <label
-                    htmlFor="asneeded"
-                    className="text-base cursor-pointer"
-                  >
-                    As needed - open to offers
-                  </label>
-                </div> */}
               </div>
             </RadioGroup>
           </div>
@@ -233,26 +227,26 @@ export function EditScopeModal({
             >
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
-                  <RadioGroupItem value={ExperienceLevel.EXPERT} id="expert" />
-                  <label htmlFor="expert" className="text-base cursor-pointer">
+                  <RadioGroupItem value={ExperienceLevel.EXPERT} id="Expert" />
+                  <label htmlFor="Expert" className="text-base cursor-pointer">
                     Expert
                   </label>
                 </div>
                 <div className="flex items-center space-x-3">
                   <RadioGroupItem
                     value={ExperienceLevel.INTERMEDIATE}
-                    id="intermediate"
+                    id="Intermediate"
                   />
                   <label
-                    htmlFor="intermediate"
+                    htmlFor="Intermediate"
                     className="text-base cursor-pointer"
                   >
                     Intermediate
                   </label>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <RadioGroupItem value={ExperienceLevel.ENTRY} id="entry" />
-                  <label htmlFor="entry" className="text-base cursor-pointer">
+                  <RadioGroupItem value={ExperienceLevel.ENTRY} id="Entry" />
+                  <label htmlFor="Entry" className="text-base cursor-pointer">
                     Entry
                   </label>
                 </div>
