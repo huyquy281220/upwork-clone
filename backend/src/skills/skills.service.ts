@@ -176,6 +176,38 @@ export class SkillsService {
     });
   }
 
+  /**
+   * Get all skills associated with a specific job
+   * @param jobId - The ID of the job
+   * @returns A flattened array of skills for the job
+   */
+  async getSkillsByJobId(jobId: string) {
+    // First, check if the job exists
+    const job = await this.prismaService.job.findUnique({
+      where: { id: jobId },
+      include: {
+        skills: {
+          select: {
+            skill: {
+              select: {
+                id: true,
+                name: true,
+                categoryId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!job) {
+      throw new NotFoundException(`Job with ID ${jobId} not found`);
+    }
+
+    // Transform the result into a simple array of skills
+    return job.skills.map((jobSkill) => jobSkill.skill);
+  }
+
   async getUserSkills(userId: string) {
     return this.prismaService.userSkill.findMany({
       where: { userId },

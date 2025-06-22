@@ -8,6 +8,7 @@ import {
   IsArray,
   IsNotEmpty,
   ValidateNested,
+  IsDate,
 } from 'class-validator';
 import {
   ExperienceLevel,
@@ -70,7 +71,6 @@ export class UpdateJobDto {
   @IsOptional()
   @IsArray()
   @IsNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => JobSkillDto)
-  skills?: JobSkillDto[];
+  @IsString({ each: true })
+  skills?: string[];
 }

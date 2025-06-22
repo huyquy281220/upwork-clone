@@ -1,7 +1,6 @@
 export interface CreateJobProps {
   title: string;
   description: string;
-  // category: string;
   experienceLevel: ExperienceLevel;
   jobType: JobType;
   hourlyRateMin?: number;

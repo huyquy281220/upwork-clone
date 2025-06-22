@@ -81,6 +81,7 @@ model Job {
   contractToHire Boolean @default(false)
 
   createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   contracts    Contract[]
   client       ClientProfile  @relation("ClientJobs", fields: [clientId], references: [id], onDelete: Cascade)
   proposals    Proposal[]

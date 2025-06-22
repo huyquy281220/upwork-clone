@@ -1,3 +1,4 @@
+import { JobProps } from "@/types/jobs";
 import api from "./api";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
@@ -16,6 +17,23 @@ export const getJobsWithPagination = async (
 export const getAllJobs = async (userId: string) => {
   const response = await api.get(`${apiURL}/jobs/${userId}/get-all-jobs`);
   return response.data;
+};
+
+export const getJobById = async (jobId: string) => {
+  const response = await api.get(`${apiURL}/jobs/${jobId}`);
+  return response.data;
+};
+
+export const updateJobById = async (
+  jobId: string,
+  clientId: string,
+  jobData: Partial<JobProps>
+) => {
+  const response = await api.patch(
+    `${apiURL}/jobs/${clientId}/update/${jobId}`,
+    jobData
+  );
+  return response;
 };
 
 export const deleteJobById = async (jobId: string, clientId: string) => {

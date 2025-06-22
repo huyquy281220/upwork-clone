@@ -16,6 +16,11 @@ import { UpdateJobDto } from './dto/update-job.dto';
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
+  @Get('/:id')
+  getJobById(@Param('id') id: string) {
+    return this.jobsService.findOneJob(id);
+  }
+
   @Get('/:clientId/get-jobs-with-pagination')
   getJobsWithPagination(
     @Param('clientId') clientId: string,
@@ -28,11 +33,6 @@ export class JobsController {
   @Get('/:clientId/get-all-jobs')
   getAllJobs(@Param('clientId') clientId: string) {
     return this.jobsService.getAllJobs(clientId);
-  }
-
-  @Get('/:id')
-  getJobById(@Param('id') id: string) {
-    return this.jobsService.findOneJob(id);
   }
 
   @Get('/search')

@@ -28,4 +28,9 @@ export class SkillsListController {
   async getAllSkills() {
     return this.skillsService.getAllSkills();
   }
+
+  @Get('/job/:jobId')
+  async getSkillsByJobId(@Param('jobId') jobId: string) {
+    return this.skillsService.getSkillsByJobId(jobId);
+  }
 }

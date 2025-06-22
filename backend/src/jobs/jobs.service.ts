@@ -72,8 +72,8 @@ export class JobsService {
     const job = await this.prisma.job.findUnique({
       where: { id },
       include: {
-        skills: { select: { skill: { select: { id: true, name: true } } } },
-        client: { select: { userId: true, companyName: true } },
+        skills: { select: { skill: { select: { id: true } } } },
+        client: { select: { id: true } },
         proposals: { select: { id: true, freelancerId: true, status: true } },
       },
     });
@@ -82,7 +82,12 @@ export class JobsService {
       throw new NotFoundException(`Job with ID ${id} not found`);
     }
 
-    return job;
+    const { skills, ...restOfJob } = job;
+
+    return {
+      ...restOfJob,
+      skills: skills.map((s) => s.skill.id),
+    };
   }
 
   async getJobsWithPagination(clientId: string, limit: number, page: number) {
@@ -123,6 +128,7 @@ export class JobsService {
   }
 
   async updateJob(id: string, clientId: string, data: UpdateJobDto) {
+    console.log(clientId);
     return this.prisma.$transaction(async (tx) => {
       // Check job and client
       const job = await tx.job.findUnique({ where: { id } });
@@ -136,7 +142,7 @@ export class JobsService {
       // Check skills if exists
       if (data.skills) {
         const skills = await tx.skill.findMany({
-          where: { id: { in: data.skills.map((skill) => skill.skillId) } },
+          where: { id: { in: data.skills } },
         });
         if (skills.length !== data.skills.length) {
           throw new BadRequestException('Some skills not found');
@@ -149,7 +155,7 @@ export class JobsService {
         await tx.jobSkill.createMany({
           data: data.skills.map((skill) => ({
             jobId: id,
-            skillId: skill.skillId,
+            skillId: skill,
           })),
         });
       }

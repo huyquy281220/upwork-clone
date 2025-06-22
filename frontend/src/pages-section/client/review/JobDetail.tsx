@@ -15,15 +15,89 @@ import {
 } from "@/components/modals/client";
 import { useJobPostingContext } from "@/store/JobPostingContext";
 import { useModalManager } from "@/hooks/useModalManager";
-// import { JobProps } from "@/types/jobs";
+import { CreateJobProps, JobProps } from "@/types/jobs";
+import { useCallback, useEffect } from "react";
+import { getJobById, updateJobById } from "@/services/jobs";
+import { useParams, useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ClientUser } from "@/types/user";
+import { useSession } from "next-auth/react";
+import { useToast } from "@/hooks/useToast";
+import { ModernToast } from "@/components/common/ModernToast";
+import { getSkillsByJobId } from "@/services/skills";
+import { Skill } from "@/types";
 
 export default function JobDetail() {
-  const { jobData } = useJobPostingContext();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const { updateJobData, resetJobData, jobData } = useJobPostingContext();
   const { isModalOpen, openModal, closeModal } = useModalManager();
+  const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
 
-  // const handleEdit = (data: Partial<JobProps>) => {
-  //   console.log(data);
-  // };
+  const params = useParams();
+  const jobId = params.jobId as string;
+
+  const { data: skillsInJob } = useQuery<Skill[]>({
+    queryKey: ["skills-in-job", jobId],
+    queryFn: () => getSkillsByJobId(jobId),
+    enabled: !!jobId,
+  });
+
+  const { data: jobDetail } = useQuery<JobProps>({
+    queryKey: ["job-detail", jobId],
+    queryFn: () => getJobById(jobId),
+    enabled: !!jobId,
+  });
+
+  const clientInfo = queryClient.getQueryData<ClientUser>([
+    "user",
+    session?.user.id,
+  ]);
+
+  useEffect(() => {
+    if (jobDetail) {
+      updateJobData(jobDetail);
+    }
+  }, [jobDetail]);
+
+  const handleUpdate = useCallback(
+    <K extends keyof CreateJobProps>(field: K, value: CreateJobProps[K]) => {
+      updateJobData({ [field]: value });
+    },
+    [updateJobData]
+  );
+
+  const handlePostJob = async () => {
+    try {
+      const res = await updateJobById(
+        jobId,
+        clientInfo?.clientProfile.id ?? "",
+        {
+          ...jobData,
+        }
+      );
+
+      if (res.status === 200) {
+        showSuccessToast(
+          "Job posted successfully",
+          "Redirecting to dashboard",
+          1400
+        );
+        resetJobData();
+        setTimeout(() => {
+          router.push("/client/dashboard");
+        }, 1600);
+      }
+    } catch (error) {
+      console.log(error);
+      showErrorToast("Failed to post job", "Please try again", 1400);
+    }
+  };
+
+  if (!jobDetail || !skillsInJob) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -32,12 +106,6 @@ export default function JobDetail() {
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 sm:mb-0">
             Job details
           </h1>
-          <Button
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
-            // onClick={handlePostJob}
-          >
-            Post this job
-          </Button>
         </div>
 
         {/* Single container with all sections */}
@@ -104,15 +172,7 @@ export default function JobDetail() {
 
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button
-              variant="outline"
-              // onClick={onSaveDraft}
-              // disabled={isLoading}
-              className="w-full sm:w-auto bg-white border-green-600 text-green-600 hover:bg-green-50"
-            >
-              Save as a draft
-            </Button>
-            <Button
-              // onClick={onPostJob}
+              onClick={handlePostJob}
               // disabled={isLoading}
               className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
             >
@@ -127,21 +187,22 @@ export default function JobDetail() {
           isOpen={isModalOpen("edit-title")}
           onClose={() => closeModal()}
           currentTitle={jobData.title}
-          onSave={() => {}}
+          onUpdate={(title) => handleUpdate("title", title)}
         />
 
         <EditDescriptionModal
           isOpen={isModalOpen("edit-description")}
           onClose={() => closeModal()}
           currentDescription={jobData.description}
-          onSave={() => {}}
+          onSave={(description) => handleUpdate("description", description)}
         />
 
         <EditSkillsModal
           isOpen={isModalOpen("edit-skills")}
           onClose={() => closeModal()}
-          currentSkills={jobData.skills}
-          onSave={() => {}}
+          currentSkills={skillsInJob}
+          jobTitle={jobData.title}
+          onSave={(skills) => handleUpdate("skills", skills)}
         />
 
         <EditScopeModal
@@ -154,7 +215,7 @@ export default function JobDetail() {
             jobDuration: jobData.jobDuration,
             contractToHire: jobData.contractToHire,
           }}
-          onSave={() => {}}
+          onSave={updateJobData}
         />
 
         <EditBudgetModal
@@ -166,8 +227,11 @@ export default function JobDetail() {
             hourlyRateMax: jobData.hourlyRateMax,
             fixedPrice: jobData.fixedPrice,
           }}
-          onSave={() => {}}
+          onSave={updateJobData}
         />
+
+        {/* toast */}
+        {activeToasts && <ModernToast {...toast} />}
       </div>
     </div>
   );

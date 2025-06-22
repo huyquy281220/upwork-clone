@@ -11,3 +11,8 @@ export const getUserSkills = async (userId: string) => {
   const response = await api.get(`${apiURL}/user-skills/${userId}`);
   return response.data;
 };
+
+export const getSkillsByJobId = async (jobId: string) => {
+  const response = await api.get(`${apiURL}/skills/job/${jobId}`);
+  return response.data;
+};

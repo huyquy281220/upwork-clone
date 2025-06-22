@@ -8,11 +8,10 @@ import { useUser } from "@/hooks/useUserInfo";
 import { deleteJobById } from "@/services/jobs";
 import { ClientUser } from "@/types/user";
 import { ModernToast } from "@/components/common/ModernToast";
-import { useState } from "react";
-import { ToastProps } from "@/types";
 import { formatRelativeTime } from "@/utils/getRelativeTime";
 import { formatDraftSaved } from "@/utils/getLocalTime";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/useToast";
 
 interface JobPostCardProps {
   title: string;
@@ -32,40 +31,21 @@ export function JobPostCard({
   const { data: session } = useSession();
   const { data: user } = useUser<ClientUser>(session?.user.id ?? "");
   const queryClient = useQueryClient();
-  const [activeToasts, setActiveToasts] = useState(false);
-  const [toast, setToast] = useState<ToastProps>({
-    title: "",
-    description: "",
-    duration: 1500,
-    position: "top-center",
-    type: "success",
-  });
+  const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
 
   const handleDeleteJob = async () => {
     try {
       const res = await deleteJobById(jobId, user?.clientProfile.id ?? "");
 
       if (res.status === 200) {
-        setToast((prev) => ({
-          ...prev,
-          title: "Job deleted",
-          description: "Your job has been deleted",
-          type: "success",
-        }));
-        setActiveToasts(true);
+        showSuccessToast("Job deleted", "Your job has been deleted");
         await queryClient.invalidateQueries({
           queryKey: ["jobs-with-pagination", session?.user.id, currentPage],
         });
       }
     } catch (error) {
       console.log(error);
-      setToast((prev) => ({
-        ...prev,
-        title: "Error deleting job",
-        description: "Please try again",
-        type: "error",
-      }));
-      setActiveToasts(true);
+      showErrorToast("Error deleting job", "Please try again");
     }
   };
 

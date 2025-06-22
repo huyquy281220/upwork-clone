@@ -13,7 +13,7 @@ interface EditTitleModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentTitle: string;
-  onSave: (title: string) => void;
+  onUpdate: (title: string) => void;
 }
 
 const exampleTitles = [
@@ -26,12 +26,12 @@ export function EditTitleModal({
   isOpen,
   onClose,
   currentTitle,
-  onSave,
+  onUpdate,
 }: EditTitleModalProps) {
   const [title, setTitle] = useState(currentTitle);
 
   const handleSave = () => {
-    onSave(title);
+    onUpdate(title);
     onClose();
   };
 
