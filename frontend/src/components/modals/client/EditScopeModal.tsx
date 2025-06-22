@@ -8,24 +8,26 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  ExperienceLevel,
+  ProjectLength,
+  HoursPerWeek,
+  JobDuration,
+} from "@/types/jobs";
 import { Button } from "@/components/ui/button";
 
 interface ScopeData {
-  size: string;
-  duration: string;
-  level: string;
-  contractToHire: string;
+  projectLength: ProjectLength;
+  experienceLevel: ExperienceLevel;
+  hoursPerWeek: HoursPerWeek;
+  jobDuration: JobDuration;
+  contractToHire: boolean;
 }
 
 interface EditScopeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currentScope: {
-    size: string;
-    duration: string;
-    level: string;
-    type: string;
-  };
+  currentScope: ScopeData;
   onSave: (scope: ScopeData) => void;
 }
 
@@ -35,14 +37,7 @@ export function EditScopeModal({
   currentScope,
   onSave,
 }: EditScopeModalProps) {
-  const [scope, setScope] = useState<ScopeData>({
-    size: currentScope.size,
-    duration: currentScope.duration,
-    level: currentScope.level,
-    contractToHire: currentScope.type.includes("Contract-to-hire")
-      ? "yes"
-      : "no",
-  });
+  const [scope, setScope] = useState<ScopeData>(currentScope);
 
   const handleSave = () => {
     onSave(scope);
@@ -59,16 +54,22 @@ export function EditScopeModal({
         </DialogHeader>
 
         <div className="space-y-8">
-          {/* Project Size */}
+          {/* Project Length */}
           <div>
             <h3 className="text-lg font-medium mb-4">Project size</h3>
             <RadioGroup
-              value={scope.size}
-              onValueChange={(value) => setScope({ ...scope, size: value })}
+              value={scope.projectLength}
+              onValueChange={(value) =>
+                setScope({ ...scope, projectLength: value as ProjectLength })
+              }
             >
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <RadioGroupItem value="Large" id="large" className="mt-1" />
+                  <RadioGroupItem
+                    value={ProjectLength.LARGE}
+                    id="large"
+                    className="mt-1"
+                  />
                   <div>
                     <label
                       htmlFor="large"
@@ -83,7 +84,11 @@ export function EditScopeModal({
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <RadioGroupItem value="Medium" id="medium" className="mt-1" />
+                  <RadioGroupItem
+                    value={ProjectLength.MEDIUM}
+                    id="medium"
+                    className="mt-1"
+                  />
                   <div>
                     <label
                       htmlFor="medium"
@@ -97,7 +102,11 @@ export function EditScopeModal({
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <RadioGroupItem value="Small" id="small" className="mt-1" />
+                  <RadioGroupItem
+                    value={ProjectLength.SMALL}
+                    id="small"
+                    className="mt-1"
+                  />
                   <div>
                     <label
                       htmlFor="small"
@@ -115,34 +124,91 @@ export function EditScopeModal({
             </RadioGroup>
           </div>
 
-          {/* Duration */}
+          {/* Job Duration */}
           <div>
             <h3 className="text-lg font-medium mb-4">
               How long will your work take?
             </h3>
             <RadioGroup
-              value={scope.duration}
-              onValueChange={(value) => setScope({ ...scope, duration: value })}
+              value={scope.jobDuration}
+              onValueChange={(value) =>
+                setScope({ ...scope, jobDuration: value as JobDuration })
+              }
             >
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
-                  <RadioGroupItem value="More than 6 months" id="6plus" />
+                  <RadioGroupItem
+                    value={JobDuration.MORE_THAN_SIX_MONTHS}
+                    id="6plus"
+                  />
                   <label htmlFor="6plus" className="text-base cursor-pointer">
                     More than 6 months
                   </label>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <RadioGroupItem value="3 to 6 months" id="3to6" />
+                  <RadioGroupItem
+                    value={JobDuration.THREE_TO_SIX_MONTHS}
+                    id="3to6"
+                  />
                   <label htmlFor="3to6" className="text-base cursor-pointer">
                     3 to 6 months
                   </label>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <RadioGroupItem value="1 to 3 months" id="1to3" />
+                  <RadioGroupItem
+                    value={JobDuration.ONE_TO_THREE_MONTHS}
+                    id="1to3"
+                  />
                   <label htmlFor="1to3" className="text-base cursor-pointer">
                     1 to 3 months
                   </label>
                 </div>
+              </div>
+            </RadioGroup>
+          </div>
+
+          {/* Hours Per Week */}
+          <div>
+            <h3 className="text-lg font-medium mb-4">
+              How many hours per week?
+            </h3>
+            <RadioGroup
+              value={scope.hoursPerWeek}
+              onValueChange={(value) =>
+                setScope({ ...scope, hoursPerWeek: value as HoursPerWeek })
+              }
+            >
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <RadioGroupItem
+                    value={HoursPerWeek.MORE_THAN_30}
+                    id="more30"
+                  />
+                  <label htmlFor="more30" className="text-base cursor-pointer">
+                    More than 30 hrs/week
+                  </label>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <RadioGroupItem
+                    value={HoursPerWeek.LESS_THAN_30}
+                    id="less30"
+                  />
+                  <label htmlFor="less30" className="text-base cursor-pointer">
+                    Less than 30 hrs/week
+                  </label>
+                </div>
+                {/* <div className="flex items-center space-x-3">
+                  <RadioGroupItem
+                    value={HoursPerWeek.AS_NEEDED}
+                    id="asneeded"
+                  />
+                  <label
+                    htmlFor="asneeded"
+                    className="text-base cursor-pointer"
+                  >
+                    As needed - open to offers
+                  </label>
+                </div> */}
               </div>
             </RadioGroup>
           </div>
@@ -157,18 +223,26 @@ export function EditScopeModal({
               to your budget.
             </p>
             <RadioGroup
-              value={scope.level}
-              onValueChange={(value) => setScope({ ...scope, level: value })}
+              value={scope.experienceLevel}
+              onValueChange={(value) =>
+                setScope({
+                  ...scope,
+                  experienceLevel: value as ExperienceLevel,
+                })
+              }
             >
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
-                  <RadioGroupItem value="Expert" id="expert" />
+                  <RadioGroupItem value={ExperienceLevel.EXPERT} id="expert" />
                   <label htmlFor="expert" className="text-base cursor-pointer">
                     Expert
                   </label>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <RadioGroupItem value="Intermediate" id="intermediate" />
+                  <RadioGroupItem
+                    value={ExperienceLevel.INTERMEDIATE}
+                    id="intermediate"
+                  />
                   <label
                     htmlFor="intermediate"
                     className="text-base cursor-pointer"
@@ -177,7 +251,7 @@ export function EditScopeModal({
                   </label>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <RadioGroupItem value="Entry" id="entry" />
+                  <RadioGroupItem value={ExperienceLevel.ENTRY} id="entry" />
                   <label htmlFor="entry" className="text-base cursor-pointer">
                     Entry
                   </label>
@@ -196,9 +270,9 @@ export function EditScopeModal({
               can submit proposals.
             </p>
             <RadioGroup
-              value={scope.contractToHire}
+              value={scope.contractToHire ? "yes" : "no"}
               onValueChange={(value) =>
-                setScope({ ...scope, contractToHire: value })
+                setScope({ ...scope, contractToHire: value === "yes" })
               }
             >
               <div className="space-y-4">

@@ -72,16 +72,16 @@ export function EditSkillsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-900 border-gray-700 text-foreground max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="w-full sm:max-w-3xl bg-gray-900 border-gray-700 text-foreground max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
+          <DialogTitle className="text-xl font-semibold text-white">
             Edit skills
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-medium mb-4">
+            <h3 className="text-lg font-medium mb-4 text-gray-300">
               Search skills or add your own
             </h3>
             <div className="relative">
@@ -89,7 +89,7 @@ export function EditSkillsModal({
               <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-gray-800 border-gray-600 text-foreground pl-10"
+                className="w-full h-10 pl-10 bg-gray-800 border-gray-600 text-white"
                 placeholder="Search skills or add your own"
               />
             </div>
@@ -118,7 +118,7 @@ export function EditSkillsModal({
           )}
 
           <div>
-            <h4 className="text-base font-medium mb-3">
+            <h4 className="text-base font-medium mb-3 text-gray-300">
               Popular skills for Manual Testing
             </h4>
             <div className="flex flex-wrap gap-2">
@@ -128,7 +128,7 @@ export function EditSkillsModal({
                   variant="outline"
                   size="sm"
                   onClick={() => handleAddSkill(skill)}
-                  className="bg-gray-800 border-gray-600 text-foreground hover:bg-gray-700 rounded-full"
+                  className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700 rounded-full"
                 >
                   {skill}
                   <Plus className="w-3 h-3 ml-1" />

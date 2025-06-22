@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Paperclip } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 interface EditDescriptionModalProps {
   isOpen: boolean;
@@ -36,9 +36,9 @@ export function EditDescriptionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-900 border-gray-700 text-foreground max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="w-full sm:max-w-3xl bg-gray-900 border-gray-700 text-foreground max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
+          <DialogTitle className="text-xl font-semibold text-white">
             Edit description
           </DialogTitle>
         </DialogHeader>
@@ -48,7 +48,7 @@ export function EditDescriptionModal({
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="bg-gray-800 border-yellow-500 text-foreground min-h-[200px] resize-none"
+              className="w-full min-h-[200px] p-3 bg-gray-800 border-yellow-500 text-white rounded-md resize-none"
               placeholder="Describe your project in detail..."
               maxLength={maxLength}
             />
@@ -66,17 +66,6 @@ export function EditDescriptionModal({
               </p>
             </div>
           )}
-
-          <div>
-            <Button
-              variant="outline"
-              className="bg-transparent border-green-600 text-green-500 hover:bg-green-500/10"
-            >
-              <Paperclip className="w-4 h-4 mr-2" />
-              Attach file
-            </Button>
-            <p className="text-sm text-gray-400 mt-2">Max file size: 100MB</p>
-          </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-6">

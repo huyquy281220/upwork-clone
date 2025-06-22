@@ -18,7 +18,6 @@ export interface JobProps {
   id: string;
   title: string;
   description: string;
-  // category: string;
   experienceLevel: ExperienceLevel;
   jobType: JobType;
   hourlyRateMin?: number;

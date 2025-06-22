@@ -37,28 +37,30 @@ export function EditTitleModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-900 border-gray-700 text-foreground max-w-2xl">
+      <DialogContent className="w-full sm:max-w-3xl bg-gray-900 border-gray-700 text-foreground ">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
-            Edit title
+          <DialogTitle>
+            <p className="text-xl font-semibold text-white">Edit title</p>
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-medium mb-4">
+            <h3 className="text-lg font-medium mb-4 text-white">
               Write a title for your job post
             </h3>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="bg-gray-800 border-gray-600 text-foreground"
+              className="w-full h-10 pl-2 bg-gray-800 border-gray-600 text-foreground"
               placeholder="Enter job title"
             />
           </div>
 
           <div>
-            <h4 className="text-base font-medium mb-3">Example titles</h4>
+            <h4 className="text-base font-medium mb-3 text-white">
+              Example titles
+            </h4>
             <ul className="space-y-2">
               {exampleTitles.map((example, index) => (
                 <li key={index} className="text-gray-300 text-sm">

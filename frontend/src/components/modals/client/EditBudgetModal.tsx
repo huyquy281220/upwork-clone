@@ -9,11 +9,13 @@ import {
 } from "@/components/ui/dialog";
 import { Clock, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JobType } from "@/types/jobs";
 
 interface BudgetData {
-  type: "hourly" | "fixed";
-  min: number;
-  max: number;
+  hourlyRateMin?: number;
+  hourlyRateMax?: number;
+  fixedPrice?: number;
+  jobType: JobType;
 }
 
 interface EditBudgetModalProps {
@@ -36,6 +38,17 @@ export function EditBudgetModal({
     onClose();
   };
 
+  const handleJobTypeChange = (newType: JobType) => {
+    setBudget({
+      ...budget,
+      jobType: newType,
+      // Clear the opposite type's values
+      ...(newType === JobType.HOURLY
+        ? { fixedPrice: undefined }
+        : { hourlyRateMin: undefined, hourlyRateMax: undefined }),
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-gray-900 border-gray-700 text-foreground max-w-3xl">
@@ -50,23 +63,23 @@ export function EditBudgetModal({
           <div className="grid grid-cols-2 gap-4">
             <div
               className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
-                budget.type === "hourly"
+                budget.jobType === JobType.HOURLY
                   ? "border-green-500 bg-green-500/10"
                   : "border-gray-600 bg-gray-800/50"
               }`}
-              onClick={() => setBudget({ ...budget, type: "hourly" })}
+              onClick={() => handleJobTypeChange(JobType.HOURLY)}
             >
               <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5" />
                 <span className="font-medium">Hourly rate</span>
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
-                    budget.type === "hourly"
+                    budget.jobType === JobType.HOURLY
                       ? "border-green-500 bg-green-500"
                       : "border-gray-400"
                   }`}
                 >
-                  {budget.type === "hourly" && (
+                  {budget.jobType === JobType.HOURLY && (
                     <div className="w-2 h-2 bg-white rounded-full m-0.5" />
                   )}
                 </div>
@@ -75,23 +88,23 @@ export function EditBudgetModal({
 
             <div
               className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
-                budget.type === "fixed"
+                budget.jobType === JobType.FIXED_PRICE
                   ? "border-green-500 bg-green-500/10"
                   : "border-gray-600 bg-gray-800/50"
               }`}
-              onClick={() => setBudget({ ...budget, type: "fixed" })}
+              onClick={() => handleJobTypeChange(JobType.FIXED_PRICE)}
             >
               <div className="flex items-center gap-3">
                 <Tag className="w-5 h-5" />
                 <span className="font-medium">Fixed price</span>
                 <div
                   className={`w-4 h-4 rounded-full border-2 ${
-                    budget.type === "fixed"
+                    budget.jobType === JobType.FIXED_PRICE
                       ? "border-green-500 bg-green-500"
                       : "border-gray-400"
                   }`}
                 >
-                  {budget.type === "fixed" && (
+                  {budget.jobType === JobType.FIXED_PRICE && (
                     <div className="w-2 h-2 bg-white rounded-full m-0.5" />
                   )}
                 </div>
@@ -99,52 +112,83 @@ export function EditBudgetModal({
             </div>
           </div>
 
-          {/* Budget Range */}
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">From</label>
+          {/* Budget Input Fields */}
+          {budget.jobType === JobType.HOURLY ? (
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">From</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    $
+                  </span>
+                  <input
+                    type="number"
+                    value={budget.hourlyRateMin || ""}
+                    onChange={(e) =>
+                      setBudget({
+                        ...budget,
+                        hourlyRateMin: Number(e.target.value),
+                      })
+                    }
+                    className="bg-gray-800 border-gray-600 text-foreground pl-8"
+                    step="0.01"
+                    placeholder="0.00"
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    /hr
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">To</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    $
+                  </span>
+                  <input
+                    type="number"
+                    value={budget.hourlyRateMax || ""}
+                    onChange={(e) =>
+                      setBudget({
+                        ...budget,
+                        hourlyRateMax: Number(e.target.value),
+                      })
+                    }
+                    className="bg-gray-800 border-gray-600 text-foreground pl-8"
+                    step="0.01"
+                    placeholder="0.00"
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    /hr
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-sm">
+              <label className="block text-sm font-medium mb-2">
+                Fixed price
+              </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   $
                 </span>
                 <input
                   type="number"
-                  value={budget.min}
+                  value={budget.fixedPrice || ""}
                   onChange={(e) =>
-                    setBudget({ ...budget, min: Number(e.target.value) })
+                    setBudget({ ...budget, fixedPrice: Number(e.target.value) })
                   }
                   className="bg-gray-800 border-gray-600 text-foreground pl-8"
                   step="0.01"
+                  placeholder="0.00"
                 />
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  {budget.type === "hourly" ? "/hr" : ""}
-                </span>
               </div>
             </div>
+          )}
 
-            <div>
-              <label className="block text-sm font-medium mb-2">To</label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  $
-                </span>
-                <input
-                  type="number"
-                  value={budget.max}
-                  onChange={(e) =>
-                    setBudget({ ...budget, max: Number(e.target.value) })
-                  }
-                  className="bg-gray-800 border-gray-600 text-foreground pl-8"
-                  step="0.01"
-                />
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  {budget.type === "hourly" ? "/hr" : ""}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {budget.type === "hourly" && (
+          {budget.jobType === JobType.HOURLY && (
             <div className="space-y-4">
               <p className="text-sm text-gray-400">
                 This is the average rate for similar projects.

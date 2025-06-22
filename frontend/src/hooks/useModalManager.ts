@@ -15,7 +15,12 @@ type ModalState =
   | { type: "availability" }
   | { type: "skills" }
   | { type: "hourlyRate" }
-  | { type: "overview" };
+  | { type: "overview" }
+  | { type: "edit-title" }
+  | { type: "edit-description" }
+  | { type: "edit-scope" }
+  | { type: "edit-budget" }
+  | { type: "edit-skills" };
 
 export const useModalManager = () => {
   const [modalState, setModalState] = useState<ModalState>({

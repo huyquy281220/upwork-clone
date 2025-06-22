@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 
-export default function CirclePencil({ onEdit }: { onEdit?: () => void }) {
+export default function CircleTrash({ onEdit }: { onEdit?: () => void }) {
   return (
     <div
       className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer border border-green-600"
