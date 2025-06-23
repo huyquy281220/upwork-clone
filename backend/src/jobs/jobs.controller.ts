@@ -18,7 +18,17 @@ export class JobsController {
 
   @Get('/:id')
   getJobById(@Param('id') id: string) {
-    return this.jobsService.findOneJob(id);
+    return this.jobsService.getOneJob(id);
+  }
+
+  @Get('/best-matches')
+  getBestMatchesJobs(@Param('freelancerId') id: string) {
+    return this.jobsService.getBestMatchesJob(id);
+  }
+
+  @Get('/most-recent')
+  getMostRecentJob() {
+    return this.getMostRecentJob();
   }
 
   @Get('/:clientId/get-jobs-with-pagination')

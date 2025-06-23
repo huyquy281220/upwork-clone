@@ -68,7 +68,7 @@ export class JobsService {
     });
   }
 
-  async findOneJob(id: string) {
+  async getOneJob(id: string) {
     const job = await this.prisma.job.findUnique({
       where: { id },
       include: {
@@ -89,6 +89,51 @@ export class JobsService {
       skills: skills.map((s) => s.skill.id),
     };
   }
+
+  async getBestMatchesJob(freelancerId: string) {
+    const freelancer = await this.prisma.freelancerProfile.findUnique({
+      where: { id: freelancerId },
+      include: { skills: true },
+    });
+
+    if (!freelancer) {
+      throw new NotFoundException('Freelancer not found');
+    }
+
+    const freelancerSkills = freelancer.skills;
+    const skillIds = freelancerSkills.map((s) => s.skillId);
+    if (!skillIds && !freelancerSkills) {
+      const freelancerTitle = freelancer.title;
+      const jobsMatchByTitle = this.prisma.job.findMany({
+        where: {
+          title: {
+            equals: freelancerTitle,
+          },
+        },
+        take: 20,
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return jobsMatchByTitle;
+    }
+    const jobsMatchBySkills = await this.prisma.job.findMany({
+      where: {
+        skills: {
+          some: {
+            skillId: {
+              in: skillIds,
+            },
+          },
+        },
+      },
+      take: 20,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return jobsMatchBySkills;
+  }
+
+  async getMostRecentJobs() {}
 
   async getJobsWithPagination(clientId: string, limit: number, page: number) {
     try {
