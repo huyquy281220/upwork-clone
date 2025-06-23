@@ -1,45 +1,41 @@
-import { JobMetaData } from "@/pages-section/freelancer/jobs/components/JobMetadata";
-import { Building, Calendar, Clock, Wallet } from "lucide-react";
-import React from "react";
+import { formatRelativeTime } from "@/utils/getRelativeTime";
+import { Clock, MapPin, AlertTriangle } from "lucide-react";
 
-export const JobHeader = () => {
-  const stats = [
-    { icon: <Building />, label: "Jobs Posted", value: "12" },
-    { icon: <Clock />, label: "Hours on Platform", value: "25,471" },
-    { icon: <Wallet />, label: "Hourly Rate", value: "$16.53" },
-    { icon: <Calendar />, label: "Member Since", value: "2011" },
-  ];
+interface JobHeaderProps {
+  title: string;
+  createdAt: string;
+}
 
+export function JobHeader({ title, createdAt }: JobHeaderProps) {
   return (
-    <div className="border-b pb-6">
-      <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-        Mandarin-speaking Customer Support Specialist (Work-from-Home
-        Opportunity)
+    <div className="space-y-4">
+      <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+        {title}
       </h1>
 
-      <div className="flex flex-wrap items-center gap-4 mb-4">
-        <div className="flex items-center">
-          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
-          <div className="ml-3">
-            <h3 className="font-semibold">Client Name</h3>
-            <div className="flex items-center text-sm text-gray-600">
-              <span className="mr-2">⭐⭐⭐⭐⭐</span>
-              <span>5.0 (24 reviews)</span>
-            </div>
-          </div>
+      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-1">
+          <Clock className="w-4 h-4" />
+          <span>Posted {formatRelativeTime(createdAt)}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <MapPin className="w-4 h-4" />
+          <span>Worldwide</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-        {stats.map((stat, index) => (
-          <JobMetaData
-            key={index}
-            icon={stat.icon}
-            label={stat.label}
-            value={stat.value}
-          />
-        ))}
+      <div className="flex items-start gap-2 p-3 bg-muted/50 rounded-lg border-l-4 border-yellow-500">
+        <AlertTriangle className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+        <div className="text-sm">
+          <span className="text-foreground">
+            Specialized profiles can help you better highlight your expertise
+            when submitting proposals to jobs like these.
+          </span>
+          <span className="text-green-500 ml-1 underline cursor-pointer">
+            Create a specialized profile.
+          </span>
+        </div>
       </div>
     </div>
   );
-};
+}

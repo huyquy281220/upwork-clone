@@ -1,13 +1,5 @@
 import { JobHeader } from "./JobHeader";
-import { JobDescription } from "./JobDescription";
-import { JobSkills } from "./JobSkills";
-import { JobActivity } from "./JobActivity";
-import { ClientRecentHistory } from "./ClientRecentHistory";
+import { JobContent } from "./JobContent";
+import { JobSidebar } from "./jobSidebar";
 
-export {
-  JobHeader,
-  JobDescription,
-  JobSkills,
-  JobActivity,
-  ClientRecentHistory,
-};
+export { JobContent, JobHeader, JobSidebar };
