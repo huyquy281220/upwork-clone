@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Edit } from "lucide-react";
+import { FileText } from "lucide-react";
+import CirclePencil from "@/components/common/CirclePencil";
 
 interface DraftCardProps {
   title: string;
@@ -26,9 +27,7 @@ export function DraftCard({ title, description }: DraftCardProps) {
             </Badge>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon">
-              <Edit className="w-4 h-4 text-green-600" />
-            </Button>
+            <CirclePencil />
           </div>
         </div>
         <p className="text-sm text-muted-foreground">{description}</p>

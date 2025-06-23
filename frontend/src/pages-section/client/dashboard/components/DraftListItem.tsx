@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { JobProps } from "@/types/jobs";
+import CirclePencil from "@/components/common/CirclePencil";
 
 export function DraftListItem({
   title,
@@ -42,9 +43,7 @@ export function DraftListItem({
         >
           Fill in draft
         </Button>
-        <Button variant="outline" size="sm" className="p-2">
-          <Edit className="w-4 h-4 text-green-600" />
-        </Button>
+        <CirclePencil />
       </div>
     </div>
   );
