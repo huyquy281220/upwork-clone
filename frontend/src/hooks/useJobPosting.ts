@@ -42,16 +42,16 @@ export function useJobPosting() {
   const addSkill = useCallback((skill: string) => {
     setJobData((prev) => ({
       ...prev,
-      skills: prev.skills.some((s) => s === skill)
+      skills: prev.skills.some((s) => s.id === skill)
         ? prev.skills
-        : [...prev.skills, skill],
+        : [...prev.skills, { id: skill, name: skill }],
     }));
   }, []);
 
   const removeSkill = useCallback((skill: string) => {
     setJobData((prev) => ({
       ...prev,
-      skills: prev.skills.filter((s) => s !== skill),
+      skills: prev.skills.filter((s) => s.id !== skill),
     }));
   }, []);
 

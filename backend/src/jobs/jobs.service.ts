@@ -102,19 +102,26 @@ export class JobsService {
 
     const freelancerSkills = freelancer.skills;
     const skillIds = freelancerSkills.map((s) => s.skillId);
-    if (!skillIds && !freelancerSkills) {
-      const freelancerTitle = freelancer.title;
-      const jobsMatchByTitle = this.prisma.job.findMany({
+    if (skillIds.length === 0) {
+      const freelancerTitle = freelancer.title ?? ' ';
+      const keyword = freelancerTitle.split(' ');
+      const jobsMatchByTitle = await this.prisma.job.findMany({
         where: {
-          title: {
-            equals: freelancerTitle,
-          },
+          OR: keyword.map((word) => ({
+            title: { contains: word, mode: 'insensitive' as const },
+          })),
+        },
+        include: {
+          skills: { select: { skill: { select: { id: true, name: true } } } },
         },
         take: 20,
         orderBy: { createdAt: 'desc' },
       });
 
-      return jobsMatchByTitle;
+      return jobsMatchByTitle.map((job) => ({
+        ...job,
+        skills: job.skills.map((s) => s.skill),
+      }));
     }
     const jobsMatchBySkills = await this.prisma.job.findMany({
       where: {
@@ -126,14 +133,33 @@ export class JobsService {
           },
         },
       },
+      include: {
+        skills: { select: { skill: { select: { id: true, name: true } } } },
+      },
       take: 20,
       orderBy: { createdAt: 'desc' },
     });
 
-    return jobsMatchBySkills;
+    return jobsMatchBySkills.map((job) => ({
+      ...job,
+      skills: job.skills.map((s) => s.skill),
+    }));
   }
 
-  async getMostRecentJobs() {}
+  async getMostRecentJobs() {
+    const mostRecentJobs = await this.prisma.job.findMany({
+      include: {
+        skills: { select: { skill: { select: { id: true, name: true } } } },
+      },
+      take: 20,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return mostRecentJobs.map((job) => ({
+      ...job,
+      skills: job.skills.map((s) => s.skill),
+    }));
+  }
 
   async getJobsWithPagination(clientId: string, limit: number, page: number) {
     try {

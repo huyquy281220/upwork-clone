@@ -19,6 +19,16 @@ export const getAllJobs = async (userId: string) => {
   return response.data;
 };
 
+export const getMostRecentJobs = async () => {
+  const response = await api.get(`${apiURL}/jobs/most-recent`);
+  return response.data;
+};
+
+export const getBestMatchesJobs = async (freelancerId: string) => {
+  const response = await api.get(`${apiURL}/jobs/best-matches/${freelancerId}`);
+  return response.data;
+};
+
 export const getJobById = async (jobId: string) => {
   const response = await api.get(`${apiURL}/jobs/${jobId}`);
   return response.data;

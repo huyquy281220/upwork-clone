@@ -5,8 +5,9 @@ import CirclePencil from "@/components/common/CirclePencil";
 import { Skill } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { useQueryClient } from "@tanstack/react-query";
+
 interface SkillsSectionProps {
-  skills: string[];
+  skills: Skill[];
   onEdit?: () => void;
 }
 
@@ -14,7 +15,9 @@ export function SkillsSection({ skills, onEdit }: SkillsSectionProps) {
   const queryClient = useQueryClient();
   const allSkills = queryClient.getQueryData<Skill[]>(["skills"]);
 
-  const skillsInJob = allSkills?.filter((skill) => skills.includes(skill.id));
+  const skillsInJob = allSkills?.filter((skill) =>
+    skills.map((s) => s.id).includes(skill.id)
+  );
 
   return (
     <div>

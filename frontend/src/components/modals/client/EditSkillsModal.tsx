@@ -17,7 +17,7 @@ interface EditSkillsModalProps {
   onClose: () => void;
   currentSkills: Skill[];
   jobTitle: string;
-  onSave: (skills: string[]) => void;
+  onSave: (skills: Skill[]) => void;
 }
 //   "Mobile App Testing",
 //   "Automated Testing",
@@ -72,8 +72,7 @@ export function EditSkillsModal({
   };
 
   const handleSave = () => {
-    const skillIds = skills.map((skill) => skill.id);
-    onSave(skillIds);
+    onSave(skills);
     onClose();
   };
 

@@ -29,7 +29,7 @@ export default function Step2Skills() {
     setShowSkillDropdown(debouncedSkillSearch.length > 0);
   }, [debouncedSkillSearch]);
 
-  const addSkill = (skill: string) => {
+  const addSkill = (skill: Skill) => {
     if (!jobData.skills.includes(skill)) {
       updateJobData({ skills: [...jobData.skills, skill] });
     }
@@ -38,7 +38,7 @@ export default function Step2Skills() {
   };
 
   const removeSkill = (skill: string) => {
-    updateJobData({ skills: jobData.skills.filter((s) => s !== skill) });
+    updateJobData({ skills: jobData.skills.filter((s) => s.id !== skill) });
   };
 
   return (
@@ -70,7 +70,7 @@ export default function Step2Skills() {
                 .map((skill) => (
                   <button
                     key={skill.id}
-                    onClick={() => addSkill(skill.id)}
+                    onClick={() => addSkill(skill)}
                     className="w-full text-left px-4 py-2 text-white hover:bg-gray-700"
                   >
                     {skill.name}
@@ -92,7 +92,9 @@ export default function Step2Skills() {
             </h3>
             <div className="flex flex-wrap gap-2">
               {skills
-                ?.filter((skill) => jobData.skills.includes(skill.id))
+                ?.filter((skill) =>
+                  jobData.skills.some((s) => s.id === skill.id)
+                )
                 .map((skill) => (
                   <Badge
                     key={skill.id}
@@ -120,7 +122,7 @@ export default function Step2Skills() {
             {popularSkills?.map((skill) => (
               <button
                 key={skill.id}
-                onClick={() => addSkill(skill.id)}
+                onClick={() => addSkill(skill)}
                 className="bg-gray-700 text-white px-3 py-2 rounded-full text-sm hover:bg-gray-600 flex items-center"
               >
                 {skill.name}

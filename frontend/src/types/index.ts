@@ -50,7 +50,7 @@ export interface NavMenuItemProps {
 export interface Skill {
   id: string;
   name: string;
-  categoryName: string;
+  category?: string;
 }
 
 export interface StepProps {

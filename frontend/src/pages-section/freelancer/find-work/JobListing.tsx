@@ -1,12 +1,15 @@
 "use client";
 
 import { JobCard } from "@/pages-section/freelancer/find-work/components/JobCard";
-import { jobsData } from "./__mock__/jobs";
 import { JobSearch } from "./JobSearch";
 import { JobFilters } from "@/pages-section/freelancer/find-work/components/JobFilters";
-import { useState } from "react";
-import { parsePostedTime } from "@/utils/parsePostedTime";
+import { useCallback, useMemo, useState } from "react";
 import type { JobProps } from "@/types/jobs";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUserInfo";
+import { getBestMatchesJobs, getMostRecentJobs } from "@/services/jobs";
+import { FreelancerUser } from "@/types/user";
 
 const filterTabs = [
   { id: "best-matches", label: "Best Matches" },
@@ -15,46 +18,56 @@ const filterTabs = [
 ];
 
 export function JobListing() {
+  const { data: session } = useSession();
+  const { data: freelancer } = useUser<FreelancerUser>(session?.user.id ?? "");
+  const freelancerId = freelancer?.freelancerProfile.id;
+
   const [activeTab, setActiveTab] = useState("best-matches");
   const [savedJobs, setSavedJobs] = useState<JobProps[]>([]);
 
-  const recentJobs = [...jobsData].sort((a, b) => {
-    const timeA = parsePostedTime(a.postedTime);
-    const timeB = parsePostedTime(b.postedTime);
-    return timeB.getTime() - timeA.getTime();
+  const { data: bestMatchesJobs } = useQuery({
+    queryKey: ["best-matches-jobs"],
+    queryFn: () => getBestMatchesJobs(freelancerId ?? ""),
+    enabled: !!freelancerId,
   });
 
-  const handleSaveJob = (jobId: string) => {
-    const jobSaved = jobsData.find((job) => job.id === jobId);
-    console.log(jobSaved);
-    if (!jobSaved) return;
+  const { data: mostRecentJobs } = useQuery({
+    queryKey: ["most-recent-jobs"],
+    queryFn: () => getMostRecentJobs(),
+  });
 
-    setSavedJobs((prev) => {
-      const isAlreadySaved = prev.some((job) => job.id === jobId);
+  const usedJobs: JobProps[] = useMemo(() => {
+    switch (activeTab) {
+      case "best-matches":
+        return bestMatchesJobs ?? [];
+      case "most-recent":
+        return mostRecentJobs ?? [];
+      case "saved-jobs":
+        return savedJobs;
+      default:
+        return [];
+    }
+  }, [activeTab, bestMatchesJobs, mostRecentJobs, savedJobs]);
 
-      if (isAlreadySaved) {
-        return prev.filter((job) => job.id !== jobId);
-      }
+  console.log(bestMatchesJobs);
+  const handleSaveJob = useCallback(
+    (jobId: string) => {
+      const jobSaved = usedJobs.find((job) => job.id === jobId);
+      console.log(jobSaved);
+      if (!jobSaved) return;
 
-      return [...prev, jobSaved];
-    });
-  };
+      setSavedJobs((prev) => {
+        const isAlreadySaved = prev.some((job) => job.id === jobId);
 
-  let usedJobs: JobProps[] = [];
+        if (isAlreadySaved) {
+          return prev.filter((job) => job.id !== jobId);
+        }
 
-  switch (activeTab) {
-    case "best-matches":
-      usedJobs = jobsData;
-      break;
-    case "most-recent":
-      usedJobs = recentJobs;
-      break;
-    case "saved-jobs":
-      usedJobs = savedJobs;
-      break;
-    default:
-      break;
-  }
+        return [...prev, jobSaved];
+      });
+    },
+    [usedJobs]
+  );
 
   return (
     <div>
@@ -77,7 +90,7 @@ export function JobListing() {
       </div>
 
       <div>
-        {usedJobs.map((job, index) => (
+        {usedJobs?.map((job, index) => (
           <JobCard
             key={job.id}
             job={job}

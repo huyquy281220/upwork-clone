@@ -10,7 +10,10 @@ export interface CreateJobProps {
   hoursPerWeek: HoursPerWeek;
   jobDuration: JobDuration;
   contractToHire: boolean;
-  skills: string[];
+  skills: {
+    id: string;
+    name: string;
+  }[];
 }
 
 export interface JobProps {
@@ -26,7 +29,10 @@ export interface JobProps {
   hoursPerWeek: HoursPerWeek;
   jobDuration: JobDuration;
   contractToHire: boolean;
-  skills: string[];
+  skills: {
+    id: string;
+    name: string;
+  }[];
   createdAt: string;
   updatedAt: string;
 }

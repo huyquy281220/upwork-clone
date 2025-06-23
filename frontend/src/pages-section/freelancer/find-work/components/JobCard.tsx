@@ -16,6 +16,8 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
+  // const skillName = job.skills.map((skill)=> skill.name)
+
   return (
     <div
       className={cn(
@@ -60,8 +62,8 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
         </a>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        {job.skills.map((skill) => (
+      {/* <div className="flex flex-wrap gap-2 mb-4">
+        {job.skills?.map((skill) => (
           <span
             key={skill}
             className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm"
@@ -69,7 +71,7 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
             {skill}
           </span>
         ))}
-      </div>
+      </div> */}
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
         {/* {job.paymentVerified && (

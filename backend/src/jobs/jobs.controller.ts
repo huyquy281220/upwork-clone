@@ -16,19 +16,14 @@ import { UpdateJobDto } from './dto/update-job.dto';
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
-  @Get('/:id')
-  getJobById(@Param('id') id: string) {
-    return this.jobsService.getOneJob(id);
-  }
-
-  @Get('/best-matches')
+  @Get('/best-matches/:freelancerId')
   getBestMatchesJobs(@Param('freelancerId') id: string) {
     return this.jobsService.getBestMatchesJob(id);
   }
 
   @Get('/most-recent')
   getMostRecentJob() {
-    return this.getMostRecentJob();
+    return this.jobsService.getMostRecentJobs();
   }
 
   @Get('/:clientId/get-jobs-with-pagination')
@@ -67,5 +62,10 @@ export class JobsController {
   @Delete('/:clientId/delete/:id')
   deleteJob(@Param('id') id: string, @Param('clientId') clientId: string) {
     return this.jobsService.deleteJob(id, clientId);
+  }
+
+  @Get('/:id')
+  getJobById(@Param('id') id: string) {
+    return this.jobsService.getOneJob(id);
   }
 }
