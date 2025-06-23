@@ -5,6 +5,7 @@ import type { JobProps } from "@/types/jobs";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatRelativeTime } from "@/utils/getRelativeTime";
 
 interface JobCardProps {
   job: JobProps;
@@ -16,18 +17,19 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
-  // const skillName = job.skills.map((skill)=> skill.name)
-
   return (
     <div
       className={cn(
         "group bg-background p-6 hover:bg-hover transition-colors duration-200 cursor-pointer border-b border-[#333]",
         index === 0 ? "border-t" : ""
       )}
+      onClick={() => router.push(`/freelancer/jobs/${job.id}`)}
     >
-      <div className="flex justify-between items-start mb-2">
-        <div className="text-sm text-gray-500">Posted {job.createdAt}</div>
-        <div className="flex space-x-2">
+      <div className="flex justify-between items-start">
+        <div className="text-sm text-gray-500">
+          Posted {formatRelativeTime(job.createdAt)}
+        </div>
+        <div className="flex space-x-1">
           <button className="p-1 rounded">
             <ThumbsDown />
           </button>
@@ -43,35 +45,33 @@ export function JobCard({ job, index, onSaveJob }: JobCardProps) {
         </div>
       </div>
 
-      <h3
-        className="text-xl font-medium text-foreground mb-1 hover:underline group-hover:text-green-600"
-        onClick={() => router.push(`/freelancer/jobs/${job.id}`)}
-      >
+      <h3 className="text-xl font-medium text-foreground mb-1 hover:underline group-hover:text-green-600">
         {job.title}
       </h3>
 
-      <div className="text-sm text-gray-600 mb-4">
-        {job.jobType} - {job.experienceLevel} - {job.jobDuration}
+      <div className="text-sm text-gray-400 mb-4">
+        {job.jobType === "HOURLY" ? "Hourly" : "Fixed-price"} -{" "}
+        {job.experienceLevel} - {job.jobDuration}
       </div>
 
-      <p className="mb-4 line-clamp-3">{job.description}</p>
+      <p className="line-clamp-3">{job.description}</p>
 
-      <div className="mb-1">
-        <a href="#" className="text-green-600 text-sm">
+      <div className="mb-4">
+        <p className="text-green-600 text-underline text-sm cursor-pointer">
           more
-        </a>
+        </p>
       </div>
 
-      {/* <div className="flex flex-wrap gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         {job.skills?.map((skill) => (
           <span
-            key={skill}
+            key={skill.id}
             className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm"
           >
-            {skill}
+            {skill.name}
           </span>
         ))}
-      </div> */}
+      </div>
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
         {/* {job.paymentVerified && (
