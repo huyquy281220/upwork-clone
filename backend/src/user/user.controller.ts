@@ -1,3 +1,4 @@
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto';
 import { UserService } from './user.service';
 import {
@@ -8,6 +9,9 @@ import {
   Param,
   Query,
   Patch,
+  Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 
 @Controller('user')
@@ -28,6 +32,12 @@ export class UserController {
   @Get('/:id')
   async findById(@Param('id') id: string): Promise<UserResponseDto> {
     return this.userService.findById(id);
+  }
+
+  @Post('image')
+  @UseInterceptors(FileInterceptor('image'))
+  uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return this.userService.uploadAvatar(file);
   }
 
   @Patch('update')

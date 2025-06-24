@@ -6,11 +6,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './dto';
-import { Prisma, Role, User } from '@prisma/client';
+import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { EmailService } from 'src/email/email.service';
+import { cloudinary } from './provider/cloudinary';
+import * as fs from 'fs';
+import * as util from 'util';
 
+const unlinkFile = util.promisify(fs.unlink);
 @Injectable()
 export class UserService {
   constructor(
@@ -240,6 +244,32 @@ export class UserService {
     } catch (error) {
       console.error('Verification error:', error);
       throw new InternalServerErrorException('Lỗi khi xác thực email.');
+    }
+  }
+
+  async uploadAvatar(file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    try {
+      const result = await cloudinary.uploader.upload(file.path, {
+        folder: 'your-folder-name',
+      });
+
+      // Xoá file local sau khi upload
+      await unlinkFile(file.path);
+
+      return {
+        url: result.secure_url,
+        public_id: result.public_id,
+      };
+    } catch (error) {
+      // Xoá file trong trường hợp lỗi
+      if (file?.path) {
+        await unlinkFile(file.path).catch(() => null);
+      }
+      throw new BadRequestException('Failed to upload to Cloudinary');
     }
   }
 }
