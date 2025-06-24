@@ -90,7 +90,7 @@ export function EditEducationModal({
       }
 
       await queryClient.invalidateQueries({
-        queryKey: ["userEducation", session?.user?.id],
+        queryKey: ["user-education", session?.user?.id],
       });
 
       onOpenChange(false);

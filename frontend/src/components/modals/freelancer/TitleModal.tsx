@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import api from "@/services/api";
+import { useSession } from "next-auth/react";
 
 interface TitleModalProps {
   open: boolean;
@@ -26,6 +27,7 @@ export function TitleModal({
   userId,
 }: TitleModalProps) {
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
   const [title, setTitle] = useState(currentTitle);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,7 +43,9 @@ export function TitleModal({
         throw new Error("Failed to update title");
       }
 
-      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["user", session?.user.id],
+      });
 
       onOpenChange(false);
     } catch (error) {

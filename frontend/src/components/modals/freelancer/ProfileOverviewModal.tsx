@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 interface ProfileOverviewModalProps {
   open: boolean;
@@ -25,11 +26,12 @@ export function ProfileOverviewModal({
   currentOverview,
   userId,
 }: ProfileOverviewModalProps) {
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
   const [overview, setOverview] = useState(currentOverview);
   const [isLoading, setIsLoading] = useState(false);
   const maxLength = 5000;
   const remainingChars = maxLength - overview.length;
-  const queryClient = useQueryClient();
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -43,7 +45,9 @@ export function ProfileOverviewModal({
         throw new Error("Failed to update overview");
       }
 
-      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["user", session?.user.id],
+      });
 
       onOpenChange(false);
     } catch (error) {

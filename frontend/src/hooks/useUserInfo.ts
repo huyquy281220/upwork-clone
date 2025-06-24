@@ -16,14 +16,14 @@ export const useUser = <T>(userId: string) => {
 
 export const useUserLanguages = (userId: string) => {
   return useQuery<LanguageData[]>({
-    queryKey: ["userLanguages", userId],
+    queryKey: ["user-languages", userId],
     queryFn: () => getUserLanguages(userId),
   });
 };
 
 export const useUserEducation = (userId: string) => {
   return useQuery<EducationData[]>({
-    queryKey: ["userEducation", userId],
+    queryKey: ["user-education", userId],
     queryFn: () => getUserEducation(userId),
   });
 };

@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { X, Info } from "lucide-react";
 import api from "@/services/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 interface ChangeHourlyRateModalProps {
   open: boolean;
@@ -24,6 +26,8 @@ export function ChangeHourlyRateModal({
   currentRate,
   userId,
 }: ChangeHourlyRateModalProps) {
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
   const [hourlyRate, setHourlyRate] = useState(currentRate);
   const [isLoading, setIsLoading] = useState(false);
   const serviceFee = hourlyRate * 0.1; // 10% service fee
@@ -40,6 +44,10 @@ export function ChangeHourlyRateModal({
       if (response.status !== 200) {
         throw new Error("Failed to update hourly rate");
       }
+
+      await queryClient.invalidateQueries({
+        queryKey: ["user", session?.user?.id],
+      });
 
       onOpenChange(false);
     } catch (error) {

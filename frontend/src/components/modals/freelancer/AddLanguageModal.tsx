@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { getLanguagesWithoutDuplicates } from "@/utils/getLanguages";
 import { useSession } from "next-auth/react";
 import api from "@/services/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AddLanguageModalProps {
   open: boolean;
@@ -47,6 +48,7 @@ export function AddLanguageModal({
   onOpenChange,
 }: AddLanguageModalProps) {
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
   const [language, setLanguage] = useState("");
   const [proficiency, setProficiency] = useState("");
@@ -85,6 +87,10 @@ export function AddLanguageModal({
         const errorData = response.data;
         throw new Error(errorData.message || "Failed to add language");
       }
+
+      await queryClient.invalidateQueries({
+        queryKey: ["user", session.user.id],
+      });
 
       // Reset form state
       setLanguage("");
