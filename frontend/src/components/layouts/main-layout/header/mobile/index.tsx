@@ -33,8 +33,8 @@ export default function MobileHeader() {
   return (
     <div
       className={cn(
-        "fixed inset-x-0 md:hidden z-50 overflow-y-auto",
-        isNavOpen || isSearchOpen ? "h-full" : ""
+        "fixed inset-x-0 md:hidden overflow-y-auto",
+        isNavOpen || isSearchOpen ? "h-full z-50" : ""
       )}
     >
       <div className="relative z-50 py-3 px-4 flex items-center justify-between bg-background">

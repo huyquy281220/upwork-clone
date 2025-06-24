@@ -93,7 +93,7 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-3xl h-[28rem] bg-background text-foreground border-gray-800"
+        className="sm:max-w-3xl min-h-[28rem] bg-background text-foreground border-gray-800"
         showCloseButton={false}
       >
         <DialogHeader>
