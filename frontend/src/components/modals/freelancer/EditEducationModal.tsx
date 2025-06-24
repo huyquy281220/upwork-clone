@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { useUserEducation } from "@/hooks/useUserInfo";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { degrees } from "./__mock__/degree";
 
 interface EditEducationModalProps {
   open: boolean;
@@ -27,17 +28,6 @@ interface EditEducationModalProps {
 const years = Array.from({ length: 50 }, (_, i) =>
   (new Date().getFullYear() - i).toString()
 );
-
-const degrees = [
-  "Associate's Degree",
-  "Bachelor's Degree",
-  "Master's Degree",
-  "Doctoral Degree",
-  "Professional Degree",
-  "Certificate",
-  "Diploma",
-  "High School Diploma",
-];
 
 export function EditEducationModal({
   open,
