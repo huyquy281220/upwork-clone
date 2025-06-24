@@ -7,7 +7,7 @@ export function JobSidebar() {
     <div className="space-y-6 pb-10 border-b md:border-0">
       <div className="bg-muted/30 p-4 rounded-lg">
         <Button className="w-full bg-green-600 hover:bg-green-700 text-white mb-2">
-          Buy Connects to apply
+          Apply
         </Button>
       </div>
 

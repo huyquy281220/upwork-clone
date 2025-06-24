@@ -72,7 +72,7 @@ export class JobsService {
     const job = await this.prisma.job.findUnique({
       where: { id },
       include: {
-        skills: { select: { skill: { select: { id: true } } } },
+        skills: { select: { skill: { select: { id: true, name: true } } } },
         client: { select: { id: true } },
         proposals: { select: { id: true, freelancerId: true, status: true } },
       },
@@ -86,7 +86,7 @@ export class JobsService {
 
     return {
       ...restOfJob,
-      skills: skills.map((s) => s.skill.id),
+      skills: skills.map((s) => s.skill),
     };
   }
 
