@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateJobDto } from './dto/create-job.dto';
-import { JobType } from '@prisma/client';
+import { JobType, Prisma } from '@prisma/client';
 import { UpdateJobDto } from './dto/update-job.dto';
 
 @Injectable()
@@ -100,16 +100,18 @@ export class JobsService {
       throw new NotFoundException('Freelancer not found');
     }
 
-    const freelancerSkills = freelancer.skills;
-    const skillIds = freelancerSkills.map((s) => s.skillId);
-    if (skillIds.length === 0) {
-      const freelancerTitle = freelancer.title ?? ' ';
-      const keyword = freelancerTitle.split(' ');
-      const jobsMatchByTitle = await this.prisma.job.findMany({
+    const skillIds = freelancer.skills.map((s) => s.skillId);
+    let jobs = [];
+
+    // 1. First, try to find jobs by skills if they exist
+    if (skillIds.length > 0) {
+      jobs = await this.prisma.job.findMany({
         where: {
-          OR: keyword.map((word) => ({
-            title: { contains: word, mode: 'insensitive' as const },
-          })),
+          skills: {
+            some: {
+              skillId: { in: skillIds },
+            },
+          },
         },
         include: {
           skills: { select: { skill: { select: { id: true, name: true } } } },
@@ -117,30 +119,50 @@ export class JobsService {
         take: 20,
         orderBy: { createdAt: 'desc' },
       });
-
-      return jobsMatchByTitle.map((job) => ({
-        ...job,
-        skills: job.skills.map((s) => s.skill),
-      }));
     }
-    const jobsMatchBySkills = await this.prisma.job.findMany({
-      where: {
-        skills: {
-          some: {
-            skillId: {
-              in: skillIds,
-            },
-          },
-        },
-      },
-      include: {
-        skills: { select: { skill: { select: { id: true, name: true } } } },
-      },
-      take: 20,
-      orderBy: { createdAt: 'desc' },
-    });
 
-    return jobsMatchBySkills.map((job) => ({
+    // 2. If no jobs were found by skills OR freelancer had no skills,
+    //    fallback to searching by title.
+    if (jobs.length === 0) {
+      const freelancerTitle = freelancer.title ?? '';
+      const keywords = freelancerTitle.split(' ').filter(Boolean); // Filter out empty strings
+
+      if (keywords.length > 0) {
+        jobs = await this.prisma.job.findMany({
+          where: {
+            OR: keywords.map((word) => ({
+              title: { contains: word, mode: 'insensitive' as const },
+            })),
+          },
+          include: {
+            skills: { select: { skill: { select: { id: true, name: true } } } },
+          },
+          take: 20,
+          orderBy: { createdAt: 'desc' },
+        });
+      }
+    }
+
+    if (jobs.length === 0) {
+      // This part is changed to use a raw query
+      const randomJobsResult = await this.prisma.$queryRaw<any[]>(
+        Prisma.sql`SELECT * FROM "Job" ORDER BY RANDOM() LIMIT 10`,
+      );
+
+      // Raw queries don't automatically include relations, so we have to fetch them separately
+      const jobIds = randomJobsResult.map((job) => job.id);
+      jobs = await this.prisma.job.findMany({
+        where: {
+          id: { in: jobIds },
+        },
+        include: {
+          skills: { select: { skill: { select: { id: true, name: true } } } },
+        },
+      });
+    }
+
+    // 3. Map the final result (either from skills or title search)
+    return jobs.map((job) => ({
       ...job,
       skills: job.skills.map((s) => s.skill),
     }));
