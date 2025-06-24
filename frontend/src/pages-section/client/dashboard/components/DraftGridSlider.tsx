@@ -20,7 +20,7 @@ export function DraftGridSlider({ drafts }: { drafts: JobProps[] }) {
       <Swiper
         modules={[Navigation]}
         spaceBetween={16}
-        slidesPerView={3}
+        slidesPerView={1}
         onSwiper={setSwiper}
         onSlideChange={(swiper) => {
           setIsBeginning(swiper.isBeginning);
@@ -39,7 +39,7 @@ export function DraftGridSlider({ drafts }: { drafts: JobProps[] }) {
         className="draft-grid-slider"
       >
         {drafts.map((draft, index) => (
-          <SwiperSlide key={index}>
+          <SwiperSlide key={index} className="h-[13rem] md:h-[18rem]">
             <DraftCard {...draft} />
           </SwiperSlide>
         ))}

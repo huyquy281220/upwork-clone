@@ -11,7 +11,7 @@ interface DraftCardProps {
 
 export function DraftCard({ title, description }: DraftCardProps) {
   return (
-    <Card className="bg-card border-border">
+    <Card className="h-full bg-card border-border">
       <CardContent className="p-6 space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
@@ -30,7 +30,11 @@ export function DraftCard({ title, description }: DraftCardProps) {
             <CirclePencil />
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <div className="h-[2.5rem] md:h-[6rem]">
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {description}
+          </p>
+        </div>
         <Button
           variant="outline"
           className="w-full border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
