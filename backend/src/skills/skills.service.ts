@@ -220,4 +220,21 @@ export class SkillsService {
       orderBy: { name: 'asc' },
     });
   }
+
+  async getSkillsByName(searchValue: string) {
+    const skills = await this.prismaService.skill.findMany({
+      where: {
+        name: {
+          contains: searchValue,
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    if (!skills.length) {
+      throw new NotFoundException('No skill found');
+    }
+
+    return skills;
+  }
 }

@@ -1,6 +1,7 @@
-import { Controller, Get, Patch, Param, Body } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Body, Post } from '@nestjs/common';
 import { SkillsService } from './skills.service';
 import { SkillItemDto } from './dto/skills.dto';
+import { SearchSkillsDto } from './dto/search-skills.dto';
 
 @Controller('user/:userId/skills')
 export class SkillsController {
@@ -32,5 +33,10 @@ export class SkillsListController {
   @Get('/job/:jobId')
   async getSkillsByJobId(@Param('jobId') jobId: string) {
     return this.skillsService.getSkillsByJobId(jobId);
+  }
+
+  @Post('/search')
+  async findSkillsByName(@Body() data: SearchSkillsDto) {
+    return this.skillsService.getSkillsByName(data.searchValue);
   }
 }
