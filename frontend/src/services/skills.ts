@@ -16,3 +16,9 @@ export const getSkillsByJobId = async (jobId: string) => {
   const response = await api.get(`${apiURL}/skills/job/${jobId}`);
   return response.data;
 };
+
+export const getSkillsByName = async (searchValue: string) => {
+  const response = await api.post(`${apiURL}/skills/search`, { searchValue });
+
+  return response.data;
+};

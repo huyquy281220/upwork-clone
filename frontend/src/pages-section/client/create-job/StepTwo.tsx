@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Search, X, Info } from "lucide-react";
 import { useJobPostingContext } from "@/store/JobPostingContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skill } from "@/types";
-import { useDebounce } from "@/hooks/useDebounce";
+import { SkillsInput } from "@/components/common/SkillsInput";
 
 export default function Step2Skills() {
   const queryClient = useQueryClient();
@@ -14,30 +14,26 @@ export default function Step2Skills() {
   const skills = queryClient.getQueryData<Skill[]>(["skills"]);
 
   const { jobData, updateJobData } = useJobPostingContext();
-  const [skillSearch, setSkillSearch] = useState("");
-  const [showSkillDropdown, setShowSkillDropdown] = useState(false);
-
-  const debouncedSkillSearch = useDebounce(skillSearch, 500);
 
   const popularSkills = useMemo(() => {
-    return skills?.filter((skill) =>
-      skill.name.toLowerCase().includes(jobData.title.toLowerCase())
-    );
+    const keywords = jobData.title.trim().split(" ");
+
+    return skills
+      ?.filter((skill) => {
+        return keywords.some((keyword) =>
+          skill.name.toLowerCase().includes(keyword.toLowerCase())
+        );
+      })
+      .splice(0, 10);
   }, [jobData.title, skills]);
 
-  useEffect(() => {
-    setShowSkillDropdown(debouncedSkillSearch.length > 0);
-  }, [debouncedSkillSearch]);
-
-  const addSkill = (skill: Skill) => {
+  const handleAddSkill = (skill: Skill) => {
     if (!jobData.skills.includes(skill)) {
       updateJobData({ skills: [...jobData.skills, skill] });
     }
-    setSkillSearch("");
-    setShowSkillDropdown(false);
   };
 
-  const removeSkill = (skill: string) => {
+  const handleRemoveSkill = (skill: string) => {
     updateJobData({ skills: jobData.skills.filter((s) => s.id !== skill) });
   };
 
@@ -55,29 +51,7 @@ export default function Step2Skills() {
         </label>
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
-          <input
-            value={skillSearch}
-            onChange={(e) => setSkillSearch(e.target.value)}
-            className="w-full bg-gray-800 border-gray-600 text-white pl-12 py-3"
-            placeholder="Search skills"
-          />
-          {showSkillDropdown && (
-            <div className="absolute top-full left-0 right-0 bg-gray-800 border border-gray-600 rounded-b-md max-h-60 overflow-y-auto z-10">
-              {skills
-                ?.filter((skill) =>
-                  skill.name.toLowerCase().includes(skillSearch.toLowerCase())
-                )
-                .map((skill) => (
-                  <button
-                    key={skill.id}
-                    onClick={() => addSkill(skill)}
-                    className="w-full text-left px-4 py-2 text-white hover:bg-gray-700"
-                  >
-                    {skill.name}
-                  </button>
-                ))}
-            </div>
-          )}
+          <SkillsInput onAddSkill={handleAddSkill} />
         </div>
 
         <div className="text-sm text-foreground mb-4 flex items-center">
@@ -103,7 +77,7 @@ export default function Step2Skills() {
                   >
                     {skill.name}
                     <button
-                      onClick={() => removeSkill(skill.id)}
+                      onClick={() => handleRemoveSkill(skill.id)}
                       className="ml-2 hover:text-red-400"
                     >
                       <X className="w-3 h-3" />
@@ -122,7 +96,7 @@ export default function Step2Skills() {
             {popularSkills?.map((skill) => (
               <button
                 key={skill.id}
-                onClick={() => addSkill(skill)}
+                onClick={() => handleAddSkill(skill)}
                 className="bg-gray-700 text-white px-3 py-2 rounded-full text-sm hover:bg-gray-600 flex items-center"
               >
                 {skill.name}
