@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 import { useJobPostingContext } from "@/store/JobPostingContext";
 import api from "@/services/api";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
 import { ModernToast } from "@/components/common/ModernToast";
-import { ToastProps } from "@/types";
+import { useToast } from "@/hooks/useToast";
 interface JobPostingWizardProps {
   children: React.ReactNode;
   currentStep: number;
@@ -21,14 +20,7 @@ export default function JobPostingWrapper({
   const router = useRouter();
   const { data: session } = useSession();
   const { jobData, resetJobData } = useJobPostingContext();
-  const [activeToasts, setActiveToasts] = useState(false);
-  const [toast, setToast] = useState<ToastProps>({
-    title: "",
-    description: "",
-    duration: 1500,
-    position: "top-center",
-    type: "success",
-  });
+  const { toast, showErrorToast, showSuccessToast, activeToasts } = useToast();
 
   const getNextRoute = () => {
     switch (currentStep) {
@@ -77,30 +69,23 @@ export default function JobPostingWrapper({
       try {
         const res = await api.post(
           `${process.env.NEXT_PUBLIC_API_URL}/jobs/${session?.user.id}/create`,
-          jobData
+          { ...jobData, skills: jobData.skills.map((skill) => skill.id) }
         );
 
         if (res.status === 201) {
           resetJobData();
-          setToast((prev) => ({
-            ...prev,
-            title: "Job posted successfully",
-            description: "Redirecting to dashboard",
-          }));
-          setActiveToasts(true);
+          showSuccessToast(
+            "Job posted successfully",
+            "Redirecting to dashboard",
+            1500
+          );
           setTimeout(() => {
             router.push("/client/dashboard");
           }, 2000);
         }
       } catch (error) {
         console.log(error);
-        setToast((prev) => ({
-          ...prev,
-          title: "Error posting job",
-          description: "Please try again",
-          type: "error",
-        }));
-        setActiveToasts(true);
+        showErrorToast("Error posting job", "Please try again", 1500);
       }
     }
   };

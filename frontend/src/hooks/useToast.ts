@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastProps } from "@/types";
 
 export const useToast = () => {
@@ -10,6 +10,15 @@ export const useToast = () => {
     position: "top-center",
     type: "success",
   });
+
+  useEffect(() => {
+    if (activeToasts && toast.duration) {
+      const timer = setTimeout(() => {
+        setActiveToasts(false);
+      }, toast.duration);
+      return () => clearTimeout(timer);
+    }
+  }, [activeToasts, toast.duration]);
 
   const showToast = (toastProps: Partial<ToastProps>) => {
     setToast((prev) => ({
