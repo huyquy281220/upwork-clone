@@ -40,7 +40,9 @@ AvailabilityModalProps) {
   const [availability, setAvailability] = useState(
     user?.freelancerProfile?.available
   );
-  // const [contractToHire, setContractToHire] = useState(currentContractToHire);
+  // const [contractToHire, setContractToHire] = useState(
+  //   user?.freelancerProfile?.contractToHire
+  // );
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
@@ -69,7 +71,7 @@ AvailabilityModalProps) {
 
   const handleCancel = () => {
     setAvailability(user?.freelancerProfile?.available);
-    // setContractToHire(currentContractToHire);
+    // setContractToHire(user?.freelancerProfile?.contractToHire);
     onOpenChange(false);
   };
 
@@ -129,14 +131,14 @@ AvailabilityModalProps) {
             </div>
           </div>
 
-          <div>
+          {/* <div>
             <h3 className="font-medium mb-4">Contract-to-hire</h3>
             <div className="flex items-start space-x-3">
               <input
                 type="checkbox"
                 id="contract-to-hire"
-                checked={false}
-                // onChange={(e) => setContractToHire(e.target.checked)}
+                checked={contractToHire}
+                onChange={(e) => setContractToHire(e.target.checked)}
                 className="h-4 w-4 mt-1 text-green-600 focus:ring-green-600 rounded"
               />
               <div className="space-y-1">
@@ -152,7 +154,7 @@ AvailabilityModalProps) {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
