@@ -45,15 +45,16 @@ export function EditLanguagesModal({
     Record<string, string>
   >({});
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
   const handleSave = async () => {
     if (!languages) return;
 
-    setIsLoading(true);
+    setStatus("loading");
 
     try {
-      // Create new language object
       const updatedLanguages = languages.map((lang) => ({
         id: lang.id,
         name: lang.name,
@@ -66,9 +67,10 @@ export function EditLanguagesModal({
       );
 
       if (response.status !== 200) {
-        const errorData = response.data;
-        throw new Error(errorData.message || "Failed to update languages");
+        setStatus("error");
       }
+
+      setStatus("success");
 
       await queryClient.invalidateQueries({
         queryKey: ["user", session?.user?.id],
@@ -77,16 +79,16 @@ export function EditLanguagesModal({
       // Reset changes
       setProficiencyChanges({});
 
-      // Close modal and call success callback
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 1500);
     } catch (error) {
-      console.error("Error updating languages:", error);
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 
   const handleCancel = () => {
+    setStatus("idle");
     onOpenChange(false);
   };
 
@@ -161,6 +163,13 @@ export function EditLanguagesModal({
           </div>
         )}
 
+        {status === "success" && (
+          <p className="text-green-500">Edit language successfully.</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-500">Failed to edit language.</p>
+        )}
+
         <div className="flex justify-end gap-3 pt-6">
           <Button
             variant="ghost"
@@ -173,7 +182,7 @@ export function EditLanguagesModal({
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
           >
-            {isLoading ? "Saving..." : "Save"}
+            {status === "loading" ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

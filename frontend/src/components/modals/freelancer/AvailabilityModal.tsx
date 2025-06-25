@@ -37,16 +37,18 @@ AvailabilityModalProps) {
   const { data: session } = useSession();
   const { data: user } = useUser<User>(session?.user?.id ?? "");
 
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [availability, setAvailability] = useState(
     user?.freelancerProfile?.available
   );
   // const [contractToHire, setContractToHire] = useState(
   //   user?.freelancerProfile?.contractToHire
   // );
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
-    setIsLoading(true);
+    setStatus("loading");
     try {
       const response = await api.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/user/update`,
@@ -54,23 +56,26 @@ AvailabilityModalProps) {
       );
 
       if (response.status !== 200) {
-        throw new Error("Failed to update availability");
+        setStatus("error");
       }
+
+      setStatus("success");
 
       await queryClient.invalidateQueries({
         queryKey: ["user", session?.user?.id],
       });
 
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 1500);
     } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 
   const handleCancel = () => {
     setAvailability(user?.freelancerProfile?.available);
+    setStatus("idle");
     // setContractToHire(user?.freelancerProfile?.contractToHire);
     onOpenChange(false);
   };
@@ -157,6 +162,13 @@ AvailabilityModalProps) {
           </div> */}
         </div>
 
+        {status === "success" && (
+          <p className="text-green-500">Add availability successfully.</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-500">Failed to add availability.</p>
+        )}
+
         <div className="flex justify-end gap-3 pt-4">
           <Button
             variant="ghost"
@@ -169,7 +181,7 @@ AvailabilityModalProps) {
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
           >
-            {isLoading ? "Saving..." : "Save"}
+            {status === "loading" ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

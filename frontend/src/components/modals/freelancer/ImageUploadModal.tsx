@@ -34,7 +34,9 @@ export default function ImageUploadModal({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = useCallback((file: File) => {
@@ -77,27 +79,30 @@ export default function ImageUploadModal({
   const handleUpload = async () => {
     if (!selectedFile || !userId) return;
 
+    setStatus("loading");
     try {
-      setIsUploading(true);
-
       // Simulate upload delay
       const res = await imageUpload(userId, selectedFile);
 
-      if (res.status === 201) {
-        await queryClient.invalidateQueries({
-          queryKey: ["user", userId],
-        });
+      if (res.status !== 201) {
+        setStatus("error");
       }
 
-      setIsUploading(false);
-      handleClose();
+      setStatus("success");
+      await queryClient.invalidateQueries({
+        queryKey: ["user", userId],
+      });
+
+      setTimeout(() => {
+        handleClose();
+      }, 1500);
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleClose = () => {
-    setIsUploading(false);
+    setStatus("idle");
     onOpenChange(false);
     setSelectedFile(null);
     if (previewUrl) {
@@ -202,6 +207,13 @@ export default function ImageUploadModal({
           )}
         </div>
 
+        {status === "success" && (
+          <p className="text-green-500">Upload image successfully.</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-500">Failed to upload image.</p>
+        )}
+
         <DialogFooter className="flex gap-2">
           <Button
             variant="outline"
@@ -212,9 +224,9 @@ export default function ImageUploadModal({
           </Button>
           <Button
             onClick={handleUpload}
-            disabled={!selectedFile || isUploading}
+            disabled={!selectedFile || status === "loading"}
           >
-            {isUploading ? "Uploading..." : "Upload"}
+            {status === "loading" ? "Uploading..." : "Upload"}
           </Button>
         </DialogFooter>
       </DialogContent>

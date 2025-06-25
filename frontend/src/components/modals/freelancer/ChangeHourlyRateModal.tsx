@@ -29,12 +29,15 @@ export function ChangeHourlyRateModal({
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const [hourlyRate, setHourlyRate] = useState(currentRate);
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
   const serviceFee = hourlyRate * 0.1; // 10% service fee
   const youReceive = hourlyRate - serviceFee;
 
   const handleSave = async () => {
-    setIsLoading(true);
+    setStatus("loading");
     try {
       const response = await api.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/user/update`,
@@ -42,23 +45,26 @@ export function ChangeHourlyRateModal({
       );
 
       if (response.status !== 200) {
-        throw new Error("Failed to update hourly rate");
+        setStatus("error");
       }
+
+      setStatus("success");
 
       await queryClient.invalidateQueries({
         queryKey: ["user", session?.user?.id],
       });
 
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 1500);
     } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 
   const handleCancel = () => {
     setHourlyRate(currentRate);
+    setStatus("idle");
     onOpenChange(false);
   };
 
@@ -159,6 +165,13 @@ export function ChangeHourlyRateModal({
           </div>
         </div>
 
+        {status === "success" && (
+          <p className="text-green-500">Add hourly rate successfully.</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-500">Failed to add hourly rate.</p>
+        )}
+
         <div className="flex justify-end gap-3 pt-4">
           <Button
             variant="ghost"
@@ -171,7 +184,7 @@ export function ChangeHourlyRateModal({
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
           >
-            {isLoading ? "Saving..." : "Save"}
+            {status === "loading" ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

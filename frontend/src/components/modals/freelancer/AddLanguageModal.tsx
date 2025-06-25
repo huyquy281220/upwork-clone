@@ -24,7 +24,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getLanguagesWithoutDuplicates } from "@/utils/getLanguages";
 import { useSession } from "next-auth/react";
@@ -54,8 +54,9 @@ export function AddLanguageModal({
   const [proficiency, setProficiency] = useState("");
   const [commandDialogOpen, setCommandDialogOpen] = useState(false);
   const [languages, setLanguages] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -68,8 +69,7 @@ export function AddLanguageModal({
   const handleSave = async () => {
     if (!language || !proficiency || !session?.user?.id) return;
 
-    setIsLoading(true);
-    setError(null);
+    setStatus("loading");
 
     try {
       // Create new language object
@@ -84,9 +84,9 @@ export function AddLanguageModal({
       );
 
       if (response.status !== 201) {
-        const errorData = response.data;
-        throw new Error(errorData.message || "Failed to add language");
+        setStatus("error");
       }
+      setStatus("success");
 
       await queryClient.invalidateQueries({
         queryKey: ["user", session.user.id],
@@ -96,21 +96,18 @@ export function AddLanguageModal({
       setLanguage("");
       setProficiency("");
 
-      // Close modal and call success callback
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 1500);
     } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Failed to add language"
-      );
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 
   const handleCancel = () => {
     setLanguage("");
     setProficiency("");
-    setError(null);
+    setStatus("idle");
     onOpenChange(false);
   };
 
@@ -153,12 +150,6 @@ export function AddLanguageModal({
             </Button>
           </DialogHeader>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-              {error}
-            </div>
-          )}
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label htmlFor="language" className="text-sm font-medium">
@@ -194,6 +185,13 @@ export function AddLanguageModal({
             </div>
           </div>
 
+          {status === "success" && (
+            <p className="text-green-500">Add language successfully.</p>
+          )}
+          {status === "error" && (
+            <p className="text-red-500">Failed to add language.</p>
+          )}
+
           <div className="flex justify-end gap-3 pt-6">
             <Button
               variant="ghost"
@@ -205,16 +203,9 @@ export function AddLanguageModal({
             <Button
               onClick={handleSave}
               className="bg-green-600 hover:bg-green-700"
-              disabled={!language || !proficiency || isLoading}
+              disabled={!language || !proficiency}
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Save"
-              )}
+              {status === "loading" ? "Saving ..." : "Save"}
             </Button>
           </div>
         </DialogContent>

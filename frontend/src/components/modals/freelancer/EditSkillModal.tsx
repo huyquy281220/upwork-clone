@@ -22,9 +22,15 @@ export interface SkillsModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const MAX_SKILLS = 15;
+
 export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
+
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
   const { data: userSkills } = useQuery<UserSkill[]>({
     queryKey: ["user-skills"],
@@ -40,8 +46,6 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
   const [skillSelected, setSkillSelected] = useState<Skill[]>(
     skillsOfUser ?? []
   );
-  const [isLoading, setIsLoading] = useState(false);
-  const MAX_SKILLS = 15;
 
   useEffect(() => {
     setSkillSelected(skillsOfUser ?? []);
@@ -61,7 +65,7 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
   };
 
   const handleSave = async () => {
-    setIsLoading(true);
+    setStatus("loading");
     try {
       const newSkills = skillSelected.map((skill) => skill.id);
 
@@ -71,22 +75,25 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
       );
 
       if (response.status !== 201) {
-        throw new Error("Failed to save skills");
+        setStatus("error");
       }
+
+      setStatus("success");
 
       await queryClient.invalidateQueries({
         queryKey: ["user-skills", session?.user.id],
       });
 
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 1500);
     } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 
   const handleCloseModal = () => {
+    setStatus("idle");
     onOpenChange(false);
   };
 
@@ -135,6 +142,13 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
           </p>
         </div>
 
+        {status === "success" && (
+          <p className="text-green-500">Edit skills successfully.</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-500">Failed to edit skills.</p>
+        )}
+
         <div className="flex items-end justify-end gap-2 mt-4">
           <Button
             variant="outline"
@@ -147,7 +161,7 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-500 text-foreground"
           >
-            {isLoading ? "Saving..." : "Save"}
+            {status === "loading" ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

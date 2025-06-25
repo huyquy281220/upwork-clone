@@ -19,6 +19,7 @@ import {
 import { useSession } from "next-auth/react";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { areaOfStudyList } from "./__mock__/areaOfStudy";
 import { degrees } from "./__mock__/degree";
 
 interface AddEducationModalProps {
@@ -46,6 +47,12 @@ export function AddEducationModal({
 }: AddEducationModalProps) {
   const { data: session } = useSession();
 
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [areaOfStudy, setAreaOfStudy] = useState("");
+  const [showAreaOfStudyDropdown, setShowAreaOfStudyDropdown] = useState(false);
+
   const [educationForm, setEducationForm] = useState({
     school: "",
     fromYear: 0,
@@ -57,9 +64,8 @@ export function AddEducationModal({
 
   const queryClient = useQueryClient();
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleSave = async () => {
+    setStatus("loading");
     try {
       const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/user/${session?.user?.id}/education/create`,
@@ -67,18 +73,19 @@ export function AddEducationModal({
       );
 
       if (response.status !== 201) {
-        throw new Error("Failed to add education");
+        setStatus("error");
       }
 
+      setStatus("success");
       await queryClient.invalidateQueries({
         queryKey: ["user", session?.user?.id],
       });
 
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 1500);
     } catch (error) {
-      console.error("Error adding education:", error);
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 
@@ -93,10 +100,20 @@ export function AddEducationModal({
     });
   };
 
+  const handleAddAreaOfStudy = (value: string) => {
+    setAreaOfStudy(value);
+    setEducationForm((prev) => ({
+      ...prev,
+      areaOfStudy: value,
+    }));
+  };
+
   const handleCancel = () => {
     resetForm();
     onOpenChange(false);
   };
+
+  const showDropdown = areaOfStudy && showAreaOfStudyDropdown;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -133,7 +150,7 @@ export function AddEducationModal({
                   school: e.target.value,
                 })
               }
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none"
               placeholder="Ex: Northwestern University"
             />
           </div>
@@ -204,23 +221,40 @@ export function AddEducationModal({
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="areaOfStudy" className="text-sm font-medium">
-              Area of Study (Optional)
-            </label>
-            <input
-              id="areaOfStudy"
-              type="text"
-              value={educationForm.areaOfStudy}
-              onChange={(e) =>
-                setEducationForm({
-                  ...educationForm,
-                  areaOfStudy: e.target.value,
-                })
-              }
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Ex: Computer Science"
-            />
+          <div className="relative space-y-2">
+            <div className="flex flex-col gap-3">
+              <label htmlFor="areaOfStudy" className="text-sm font-medium">
+                Area of Study (Optional)
+              </label>
+              <input
+                type="text"
+                value={areaOfStudy}
+                onChange={(e) => setAreaOfStudy(e.target.value)}
+                onFocus={() => setShowAreaOfStudyDropdown(true)}
+                onBlur={() =>
+                  setTimeout(() => setShowAreaOfStudyDropdown(false), 200)
+                }
+                placeholder="Search area of study"
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none"
+              />
+            </div>
+            {showDropdown && (
+              <div className="absolute z-10 w-full mt-1 max-h-56 overflow-auto rounded-md border border-gray-700 bg-background p-1">
+                {areaOfStudyList
+                  .filter((item) =>
+                    item.toLowerCase().includes(areaOfStudy.toLowerCase())
+                  )
+                  .map((value, index) => (
+                    <button
+                      key={index}
+                      className="w-full text-left px-3 py-2 hover:bg-gray-800 focus:bg-gray-800 focus:outline-none rounded-md"
+                      onClick={() => handleAddAreaOfStudy(value)}
+                    >
+                      {value}
+                    </button>
+                  ))}
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -242,6 +276,13 @@ export function AddEducationModal({
           </div>
         </div>
 
+        {status === "success" && (
+          <p className="text-green-500">Add education successfully.</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-500">Failed to add education.</p>
+        )}
+
         <div className="flex justify-end gap-3 pt-4">
           <Button
             variant="ghost"
@@ -255,7 +296,7 @@ export function AddEducationModal({
             className="bg-green-600 hover:bg-green-700"
             disabled={!educationForm.school}
           >
-            {isLoading ? "Saving..." : "Save"}
+            {status === "loading" ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

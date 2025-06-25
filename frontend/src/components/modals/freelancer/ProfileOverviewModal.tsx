@@ -29,12 +29,17 @@ export function ProfileOverviewModal({
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const [overview, setOverview] = useState(currentOverview);
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
   const maxLength = 5000;
   const remainingChars = maxLength - overview.length;
 
   const handleSave = async () => {
-    setIsLoading(true);
+    if (!overview) return;
+    setStatus("loading");
+
     try {
       const response = await api.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/user/update`,
@@ -42,22 +47,23 @@ export function ProfileOverviewModal({
       );
 
       if (response.status !== 200) {
-        throw new Error("Failed to update overview");
+        setStatus("error");
       }
 
       await queryClient.invalidateQueries({
         queryKey: ["user", session?.user.id],
       });
 
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 1500);
     } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 
   const handleCancel = () => {
+    setStatus("idle");
     setOverview(currentOverview);
     onOpenChange(false);
   };
@@ -116,6 +122,13 @@ export function ProfileOverviewModal({
           </div>
         </div>
 
+        {status === "success" && (
+          <p className="text-green-500">Edit overview successfully.</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-500">Failed to edit overview.</p>
+        )}
+
         <div className="flex justify-end gap-3 pt-4">
           <Button
             variant="ghost"
@@ -128,7 +141,7 @@ export function ProfileOverviewModal({
             onClick={handleSave}
             className="bg-green-600 hover:bg-green-700"
           >
-            {isLoading ? "Saving..." : "Save"}
+            {status === "loading" ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

@@ -49,7 +49,9 @@ export function EditEducationModal({
 
   const queryClient = useQueryClient();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
   const education = educations?.find((e) => e.id === educationId);
 
@@ -68,7 +70,7 @@ export function EditEducationModal({
   }, [education]);
 
   const handleSave = async () => {
-    setIsLoading(true);
+    setStatus("loading");
     try {
       const response = await api.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/user/${session?.user?.id}/education/update`,
@@ -76,18 +78,20 @@ export function EditEducationModal({
       );
 
       if (response.status !== 200) {
-        throw new Error("Failed to update education");
+        setStatus("error");
       }
+
+      setStatus("success");
 
       await queryClient.invalidateQueries({
         queryKey: ["user-education", session?.user?.id],
       });
 
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 1500);
     } catch (error) {
-      console.error("Error updating education:", error);
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 
@@ -103,6 +107,7 @@ export function EditEducationModal({
         description: education.description || "",
       });
     }
+    setStatus("idle");
     onOpenChange(false);
   };
 
@@ -273,6 +278,13 @@ export function EditEducationModal({
           </div>
         </div>
 
+        {status === "success" && (
+          <p className="text-green-500">Edit education successfully.</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-500">Failed to edit education.</p>
+        )}
+
         <div className="flex justify-end gap-3 pt-4">
           <Button
             variant="ghost"
@@ -286,7 +298,7 @@ export function EditEducationModal({
             className="bg-green-600 hover:bg-green-700"
             disabled={!educationForm.school}
           >
-            {isLoading ? "Saving..." : "Save"}
+            {status === "loading" ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>
