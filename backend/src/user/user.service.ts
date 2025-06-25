@@ -247,25 +247,34 @@ export class UserService {
     }
   }
 
-  async uploadAvatar(file: Express.Multer.File) {
+  async uploadAvatar(userId: string, file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('No file provided');
     }
 
     try {
       const result = await cloudinary.uploader.upload(file.path, {
-        folder: 'your-folder-name',
+        folder: 'avatar',
       });
 
-      // Xoá file local sau khi upload
+      if (!result || !result.secure_url || !result.public_id) {
+        throw new BadRequestException(
+          'Cloudinary upload did not return expected result',
+        );
+      }
+
       await unlinkFile(file.path);
+      await this.prismaService.user.update({
+        where: { id: userId },
+        data: { avatarUrl: result.secure_url },
+      });
 
       return {
         url: result.secure_url,
         public_id: result.public_id,
       };
     } catch (error) {
-      // Xoá file trong trường hợp lỗi
+      // Delete file if error
       if (file?.path) {
         await unlinkFile(file.path).catch(() => null);
       }

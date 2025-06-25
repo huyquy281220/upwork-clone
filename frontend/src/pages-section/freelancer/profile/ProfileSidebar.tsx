@@ -17,6 +17,7 @@ import { EditEducationModal } from "@/components/modals/freelancer/EditEducation
 import { AvailabilityModal } from "@/components/modals/freelancer/AvailabilityModal";
 import CircleTrash from "@/components/common/CircleTrash";
 import useLocalTime from "@/hooks/useLocalTime";
+import ImageUploadModal from "@/components/modals/freelancer/ImageUploadModal";
 
 const availabilityOptions = {
   MORE_THAN_30: "More than 30 hrs/week",
@@ -38,17 +39,23 @@ export function ProfileSidebar() {
 
   const currentLanguages = user?.freelancerProfile?.languages;
   const educations = user?.freelancerProfile?.education;
+  const avatar = user?.avatarUrl;
 
   return (
     <div className="space-y-6">
       {/* Profile Header */}
       <Card className="bg-card">
         <CardHeader className="text-center">
-          <Avatar className="w-20 h-20 mx-auto mb-4">
+          <Avatar className="relative w-[5.5rem] h-[5.5rem] mx-auto mb-4 z-10 overflow-visible">
             <AvatarImage
-              src="/placeholder.svg?height=80&width=80"
+              src={avatar ?? "/placeholder.svg?height=80&width=80"}
               alt="Hai H."
+              className="rounded-full object-cover object-center"
             />
+
+            <div className="absolute right-0 bottom-0 z-50">
+              <CirclePencil onEdit={() => openModal("image-upload")} />
+            </div>
             <AvatarFallback>HH</AvatarFallback>
           </Avatar>
           <h1 className="text-2xl font-bold">{user?.fullName}</h1>
@@ -207,6 +214,11 @@ export function ProfileSidebar() {
         open={isModalOpen("availability")}
         onOpenChange={() => closeModal()}
         // currentContractToHire={user?.freelancerProfile?.contractToHire ?? null}
+      />
+
+      <ImageUploadModal
+        open={isModalOpen("image-upload")}
+        onOpenChange={() => closeModal()}
       />
     </div>
   );

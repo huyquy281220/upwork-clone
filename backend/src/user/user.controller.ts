@@ -34,10 +34,13 @@ export class UserController {
     return this.userService.findById(id);
   }
 
-  @Post('image')
+  @Post('/:id/upload-avatar')
   @UseInterceptors(FileInterceptor('image'))
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
-    return this.userService.uploadAvatar(file);
+  uploadImage(
+    @Param('id') userId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.userService.uploadAvatar(userId, file);
   }
 
   @Patch('update')

@@ -20,7 +20,8 @@ type ModalState =
   | { type: "edit-description" }
   | { type: "edit-scope" }
   | { type: "edit-budget" }
-  | { type: "edit-skills" };
+  | { type: "edit-skills" }
+  | { type: "image-upload" };
 
 export const useModalManager = () => {
   const [modalState, setModalState] = useState<ModalState>({

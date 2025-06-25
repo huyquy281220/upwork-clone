@@ -21,3 +21,15 @@ export const getUserEducation = async (id: string) => {
   const response = await api.get(`${apiURL}/user/${id}/education`);
   return response.data;
 };
+
+export const imageUpload = async (userId: string, file: File) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await api.post(
+    `${apiURL}/user/${userId}/upload-avatar`,
+    formData
+  );
+
+  return response.data;
+};
