@@ -36,7 +36,7 @@ export const SkillsInput = ({ onAddSkill, classes }: SkillsInputProps) => {
   const showDropdown = isFocused && searchValue;
 
   return (
-    <div className={cn("relative", ...(classes ?? ""))}>
+    <div className={cn("relative", classes ?? "")}>
       <div className="flex flex-wrap gap-2 p-2 min-h-10 rounded-md border border-gray-700 bg-transparent">
         <input
           type="text"

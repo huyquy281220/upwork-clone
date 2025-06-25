@@ -54,7 +54,10 @@ export function ProfileSidebar() {
             />
 
             <div className="absolute right-0 bottom-0 z-50">
-              <CirclePencil onEdit={() => openModal("image-upload")} />
+              <CirclePencil
+                onEdit={() => openModal("image-upload")}
+                classes="bg-background"
+              />
             </div>
             <AvatarFallback>HH</AvatarFallback>
           </Avatar>
