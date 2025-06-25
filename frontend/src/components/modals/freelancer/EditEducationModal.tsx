@@ -84,7 +84,7 @@ export function EditEducationModal({
       setStatus("success");
 
       await queryClient.invalidateQueries({
-        queryKey: ["user-education", session?.user?.id],
+        queryKey: ["user", session?.user?.id],
       });
 
       setTimeout(() => {

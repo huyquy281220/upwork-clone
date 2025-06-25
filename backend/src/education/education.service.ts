@@ -76,7 +76,7 @@ export class EducationService {
    * @returns Updated user with freelancer profile and education
    */
   async updateUserEducation(userId: string, education: EducationItemDto[]) {
-    // Check if freelancer exists
+    console.log(education);
     const freelancer = await this.prismaService.freelancerProfile.findUnique({
       where: { userId },
     });

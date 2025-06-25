@@ -30,8 +30,8 @@ interface AddEducationModalProps {
 
 interface EducationData {
   school: string;
-  fromYear?: number;
-  toYear?: number;
+  startYear?: number;
+  endYear?: number;
   degree?: string;
   areaOfStudy?: string;
   description?: string;
@@ -55,8 +55,8 @@ export function AddEducationModal({
 
   const [educationForm, setEducationForm] = useState({
     school: "",
-    fromYear: 0,
-    toYear: 0,
+    startYear: 0,
+    endYear: 0,
     degree: "",
     areaOfStudy: "",
     description: "",
@@ -92,8 +92,8 @@ export function AddEducationModal({
   const resetForm = () => {
     setEducationForm({
       school: "",
-      fromYear: 0,
-      toYear: 0,
+      startYear: 0,
+      endYear: 0,
       degree: "",
       areaOfStudy: "",
       description: "",
@@ -109,6 +109,7 @@ export function AddEducationModal({
   };
 
   const handleCancel = () => {
+    setStatus("idle");
     resetForm();
     onOpenChange(false);
   };
@@ -161,9 +162,9 @@ export function AddEducationModal({
             </label>
             <div className="grid grid-cols-2 gap-4">
               <Select
-                value={educationForm.fromYear.toString()}
+                value={educationForm.startYear.toString()}
                 onValueChange={(value) =>
-                  setEducationForm({ ...educationForm, fromYear: +value })
+                  setEducationForm({ ...educationForm, startYear: +value })
                 }
               >
                 <SelectTrigger className="bg-background border-border">
@@ -179,9 +180,9 @@ export function AddEducationModal({
               </Select>
 
               <Select
-                value={educationForm.toYear.toString()}
+                value={educationForm.endYear.toString()}
                 onValueChange={(value) =>
-                  setEducationForm({ ...educationForm, toYear: +value })
+                  setEducationForm({ ...educationForm, endYear: +value })
                 }
               >
                 <SelectTrigger className="bg-background border-border">
