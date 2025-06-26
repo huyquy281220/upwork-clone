@@ -1,5 +1,5 @@
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto';
+import { UpdateUserDto, UserResponseDto } from './dto';
 import { UserService } from './user.service';
 import {
   Controller,
@@ -13,6 +13,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { Express } from 'express';
 
 @Controller('user')
 export class UserController {

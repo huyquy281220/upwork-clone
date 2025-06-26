@@ -13,8 +13,10 @@ import { EmailService } from 'src/email/email.service';
 import { cloudinary } from './provider/cloudinary';
 import * as fs from 'fs';
 import * as util from 'util';
+import { Express } from 'express';
 
 const unlinkFile = util.promisify(fs.unlink);
+
 @Injectable()
 export class UserService {
   constructor(
@@ -58,6 +60,7 @@ export class UserService {
         );
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, refreshToken, verificationToken, ...result } = user;
       return result;
     } catch (error) {
@@ -76,7 +79,11 @@ export class UserService {
           freelancerProfile: true,
         },
       });
-      if (!user) return null;
+      if (!user) {
+        throw new NotFoundException(
+          'Account does not exist. Please sign up or try again later.',
+        );
+      }
       return user;
     } catch (error) {
       throw new NotFoundException(
@@ -268,6 +275,37 @@ export class UserService {
         where: { id: userId },
         data: { avatarUrl: result.secure_url },
       });
+
+      return {
+        url: result.secure_url,
+        public_id: result.public_id,
+      };
+    } catch (error) {
+      // Delete file if error
+      if (file?.path) {
+        await unlinkFile(file.path).catch(() => null);
+      }
+      throw new BadRequestException('Failed to upload to Cloudinary');
+    }
+  }
+
+  async uploadCv(freelancerId: string, file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    try {
+      const result = await cloudinary.uploader.upload(file.path, {
+        folder: 'avatar',
+      });
+
+      if (!result || !result.secure_url || !result.public_id) {
+        throw new BadRequestException(
+          'Cloudinary upload did not return expected result',
+        );
+      }
+
+      await unlinkFile(file.path);
 
       return {
         url: result.secure_url,
