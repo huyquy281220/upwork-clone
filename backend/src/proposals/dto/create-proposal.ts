@@ -2,6 +2,9 @@ import { IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateProposalDto {
   @IsString()
+  freelancerId: string;
+
+  @IsString()
   jobId: string;
 
   @IsString()
@@ -9,5 +12,11 @@ export class CreateProposalDto {
   coverLetter?: string;
 
   @IsNumber()
-  hourlyRate: number;
+  pricing: number;
+
+  @IsString()
+  attachment: string;
+
+  @IsString()
+  timeline: string;
 }

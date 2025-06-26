@@ -165,7 +165,6 @@ model Proposal {
   freelancerId String
   jobId        String
   coverLetter  String
-  hourlyRate   Float
   pricing      Float
   timeline     String
   attachment   String

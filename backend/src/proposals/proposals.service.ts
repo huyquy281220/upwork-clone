@@ -12,10 +12,10 @@ import { UpdateProposalDto } from './dto/update-proposal.dto';
 export class ProposalsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createProposal(freelancerId: string, data: CreateProposalDto) {
+  async createProposal(data: CreateProposalDto) {
     return this.prismaService.$transaction(async (tx) => {
       const freelancer = await tx.freelancerProfile.findUnique({
-        where: { userId: freelancerId },
+        where: { userId: data.freelancerId },
       });
       if (!freelancer) {
         throw new NotFoundException('Freelancer not found');
@@ -30,7 +30,7 @@ export class ProposalsService {
 
       // Check if freelancer is already a proposal for this job
       const existingProposal = await tx.proposal.findFirst({
-        where: { freelancerId, jobId: data.jobId },
+        where: { freelancerId: data.freelancerId, jobId: data.jobId },
       });
       if (existingProposal) {
         throw new BadRequestException(
@@ -41,10 +41,12 @@ export class ProposalsService {
       //Create proposal
       const proposal = await tx.proposal.create({
         data: {
-          freelancerId,
-          jobId: data.jobId,
+          job: { connect: { id: data.jobId } },
+          freelancer: { connect: { userId: data.freelancerId } },
+          timeline: data.timeline,
           coverLetter: data.coverLetter,
-          hourlyRate: data.hourlyRate,
+          pricing: data.pricing,
+          attachment: data.attachment,
           status: ProposalStatus.PENDING,
         },
       });
@@ -75,26 +77,26 @@ export class ProposalsService {
     return proposal;
   }
 
-  async updateProposal(
-    id: string,
-    freelancerId: string,
-    data: UpdateProposalDto,
-  ) {
+  async updateProposal(proposalId: string, data: UpdateProposalDto) {
     return this.prismaService.$transaction(async (tx) => {
-      const proposal = await tx.proposal.findUnique({ where: { id } });
+      const proposal = await tx.proposal.findUnique({
+        where: { id: proposalId },
+      });
       if (!proposal) {
-        throw new NotFoundException(`Proposal with ID ${id} not found`);
+        throw new NotFoundException(`Proposal with ID ${proposalId} not found`);
       }
-      if (proposal.freelancerId !== freelancerId) {
+      if (proposal.freelancerId !== data.freelancerId) {
         throw new BadRequestException('Freelancer does not own this proposal');
       }
 
       // Update proposal
       await tx.proposal.update({
-        where: { id },
+        where: { id: proposalId },
         data: {
           coverLetter: data.coverLetter,
-          hourlyRate: data.hourlyRate,
+          pricing: data.pricing,
+          timeline: data.timeline,
+          attachment: data.attachment,
           status: data.status,
         },
       });
@@ -113,7 +115,7 @@ export class ProposalsService {
       //   }
 
       return tx.proposal.findUnique({
-        where: { id },
+        where: { id: proposalId },
         include: {
           freelancer: { select: { userId: true, title: true } },
           job: { select: { id: true, title: true } },
@@ -122,11 +124,13 @@ export class ProposalsService {
     });
   }
 
-  async deleteProposal(id: string, freelancerId: string) {
+  async deleteProposal(proposalId: string, freelancerId: string) {
     return this.prismaService.$transaction(async (tx) => {
-      const proposal = await tx.proposal.findUnique({ where: { id } });
+      const proposal = await tx.proposal.findUnique({
+        where: { id: proposalId },
+      });
       if (!proposal) {
-        throw new NotFoundException(`Proposal with ID ${id} not found`);
+        throw new NotFoundException(`Proposal with ID ${proposalId} not found`);
       }
       if (proposal.freelancerId !== freelancerId) {
         throw new BadRequestException('Freelancer does not own this proposal');
@@ -136,9 +140,9 @@ export class ProposalsService {
       }
 
       // Delete proposal
-      await tx.proposal.delete({ where: { id } });
+      await tx.proposal.delete({ where: { id: proposalId } });
 
-      return { message: `Proposal ${id} deleted successfully` };
+      return { message: `Proposal ${proposalId} deleted successfully` };
     });
   }
 
