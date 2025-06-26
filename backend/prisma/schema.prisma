@@ -192,6 +192,8 @@ model Contract {
   reviews      Review[]
   
   updatedAt    DateTime @updatedAt
+
+   @@unique([jobId,freelancerId,clientId])
 }
 
 model Message {
