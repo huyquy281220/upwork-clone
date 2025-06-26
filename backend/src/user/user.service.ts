@@ -288,35 +288,4 @@ export class UserService {
       throw new BadRequestException('Failed to upload to Cloudinary');
     }
   }
-
-  async uploadCv(freelancerId: string, file: Express.Multer.File) {
-    if (!file) {
-      throw new BadRequestException('No file provided');
-    }
-
-    try {
-      const result = await cloudinary.uploader.upload(file.path, {
-        folder: 'avatar',
-      });
-
-      if (!result || !result.secure_url || !result.public_id) {
-        throw new BadRequestException(
-          'Cloudinary upload did not return expected result',
-        );
-      }
-
-      await unlinkFile(file.path);
-
-      return {
-        url: result.secure_url,
-        public_id: result.public_id,
-      };
-    } catch (error) {
-      // Delete file if error
-      if (file?.path) {
-        await unlinkFile(file.path).catch(() => null);
-      }
-      throw new BadRequestException('Failed to upload to Cloudinary');
-    }
-  }
 }
