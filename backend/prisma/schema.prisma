@@ -164,12 +164,18 @@ model Proposal {
   id           String            @id @default(uuid())
   freelancerId String
   jobId        String
-  coverLetter  String?
+  coverLetter  String
   hourlyRate   Float
+  pricing      Float
+  timeline     String
+  attachment   String
   status       ProposalStatus
   createdAt    DateTime          @default(now())
+  updatedAt    DateTime @updatedAt
   freelancer   FreelancerProfile @relation("FreelancerProposals", fields: [freelancerId], references: [userId], onDelete: Cascade)
   job          Job               @relation(fields: [jobId], references: [id])
+
+  @@unique([jobId,freelancerId])
 }
 
 model Contract {
