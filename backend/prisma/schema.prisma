@@ -190,6 +190,8 @@ model Contract {
   job          Job               @relation(fields: [jobId], references: [id])
   payments     Payment[]
   reviews      Review[]
+  
+  updatedAt    DateTime @updatedAt
 }
 
 model Message {
