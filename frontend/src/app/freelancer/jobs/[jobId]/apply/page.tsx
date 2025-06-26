@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   AttachmentsSection,
-  ClientQuestionsSection,
   CoverLetterSection,
   PricingSection,
   ProposalSidebar,
@@ -49,11 +48,7 @@ export default function Apply() {
   const [hourlyRate, setHourlyRate] = useState("");
   const [fixedPrice, setFixedPrice] = useState("");
   const [timeline, setTimeline] = useState("");
-  const [clientQuestions, setClientQuestions] = useState<string[]>([
-    "",
-    "",
-    "",
-  ]);
+
   const [attachments, setAttachments] = useState<
     Array<{ name: string; size: number; type: string }>
   >([]);
@@ -111,12 +106,6 @@ export default function Apply() {
               />
 
               <TimelineSection timeline={timeline} setTimeline={setTimeline} />
-
-              <ClientQuestionsSection
-                questions={jobData.questions}
-                clientQuestions={clientQuestions}
-                setClientQuestions={setClientQuestions}
-              />
 
               <AttachmentsSection
                 attachments={attachments}
