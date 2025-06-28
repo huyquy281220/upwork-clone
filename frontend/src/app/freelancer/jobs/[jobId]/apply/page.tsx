@@ -41,33 +41,50 @@ const jobData = {
 };
 
 export default function Apply() {
-  const [coverLetter, setCoverLetter] = useState("");
-  const [proposalType, setProposalType] = useState<"hourly" | "fixed">(
-    "hourly"
-  );
-  const [hourlyRate, setHourlyRate] = useState("");
-  const [fixedPrice, setFixedPrice] = useState("");
-  const [timeline, setTimeline] = useState("");
+  const [proposal, setProposal] = useState<{
+    coverLetter: string;
+    pricing: number;
+    timeline: string;
+    attachment: File | null;
+  }>({
+    coverLetter: "",
+    pricing: 0,
+    timeline: "",
+    attachment: null,
+  });
 
-  const [attachments, setAttachments] = useState<
-    Array<{ name: string; size: number; type: string }>
-  >([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
   const handleSubmit = async () => {
-    setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    setStatus("loading");
+    try {
+      // Simulate API call
+      const res = await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      if (res.status !== 200) {
+        setStatus("error");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const isValid = coverLetter.trim() && (hourlyRate || fixedPrice) && timeline;
+  const handleSetCoverLetter = (value: string) =>
+    setProposal((prev) => ({ ...prev, coverLetter: value }));
 
-  if (isSubmitted) {
-    // return <ProposalSuccess clientName={jobData.client.name} />;
-  }
+  const handleSetAttachment = (file: File) => {
+    setProposal((prev) => ({ ...prev, attachment: file }));
+  };
+
+  const handleSetTimeline = (value: string) => {
+    setProposal((prev) => ({ ...prev, timeline: value }));
+  };
+
+  const handleSetPricing = (value: number) => {
+    setProposal((prev) => ({ ...prev, pricing: value }));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,30 +108,25 @@ export default function Apply() {
           <div className="lg:col-span-2">
             <div className="space-y-8">
               <CoverLetterSection
-                coverLetter={coverLetter}
-                setCoverLetter={setCoverLetter}
+                coverLetter={proposal.coverLetter}
+                setCoverLetter={handleSetCoverLetter}
               />
 
               <PricingSection
-                proposalType={proposalType}
-                setProposalType={setProposalType}
-                hourlyRate={hourlyRate}
-                setHourlyRate={setHourlyRate}
-                fixedPrice={fixedPrice}
-                setFixedPrice={setFixedPrice}
-                jobBudget={jobData.budget}
+                pricing={proposal.pricing}
+                setPricing={handleSetPricing}
               />
 
-              <TimelineSection timeline={timeline} setTimeline={setTimeline} />
-
-              <AttachmentsSection
-                attachments={attachments}
-                setAttachments={setAttachments}
+              <TimelineSection
+                timeline={proposal.timeline}
+                setTimeline={handleSetTimeline}
               />
+
+              <AttachmentsSection setAttachments={handleSetAttachment} />
 
               <SubmitSection
                 onSubmit={handleSubmit}
-                isSubmitting={isSubmitting}
+                isSubmitting={status === "loading"}
                 isValid={false}
               />
             </div>

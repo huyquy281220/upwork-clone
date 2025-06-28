@@ -8,8 +8,10 @@ import LogoBissel from "./Bissel.svg";
 import LogoGlassdoor from "./Glassdoor.svg";
 import BagSvg from "./Bag.svg";
 import RocketSvg from "./Rocket.svg";
+import IconPdf from "./IconPdf.svg";
 
 export {
+  IconPdf,
   Logo,
   ClientSvg,
   FreelancerSvg,

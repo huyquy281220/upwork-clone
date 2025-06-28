@@ -3,42 +3,87 @@
 import type React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, File, X } from "lucide-react";
+import { X, ImageIcon } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { IconPdf } from "@/assets/svg";
 
 interface AttachmentsSectionProps {
-  attachments: Array<{ name: string; size: number; type: string }>;
-  setAttachments: (
-    attachments: Array<{ name: string; size: number; type: string }>
-  ) => void;
+  setAttachments: (file: File) => void;
 }
 
 export function AttachmentsSection({
-  attachments,
   setAttachments,
 }: AttachmentsSectionProps) {
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFiles = Array.from(event.target.files || []);
-    const fileData = uploadedFiles.map((file) => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    }));
-    setAttachments([...attachments, ...fileData]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const handleFileInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
   };
 
-  const removeFile = (index: number) => {
-    setAttachments(attachments.filter((_, i) => i !== index));
+  console.log(selectedFile);
+
+  const handleFileSelect = useCallback((file: File) => {
+    if (!file || !file.type.startsWith("application/pdf")) {
+      alert("Please upload a PDF file");
+      return;
+    }
+    setSelectedFile(file);
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+  }, []);
+
+  // const handleFileUpload = () => {};
+
+  const removeFile = () => {
+    setSelectedFile(null);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return (
-      Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
-    );
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragOver(true);
   };
+
+  const handleDragLeave = (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragOver(false);
+
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  // const formatFileSize = (bytes: number) => {
+  //   if (bytes === 0) return "0 Bytes";
+  //   const k = 1024;
+  //   const sizes = ["Bytes", "KB", "MB", "GB"];
+  //   const i = Math.floor(Math.log(bytes) / Math.log(k));
+  //   return (
+  //     Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+  //   );
+  // };
 
   return (
     <Card>
@@ -49,50 +94,78 @@ export function AttachmentsSection({
         </p>
       </CardHeader>
       <CardContent>
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-          <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-          <p className="text-sm text-gray-600 mb-2">
-            Drag and drop files here, or click to browse
-          </p>
-          <input
-            type="file"
-            multiple
-            onChange={handleFileUpload}
-            className="hidden"
-            id="file-upload"
-          />
-          <Button variant="outline" size="sm" asChild>
-            <label htmlFor="file-upload" className="cursor-pointer">
-              Choose Files
-            </label>
-          </Button>
-        </div>
-
-        {attachments.length > 0 && (
-          <div className="mt-4 space-y-2">
-            {attachments.map((file, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-              >
-                <div className="flex items-center space-x-3">
-                  <File className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="font-medium text-sm">{file.name}</p>
-                    <p className="text-xs text-gray-500">
-                      {formatFileSize(file.size)}
-                    </p>
+        {!selectedFile ? (
+          <div
+            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+              isDragOver
+                ? "border-blue-500 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400"
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <ImageIcon className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+            <p className="text-sm text-gray-600 mb-2">
+              Drag and drop your pdf file here, or click to browse
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              className="bg-white text-black"
+            >
+              Browse Files
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf"
+              onChange={handleFileInputChange}
+              className="hidden"
+            />
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="relative w-full">
+              {previewUrl && (
+                <div className="relative rounded-lg w-full max-w-full">
+                  <div className="w-full h-48 flex items-center justify-center">
+                    <Image
+                      src={IconPdf}
+                      alt="Preview"
+                      width={400}
+                      height={300}
+                      className="max-w-full max-h-full object-contain"
+                    />
                   </div>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 h-8 w-8"
+                    onClick={removeFile}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeFile(index)}
+              )}
+            </div>
+            <div className="text-sm text-gray-600">
+              <p>
+                <strong className="text-foreground">File: </strong>
+                <Link
+                  href={previewUrl ?? ""}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-block text-green-400"
                 >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
+                  {selectedFile.name}
+                </Link>
+              </p>
+              <p className="text-foreground">
+                <strong>Size:</strong>{" "}
+                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+            </div>
           </div>
         )}
       </CardContent>
