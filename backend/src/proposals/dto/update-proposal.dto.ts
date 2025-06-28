@@ -16,7 +16,7 @@ export class UpdateProposalDto {
   timeline?: string;
 
   @IsString()
-  attachment?: string;
+  attachment?: Express.Multer.File;
 
   @IsEnum(ProposalStatus)
   @IsOptional()

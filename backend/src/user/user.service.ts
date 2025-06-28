@@ -10,7 +10,7 @@ import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { EmailService } from 'src/email/email.service';
-import { cloudinary } from './provider/cloudinary';
+import { cloudinary } from 'src/provider/cloudinary';
 import * as fs from 'fs';
 import * as util from 'util';
 import { Express } from 'express';

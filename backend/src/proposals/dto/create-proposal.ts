@@ -12,11 +12,11 @@ export class CreateProposalDto {
   coverLetter?: string;
 
   @IsNumber()
-  pricing: number;
+  pricing?: number;
 
   @IsString()
-  attachment: string;
+  attachment?: Express.Multer.File;
 
   @IsString()
-  timeline: string;
+  timeline?: string;
 }

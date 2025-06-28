@@ -7,6 +7,11 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ProposalStatus } from '@prisma/client';
 import { CreateProposalDto } from './dto/create-proposal';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
+import { cloudinary } from 'src/provider/cloudinary';
+import * as fs from 'fs';
+import * as util from 'util';
+
+const unlinkFile = util.promisify(fs.unlink);
 
 @Injectable()
 export class ProposalsService {
@@ -32,11 +37,14 @@ export class ProposalsService {
       const existingProposal = await tx.proposal.findFirst({
         where: { freelancerId: data.freelancerId, jobId: data.jobId },
       });
+
       if (existingProposal) {
         throw new BadRequestException(
           'Freelancer already has a proposal for this job',
         );
       }
+
+      const urlOfCv = await this.uploadCv(data.attachment);
 
       //Create proposal
       const proposal = await tx.proposal.create({
@@ -46,7 +54,7 @@ export class ProposalsService {
           timeline: data.timeline,
           coverLetter: data.coverLetter,
           pricing: data.pricing,
-          attachment: data.attachment,
+          attachment: urlOfCv ?? null,
           status: ProposalStatus.PENDING,
         },
       });
@@ -89,6 +97,8 @@ export class ProposalsService {
         throw new BadRequestException('Freelancer does not own this proposal');
       }
 
+      const urlOfCv = await this.uploadCv(data.attachment);
+
       // Update proposal
       await tx.proposal.update({
         where: { id: proposalId },
@@ -96,7 +106,7 @@ export class ProposalsService {
           coverLetter: data.coverLetter,
           pricing: data.pricing,
           timeline: data.timeline,
-          attachment: data.attachment,
+          attachment: urlOfCv ?? null,
           status: data.status,
         },
       });
@@ -230,4 +240,32 @@ export class ProposalsService {
   //       return { message: `Proposal ${proposalId} rejected successfully` };
   //     });
   //   }
+
+  async uploadCv(file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    try {
+      const result = await cloudinary.uploader.upload(file.path, {
+        folder: 'cv',
+      });
+
+      if (!result || !result.secure_url || !result.public_id) {
+        throw new BadRequestException(
+          'Cloudinary upload did not return expected result',
+        );
+      }
+
+      await unlinkFile(file.path);
+
+      return result.secure_url;
+    } catch (error) {
+      // Delete file if error
+      if (file?.path) {
+        await unlinkFile(file.path).catch(() => null);
+      }
+      throw new BadRequestException('Failed to upload to Cloudinary');
+    }
+  }
 }
