@@ -18,7 +18,55 @@ const unlinkFile = util.promisify(fs.unlink);
 export class ProposalsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getPaginatedProposals() {}
+  async getPaginatedProposals(
+    freelancerId: string,
+    limit: number,
+    page: number,
+  ) {
+    try {
+      const [proposals, totalProposals] = await Promise.all([
+        this.prismaService.proposal.findMany({
+          where: {
+            freelancerId,
+          },
+          include: {
+            job: {
+              select: {
+                title: true,
+                description: true,
+                hourlyRateMin: true,
+                hourlyRateMax: true,
+                fixedPrice: true,
+              },
+            },
+            freelancer: {
+              include: {
+                user: {
+                  select: { fullName: true, address: true, verified: true },
+                },
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: limit,
+          skip: (page - 1) * limit,
+        }),
+        this.prismaService.proposal.count({
+          where: { freelancerId },
+        }),
+      ]);
+
+      return {
+        data: proposals,
+        totalPage: Math.ceil(totalProposals / limit),
+      };
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to fetch proposals');
+    }
+  }
 
   async createProposal(data: CreateProposalDto, file: Express.Multer.File) {
     return this.prismaService.$transaction(async (tx) => {

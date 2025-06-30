@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -20,8 +21,18 @@ import { Express } from 'express';
 export class ProposalsController {
   constructor(private readonly proposalsService: ProposalsService) {}
 
-  @Get('/')
-  async getPaginatedProposals() {}
+  @Get('/:freelancerId/get-paginated-proposals')
+  async getPaginatedProposals(
+    @Param('freelancerId') freelancerId: string,
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('page', ParseIntPipe) page: number,
+  ) {
+    return this.proposalsService.getPaginatedProposals(
+      freelancerId,
+      limit,
+      page,
+    );
+  }
 
   @Post('/create')
   @UseInterceptors(FileInterceptor('attachment'))

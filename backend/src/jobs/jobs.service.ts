@@ -185,11 +185,13 @@ export class JobsService {
 
   async getPaginatedJobs(clientId: string, limit: number, page: number) {
     try {
-      const [jobs, totalJobs] = await this.prisma.$transaction([
+      const [jobs, totalJobs] = await Promise.all([
         this.prisma.job.findMany({
           where: { client: { userId: clientId } },
           include: {
-            skills: { select: { skill: { select: { id: true, name: true } } } },
+            skills: {
+              select: { skill: { select: { id: true, name: true } } },
+            },
           },
           orderBy: { createdAt: 'desc' },
           take: limit,
@@ -202,11 +204,11 @@ export class JobsService {
 
       return {
         data: jobs,
-        // totalJobsCount: totalJobs,
         totalPages: Math.ceil(totalJobs / limit),
       };
     } catch (error) {
-      console.log(error);
+      console.error('Error fetching jobs with pagination:', error);
+      throw new Error('Failed to fetch jobs');
     }
   }
 
