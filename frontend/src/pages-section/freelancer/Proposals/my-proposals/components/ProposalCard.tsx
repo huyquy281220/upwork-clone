@@ -60,20 +60,12 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
-              <h3 className="text-lg font-semibold text-gray-900 hover:text-green-600 cursor-pointer">
+              <h3 className="text-lg font-semibold text-green-600 cursor-pointer">
                 {proposal.jobTitle}
               </h3>
-              {proposal.boosted && (
-                <Badge
-                  variant="outline"
-                  className="bg-orange-50 text-orange-700 border-orange-200"
-                >
-                  Boosted
-                </Badge>
-              )}
             </div>
 
-            <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+            <div className="flex items-center space-x-4 text-sm text-foreground-muted opacity-85 mb-3">
               <div className="flex items-center space-x-1">
                 <Calendar className="w-4 h-4" />
                 <span>Submitted {proposal.submittedDate}</span>
@@ -101,7 +93,7 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
               </Avatar>
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-foreground">
                     {proposal.client.name}
                   </span>
                   {proposal.client.verified && (
@@ -113,7 +105,7 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center space-x-3 text-sm text-gray-600">
+                <div className="flex items-center space-x-3 text-sm text-foreground-muted opacity-85">
                   <div className="flex items-center space-x-1">
                     <MapPin className="w-3 h-3" />
                     <span>{proposal.client.location}</span>
@@ -127,7 +119,7 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+            <div className="bg-gray-100 rounded-lg p-4 mb-4">
               <p className="text-sm text-gray-700 line-clamp-2">
                 {proposal.coverLetter}
               </p>
@@ -138,11 +130,11 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
                 <Badge className={getStatusColor(proposal.status)}>
                   {proposal.status}
                 </Badge>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm font-medium text-foreground">
                   Your rate: {proposal.proposalRate}
                 </span>
                 {proposal.viewed && (
-                  <div className="flex items-center space-x-1 text-sm text-gray-600">
+                  <div className="flex items-center space-x-1 text-sm text-foreground-muted opacity-85">
                     <Eye className="w-4 h-4" />
                     <span>Viewed</span>
                   </div>
