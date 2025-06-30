@@ -2,18 +2,8 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Calendar,
-  DollarSign,
-  Eye,
-  Heart,
-  MapPin,
-  MessageSquare,
-  MoreHorizontal,
-  Star,
-} from "lucide-react";
+import { Calendar, DollarSign, Eye, MapPin, Star } from "lucide-react";
 
 interface ProposalCardProps {
   proposal: {
@@ -141,18 +131,14 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
                 )}
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm">
-                  <MessageSquare className="w-4 h-4 mr-1" />
-                  Message
-                </Button>
+              {/* <div className="flex items-center space-x-2">
                 <Button variant="ghost" size="sm">
                   <Heart className="w-4 h-4" />
                 </Button>
                 <Button variant="ghost" size="sm">
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
