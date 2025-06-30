@@ -3,7 +3,7 @@ import api from "./api";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const getJobsWithPagination = async (
+export const getPaginatedJobs = async (
   userId: string,
   page: number,
   limit: number

@@ -17,3 +17,5 @@ export const createProposal = async (data: CreateProposalProps) => {
 
   return res.data;
 };
+
+// export const getPaginatedProposals

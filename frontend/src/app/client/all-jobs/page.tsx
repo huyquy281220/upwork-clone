@@ -3,7 +3,7 @@
 import { Pagination } from "@/components/common/Pagination";
 import { JobPostsHeader } from "@/pages-section/client/all-jobs/JobPostsHeader";
 import { JobPostsList } from "@/pages-section/client/all-jobs/JobPostsList";
-import { getJobsWithPagination } from "@/services/jobs";
+import { getPaginatedJobs } from "@/services/jobs";
 import { JobProps } from "@/types/jobs";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -22,8 +22,7 @@ export default function AllJobsPage() {
 
   const { data: jobPosts } = useQuery<JobPostsProps>({
     queryKey: ["jobs-with-pagination", session?.user.id, currentPage],
-    queryFn: () =>
-      getJobsWithPagination(session?.user.id ?? "", currentPage, LIMIT),
+    queryFn: () => getPaginatedJobs(session?.user.id ?? "", currentPage, LIMIT),
     enabled: !!session?.user.id,
   });
 
