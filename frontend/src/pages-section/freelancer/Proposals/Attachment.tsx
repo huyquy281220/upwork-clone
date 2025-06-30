@@ -10,7 +10,7 @@ import Link from "next/link";
 import { IconPdf } from "@/assets/svg";
 
 interface AttachmentsSectionProps {
-  setAttachments: (file: File) => void;
+  setAttachments: (file: File | null) => void;
 }
 
 export function AttachmentsSection({
@@ -30,13 +30,12 @@ export function AttachmentsSection({
     }
   };
 
-  console.log(selectedFile);
-
   const handleFileSelect = useCallback((file: File) => {
     if (!file || !file.type.startsWith("application/pdf")) {
       alert("Please upload a PDF file");
       return;
     }
+    setAttachments(file);
     setSelectedFile(file);
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
@@ -45,6 +44,7 @@ export function AttachmentsSection({
   // const handleFileUpload = () => {};
 
   const removeFile = () => {
+    setAttachments(null);
     setSelectedFile(null);
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);

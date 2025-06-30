@@ -1,4 +1,5 @@
 import { ProposalStatus } from '@prisma/client';
+import { Type } from 'class-transformer';
 import { IsString, IsNumber, IsOptional, IsEnum } from 'class-validator';
 
 export class UpdateProposalDto {
@@ -10,13 +11,13 @@ export class UpdateProposalDto {
   coverLetter?: string;
 
   @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
   pricing?: number;
 
   @IsString()
+  @IsOptional()
   timeline?: string;
-
-  @IsString()
-  attachment?: Express.Multer.File;
 
   @IsEnum(ProposalStatus)
   @IsOptional()

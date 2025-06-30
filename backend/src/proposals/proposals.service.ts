@@ -10,6 +10,7 @@ import { UpdateProposalDto } from './dto/update-proposal.dto';
 import { cloudinary } from 'src/provider/cloudinary';
 import * as fs from 'fs';
 import * as util from 'util';
+import { Express } from 'express';
 
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -17,10 +18,10 @@ const unlinkFile = util.promisify(fs.unlink);
 export class ProposalsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createProposal(data: CreateProposalDto) {
+  async createProposal(data: CreateProposalDto, file: Express.Multer.File) {
     return this.prismaService.$transaction(async (tx) => {
       const freelancer = await tx.freelancerProfile.findUnique({
-        where: { userId: data.freelancerId },
+        where: { id: data.freelancerId },
       });
       if (!freelancer) {
         throw new NotFoundException('Freelancer not found');
@@ -44,16 +45,16 @@ export class ProposalsService {
         );
       }
 
-      const urlOfCv = await this.uploadCv(data.attachment);
+      const urlOfCv = await this.uploadCv(file);
 
       //Create proposal
       const proposal = await tx.proposal.create({
         data: {
           job: { connect: { id: data.jobId } },
-          freelancer: { connect: { userId: data.freelancerId } },
+          freelancer: { connect: { id: data.freelancerId } },
           timeline: data.timeline,
           coverLetter: data.coverLetter,
-          pricing: data.pricing,
+          pricing: Number(data.pricing),
           attachment: urlOfCv ?? null,
           status: ProposalStatus.PENDING,
         },
@@ -85,7 +86,11 @@ export class ProposalsService {
     return proposal;
   }
 
-  async updateProposal(proposalId: string, data: UpdateProposalDto) {
+  async updateProposal(
+    proposalId: string,
+    data: UpdateProposalDto,
+    file: Express.Multer.File,
+  ) {
     return this.prismaService.$transaction(async (tx) => {
       const proposal = await tx.proposal.findUnique({
         where: { id: proposalId },
@@ -97,14 +102,14 @@ export class ProposalsService {
         throw new BadRequestException('Freelancer does not own this proposal');
       }
 
-      const urlOfCv = await this.uploadCv(data.attachment);
+      const urlOfCv = await this.uploadCv(file);
 
       // Update proposal
       await tx.proposal.update({
         where: { id: proposalId },
         data: {
           coverLetter: data.coverLetter,
-          pricing: data.pricing,
+          pricing: Number(data.pricing),
           timeline: data.timeline,
           attachment: urlOfCv ?? null,
           status: data.status,
@@ -242,6 +247,7 @@ export class ProposalsService {
   //   }
 
   async uploadCv(file: Express.Multer.File) {
+    console.log(file);
     if (!file) {
       throw new BadRequestException('No file provided');
     }
@@ -265,6 +271,7 @@ export class ProposalsService {
       if (file?.path) {
         await unlinkFile(file.path).catch(() => null);
       }
+      console.log(error);
       throw new BadRequestException('Failed to upload to Cloudinary');
     }
   }

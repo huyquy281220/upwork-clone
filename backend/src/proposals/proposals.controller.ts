@@ -6,26 +6,35 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProposalsService } from './proposals.service';
 import { CreateProposalDto } from './dto/create-proposal';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('proposals')
 export class ProposalsController {
   constructor(private readonly proposalsService: ProposalsService) {}
 
   @Post('/create')
-  async create(@Body() data: CreateProposalDto) {
-    return this.proposalsService.createProposal(data);
+  @UseInterceptors(FileInterceptor('attachment'))
+  async create(
+    @Body() data: CreateProposalDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.proposalsService.createProposal(data, file);
   }
 
   @Patch('/update/:proposalId')
+  @UseInterceptors(FileInterceptor('attachment'))
   async update(
     @Param('proposalId') proposalId: string,
     @Body() data: UpdateProposalDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.proposalsService.updateProposal(proposalId, data);
+    return this.proposalsService.updateProposal(proposalId, data, file);
   }
 
   @Delete('/delete/:proposalId')

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   AttachmentsSection,
   CoverLetterSection,
@@ -9,6 +9,14 @@ import {
   SubmitSection,
   TimelineSection,
 } from "@/pages-section/freelancer/Proposals";
+import { createProposal } from "@/services/proposals";
+import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUserInfo";
+import { LoadingComp } from "@/components/common/LoadingComp";
+import { FreelancerUser } from "@/types/user";
+import { useToast } from "@/hooks/useToast";
+import { ModernToast } from "@/components/common/ModernToast";
 
 const jobData = {
   id: 1,
@@ -40,41 +48,74 @@ const jobData = {
   ],
 };
 
+const initialProposal = {
+  coverLetter: "",
+  pricing: 0,
+  timeline: "",
+  attachment: null,
+};
+
 export default function Apply() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const { data: user } = useUser<FreelancerUser>(session?.user.id ?? "");
+  const params = useParams();
+  const jobId = params.jobId as string;
+
   const [proposal, setProposal] = useState<{
     coverLetter: string;
     pricing: number;
     timeline: string;
     attachment: File | null;
-  }>({
-    coverLetter: "",
-    pricing: 0,
-    timeline: "",
-    attachment: null,
-  });
+  }>(initialProposal);
 
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+  const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
+
+  const isValid = useMemo(() => {
+    return (
+      proposal.coverLetter !== initialProposal.coverLetter ||
+      proposal.pricing !== initialProposal.pricing ||
+      proposal.timeline !== initialProposal.timeline ||
+      proposal.attachment !== initialProposal.attachment
+    );
+  }, [proposal]);
+
+  if (!session || !user) return <LoadingComp progress={session ? 100 : 50} />;
 
   const handleSubmit = async () => {
     setStatus("loading");
     try {
-      // Simulate API call
-      const res = await new Promise((resolve) => setTimeout(resolve, 2000));
+      const res = await createProposal({
+        ...proposal,
+        jobId,
+        freelancerId: user?.freelancerProfile.id,
+      });
 
-      if (res.status !== 200) {
-        setStatus("error");
+      if (res.status === 200) {
+        showSuccessToast(
+          "Create proposal successfully.",
+          "Redirecting to proposals page.",
+          1500
+        );
+        setProposal(initialProposal);
+        setTimeout(() => {
+          router.push("/freelancer/proposals");
+        }, 1500);
       }
     } catch (error) {
       console.error(error);
+      setStatus("error");
+      showErrorToast("Failed to create proposal. Please try again.", "", 1500);
     }
   };
 
   const handleSetCoverLetter = (value: string) =>
     setProposal((prev) => ({ ...prev, coverLetter: value }));
 
-  const handleSetAttachment = (file: File) => {
+  const handleSetAttachment = (file: File | null) => {
     setProposal((prev) => ({ ...prev, attachment: file }));
   };
 
@@ -88,6 +129,7 @@ export default function Apply() {
 
   return (
     <div className="min-h-screen bg-background">
+      {activeToasts && <ModernToast {...toast} />}
       {/* Header */}
       <div className="max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
@@ -127,7 +169,7 @@ export default function Apply() {
               <SubmitSection
                 onSubmit={handleSubmit}
                 isSubmitting={status === "loading"}
-                isValid={false}
+                isValid={isValid}
               />
             </div>
           </div>

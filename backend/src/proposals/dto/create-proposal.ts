@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateProposalDto {
@@ -12,11 +13,11 @@ export class CreateProposalDto {
   coverLetter?: string;
 
   @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
   pricing?: number;
 
   @IsString()
-  attachment?: Express.Multer.File;
-
-  @IsString()
+  @IsOptional()
   timeline?: string;
 }

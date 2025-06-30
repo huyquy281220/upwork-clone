@@ -22,19 +22,7 @@ export function CoverLetterSection({
       </CardHeader>
       <CardContent>
         <textarea
-          placeholder="Dear [Client Name],
-
-            I'm excited about your project and believe I'm the perfect fit because...
-
-            Here's how I can help:
-            • [Specific skill/experience relevant to the project]
-            • [Another relevant point]
-            • [Timeline or availability]
-
-            I'd love to discuss your project further. When would be a good time for a quick call?
-
-            Best regards,
-            [Your Name]"
+          placeholder=""
           value={coverLetter}
           onChange={(e) => setCoverLetter(e.target.value)}
           className="min-h-[300px] w-full p-2 rounded-sm resize-none bg-transparent border border-gray-400"
