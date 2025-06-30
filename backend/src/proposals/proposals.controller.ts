@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -13,10 +14,14 @@ import { ProposalsService } from './proposals.service';
 import { CreateProposalDto } from './dto/create-proposal';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 
 @Controller('proposals')
 export class ProposalsController {
   constructor(private readonly proposalsService: ProposalsService) {}
+
+  @Get('/')
+  async getPaginatedProposals() {}
 
   @Post('/create')
   @UseInterceptors(FileInterceptor('attachment'))

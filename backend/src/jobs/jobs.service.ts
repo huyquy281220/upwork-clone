@@ -183,7 +183,7 @@ export class JobsService {
     }));
   }
 
-  async getJobsWithPagination(clientId: string, limit: number, page: number) {
+  async getPaginatedJobs(clientId: string, limit: number, page: number) {
     try {
       const [jobs, totalJobs] = await this.prisma.$transaction([
         this.prisma.job.findMany({

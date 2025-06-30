@@ -18,6 +18,8 @@ const unlinkFile = util.promisify(fs.unlink);
 export class ProposalsService {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async getPaginatedProposals() {}
+
   async createProposal(data: CreateProposalDto, file: Express.Multer.File) {
     return this.prismaService.$transaction(async (tx) => {
       const freelancer = await tx.freelancerProfile.findUnique({

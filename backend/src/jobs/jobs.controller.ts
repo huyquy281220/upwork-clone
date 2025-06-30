@@ -27,12 +27,12 @@ export class JobsController {
   }
 
   @Get('/:clientId/get-jobs-with-pagination')
-  getJobsWithPagination(
+  getPaginatedJobs(
     @Param('clientId') clientId: string,
     @Query('limit', ParseIntPipe) limit: number,
     @Query('page', ParseIntPipe) page: number,
   ) {
-    return this.jobsService.getJobsWithPagination(clientId, limit, page);
+    return this.jobsService.getPaginatedJobs(clientId, limit, page);
   }
 
   @Get('/:clientId/get-all-jobs')
