@@ -11,8 +11,8 @@ export const freelancerNavHeader = [
         link: "",
       },
       {
-        label: "Proposals and offers",
-        link: "",
+        label: "Proposals",
+        link: "freelancer/my-proposals",
       },
       {
         label: "Reach more clients",
