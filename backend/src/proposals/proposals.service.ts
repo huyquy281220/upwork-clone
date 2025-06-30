@@ -305,6 +305,7 @@ export class ProposalsService {
     try {
       const result = await cloudinary.uploader.upload(file.path, {
         folder: 'cv',
+        resource_type: 'raw',
       });
 
       if (!result || !result.secure_url || !result.public_id) {
