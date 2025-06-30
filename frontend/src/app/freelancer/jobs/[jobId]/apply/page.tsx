@@ -8,7 +8,7 @@ import {
   ProposalSidebar,
   SubmitSection,
   TimelineSection,
-} from "@/pages-section/freelancer/Proposals";
+} from "@/pages-section/freelancer/Proposals/create-proposal";
 import { createProposal } from "@/services/proposals";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
