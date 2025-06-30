@@ -49,7 +49,7 @@ export function ProposalsFilters({
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">
+          <label className="text-sm font-medium text-foreground mb-2 block">
             Status
           </label>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -77,7 +77,7 @@ export function ProposalsFilters({
         </div>
 
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">
+          <label className="text-sm font-medium text-foreground mb-2 block">
             Date Range
           </label>
           <Select value={dateFilter} onValueChange={setDateFilter}>
@@ -95,7 +95,7 @@ export function ProposalsFilters({
         </div>
 
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">
+          <label className="text-sm font-medium text-foreground mb-2 block">
             Budget Range
           </label>
           <Select

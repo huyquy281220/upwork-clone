@@ -30,7 +30,7 @@ export function ProposalsSearchSort({
           placeholder="Search proposals..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className="w-full h-9 pl-10 rounded-sm border"
         />
       </div>
       <Select value={sortBy} onValueChange={setSortBy}>
