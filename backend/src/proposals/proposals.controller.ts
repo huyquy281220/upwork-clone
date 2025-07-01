@@ -26,11 +26,21 @@ export class ProposalsController {
     @Param('freelancerId') freelancerId: string,
     @Query('limit', ParseIntPipe) limit: number,
     @Query('page', ParseIntPipe) page: number,
+    @Query('search') searchQuery?: string,
+    @Query('status') statusFilter?: string,
+    @Query('date') dateFilter?: string,
+    @Query('budget') budget?: string,
+    @Query('sortBy') sortBy = 'newest',
   ) {
     return this.proposalsService.getPaginatedProposals(
       freelancerId,
       limit,
       page,
+      searchQuery,
+      statusFilter,
+      dateFilter,
+      budget,
+      sortBy,
     );
   }
 

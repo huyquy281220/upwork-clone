@@ -36,6 +36,7 @@ export interface ProposalProps {
       fullName: string;
       address: string;
       verified: boolean;
+      avatar: string;
     };
   };
 }

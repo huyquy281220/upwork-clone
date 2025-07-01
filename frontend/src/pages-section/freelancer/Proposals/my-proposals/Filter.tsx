@@ -19,12 +19,10 @@ interface ProposalsFiltersProps {
   budgetRangeFilter: string;
   setBudgetRangeFilter: (value: string) => void;
   statusCounts: {
-    active: number;
-    interviewing: number;
-    submitted: number;
-    declined: number;
+    pending: number;
+    accepted: number;
+    rejected: number;
   };
-  filteredCount: number;
   onClearFilters: () => void;
 }
 
@@ -36,7 +34,6 @@ export function ProposalsFilters({
   budgetRangeFilter,
   setBudgetRangeFilter,
   statusCounts,
-  filteredCount,
   onClearFilters,
 }: ProposalsFiltersProps) {
   return (
@@ -57,20 +54,15 @@ export function ProposalsFilters({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">
-                All Proposals ({filteredCount})
+              <SelectItem value="all">All Proposals</SelectItem>
+              <SelectItem value="pending">
+                Pending ({statusCounts.pending})
               </SelectItem>
-              <SelectItem value="active">
-                Active ({statusCounts.active})
+              <SelectItem value="accepted">
+                Accepted ({statusCounts.accepted})
               </SelectItem>
-              <SelectItem value="interviewing">
-                Interviewing ({statusCounts.interviewing})
-              </SelectItem>
-              <SelectItem value="submitted">
-                Submitted ({statusCounts.submitted})
-              </SelectItem>
-              <SelectItem value="declined">
-                Declined ({statusCounts.declined})
+              <SelectItem value="rejected">
+                Rejected ({statusCounts.rejected})
               </SelectItem>
             </SelectContent>
           </Select>

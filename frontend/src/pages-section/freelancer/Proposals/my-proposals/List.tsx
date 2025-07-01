@@ -1,28 +1,10 @@
 "use client";
 
+import { ProposalProps } from "@/types/proposals";
 import { ProposalCard } from "./components/ProposalCard";
 
 interface ProposalsListProps {
-  proposals: Array<{
-    id: number;
-    jobTitle: string;
-    client: {
-      name: string;
-      avatar: string;
-      location: string;
-      rating: number;
-      totalSpent: string;
-      verified: boolean;
-    };
-    status: string;
-    submittedDate: string;
-    budget: string;
-    proposalRate: string;
-    coverLetter: string;
-    connects: number;
-    boosted: boolean;
-    viewed: boolean;
-  }>;
+  proposals: ProposalProps[];
 }
 
 export function ProposalsList({ proposals }: ProposalsListProps) {

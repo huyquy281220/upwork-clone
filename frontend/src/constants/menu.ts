@@ -12,7 +12,7 @@ export const freelancerNavHeader = [
       },
       {
         label: "Proposals",
-        link: "freelancer/my-proposals",
+        link: "/freelancer/my-proposals",
       },
       {
         label: "Reach more clients",

@@ -11,6 +11,7 @@ import { cloudinary } from 'src/provider/cloudinary';
 import * as fs from 'fs';
 import * as util from 'util';
 import { Express } from 'express';
+import { buildProposalFilters } from 'src/helpers/buildProposalFilters';
 
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -22,13 +23,26 @@ export class ProposalsService {
     freelancerId: string,
     limit: number,
     page: number,
+    searchQuery?: string,
+    statusFilter?: string,
+    dateFilter?: string,
+    budget?: string,
+    sortedBy?: string,
   ) {
+    const { where, orderBy } = buildProposalFilters({
+      freelancerId,
+      searchQuery,
+      statusFilter,
+      dateFilter,
+      budget,
+      sortedBy,
+    });
+
     try {
       const [proposals, totalProposals] = await Promise.all([
         this.prismaService.proposal.findMany({
-          where: {
-            freelancerId,
-          },
+          where,
+          orderBy,
           include: {
             job: {
               select: {
@@ -47,9 +61,6 @@ export class ProposalsService {
               },
             },
           },
-          orderBy: {
-            createdAt: 'desc',
-          },
           take: limit,
           skip: (page - 1) * limit,
         }),
@@ -61,6 +72,7 @@ export class ProposalsService {
       return {
         data: proposals,
         totalPage: Math.ceil(totalProposals / limit),
+        totalProposals,
       };
     } catch (error) {
       console.error(error);

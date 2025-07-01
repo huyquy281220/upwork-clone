@@ -18,4 +18,19 @@ export const createProposal = async (data: CreateProposalProps) => {
   return res.data;
 };
 
-// export const getPaginatedProposals
+export const getPaginatedProposals = async (
+  userId: string,
+  limit: number,
+  page: number,
+  searchQuery?: string,
+  status?: string,
+  sortBy?: string,
+  date?: string,
+  budget?: string
+) => {
+  const response = await api.get(
+    `${apiURL}/proposals/${userId}/get-paginated-proposals?limit=${limit}&page=${page}&searchQuery=${searchQuery}&status=${status}&sorted-by=${sortBy}&date=${date}&budget=${budget}`
+  );
+
+  return response.data;
+};
