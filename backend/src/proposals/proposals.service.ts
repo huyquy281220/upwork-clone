@@ -26,7 +26,7 @@ export class ProposalsService {
     searchQuery?: string,
     statusFilter?: string,
     dateFilter?: string,
-    budget?: string,
+    budgetFilter?: string,
     sortedBy?: string,
   ) {
     const { where, orderBy } = buildProposalFilters({
@@ -34,7 +34,7 @@ export class ProposalsService {
       searchQuery,
       statusFilter,
       dateFilter,
-      budget,
+      budgetFilter,
       sortedBy,
     });
 
@@ -56,7 +56,12 @@ export class ProposalsService {
             freelancer: {
               include: {
                 user: {
-                  select: { fullName: true, address: true, verified: true },
+                  select: {
+                    fullName: true,
+                    address: true,
+                    verified: true,
+                    avatarUrl: true,
+                  },
                 },
               },
             },

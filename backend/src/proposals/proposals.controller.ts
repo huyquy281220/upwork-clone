@@ -29,7 +29,7 @@ export class ProposalsController {
     @Query('search') searchQuery?: string,
     @Query('status') statusFilter?: string,
     @Query('date') dateFilter?: string,
-    @Query('budget') budget?: string,
+    @Query('budget') budgetFilter?: string,
     @Query('sortBy') sortBy = 'newest',
   ) {
     return this.proposalsService.getPaginatedProposals(
@@ -39,7 +39,7 @@ export class ProposalsController {
       searchQuery,
       statusFilter,
       dateFilter,
-      budget,
+      budgetFilter,
       sortBy,
     );
   }

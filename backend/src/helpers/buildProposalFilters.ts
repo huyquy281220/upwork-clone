@@ -6,7 +6,7 @@ interface BuildFiltersParams {
   searchQuery?: string;
   statusFilter?: string;
   dateFilter?: string;
-  budget?: string;
+  budgetFilter?: string;
   sortedBy?: string;
 }
 
@@ -15,16 +15,21 @@ export function buildProposalFilters({
   searchQuery,
   statusFilter,
   dateFilter,
-  budget,
+  budgetFilter,
   sortedBy,
 }: BuildFiltersParams): {
   where: Prisma.ProposalWhereInput;
   orderBy: Prisma.ProposalOrderByWithRelationInput[];
 } {
+  const statusFilterCleaned = cleanFilter(statusFilter);
+  const dateFilterCleaned = cleanFilter(dateFilter);
+  const budgetFilterCleaned = cleanFilter(budgetFilter);
+
   const today = startOfToday();
+  const budget = parseBudgetFilter(budgetFilterCleaned);
 
   let dateFilterCondition;
-  switch (dateFilter) {
+  switch (dateFilterCleaned) {
     case 'today':
       dateFilterCondition = today;
       break;
@@ -48,8 +53,10 @@ export function buildProposalFilters({
   switch (sortedBy) {
     case 'newest':
       orderBy = [{ createdAt: 'desc' }];
+      break;
     case 'oldest':
       orderBy = [{ createdAt: 'asc' }];
+      break;
     case 'highest':
       orderBy = [
         {
@@ -63,6 +70,7 @@ export function buildProposalFilters({
           },
         },
       ];
+      break;
     case 'lowest':
       orderBy = [
         {
@@ -76,6 +84,7 @@ export function buildProposalFilters({
           },
         },
       ];
+      break;
     default:
       break;
   }
@@ -89,7 +98,7 @@ export function buildProposalFilters({
       },
     }),
     ...(statusFilter && {
-      status: statusFilter as ProposalStatus,
+      status: statusFilterCleaned as ProposalStatus,
     }),
     ...(dateFilterCondition && {
       createdAt: {
@@ -98,5 +107,49 @@ export function buildProposalFilters({
     }),
   };
 
+  if (budget) {
+    where.OR = [
+      {
+        job: {
+          fixedPrice: {
+            gte: budget.min,
+            lte: budget.max !== Infinity ? budget.max : undefined,
+          },
+        },
+      },
+      {
+        job: {
+          hourlyRateMin: {
+            gte: budget.min,
+          },
+          ...(budget.max !== Infinity && {
+            hourlyRateMax: {
+              lte: budget.max,
+            },
+          }),
+        },
+      },
+    ];
+  }
+
   return { where, orderBy };
+}
+
+function cleanFilter(value: string) {
+  return value === 'all' ? undefined : value;
+}
+
+function parseBudgetFilter(budgetFilter: string) {
+  switch (budgetFilter) {
+    case 'under-1k':
+      return { min: 0, max: 1000 };
+    case '1k-5k':
+      return { min: 1000, max: 5000 };
+    case '5k-10k':
+      return { min: 5000, max: 10000 };
+    case 'over-10k':
+      return { min: 10000, max: Infinity };
+    default:
+      return null;
+  }
 }

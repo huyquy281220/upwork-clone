@@ -29,7 +29,7 @@ export const getPaginatedProposals = async (
   budget?: string
 ) => {
   const response = await api.get(
-    `${apiURL}/proposals/${userId}/get-paginated-proposals?limit=${limit}&page=${page}&searchQuery=${searchQuery}&status=${status}&sorted-by=${sortBy}&date=${date}&budget=${budget}`
+    `${apiURL}/proposals/${userId}/get-paginated-proposals?limit=${limit}&page=${page}&searchQuery=${searchQuery}&status=${status}&sortedBy=${sortBy}&date=${date}&budget=${budget}`
   );
 
   return response.data;
