@@ -68,7 +68,7 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
             <div className="flex items-center space-x-3 mb-4">
               <Avatar className="w-8 h-8">
                 <AvatarImage
-                  src={proposal.freelancer.user.avatar || "/placeholder.svg"}
+                  src={proposal.freelancer.user.avatarUrl || "/placeholder.svg"}
                 />
                 <AvatarFallback>
                   {proposal.freelancer.user.fullName
