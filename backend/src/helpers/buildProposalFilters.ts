@@ -92,9 +92,11 @@ export function buildProposalFilters({
   const where: Prisma.ProposalWhereInput = {
     freelancerId,
     ...(searchQuery && {
-      title: {
-        contains: searchQuery,
-        mode: 'insensitive',
+      job: {
+        title: {
+          contains: searchQuery,
+          mode: 'insensitive',
+        },
       },
     }),
     ...(statusFilter && {
@@ -108,6 +110,9 @@ export function buildProposalFilters({
       },
     }),
   };
+
+  console.log(where);
+  console.log(searchQuery);
 
   if (budget) {
     where.OR = [

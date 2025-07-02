@@ -26,7 +26,7 @@ export class ProposalsController {
     @Param('freelancerId') freelancerId: string,
     @Query('limit', ParseIntPipe) limit: number,
     @Query('page', ParseIntPipe) page: number,
-    @Query('search') searchQuery?: string,
+    @Query('searchQuery') searchQuery?: string,
     @Query('status') statusFilter?: string,
     @Query('date') dateFilter?: string,
     @Query('budget') budgetFilter?: string,
