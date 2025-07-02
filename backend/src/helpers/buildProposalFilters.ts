@@ -98,7 +98,9 @@ export function buildProposalFilters({
       },
     }),
     ...(statusFilter && {
-      status: statusFilterCleaned as ProposalStatus,
+      status: statusFilterCleaned
+        ? (statusFilterCleaned.toUpperCase() as ProposalStatus)
+        : undefined,
     }),
     ...(dateFilterCondition && {
       createdAt: {

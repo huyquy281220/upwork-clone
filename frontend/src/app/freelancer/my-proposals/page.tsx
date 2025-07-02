@@ -10,7 +10,7 @@ import {
 } from "@/pages-section/freelancer/Proposals/my-proposals";
 import { getPaginatedProposals } from "@/services/proposals";
 import { ProposalProps } from "@/types/proposals";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -32,8 +32,22 @@ export default function ProposalsPage() {
   const [dateFilter, setDateFilter] = useState("all");
   const [budgetRangeFilter, setBudgetRangeFilter] = useState("all");
 
-  const { data: paginatedProposals } = useQuery<PaginatedProposalsProps>({
-    queryKey: ["paginated-proposals"],
+  const {
+    data: paginatedProposals,
+    isLoading,
+    isFetching,
+  } = useQuery<PaginatedProposalsProps>({
+    queryKey: [
+      "paginated-proposals",
+      session?.user.id,
+      ITEMS_PER_PAGE,
+      currentPage,
+      searchQuery,
+      statusFilter,
+      sortBy,
+      dateFilter,
+      budgetRangeFilter,
+    ],
     queryFn: () =>
       getPaginatedProposals(
         session?.user.id ?? "",
@@ -46,6 +60,7 @@ export default function ProposalsPage() {
         budgetRangeFilter
       ),
     enabled: !!session?.user.id,
+    placeholderData: keepPreviousData,
   });
 
   if (!paginatedProposals) return;
@@ -111,15 +126,16 @@ export default function ProposalsPage() {
               }}
             />
 
+            <ProposalsList
+              proposals={proposals}
+              isLoading={isLoading || isFetching}
+            />
             {proposals.length > 0 ? (
-              <>
-                <ProposalsList proposals={proposals} />
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={paginatedProposals.totalPage}
-                  onPageChange={setCurrentPage}
-                />
-              </>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={paginatedProposals.totalPage}
+                onPageChange={setCurrentPage}
+              />
             ) : (
               <ProposalsEmptyState />
             )}
