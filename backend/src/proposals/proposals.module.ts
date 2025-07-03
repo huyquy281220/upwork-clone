@@ -5,6 +5,7 @@ import { ProposalsService } from './proposals.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { SocketModule } from 'src/socket/socket.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { extname } from 'path';
         fileSize: 2 * 1024 * 1024, // 2MB
       },
     }),
+    SocketModule,
   ],
   controllers: [ProposalsController],
   providers: [ProposalsService],

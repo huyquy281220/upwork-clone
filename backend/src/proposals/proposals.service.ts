@@ -12,12 +12,16 @@ import * as fs from 'fs';
 import * as util from 'util';
 import { Express } from 'express';
 import { buildProposalFilters } from 'src/helpers/buildProposalFilters';
+import { NotificationsGateway } from 'src/socket/socket.gateway';
 
 const unlinkFile = util.promisify(fs.unlink);
 
 @Injectable()
 export class ProposalsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly notificationGateway: NotificationsGateway,
+  ) {}
 
   async getPaginatedProposals(
     freelancerId: string,
@@ -38,51 +42,56 @@ export class ProposalsService {
       sortedBy,
     });
 
-    try {
-      const [proposals, totalProposals] = await Promise.all([
-        this.prismaService.proposal.findMany({
-          where,
-          orderBy,
-          include: {
-            job: {
-              select: {
-                title: true,
-                description: true,
-                hourlyRateMin: true,
-                hourlyRateMax: true,
-                fixedPrice: true,
-              },
+    const result = await this.prismaService.$transaction([
+      this.prismaService.proposal.findMany({
+        where,
+        orderBy,
+        include: {
+          job: {
+            select: {
+              title: true,
+              description: true,
+              hourlyRateMin: true,
+              hourlyRateMax: true,
+              fixedPrice: true,
             },
-            freelancer: {
-              include: {
-                user: {
-                  select: {
-                    fullName: true,
-                    address: true,
-                    verified: true,
-                    avatarUrl: true,
-                  },
+          },
+          freelancer: {
+            include: {
+              user: {
+                select: {
+                  fullName: true,
+                  address: true,
+                  verified: true,
+                  avatarUrl: true,
                 },
               },
             },
           },
-          take: limit,
-          skip: (page - 1) * limit,
-        }),
-        this.prismaService.proposal.count({
-          where: { freelancerId },
-        }),
-      ]);
+        },
+        take: limit,
+        skip: (page - 1) * limit,
+      }),
+      this.prismaService.proposal.count({
+        where: { freelancerId },
+      }),
+      this.prismaService.notification.create({
+        data: {
+          userId: freelancerId,
+          content: `Proposals queried for freelancer ID ${freelancerId} at ${new Date().toISOString()}`,
+        },
+      }),
+    ]);
 
-      return {
-        data: proposals,
-        totalPage: Math.ceil(totalProposals / limit),
-        totalProposals,
-      };
-    } catch (error) {
-      console.error(error);
-      throw new Error('Failed to fetch proposals');
-    }
+    const [proposals, totalProposals, notification] = result;
+
+    this.notificationGateway.sendNotificationToUser(freelancerId, notification);
+
+    return {
+      data: proposals,
+      totalPage: Math.ceil(totalProposals / limit),
+      totalProposals,
+    };
   }
 
   async createProposal(data: CreateProposalDto, file: Express.Multer.File) {

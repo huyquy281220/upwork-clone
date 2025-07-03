@@ -16,6 +16,7 @@ import { ConversationsModule } from './conversation/conversation.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ProposalsModule } from './proposals/proposals.module';
 import { UserSkillsModule } from './user-skills/user-skills.module';
+import { SocketModule } from './socket/socket.module';
 @Module({
   imports: [
     UserModule,
@@ -33,6 +34,7 @@ import { UserSkillsModule } from './user-skills/user-skills.module';
     ProposalsModule,
     NotificationsModule,
     UserSkillsModule,
+    SocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
