@@ -121,6 +121,14 @@ export class ProposalsService {
         );
       }
 
+      const client = await tx.user.findFirst({
+        where: {
+          clientProfile: {
+            id: job.clientId,
+          },
+        },
+      });
+
       const proposal = await tx.proposal.create({
         data: {
           job: { connect: { id: data.jobId } },
@@ -135,15 +143,12 @@ export class ProposalsService {
 
       const notification = await tx.notification.create({
         data: {
-          userId: data.clientId,
-          content: `Freelancer ${freelancer.userId} has submitted a proposal to your job "${job.title}"`,
+          userId: client.id,
+          content: `A freelancer has submitted a proposal to your job "${job.title}"`,
         },
       });
 
-      this.notificationGateway.sendNotificationToUser(
-        data.freelancerId,
-        notification,
-      );
+      this.notificationGateway.sendNotificationToUser(client.id, notification);
 
       return tx.proposal.findUnique({
         where: { id: proposal.id },
