@@ -164,22 +164,14 @@ export class NotificationsService {
     });
   }
 
-  async findOneNotification(id: string, userId: string) {
-    const notification = await this.prisma.notification.findUnique({
-      where: { id },
-      include: {
-        user: { select: { id: true, email: true } },
+  async findNotificationsOfUser(userId: string) {
+    const notifications = await this.prisma.notification.findMany({
+      where: {
+        userId,
       },
     });
 
-    if (!notification) {
-      throw new NotFoundException(`Notification with ID ${id} not found`);
-    }
-    if (notification.userId !== userId) {
-      throw new BadRequestException('User does not own this notification');
-    }
-
-    return notification;
+    return notifications;
   }
 
   async markAsRead(id: string, userId: string) {

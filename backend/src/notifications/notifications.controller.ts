@@ -38,11 +38,6 @@ export class NotificationsController {
     });
   }
 
-  @Get('/:userId')
-  findOne(@Param('userId') id: string, @Query('userId') userId: string) {
-    return this.notificationsService.findOneNotification(id, userId);
-  }
-
   @Put('/:id/read')
   markAsRead(@Param('id') id: string, @Query('userId') userId: string) {
     return this.notificationsService.markAsRead(id, userId);
@@ -61,5 +56,10 @@ export class NotificationsController {
   @Delete()
   deleteAll(@Query('userId') userId: string) {
     return this.notificationsService.deleteAllNotifications(userId);
+  }
+
+  @Get()
+  findOne(@Query('userId') userId: string) {
+    return this.notificationsService.findNotificationsOfUser(userId);
   }
 }
