@@ -104,7 +104,7 @@ export default function Apply() {
         setTimeout(() => {
           setProposal(initialProposal);
           setStatus("idle");
-          router.push("/freelancer/proposals");
+          router.push("/freelancer/my-proposals");
         }, 1500);
       }
     } catch (error) {
