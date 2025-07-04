@@ -107,7 +107,7 @@ export const clientNavHeader = [
         type: "divider",
       },
       {
-        label: "Job posts and proposals",
+        label: "Proposals",
         link: "",
       },
       {
