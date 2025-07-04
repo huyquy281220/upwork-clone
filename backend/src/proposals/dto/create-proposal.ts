@@ -6,6 +6,9 @@ export class CreateProposalDto {
   freelancerId: string;
 
   @IsString()
+  clientId: string;
+
+  @IsString()
   jobId: string;
 
   @IsString()

@@ -133,10 +133,10 @@ export class ProposalsService {
         },
       });
 
-      const notification = this.prismaService.notification.create({
+      const notification = await tx.notification.create({
         data: {
-          userId: data.freelancerId,
-          content: `Proposals queried for freelancer ID ${data.freelancerId} at ${new Date().toISOString()}`,
+          userId: data.clientId,
+          content: `Freelancer ${freelancer.userId} has submitted a proposal to your job "${job.title}"`,
         },
       });
 
