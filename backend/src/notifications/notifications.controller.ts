@@ -38,12 +38,12 @@ export class NotificationsController {
     });
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string, @Query('userId') userId: string) {
+  @Get('/:userId')
+  findOne(@Param('userId') id: string, @Query('userId') userId: string) {
     return this.notificationsService.findOneNotification(id, userId);
   }
 
-  @Put(':id/read')
+  @Put('/:id/read')
   markAsRead(@Param('id') id: string, @Query('userId') userId: string) {
     return this.notificationsService.markAsRead(id, userId);
   }

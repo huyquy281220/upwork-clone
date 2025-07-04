@@ -4,12 +4,24 @@ import { PopoverContent } from "@/components/ui/popover";
 
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { Bell } from "lucide-react";
-import { notifications } from "../data/navigation";
 import Link from "next/link";
 import { useState } from "react";
+import { useSocket } from "@/hooks/useSocket";
+import { useSession } from "next-auth/react";
+import { useNotifications } from "@/hooks/useNotifications";
+import { NotificationProps } from "@/types/notification";
+import { formatRelativeTime } from "@/utils/getRelativeTime";
 
 export default function Notification() {
+  const { data: session } = useSession();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const socket = useSocket(session?.user.id ?? "");
+
+  const { notifications } = useNotifications({
+    socket: socket!,
+    userId: session?.user.id ?? "",
+  });
+
   const handleNotificationToggle = () => {
     setIsNotificationOpen(!isNotificationOpen);
   };
@@ -33,7 +45,7 @@ export default function Notification() {
         sideOffset={20}
       >
         <div className="max-h-80 overflow-y-auto">
-          {notifications.map((notification) => (
+          {notifications.map((notification: NotificationProps) => (
             <div key={notification.id} className="border-b border-gray-700 p-4">
               <div className="flex">
                 <div className="mr-3 mt-1">
@@ -42,9 +54,9 @@ export default function Notification() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm">{notification.message}</p>
+                  <p className="text-sm">{notification.content}</p>
                   <span className="text-xs text-gray-400">
-                    {notification.time}
+                    {formatRelativeTime(notification.createdAt)}
                   </span>
                 </div>
               </div>

@@ -15,7 +15,7 @@ export const createProposal = async (data: CreateProposalProps) => {
 
   const res = await api.post(`${apiURL}/proposals/create`, formData);
 
-  return res.data;
+  return res;
 };
 
 export const getPaginatedProposals = async (

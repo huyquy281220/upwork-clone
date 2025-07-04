@@ -42,59 +42,59 @@ export class ProposalsService {
       sortedBy,
     });
 
-    const result = await this.prismaService.$transaction([
-      this.prismaService.proposal.findMany({
-        where,
-        orderBy,
-        include: {
-          job: {
-            select: {
-              title: true,
-              description: true,
-              hourlyRateMin: true,
-              hourlyRateMax: true,
-              fixedPrice: true,
+    try {
+      const [proposals, totalProposals] = await Promise.all([
+        this.prismaService.proposal.findMany({
+          where,
+          orderBy,
+          include: {
+            job: {
+              select: {
+                title: true,
+                description: true,
+                hourlyRateMin: true,
+                hourlyRateMax: true,
+                fixedPrice: true,
+              },
             },
-          },
-          freelancer: {
-            include: {
-              user: {
-                select: {
-                  fullName: true,
-                  address: true,
-                  verified: true,
-                  avatarUrl: true,
+            freelancer: {
+              include: {
+                user: {
+                  select: {
+                    fullName: true,
+                    address: true,
+                    verified: true,
+                    avatarUrl: true,
+                  },
                 },
               },
             },
           },
-        },
-        take: limit,
-        skip: (page - 1) * limit,
-      }),
-      this.prismaService.proposal.count({
-        where: { freelancerId },
-      }),
-      this.prismaService.notification.create({
-        data: {
-          userId: freelancerId,
-          content: `Proposals queried for freelancer ID ${freelancerId} at ${new Date().toISOString()}`,
-        },
-      }),
-    ]);
+          take: limit,
+          skip: (page - 1) * limit,
+        }),
+        this.prismaService.proposal.count({
+          where: { freelancerId },
+        }),
+      ]);
 
-    const [proposals, totalProposals, notification] = result;
-
-    this.notificationGateway.sendNotificationToUser(freelancerId, notification);
-
-    return {
-      data: proposals,
-      totalPage: Math.ceil(totalProposals / limit),
-      totalProposals,
-    };
+      return {
+        data: proposals,
+        totalPage: Math.ceil(totalProposals / limit),
+        totalProposals,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to fetch proposals');
+    }
   }
 
   async createProposal(data: CreateProposalDto, file: Express.Multer.File) {
+    let urlOfCv;
+    if (file) {
+      urlOfCv = await this.uploadCv(file);
+    }
+
     return this.prismaService.$transaction(async (tx) => {
       const freelancer = await tx.freelancerProfile.findUnique({
         where: { id: data.freelancerId },
@@ -121,9 +121,6 @@ export class ProposalsService {
         );
       }
 
-      const urlOfCv = await this.uploadCv(file);
-
-      //Create proposal
       const proposal = await tx.proposal.create({
         data: {
           job: { connect: { id: data.jobId } },
@@ -131,10 +128,22 @@ export class ProposalsService {
           timeline: data.timeline,
           coverLetter: data.coverLetter,
           pricing: Number(data.pricing),
-          attachment: urlOfCv ?? null,
+          attachment: urlOfCv ?? '',
           status: ProposalStatus.PENDING,
         },
       });
+
+      const notification = this.prismaService.notification.create({
+        data: {
+          userId: data.freelancerId,
+          content: `Proposals queried for freelancer ID ${data.freelancerId} at ${new Date().toISOString()}`,
+        },
+      });
+
+      this.notificationGateway.sendNotificationToUser(
+        data.freelancerId,
+        notification,
+      );
 
       return tx.proposal.findUnique({
         where: { id: proposal.id },

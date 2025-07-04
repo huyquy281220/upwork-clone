@@ -94,14 +94,16 @@ export default function Apply() {
         freelancerId: user?.freelancerProfile.id,
       });
 
-      if (res.status === 200) {
+      if (res.status === 201) {
+        setStatus("success");
         showSuccessToast(
           "Create proposal successfully.",
           "Redirecting to proposals page.",
           1500
         );
-        setProposal(initialProposal);
         setTimeout(() => {
+          setProposal(initialProposal);
+          setStatus("idle");
           router.push("/freelancer/proposals");
         }, 1500);
       }
