@@ -7,7 +7,7 @@ import {
   JobContent,
 } from "@/pages-section/freelancer/jobs";
 import { getJobById } from "@/services/jobs";
-import { JobProps } from "@/types/jobs";
+import { JobDetailProps } from "@/types/jobs";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
@@ -15,7 +15,7 @@ export default function JobDetailPage() {
   const params = useParams();
   const jobId = params.jobId as string;
 
-  const { data: jobDetail, isLoading } = useQuery<JobProps>({
+  const { data: jobDetail, isLoading } = useQuery<JobDetailProps>({
     queryKey: ["job-detail", jobId],
     queryFn: () => getJobById(jobId),
     enabled: !!jobId,
@@ -34,7 +34,7 @@ export default function JobDetailPage() {
             <JobContent />
           </div>
           <div className="lg:col-span-1 order-1 md:order-2">
-            <JobSidebar />
+            <JobSidebar jobId={jobId} />
           </div>
         </div>
       </div>

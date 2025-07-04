@@ -37,6 +37,12 @@ export interface JobProps {
   updatedAt: string;
 }
 
+export interface JobDetailProps extends JobProps {
+  client: {
+    id: string;
+  };
+}
+
 export enum ExperienceLevel {
   DEFAULT = "",
   ENTRY = "Entry Level",

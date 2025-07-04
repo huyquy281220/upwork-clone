@@ -3,12 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { ClientInfo } from "./ClientInfo";
 import { JobActions } from "./JobActions";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-export function JobSidebar() {
+export function JobSidebar({ jobId }: { jobId: string }) {
   const router = useRouter();
-  const params = useParams();
-  const jobId = params.jobId as string;
 
   return (
     <div className="space-y-6 pb-10 border-b md:border-0">
