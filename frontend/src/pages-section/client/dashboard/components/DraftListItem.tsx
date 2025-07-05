@@ -1,14 +1,20 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText } from "lucide-react";
 import { JobProps } from "@/types/jobs";
 import CirclePencil from "@/components/common/CirclePencil";
+import { useRouter } from "next/navigation";
 
 export function DraftListItem({
+  id,
   title,
   description,
   isLast,
 }: JobProps & { isLast: boolean }) {
+  const router = useRouter();
+
   return (
     <div
       className={`flex items-center gap-4 p-4 bg-card hover:bg-muted/50 transition-colors border-b border-border ${
@@ -40,8 +46,9 @@ export function DraftListItem({
           variant="outline"
           size="sm"
           className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+          onClick={() => router.push(`/client/job/${id}`)}
         >
-          Fill in draft
+          See details
         </Button>
         <CirclePencil />
       </div>

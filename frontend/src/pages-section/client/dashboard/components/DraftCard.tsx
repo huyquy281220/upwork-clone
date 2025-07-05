@@ -1,15 +1,21 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText } from "lucide-react";
 import CirclePencil from "@/components/common/CirclePencil";
+import { useRouter } from "next/navigation";
 
 interface DraftCardProps {
+  id: string;
   title: string;
   description: string;
 }
 
-export function DraftCard({ title, description }: DraftCardProps) {
+export function DraftCard({ id, title, description }: DraftCardProps) {
+  const router = useRouter();
+
   return (
     <Card className="h-full bg-card border-border">
       <CardContent className="p-6 space-y-4">
@@ -38,8 +44,9 @@ export function DraftCard({ title, description }: DraftCardProps) {
         <Button
           variant="outline"
           className="w-full border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+          onClick={() => router.push(`/client/job/${id}`)}
         >
-          Fill in draft
+          See details
         </Button>
       </CardContent>
     </Card>
