@@ -19,6 +19,7 @@ import {
   ThumbsDown,
   ThumbsUp,
 } from "lucide-react";
+import Image from "next/image";
 
 interface FreelancerDetailsModalProps {
   proposal: ProposalProps;
@@ -146,7 +147,7 @@ export function FreelancerDetailsModal({
           </div>
 
           {/* Portfolio */}
-          {proposal.portfolio.length > 0 && (
+          {/* {proposal.portfolio.length > 0 && (
             <div>
               <h3 className="font-semibold mb-3">Portfolio</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -155,7 +156,7 @@ export function FreelancerDetailsModal({
                     key={index}
                     className="border rounded-lg overflow-hidden"
                   >
-                    <img
+                    <Image
                       src={project.image || "/placeholder.svg"}
                       alt={project.title}
                       className="w-full h-40 object-cover"
@@ -183,30 +184,25 @@ export function FreelancerDetailsModal({
                 ))}
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Attachments */}
           {proposal.attachment && (
             <div>
               <h3 className="font-semibold mb-3">Attachments</h3>
               <div className="space-y-2">
-                {proposal.attachments.map((file: any, index: number) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <FileText className="w-5 h-5 text-gray-500" />
-                      <div>
-                        <p className="font-medium text-sm">{file.name}</p>
-                        <p className="text-xs text-gray-500">{file.size}</p>
-                      </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <FileText className="w-5 h-5 text-gray-500" />
+                    <div>
+                      {/* <p className="font-medium text-sm">{file.name}</p>
+                      <p className="text-xs text-gray-500">{file.size}</p> */}
                     </div>
-                    <Button variant="ghost" size="sm">
-                      <Download className="w-4 h-4" />
-                    </Button>
                   </div>
-                ))}
+                  <Button variant="ghost" size="sm">
+                    <Download className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           )}

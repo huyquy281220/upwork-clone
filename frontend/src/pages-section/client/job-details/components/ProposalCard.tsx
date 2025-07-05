@@ -62,8 +62,8 @@ interface ProposalCardProps {
 export function ProposalCard({
   proposal,
   onViewDetails,
-  onMessage,
-}: ProposalCardProps) {
+}: // onMessage,
+ProposalCardProps) {
   const formatRate = (proposal: ProposalProps) => {
     if (proposal.proposalType === "hourly") {
       return `$${proposal.rate}/hr`;
@@ -195,7 +195,7 @@ export function ProposalCard({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onMessage(proposal)}
+              // onClick={() => onMessage(proposal)}
             >
               <MessageSquare className="w-4 h-4 mr-1" />
               Message
