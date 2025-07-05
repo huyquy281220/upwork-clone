@@ -103,8 +103,29 @@ export class ProposalsService {
         this.prismaService.proposal.findMany({
           where,
           include: {
-            job: true,
-            freelancer: true,
+            job: {
+              include: {
+                skills: {
+                  include: {
+                    skill: {
+                      select: { id: true, name: true },
+                    },
+                  },
+                },
+              },
+            },
+            freelancer: {
+              include: {
+                user: {
+                  select: {
+                    fullName: true,
+                    avatarUrl: true,
+                    address: true,
+                    verified: true,
+                  },
+                },
+              },
+            },
           },
           orderBy,
           take: limit,
@@ -115,8 +136,19 @@ export class ProposalsService {
         }),
       ]);
 
+      const conciseProposals = proposals.map((proposal) => ({
+        ...proposal,
+        job: {
+          ...proposal.job,
+          skills: proposal.job.skills.map((s) => ({
+            id: s.skill.id,
+            name: s.skill.name,
+          })),
+        },
+      }));
+
       return {
-        data: proposals,
+        data: conciseProposals,
         totalProposals,
         totalPages: Math.ceil(totalProposals / limit),
       };
