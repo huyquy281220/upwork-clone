@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ProposalProps } from "@/types/proposals";
 import {
   Eye,
   Heart,
@@ -63,25 +64,7 @@ export function ProposalCard({
   onViewDetails,
   onMessage,
 }: ProposalCardProps) {
-  const getStatusBadge = (proposal: any) => {
-    if (proposal.shortlisted) {
-      return (
-        <Badge className="bg-blue-100 text-blue-800 border-blue-200">
-          Shortlisted
-        </Badge>
-      );
-    }
-    if (!proposal.viewed) {
-      return (
-        <Badge className="bg-orange-100 text-orange-800 border-orange-200">
-          New
-        </Badge>
-      );
-    }
-    return null;
-  };
-
-  const formatRate = (proposal: any) => {
+  const formatRate = (proposal: ProposalProps) => {
     if (proposal.proposalType === "hourly") {
       return `$${proposal.rate}/hr`;
     } else {
@@ -140,17 +123,6 @@ export function ProposalCard({
                 <span>Responds in {proposal.freelancer.responseTime}</span>
                 <span>{proposal.freelancer.availability} available</span>
               </div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            {getStatusBadge(proposal)}
-            <div className="text-right">
-              <p className="text-lg font-bold text-gray-900">
-                {formatRate(proposal)}
-              </p>
-              <p className="text-xs text-gray-500">
-                Submitted {proposal.submittedDate}
-              </p>
             </div>
           </div>
         </div>

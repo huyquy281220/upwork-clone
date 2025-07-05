@@ -1,6 +1,6 @@
 "use client";
 
-import { ProposalCard } from "./proposal-card";
+import { ProposalCard } from "./ProposalCard";
 
 interface ProposalsListProps {
   proposals: Array<any>;

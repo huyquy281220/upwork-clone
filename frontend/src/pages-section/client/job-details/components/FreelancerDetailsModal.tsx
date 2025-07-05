@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ProposalProps } from "@/types/proposals";
 import {
   Download,
   FileText,
@@ -20,7 +21,7 @@ import {
 } from "lucide-react";
 
 interface FreelancerDetailsModalProps {
-  proposal: any;
+  proposal: ProposalProps;
   jobData: any;
   isOpen: boolean;
   onClose: () => void;
@@ -36,7 +37,7 @@ export function FreelancerDetailsModal({
 }: FreelancerDetailsModalProps) {
   if (!proposal) return null;
 
-  const formatRate = (proposal: any) => {
+  const formatRate = (proposal: ProposalProps) => {
     if (proposal.proposalType === "hourly") {
       return `$${proposal.rate}/hr`;
     } else {
@@ -51,17 +52,19 @@ export function FreelancerDetailsModal({
           <DialogTitle className="flex items-center space-x-3">
             <Avatar className="w-12 h-12">
               <AvatarImage
-                src={proposal.freelancer.avatar || "/placeholder.svg"}
+                src={proposal.freelancer.user.avatarUrl || "/placeholder.svg"}
               />
               <AvatarFallback>
-                {proposal.freelancer.name
+                {proposal.freelancer.user.fullName
                   .split(" ")
                   .map((n: string) => n[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
             <div>
-              <span className="text-lg">{proposal.freelancer.name}</span>
+              <span className="text-lg">
+                {proposal.freelancer.user.fullName}
+              </span>
               <p className="text-sm text-gray-600 font-normal">
                 {proposal.freelancer.title}
               </p>
@@ -135,7 +138,7 @@ export function FreelancerDetailsModal({
                     {question}
                   </h4>
                   <p className="text-sm text-gray-700">
-                    {proposal.clientQuestions[index]}
+                    {/* {proposal.clientQuestions[index]} */}
                   </p>
                 </div>
               ))}
@@ -183,7 +186,7 @@ export function FreelancerDetailsModal({
           )}
 
           {/* Attachments */}
-          {proposal.attachments.length > 0 && (
+          {proposal.attachment && (
             <div>
               <h3 className="font-semibold mb-3">Attachments</h3>
               <div className="space-y-2">

@@ -34,7 +34,7 @@ export function ProposalsFilters({
           placeholder="Search proposals..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className="pl-10 w-full h-9 rounded-sm"
         />
       </div>
       <Select value={filterBy} onValueChange={setFilterBy}>

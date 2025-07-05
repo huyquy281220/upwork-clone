@@ -7,6 +7,7 @@ import {
   ProposalsFilters,
   ProposalsList,
 } from "@/pages-section/client/job-details";
+import { ProposalProps } from "@/types/proposals";
 import { useState } from "react";
 const jobData = {
   id: 1,
@@ -261,20 +262,21 @@ export default function ClientProposalsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [filterBy, setFilterBy] = useState("all");
-  const [selectedProposal, setSelectedProposal] = useState<any>(null);
+  const [selectedProposal, setSelectedProposal] =
+    useState<ProposalProps | null>(null);
   const [messageModalOpen, setMessageModalOpen] = useState(false);
 
-  const handleViewDetails = (proposal: any) => {
+  const handleViewDetails = (proposal: ProposalProps) => {
     setSelectedProposal(proposal);
   };
 
-  const handleMessage = (proposal: any) => {
+  const handleMessage = (proposal: ProposalProps) => {
     setSelectedProposal(proposal);
     setMessageModalOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <JobDetailsHeader
         proposalsCount={proposals.length}
         jobTitle={jobData.title}
