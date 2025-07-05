@@ -2,7 +2,8 @@ import { Prisma, ProposalStatus } from '@prisma/client';
 import { subDays, startOfToday } from 'date-fns';
 
 interface BuildFiltersParams {
-  freelancerId: string;
+  freelancerId?: string;
+  jobId?: string;
   searchQuery?: string;
   statusFilter?: string;
   dateFilter?: string;
@@ -12,6 +13,7 @@ interface BuildFiltersParams {
 
 export function buildProposalFilters({
   freelancerId,
+  jobId,
   searchQuery,
   statusFilter,
   dateFilter,
@@ -85,12 +87,27 @@ export function buildProposalFilters({
         },
       ];
       break;
+    case 'rate-highest':
+      orderBy = [
+        {
+          pricing: 'desc',
+        },
+      ];
+      break;
+    case 'rate-lowest':
+      orderBy = [
+        {
+          pricing: 'asc',
+        },
+      ];
+      break;
     default:
       break;
   }
 
   const where: Prisma.ProposalWhereInput = {
-    freelancerId,
+    ...(freelancerId && { freelancerId }),
+    ...(jobId && { jobId }),
     ...(searchQuery && {
       job: {
         title: {
@@ -110,9 +127,6 @@ export function buildProposalFilters({
       },
     }),
   };
-
-  console.log(where);
-  console.log(searchQuery);
 
   if (budget) {
     where.OR = [

@@ -18,7 +18,7 @@ export const createProposal = async (data: CreateProposalProps) => {
   return res;
 };
 
-export const getPaginatedProposals = async (
+export const getPaginatedProposalsByFreelancer = async (
   userId: string,
   limit: number,
   page: number,
@@ -30,6 +30,20 @@ export const getPaginatedProposals = async (
 ) => {
   const response = await api.get(
     `${apiURL}/proposals/${userId}/get-paginated-proposals?limit=${limit}&page=${page}&searchQuery=${searchQuery}&status=${status}&sortedBy=${sortBy}&date=${date}&budget=${budget}`
+  );
+
+  return response.data;
+};
+
+export const getPaginatedProposalsByJob = async (
+  jobId: string,
+  limit: number,
+  page: number,
+  searchQuery?: string,
+  sortBy?: string
+) => {
+  const response = await api.get(
+    `${apiURL}/${jobId}/get-paginated-proposals-by-job?limit=${limit}&page=${page}&searchQuery=${searchQuery}&sortedBy=${sortBy}`
   );
 
   return response.data;

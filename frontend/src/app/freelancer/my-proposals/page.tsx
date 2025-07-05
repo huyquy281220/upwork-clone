@@ -8,7 +8,7 @@ import {
   ProposalsList,
   ProposalsSearchSort,
 } from "@/pages-section/freelancer/Proposals/my-proposals";
-import { getPaginatedProposals } from "@/services/proposals";
+import { getPaginatedProposalsByFreelancer } from "@/services/proposals";
 import { ProposalProps } from "@/types/proposals";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -49,7 +49,7 @@ export default function ProposalsPage() {
       budgetRangeFilter,
     ],
     queryFn: () =>
-      getPaginatedProposals(
+      getPaginatedProposalsByFreelancer(
         session?.user.id ?? "",
         ITEMS_PER_PAGE,
         currentPage,

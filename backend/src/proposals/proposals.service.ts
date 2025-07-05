@@ -89,18 +89,24 @@ export class ProposalsService {
     }
   }
 
-  async getPaginatedProposalsByJob(jobId: string, limit: number, page: number) {
+  async getPaginatedProposalsByJob(
+    jobId: string,
+    limit: number,
+    page: number,
+    searchQuery?: string,
+    sortedBy?: string,
+  ) {
+    const { where, orderBy } = buildProposalFilters({ searchQuery, sortedBy });
+
     try {
       const [proposals, totalProposals] = await Promise.all([
         this.prismaService.proposal.findMany({
-          where: {
-            jobId,
-          },
+          where,
           include: {
             job: true,
             freelancer: true,
           },
-          orderBy: { createdAt: 'desc' },
+          orderBy,
           take: limit,
           skip: (page - 1) * limit,
         }),

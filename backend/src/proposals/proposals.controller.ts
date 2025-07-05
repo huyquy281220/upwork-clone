@@ -49,8 +49,16 @@ export class ProposalsController {
     @Param('jobId') jobId: string,
     @Query('limit', ParseIntPipe) limit: number,
     @Query('page', ParseIntPipe) page: number,
+    @Query('searchQuery') searchQuery?: string,
+    @Query('sortBy') sortBy = 'newest',
   ) {
-    return this.proposalsService.getPaginatedProposalsByJob(jobId, limit, page);
+    return this.proposalsService.getPaginatedProposalsByJob(
+      jobId,
+      limit,
+      page,
+      searchQuery,
+      sortBy,
+    );
   }
 
   @Post('/create')
