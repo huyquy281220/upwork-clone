@@ -44,6 +44,15 @@ export class ProposalsController {
     );
   }
 
+  @Get('/:jobId/get-paginated-proposals-by-job')
+  async getPaginatedProposalsByJob(
+    @Param('jobId') jobId: string,
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('page', ParseIntPipe) page: number,
+  ) {
+    return this.proposalsService.getPaginatedProposalsByJob(jobId, limit, page);
+  }
+
   @Post('/create')
   @UseInterceptors(FileInterceptor('attachment'))
   async create(

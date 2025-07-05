@@ -89,6 +89,37 @@ export class ProposalsService {
     }
   }
 
+  async getPaginatedProposalsByJob(jobId: string, limit: number, page: number) {
+    try {
+      const [proposals, totalProposals] = await Promise.all([
+        this.prismaService.proposal.findMany({
+          where: {
+            jobId,
+          },
+          include: {
+            job: true,
+            freelancer: true,
+          },
+          orderBy: { createdAt: 'desc' },
+          take: limit,
+          skip: (page - 1) * limit,
+        }),
+        this.prismaService.proposal.count({
+          where: { jobId },
+        }),
+      ]);
+
+      return {
+        data: proposals,
+        totalProposals,
+        totalPages: Math.ceil(totalProposals / limit),
+      };
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to fetch proposals');
+    }
+  }
+
   async createProposal(data: CreateProposalDto, file: Express.Multer.File) {
     let urlOfCv;
     if (file) {
