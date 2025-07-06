@@ -51,7 +51,7 @@ export default function ClientProposalsPage() {
     openModal("freelancer-details");
     setSelectedProposal(proposal);
   };
-
+  console.log(paginatedProposals);
   // const handleMessage = (proposal: ProposalProps) => {
   //   setSelectedProposal(proposal);
   // };
@@ -88,11 +88,13 @@ export default function ClientProposalsPage() {
               // onMessage={handleMessage}
             />
 
-            <Pagination
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-              totalPages={paginatedProposals.totalPage}
-            />
+            {paginatedProposals.data.length > 0 && (
+              <Pagination
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                totalPages={paginatedProposals.totalPage}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { JobProps } from "@/types/jobs";
+import { JobProps, JobType } from "@/types/jobs";
 import { formatRelativeTime } from "@/utils/getRelativeTime";
 import { Clock, DollarSign, Calendar } from "lucide-react";
 
@@ -11,13 +11,13 @@ interface JobDetailsSidebarProps {
 }
 
 export function JobDetailsSidebar({ jobData }: JobDetailsSidebarProps) {
-  // const formatBudget = (budget: any) => {
-  //   if (budget.type === "hourly") {
-  //     return `$${budget.min}-$${budget.max}/hr`;
-  //   } else {
-  //     return `$${budget.amount?.toLocaleString()}`;
-  //   }
-  // };
+  const formatBudget = (jobType: JobType) => {
+    if (jobType === JobType.HOURLY) {
+      return `$${jobData.hourlyRateMin}-$${jobData.hourlyRateMax}/hr`;
+    } else {
+      return `$${jobData.fixedPrice}`;
+    }
+  };
 
   return (
     <Card className="sticky top-6">
@@ -37,7 +37,7 @@ export function JobDetailsSidebar({ jobData }: JobDetailsSidebarProps) {
         <div className="space-y-3">
           <div className="flex items-center space-x-2 text-sm">
             <DollarSign className="w-4 h-4 text-gray-400" />
-            {/* <span className="font-medium">{formatBudget(jobData.budget)}</span> */}
+            <span className="font-medium">{formatBudget(jobData.jobType)}</span>
           </div>
           <div className="flex items-center space-x-2 text-sm">
             <Clock className="w-4 h-4 text-gray-400" />

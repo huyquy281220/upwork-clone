@@ -124,6 +124,13 @@ export class ProposalsService {
                     verified: true,
                   },
                 },
+                skills: {
+                  include: {
+                    skill: {
+                      select: { id: true, name: true },
+                    },
+                  },
+                },
               },
             },
           },
@@ -141,6 +148,13 @@ export class ProposalsService {
         job: {
           ...proposal.job,
           skills: proposal.job.skills.map((s) => ({
+            id: s.skill.id,
+            name: s.skill.name,
+          })),
+        },
+        freelancer: {
+          ...proposal.freelancer,
+          skills: proposal.freelancer.skills.map((s) => ({
             id: s.skill.id,
             name: s.skill.name,
           })),

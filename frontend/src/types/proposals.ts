@@ -1,4 +1,5 @@
 import { JobProps } from "./jobs";
+import { Skill } from "./user";
 
 export interface CreateProposalProps {
   freelancerId: string;
@@ -28,6 +29,7 @@ export interface ProposalProps {
     title: string;
     overview: string | null;
     available: "LESS_THAN_30" | "MORE_THAN_30" | "FULL_TIME";
+    skills: Skill[];
     user: {
       fullName: string;
       address: string;

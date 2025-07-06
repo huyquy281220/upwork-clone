@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 // import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -94,16 +95,23 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
 
         {/* Skills */}
         <div className="flex flex-wrap gap-1 mb-4">
-          {/* {proposal.freelancer.skills.slice(0, 6).map((skill, index) => (
-            <Badge key={index} variant="secondary" className="text-xs">
-              {skill}
+          {proposal.freelancer.skills.slice(0, 6).map(({ id, name }) => (
+            <Badge
+              key={id}
+              variant="secondary"
+              className="bg-background text-foreground flex items-center gap-1 py-1.5 border border-gray-700"
+            >
+              {name}
             </Badge>
           ))}
           {proposal.freelancer.skills.length > 6 && (
-            <Badge variant="outline" className="text-xs">
+            <Badge
+              variant="secondary"
+              className="bg-background text-foreground flex items-center gap-1 py-1.5 border border-gray-700"
+            >
               +{proposal.freelancer.skills.length - 6} more
             </Badge>
-          )} */}
+          )}
         </div>
 
         {/* Cover Letter Preview */}
