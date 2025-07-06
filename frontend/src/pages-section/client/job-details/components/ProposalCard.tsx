@@ -137,7 +137,7 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-4 border-t">
+        <div className="flex-col sm:flex-row sm:items-center flex items-start justify-between gap-3 pt-4 border-t">
           <div className="flex items-center space-x-2">
             <Button
               size="sm"
