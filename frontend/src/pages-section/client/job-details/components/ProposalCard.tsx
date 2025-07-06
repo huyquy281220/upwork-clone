@@ -11,9 +11,9 @@ import {
   Eye,
   MapPin,
   MessageSquare,
-  MoreHorizontal,
   Star,
   ThumbsDown,
+  ThumbsUp,
   Verified,
 } from "lucide-react";
 
@@ -162,15 +162,20 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
           </div>
           <div className="flex items-center space-x-2">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="text-red-600 hover:text-red-700"
+              className="text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50 bg-transparent"
+            >
+              <ThumbsUp className="w-4 h-4 mr-1" />
+              Accept
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 bg-transparent"
             >
               <ThumbsDown className="w-4 h-4 mr-1" />
-              Decline
-            </Button>
-            <Button variant="ghost" size="sm">
-              <MoreHorizontal className="w-4 h-4" />
+              Reject
             </Button>
           </div>
         </div>
