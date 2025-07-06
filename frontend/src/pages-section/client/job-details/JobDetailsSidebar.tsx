@@ -13,7 +13,7 @@ interface JobDetailsSidebarProps {
 export function JobDetailsSidebar({ jobData }: JobDetailsSidebarProps) {
   const formatBudget = (jobType: JobType) => {
     if (jobType === JobType.HOURLY) {
-      return `$${jobData.hourlyRateMin}-$${jobData.hourlyRateMax}/hr`;
+      return `$${jobData.hourlyRateMin}-$${jobData.hourlyRateMax}`;
     } else {
       return `$${jobData.fixedPrice}`;
     }

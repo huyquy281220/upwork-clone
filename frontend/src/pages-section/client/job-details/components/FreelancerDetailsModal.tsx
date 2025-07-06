@@ -5,13 +5,12 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { JobType } from "@/types/jobs";
 import { ProposalProps } from "@/types/proposals";
-import { Download, FileText, Star, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Download, FileText, Star } from "lucide-react";
 
 interface FreelancerDetailsModalProps {
   proposal: ProposalProps;
@@ -28,7 +27,7 @@ export function FreelancerDetailsModal({
 
   const formatRate = (proposal: ProposalProps) => {
     if (proposal.job.jobType === JobType.HOURLY) {
-      return `$${proposal.job.hourlyRateMin} - ${proposal.job.hourlyRateMax}/hr`;
+      return `$${proposal.job.hourlyRateMin} - $${proposal.job.hourlyRateMax}`;
     } else {
       return `$${proposal.job.fixedPrice}`;
     }
@@ -139,27 +138,6 @@ export function FreelancerDetailsModal({
             </div>
           )}
         </div>
-
-        <DialogFooter className="flex justify-between">
-          <div className="flex space-x-2">
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
-          </div>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              className="text-red-600 hover:text-red-700 bg-transparent"
-            >
-              <ThumbsDown className="w-4 h-4 mr-2" />
-              Decline
-            </Button>
-            <Button className="bg-green-600 hover:bg-green-700">
-              <ThumbsUp className="w-4 h-4 mr-2" />
-              Hire
-            </Button>
-          </div>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
