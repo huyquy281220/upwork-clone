@@ -43,7 +43,9 @@ export const getPaginatedProposalsByJob = async (
   sortBy?: string
 ) => {
   const response = await api.get(
-    `${apiURL}/${jobId}/get-paginated-proposals-by-job?limit=${limit}&page=${page}&searchQuery=${searchQuery}&sortedBy=${sortBy}`
+    `${apiURL}/proposals/${jobId}/get-paginated-proposals-by-job?limit=${limit}&page=${page}&searchQuery=${
+      searchQuery ?? ""
+    }&sortedBy=${sortBy ?? "newest"}`
   );
 
   return response.data;

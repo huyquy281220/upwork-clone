@@ -2,28 +2,22 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { JobProps } from "@/types/jobs";
+import { formatRelativeTime } from "@/utils/getRelativeTime";
 import { Clock, DollarSign, Calendar } from "lucide-react";
 
 interface JobDetailsSidebarProps {
-  jobData: {
-    title: string;
-    description: string;
-    budget: { type: string; min?: number; max?: number; amount?: number };
-    duration: string;
-    postedDate: string;
-    skills: string[];
-    questions: string[];
-  };
+  jobData: JobProps;
 }
 
 export function JobDetailsSidebar({ jobData }: JobDetailsSidebarProps) {
-  const formatBudget = (budget: any) => {
-    if (budget.type === "hourly") {
-      return `$${budget.min}-$${budget.max}/hr`;
-    } else {
-      return `$${budget.amount?.toLocaleString()}`;
-    }
-  };
+  // const formatBudget = (budget: any) => {
+  //   if (budget.type === "hourly") {
+  //     return `$${budget.min}-$${budget.max}/hr`;
+  //   } else {
+  //     return `$${budget.amount?.toLocaleString()}`;
+  //   }
+  // };
 
   return (
     <Card className="sticky top-6">
@@ -32,8 +26,10 @@ export function JobDetailsSidebar({ jobData }: JobDetailsSidebarProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <h3 className="font-semibold text-gray-900 mb-2">{jobData.title}</h3>
-          <p className="text-sm text-gray-600 line-clamp-4">
+          <h3 className="font-semibold text-foreground mb-2">
+            {jobData.title}
+          </h3>
+          <p className="text-sm text-gray-400 line-clamp-3">
             {jobData.description}
           </p>
         </div>
@@ -41,27 +37,31 @@ export function JobDetailsSidebar({ jobData }: JobDetailsSidebarProps) {
         <div className="space-y-3">
           <div className="flex items-center space-x-2 text-sm">
             <DollarSign className="w-4 h-4 text-gray-400" />
-            <span className="font-medium">{formatBudget(jobData.budget)}</span>
+            {/* <span className="font-medium">{formatBudget(jobData.budget)}</span> */}
           </div>
           <div className="flex items-center space-x-2 text-sm">
             <Clock className="w-4 h-4 text-gray-400" />
-            <span>{jobData.duration}</span>
+            <span>{jobData.jobDuration}</span>
           </div>
           <div className="flex items-center space-x-2 text-sm">
             <Calendar className="w-4 h-4 text-gray-400" />
-            <span>Posted {jobData.postedDate}</span>
+            <span>Posted {formatRelativeTime(jobData.createdAt)}</span>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-1 pt-4 border-t">
-          {jobData.skills.map((skill, index) => (
-            <Badge key={index} variant="secondary" className="text-xs">
-              {skill}
+          {jobData.skills.map(({ id, name }) => (
+            <Badge
+              key={id}
+              variant="secondary"
+              className="bg-background text-foreground flex items-center gap-1 py-1.5 border border-gray-700"
+            >
+              {name}
             </Badge>
           ))}
         </div>
 
-        <div className="pt-4 border-t">
+        {/* <div className="pt-4 border-t">
           <h4 className="font-medium mb-2">Questions Asked</h4>
           <ul className="text-sm text-gray-600 space-y-1">
             {jobData.questions.map((question, index) => (
@@ -71,7 +71,7 @@ export function JobDetailsSidebar({ jobData }: JobDetailsSidebarProps) {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

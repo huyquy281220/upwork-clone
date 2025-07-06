@@ -1,3 +1,5 @@
+import { JobProps } from "./jobs";
+
 export interface CreateProposalProps {
   freelancerId: string;
   jobId: string;
@@ -18,13 +20,7 @@ export interface ProposalProps {
   status: "PENDING" | "ACCEPTED" | "REJECTED";
   createdAt: string;
   updatedAt: string;
-  job: {
-    title: string;
-    description: string;
-    hourlyRateMin: number | null;
-    hourlyRateMax: number | null;
-    fixedPrice: number | null;
-  };
+  job: JobProps;
   freelancer: {
     id: string;
     userId: string;
