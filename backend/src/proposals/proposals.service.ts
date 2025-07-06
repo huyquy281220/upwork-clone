@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ProposalStatus } from '@prisma/client';
+import { ContractStatus, ProposalStatus } from '@prisma/client';
 import { CreateProposalDto } from './dto/create-proposal';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
 import { cloudinary } from 'src/provider/cloudinary';
@@ -320,93 +320,104 @@ export class ProposalsService {
     });
   }
 
-  //   async acceptProposal(proposalId: string, clientId: string) {
-  //     return this.prismaService.$transaction(async (tx) => {
-  //       // Check proposal
-  //       const proposal = await tx.proposal.findUnique({
-  //         where: { id: proposalId },
-  //         include: { job: { select: { clientId: true } } },
-  //       });
-  //       if (!proposal) {
-  //         throw new NotFoundException(`Proposal with ID ${proposalId} not found`);
-  //       }
-  //       if (proposal.job.clientId !== clientId) {
-  //         throw new BadRequestException('Client does not own this job');
-  //       }
-  //       if (proposal.status !== ProposalStatus.PENDING) {
-  //         throw new BadRequestException('Proposal is not in pending status');
-  //       }
+  async acceptProposal(proposalId: string, clientId: string) {
+    return this.prismaService.$transaction(async (tx) => {
+      // Check proposal
+      const proposal = await tx.proposal.findUnique({
+        where: { id: proposalId },
+        include: { job: { select: { clientId: true } } },
+      });
+      if (!proposal) {
+        throw new NotFoundException(`Proposal with ID ${proposalId} not found`);
+      }
+      if (proposal.job.clientId !== clientId) {
+        throw new BadRequestException('Client does not own this job');
+      }
+      if (proposal.status !== ProposalStatus.PENDING) {
+        throw new BadRequestException('Proposal is not in pending status');
+      }
 
-  //       // Update proposal status
-  //       await tx.proposal.update({
-  //         where: { id: proposalId },
-  //         data: { status: ProposalStatus.ACCEPTED },
-  //       });
+      // Update proposal status
+      await tx.proposal.update({
+        where: { id: proposalId },
+        data: { status: ProposalStatus.ACCEPTED },
+      });
 
-  //       // Create contract
-  //       const contract = await tx.contract.create({
-  //         data: {
-  //           jobId: proposal.jobId,
-  //           clientId,
-  //           freelancerId: proposal.freelancerId,
-  //           status: 'ACTIVE',
-  //           startedAt: new Date(),
-  //         },
-  //       });
+      // Create contract
+      const contract = await tx.contract.create({
+        data: {
+          jobId: proposal.jobId,
+          clientId,
+          freelancerId: proposal.freelancerId,
+          status: ContractStatus.ACTIVE,
+          startedAt: new Date(),
+        },
+      });
 
-  //       // Create notification for freelancer
-  //       await tx.notification.create({
-  //         data: {
-  //           userId: proposal.freelancerId,
-  //           content: `Your proposal for job "${proposal.jobId}" has been accepted`,
-  //         },
-  //       });
+      // Create notification for freelancer
+      await tx.notification.create({
+        data: {
+          userId: proposal.freelancerId,
+          content: `Your proposal for job "${proposal.jobId}" has been accepted`,
+        },
+      });
 
-  //       return tx.contract.findUnique({
-  //         where: { id: contract.id },
-  //         include: {
-  //           job: { select: { id: true, title: true } },
-  //           freelancer: { select: { userId: true, title: true } },
-  //           client: { select: { userId: true, companyName: true } },
-  //         },
-  //       });
-  //     });
-  //   }
+      return tx.contract.findUnique({
+        where: { id: contract.id },
+        include: {
+          job: { select: { id: true, title: true } },
+          freelancer: { select: { userId: true, title: true } },
+          client: { select: { userId: true, companyName: true } },
+        },
+      });
+    });
+  }
 
-  //   async rejectProposal(proposalId: string, clientId: string) {
-  //     return this.prismaService.$transaction(async (tx) => {
-  //       const proposal = await tx.proposal.findUnique({
-  //         where: { id: proposalId },
-  //         include: { job: { select: { clientId: true } } },
-  //       });
-  //       if (!proposal) {
-  //         throw new NotFoundException(`Proposal with ID ${proposalId} not found`);
-  //       }
-  //       if (proposal.job.clientId !== clientId) {
-  //         throw new BadRequestException('Client does not own this job');
-  //       }
-  //       if (proposal.status !== ProposalStatus.PENDING) {
-  //         throw new BadRequestException('Proposal is not in pending status');
-  //       }
+  async rejectProposal(proposalId: string, clientId: string) {
+    return this.prismaService.$transaction(async (tx) => {
+      const proposal = await tx.proposal.findUnique({
+        where: { id: proposalId },
+        include: { job: { select: { clientId: true, title: true } } },
+      });
+      if (!proposal) {
+        throw new NotFoundException(`Proposal with ID ${proposalId} not found`);
+      }
+      if (proposal.job.clientId !== clientId) {
+        throw new BadRequestException('Client does not own this job');
+      }
+      if (proposal.status !== ProposalStatus.PENDING) {
+        throw new BadRequestException('Proposal is not in pending status');
+      }
 
-  //       await tx.proposal.update({
-  //         where: { id: proposalId },
-  //         data: { status: ProposalStatus.REJECTED },
-  //       });
+      await tx.proposal.update({
+        where: { id: proposalId },
+        data: { status: ProposalStatus.REJECTED },
+      });
 
-  //       await tx.notification.create({
-  //         data: {
-  //           userId: proposal.freelancerId,
-  //           content: `Your proposal for job "${proposal.jobId}" has been rejected`,
-  //         },
-  //       });
+      await tx.notification.create({
+        data: {
+          userId: proposal.freelancerId,
+          content: `Your proposal for job "${proposal.jobId}" has been rejected`,
+        },
+      });
 
-  //       return { message: `Proposal ${proposalId} rejected successfully` };
-  //     });
-  //   }
+      const freelancer = await tx.freelancerProfile.findFirst({
+        where: {
+          proposals: {
+            some: { id: proposalId },
+          },
+        },
+      });
+
+      this.notificationGateway.sendNotificationToUser(freelancer.userId, {
+        content: `Your proposal for job "${proposal.job.title}" has been rejected`,
+      });
+
+      return { message: `Proposal ${proposalId} rejected successfully` };
+    });
+  }
 
   async uploadCv(file: Express.Multer.File) {
-    console.log(file);
     if (!file) {
       throw new BadRequestException('No file provided');
     }
