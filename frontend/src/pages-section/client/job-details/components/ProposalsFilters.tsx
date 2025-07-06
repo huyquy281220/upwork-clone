@@ -23,8 +23,6 @@ export function ProposalsFilters({
   setSearchQuery,
   sortBy,
   setSortBy,
-  filterBy,
-  setFilterBy,
 }: ProposalsFiltersProps) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -37,17 +35,7 @@ export function ProposalsFilters({
           className="pl-10 w-full h-9 rounded-sm"
         />
       </div>
-      <Select value={filterBy} onValueChange={setFilterBy}>
-        <SelectTrigger className="w-full sm:w-48">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Proposals</SelectItem>
-          <SelectItem value="shortlisted">Shortlisted</SelectItem>
-          <SelectItem value="new">New</SelectItem>
-          <SelectItem value="top-rated">Top Rated</SelectItem>
-        </SelectContent>
-      </Select>
+
       <Select value={sortBy} onValueChange={setSortBy}>
         <SelectTrigger className="w-full sm:w-48">
           <SelectValue />
@@ -57,7 +45,7 @@ export function ProposalsFilters({
           <SelectItem value="oldest">Oldest first</SelectItem>
           <SelectItem value="rate-low">Rate: Low to High</SelectItem>
           <SelectItem value="rate-high">Rate: High to Low</SelectItem>
-          <SelectItem value="rating">Highest Rated</SelectItem>
+          {/* <SelectItem value="rating">Highest Rated</SelectItem> */}
         </SelectContent>
       </Select>
     </div>
