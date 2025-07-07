@@ -179,18 +179,27 @@ model Proposal {
 
 model Contract {
   id           String            @id @default(uuid())
+  title        String
+  description  String
   jobId        String
   clientId     String
   freelancerId String
   status       ContractStatus
-  startedAt    DateTime
-  completedAt  DateTime?
+  contractType ContractType
+  hourlyRate   Float
+  totalPrice   Float
+
   client       ClientProfile     @relation("ClientContracts", fields: [clientId], references: [userId])
   freelancer   FreelancerProfile @relation("FreelancerContracts", fields: [freelancerId], references: [userId])
   job          Job               @relation(fields: [jobId], references: [id])
   payments     Payment[]
   reviews      Review[]
+
+  startedAt    DateTime
+  completedAt  DateTime
+  canceledAt   DateTime
   
+  createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
    @@unique([jobId,freelancerId,clientId])
@@ -303,6 +312,10 @@ enum Role {
 }
 
 enum JobType {
+  FIXED_PRICE
+  HOURLY
+}
+enum ContractType {
   FIXED_PRICE
   HOURLY
 }
