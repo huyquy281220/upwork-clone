@@ -8,7 +8,26 @@ import {
   ContractSummary,
   ContractTerms,
 } from "@/pages-section/client/contract";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
+import { getOneProposal } from "@/services/proposals";
+import { ProposalProps } from "@/types/proposals";
 // import { MilestonesSection } from "./components/contract/milestones-section";
+
+type PartialProposalProps = {
+  id: string;
+  freelancerId: string;
+  jobId: string;
+  coverLetter: string;
+  pricing: number;
+  timeline: string;
+  attachment: string;
+  status: "PENDING" | "ACCEPTED" | "REJECTED";
+  createdAt: string;
+  updatedAt: string;
+  job: Pick<ProposalProps["job"], "title" | "jobType">;
+  freelancer: Pick<ProposalProps["freelancer"], "userId" | "title">;
+};
 
 const jobData = {
   title: "Full Stack Developer for SaaS Platform",
@@ -25,6 +44,9 @@ const jobData = {
 // }
 
 export default function CreateContractPage() {
+  const params = useParams();
+  const proposalId = params.proposalId as string;
+
   const [contractType, setContractType] = useState<"hourly" | "fixed">("fixed");
   const [hourlyRate, setHourlyRate] = useState(jobData.proposalRate.toString());
   const [weeklyLimit, setWeeklyLimit] = useState("");
@@ -37,6 +59,12 @@ export default function CreateContractPage() {
   >("idle");
   const [description, setDescription] = useState("");
   // const [milestones, setMilestones] = useState<Milestone[]>([]);
+
+  const { data: proposal } = useQuery<PartialProposalProps>({
+    queryKey: ["proposal-for-contract", proposalId],
+    queryFn: () => getOneProposal(proposalId),
+    enabled: !!proposalId,
+  });
 
   const handleSaveDraft = () => {
     // Save contract as draft
@@ -57,9 +85,11 @@ export default function CreateContractPage() {
     ((contractType === "hourly" && hourlyRate) ||
       (contractType === "fixed" && fixedPrice));
 
+  if (!proposal) return;
+
   return (
     <div className="min-h-screen bg-background">
-      <ContractHeader freelancerName={""} jobTitle={jobData.title} />
+      <ContractHeader freelancerName={""} jobTitle={proposal.job.title} />
 
       <div className="max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
