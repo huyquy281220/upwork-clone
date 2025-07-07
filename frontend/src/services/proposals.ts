@@ -50,3 +50,9 @@ export const getPaginatedProposalsByJob = async (
 
   return response.data;
 };
+
+export const getOneProposal = async (proposalId: string) => {
+  const response = await api.get(`${apiURL}/proposal/${proposalId}`);
+
+  return response.data;
+};
