@@ -5,6 +5,44 @@ import Stripe from 'stripe';
 export class StripeService {
   constructor(@Inject('STRIPE_CLIENT') private stripe: Stripe) {}
 
+  //   create freelancer account
+  async createConnectedAccount(email: string) {
+    try {
+      const account = await this.stripe.accounts.create({
+        type: 'express',
+        email,
+        capabilities: {
+          transfers: { requested: true },
+        },
+      });
+
+      return account;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  // create account onboarding link
+  async createAccountLink(
+    accountId: string,
+    refreshUrl: string,
+    returnUrl: string,
+  ) {
+    try {
+      const accountLink = await this.stripe.accountLinks.create({
+        account: accountId,
+        refresh_url: refreshUrl,
+        return_url: returnUrl,
+        type: 'account_onboarding',
+      });
+
+      return accountLink.url;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  //   customer
   async createCustomer(email: string, name: string) {
     try {
       return await this.stripe.customers.create({ email, name });
@@ -31,6 +69,7 @@ export class StripeService {
     }
   }
 
+  //   create payment intent
   async createPaymentIntent(amount: number, currency: string) {
     try {
       return await this.stripe.paymentIntents.create({
@@ -51,8 +90,35 @@ export class StripeService {
     });
   }
 
-  /* PaymentMethod */
+  //   create escrow payment intent
+  async createEscrowPaymentIntent(
+    customerId: string,
+    amount: number,
+    currency: string,
+  ) {
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      customer: customerId,
+      amount,
+      currency,
+      payment_method_types: ['card'],
+      capture_method: 'manual', // authorize only
+    });
 
+    return paymentIntent;
+  }
+
+  // Release escrow payment (capture)
+  async capturePaymentIntent(paymentIntentId: string) {
+    try {
+      const paymentIntent =
+        await this.stripe.paymentIntents.capture(paymentIntentId);
+      return paymentIntent;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  /* PaymentMethod */
   async attachPaymentMethod(paymentMethodId: string, customerId: string) {
     try {
       return await this.stripe.paymentMethods.attach(paymentMethodId, {
@@ -115,6 +181,47 @@ export class StripeService {
       });
 
       return checkout;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  //   create payment with fee
+  async createPaymentWithFee(
+    customerId: string,
+    amount: number,
+    currency: string,
+    applicationFeeAmount: number,
+    freelancerAccountId: string,
+  ) {
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      customer: customerId,
+      amount,
+      currency,
+      payment_method_types: ['card'],
+      application_fee_amount: applicationFeeAmount,
+      transfer_data: {
+        destination: freelancerAccountId,
+      },
+    });
+
+    return paymentIntent;
+  }
+
+  // Transfer money to freelancer (payout)
+  async transferToFreelancer(
+    amount: number,
+    currency: string,
+    destinationAccountId: string,
+  ) {
+    try {
+      const transfer = await this.stripe.transfers.create({
+        amount,
+        currency,
+        destination: destinationAccountId,
+      });
+
+      return transfer;
     } catch (error) {
       throw new Error(error);
     }

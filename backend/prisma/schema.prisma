@@ -281,15 +281,18 @@ model Notification {
 }
 
 model Payment {
-  id         String        @id @default(uuid())
-  contractId String
-  amount     Float
-  currency   String        @default("USD")
-  status     PaymentStatus
-  method     PaymentMethod
-  paidAt     DateTime?
-  createdAt  DateTime      @default(now())
-  contract   Contract      @relation(fields: [contractId], references: [id])
+  id                  String        @id @default(uuid())
+  contractId          String
+  amount              Float
+  currency            String        @default("USD")
+  status              PaymentStatus
+  method              PaymentMethod
+  paymentIntentId     String?       @unique
+  captureMethod       String?       
+  applicationFeeAmount Float?
+  paidAt              DateTime?
+  createdAt           DateTime      @default(now())
+  contract            Contract      @relation(fields: [contractId], references: [id])
 }
 
 model Review {
@@ -322,15 +325,16 @@ enum LanguageProficiency {
 }
 
 enum PaymentStatus {
-  PENDING
+  PENDING  
+  AUTHORIZED
   PAID
   FAILED
+  REFUNDED
 }
 
 enum PaymentMethod {
   CARD
   BANK_TRANSFER
-  STRIPE
 }
 
 enum Role {
