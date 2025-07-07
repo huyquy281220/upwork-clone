@@ -11,10 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { JobType } from "@/types/jobs";
 
 interface ContractTermsProps {
-  contractType: "hourly" | "fixed";
-  setContractType: (type: "hourly" | "fixed") => void;
+  contractType: "HOURLY" | "FIXED_PRICE";
+  setContractType: (type: "HOURLY" | "FIXED_PRICE") => void;
   hourlyRate: string;
   setHourlyRate: (rate: string) => void;
   weeklyLimit: string;
@@ -80,8 +81,8 @@ export function ContractTerms({
                 type="radio"
                 id="hourly"
                 name="contract-type"
-                checked={contractType === "hourly"}
-                onChange={() => setContractType("hourly")}
+                checked={contractType === JobType.HOURLY}
+                onChange={() => setContractType("HOURLY")}
                 className="w-4 h-4"
               />
               <Label htmlFor="hourly">Hourly</Label>
@@ -91,8 +92,8 @@ export function ContractTerms({
                 type="radio"
                 id="fixed"
                 name="contract-type"
-                checked={contractType === "fixed"}
-                onChange={() => setContractType("fixed")}
+                checked={contractType === JobType.FIXED_PRICE}
+                onChange={() => setContractType("FIXED_PRICE")}
                 className="w-4 h-4"
               />
               <Label htmlFor="fixed">Fixed Price</Label>
@@ -101,7 +102,7 @@ export function ContractTerms({
         </div>
 
         {/* Hourly Contract Fields */}
-        {contractType === "hourly" && (
+        {contractType === JobType.HOURLY && (
           <div className="space-y-4">
             <div>
               <Label htmlFor="hourly-rate">Hourly Rate</Label>
@@ -148,7 +149,7 @@ export function ContractTerms({
         )}
 
         {/* Fixed Price Contract Fields */}
-        {contractType === "fixed" && (
+        {contractType === JobType.FIXED_PRICE && (
           <div>
             <Label htmlFor="fixed-price">Fixed Price</Label>
             <div className="relative mt-1">

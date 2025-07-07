@@ -26,7 +26,10 @@ type PartialProposalProps = {
   createdAt: string;
   updatedAt: string;
   job: Pick<ProposalProps["job"], "title" | "jobType">;
-  freelancer: Pick<ProposalProps["freelancer"], "userId" | "title">;
+  freelancer: {
+    title: string;
+    user: Pick<ProposalProps["freelancer"]["user"], "fullName">;
+  };
 };
 
 const jobData = {
@@ -77,13 +80,13 @@ export default function CreateContractPage() {
     await new Promise((resolve) => setTimeout(resolve, 2000));
   };
 
-  const isValid =
-    contractTitle.trim() &&
-    description.trim() &&
-    projectDuration &&
-    startDate &&
-    ((contractType === "hourly" && hourlyRate) ||
-      (contractType === "fixed" && fixedPrice));
+  // const isValid =
+  //   contractTitle.trim() &&
+  //   description.trim() &&
+  //   projectDuration &&
+  //   startDate &&
+  //   ((contractType === "hourly" && hourlyRate) ||
+  //     (contractType === "fixed" && fixedPrice));
 
   if (!proposal) return;
 
