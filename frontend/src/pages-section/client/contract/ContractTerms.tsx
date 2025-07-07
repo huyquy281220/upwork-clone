@@ -172,13 +172,15 @@ export function ContractTerms({
               <SelectValue placeholder="Select duration" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="less-than-1-month">
-                Less than 1 month
-              </SelectItem>
-              <SelectItem value="1-3-months">1-3 months</SelectItem>
+              <SelectItem value="less-than-1-week">Less than 1 week</SelectItem>
+              <SelectItem value="1-2-weeks">1-2 weeks</SelectItem>
+              <SelectItem value="2-4-weeks">2-4 weeks</SelectItem>
+              <SelectItem value="1-2-months">1-2 months</SelectItem>
+              <SelectItem value="2-3-months">2-3 months</SelectItem>
               <SelectItem value="3-6-months">3-6 months</SelectItem>
-              <SelectItem value="6-12-months">6-12 months</SelectItem>
-              <SelectItem value="more-than-1-year">More than 1 year</SelectItem>
+              <SelectItem value="more-than-6-months">
+                More than 6 months
+              </SelectItem>
               <SelectItem value="ongoing">Ongoing</SelectItem>
             </SelectContent>
           </Select>
