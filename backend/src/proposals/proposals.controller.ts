@@ -61,7 +61,7 @@ export class ProposalsController {
     );
   }
 
-  @Get('/proposalId')
+  @Get('/:proposalId')
   async getOneProposal(@Param('proposalId') proposalId: string) {
     return this.proposalsService.findOneProposal(proposalId);
   }
