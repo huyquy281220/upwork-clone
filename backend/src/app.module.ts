@@ -17,6 +17,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ProposalsModule } from './proposals/proposals.module';
 import { UserSkillsModule } from './user-skills/user-skills.module';
 import { SocketModule } from './socket/socket.module';
+import { StripeModule } from './stripe/stripe.module';
 @Module({
   imports: [
     UserModule,
@@ -35,6 +36,7 @@ import { SocketModule } from './socket/socket.module';
     NotificationsModule,
     UserSkillsModule,
     SocketModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
