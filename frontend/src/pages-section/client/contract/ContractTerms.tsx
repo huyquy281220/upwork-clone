@@ -193,8 +193,9 @@ export function ContractTerms({
             id="start-date"
             type="date"
             value={startDate}
+            min={new Date().toISOString().split("T")[0]}
             onChange={(e) => setStartDate(e.target.value)}
-            className="mt-1"
+            className="mt-1 max-w-36"
           />
         </div>
 
