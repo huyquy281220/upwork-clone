@@ -104,7 +104,7 @@ export default function CreateContractPage() {
       <div className="max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2">
+          <div className="order-2 md:order-1 lg:col-span-2">
             <div className="space-y-8">
               <ContractTerms
                 contractType={contractType}
@@ -143,7 +143,7 @@ export default function CreateContractPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="order-1 md:order-2 lg:col-span-1">
             <ContractSummary
               contractType={contractType}
               hourlyRate={hourlyRate}
