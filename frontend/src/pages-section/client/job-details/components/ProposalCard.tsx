@@ -169,7 +169,9 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
               size="sm"
               className="text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50 bg-transparent"
               onClick={() =>
-                router.push(`/contracts/create?proposalId=${proposal.id}`)
+                router.push(
+                  `/client/contracts/create?proposalId=${proposal.id}`
+                )
               }
             >
               <ThumbsUp className="w-4 h-4 mr-1" />
