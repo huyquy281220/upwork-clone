@@ -1,9 +1,18 @@
-import { Module } from '@nestjs/common';
-import { StripeController } from './stripe.controller';
-import { StripeService } from './stripe.service';
+import { Module, Global } from '@nestjs/common';
+import Stripe from 'stripe';
 
+@Global()
 @Module({
-  controllers: [StripeController],
-  providers: [StripeService],
+  providers: [
+    {
+      provide: 'STRIPE_CLIENT',
+      useFactory: () => {
+        return new Stripe(process.env.STRIPE_SECRET_KEY, {
+          apiVersion: '2025-06-30.basil',
+        });
+      },
+    },
+  ],
+  exports: ['STRIPE_CLIENT'],
 })
 export class StripeModule {}
