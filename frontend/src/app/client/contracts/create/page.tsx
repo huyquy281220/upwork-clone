@@ -9,7 +9,7 @@ import {
   ContractTerms,
 } from "@/pages-section/client/contract";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { getOneProposal } from "@/services/proposals";
 import { ProposalProps } from "@/types/proposals";
 // import { MilestonesSection } from "./components/contract/milestones-section";
@@ -44,8 +44,8 @@ const jobData = {
 // }
 
 export default function CreateContractPage() {
-  const params = useParams();
-  const proposalId = params.proposalId as string;
+  const searchParams = useSearchParams();
+  const proposalId = searchParams.get("proposalId") as string;
 
   const [contractType, setContractType] = useState<"hourly" | "fixed">("fixed");
   const [hourlyRate, setHourlyRate] = useState(jobData.proposalRate.toString());

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 interface ContractHeaderProps {
   freelancerName: string;
@@ -17,10 +18,10 @@ export function ContractHeader({
       <div className="max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           <Button variant="ghost" size="sm" asChild className="mr-4">
-            <a href="/client-proposals">
+            <Link href="/client-proposals">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Proposals
-            </a>
+            </Link>
           </Button>
           <div>
             <h1 className="text-xl font-semibold text-foreground">
