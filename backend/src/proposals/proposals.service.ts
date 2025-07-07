@@ -251,7 +251,15 @@ export class ProposalsService {
     const proposal = await this.prismaService.proposal.findUnique({
       where: { id },
       include: {
-        freelancer: { select: { userId: true, title: true } },
+        freelancer: {
+          select: {
+            userId: true,
+            title: true,
+            user: {
+              select: { fullName: true },
+            },
+          },
+        },
         job: {
           select: {
             id: true,
