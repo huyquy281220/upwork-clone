@@ -16,6 +16,7 @@ import {
   ThumbsUp,
   Verified,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ProposalCardProps {
   proposal: ProposalProps;
@@ -23,6 +24,8 @@ interface ProposalCardProps {
 }
 
 export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
+  const router = useRouter();
+
   // const formatRate = (proposal: ProposalProps) => {
   //   if (proposal.proposalType === "hourly") {
   //     return `$${proposal.rate}/hr`;
@@ -165,6 +168,9 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
               variant="outline"
               size="sm"
               className="text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50 bg-transparent"
+              onClick={() =>
+                router.push(`/contracts/create?proposalId=${proposal.id}`)
+              }
             >
               <ThumbsUp className="w-4 h-4 mr-1" />
               Accept

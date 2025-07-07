@@ -16,13 +16,13 @@ const jobData = {
   proposalRate: 75,
 };
 
-interface Milestone {
-  id: string;
-  name: string;
-  description: string;
-  amount: string;
-  dueDate: string;
-}
+// interface Milestone {
+//   id: string;
+//   name: string;
+//   description: string;
+//   amount: string;
+//   dueDate: string;
+// }
 
 export default function CreateContractPage() {
   const [contractType, setContractType] = useState<"hourly" | "fixed">("fixed");
@@ -32,10 +32,11 @@ export default function CreateContractPage() {
   const [projectDuration, setProjectDuration] = useState("");
   const [startDate, setStartDate] = useState("");
   const [contractTitle, setContractTitle] = useState(jobData.title);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [description, setDescription] = useState("");
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [isSending, setIsSending] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  // const [milestones, setMilestones] = useState<Milestone[]>([]);
 
   const handleSaveDraft = () => {
     // Save contract as draft
@@ -43,11 +44,9 @@ export default function CreateContractPage() {
   };
 
   const handleSendContract = async () => {
-    setIsSending(true);
+    setStatus("loading");
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSending(false);
-    setIsSuccess(true);
   };
 
   const isValid =
@@ -57,15 +56,6 @@ export default function CreateContractPage() {
     startDate &&
     ((contractType === "hourly" && hourlyRate) ||
       (contractType === "fixed" && fixedPrice));
-
-  //   if (isSuccess) {
-  //     return (
-  //       <ContractSuccess
-  //         freelancerName={freelancerData.name}
-  //         contractTitle={contractTitle}
-  //       />
-  //     );
-  //   }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -107,7 +97,7 @@ export default function CreateContractPage() {
                 onSaveDraft={handleSaveDraft}
                 onSendContract={handleSendContract}
                 isValid={false}
-                isSending={isSending}
+                isSending={status === "loading"}
               />
             </div>
           </div>
@@ -122,7 +112,7 @@ export default function CreateContractPage() {
               projectDuration={projectDuration}
               startDate={startDate}
               contractTitle={contractTitle}
-              milestones={milestones}
+              // milestones={milestones}
             />
           </div>
         </div>

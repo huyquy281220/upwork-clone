@@ -11,7 +11,7 @@ interface ContractSummaryProps {
   projectDuration: string;
   startDate: string;
   contractTitle: string;
-  milestones: Array<{ name: string; amount: string }>;
+  // milestones: Array<{ name: string; amount: string }>;
 }
 
 export function ContractSummary({
@@ -22,17 +22,17 @@ export function ContractSummary({
   projectDuration,
   startDate,
   contractTitle,
-  milestones,
-}: ContractSummaryProps) {
+}: // milestones,
+ContractSummaryProps) {
   const formatDate = (dateString: string) => {
     if (!dateString) return "Not set";
     return new Date(dateString).toLocaleDateString();
   };
 
-  const totalMilestoneAmount = milestones.reduce(
-    (sum, milestone) => sum + (Number.parseFloat(milestone.amount) || 0),
-    0
-  );
+  // const totalMilestoneAmount = milestones.reduce(
+  //   (sum, milestone) => sum + (Number.parseFloat(milestone.amount) || 0),
+  //   0
+  // );
 
   return (
     <Card className="sticky top-6">
@@ -83,7 +83,7 @@ export function ContractSummary({
           </div>
         </div>
 
-        {contractType === "fixed" && milestones.length > 0 && (
+        {/* {contractType === "fixed" && milestones.length > 0 && (
           <div className="pt-4 border-t">
             <h4 className="font-medium mb-2">
               Milestones ({milestones.length})
@@ -107,7 +107,7 @@ export function ContractSummary({
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
         <div className="pt-4 border-t">
           <div className="bg-blue-50 rounded-lg p-3">
