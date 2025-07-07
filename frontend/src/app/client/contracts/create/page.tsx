@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { FreelancerSummary } from "./components/contract/freelancer-summary";
 import {
   ContractActions,
@@ -9,9 +9,10 @@ import {
   ContractTerms,
 } from "@/pages-section/client/contract";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getOneProposal } from "@/services/proposals";
 import { ProposalProps } from "@/types/proposals";
+import { JobType } from "@/types/jobs";
 // import { MilestonesSection } from "./components/contract/milestones-section";
 
 type PartialProposalProps = {
@@ -32,12 +33,6 @@ type PartialProposalProps = {
   };
 };
 
-const jobData = {
-  title: "Full Stack Developer for SaaS Platform",
-  proposalType: "hourly" as const,
-  proposalRate: 75,
-};
-
 // interface Milestone {
 //   id: string;
 //   name: string;
@@ -47,16 +42,19 @@ const jobData = {
 // }
 
 export default function CreateContractPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const proposalId = searchParams.get("proposalId") as string;
 
-  const [contractType, setContractType] = useState<"hourly" | "fixed">("fixed");
-  const [hourlyRate, setHourlyRate] = useState(jobData.proposalRate.toString());
+  const [contractType, setContractType] = useState<JobType>(
+    JobType.FIXED_PRICE
+  );
+  const [hourlyRate, setHourlyRate] = useState(0);
   const [weeklyLimit, setWeeklyLimit] = useState("");
-  const [fixedPrice, setFixedPrice] = useState("");
+  const [fixedPrice, setFixedPrice] = useState(0);
   const [projectDuration, setProjectDuration] = useState("");
   const [startDate, setStartDate] = useState("");
-  const [contractTitle, setContractTitle] = useState(jobData.title);
+  const [contractTitle, setContractTitle] = useState("");
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -69,9 +67,18 @@ export default function CreateContractPage() {
     enabled: !!proposalId,
   });
 
-  const handleSaveDraft = () => {
-    // Save contract as draft
-    console.log("Saving draft...");
+  useEffect(() => {
+    if (proposal) {
+      setContractTitle(proposal.job.title);
+      setProjectDuration(proposal.timeline);
+      setContractType(proposal.job.jobType);
+      setFixedPrice(proposal.pricing);
+      setHourlyRate(proposal.pricing);
+    }
+  }, [proposal]);
+
+  const handleBackToProposal = () => {
+    router.back();
   };
 
   const handleSendContract = async () => {
@@ -101,7 +108,7 @@ export default function CreateContractPage() {
             <div className="space-y-8">
               <ContractTerms
                 contractType={contractType}
-                setContractType={setContractType}
+                setContractType={(type) => setContractType(type as JobType)}
                 hourlyRate={hourlyRate}
                 setHourlyRate={setHourlyRate}
                 weeklyLimit={weeklyLimit}
@@ -116,8 +123,8 @@ export default function CreateContractPage() {
                 setContractTitle={setContractTitle}
                 description={description}
                 setDescription={setDescription}
-                proposalType={jobData.proposalType}
-                proposalRate={jobData.proposalRate}
+                // proposalType={jobData.proposalType}
+                // proposalRate={jobData.proposalRate}
               />
 
               {/* <MilestonesSection
@@ -127,7 +134,7 @@ export default function CreateContractPage() {
                 /> */}
 
               <ContractActions
-                onSaveDraft={handleSaveDraft}
+                onSaveDraft={handleBackToProposal}
                 onSendContract={handleSendContract}
                 isValid={false}
                 isSending={status === "loading"}

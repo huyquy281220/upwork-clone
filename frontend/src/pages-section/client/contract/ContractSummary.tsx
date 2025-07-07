@@ -2,12 +2,13 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { JobType } from "@/types/jobs";
 
 interface ContractSummaryProps {
   contractType: string;
-  hourlyRate: string;
+  hourlyRate: number;
   weeklyLimit: string;
-  fixedPrice: string;
+  fixedPrice: number;
   projectDuration: string;
   startDate: string;
   contractTitle: string;
@@ -41,44 +42,44 @@ ContractSummaryProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <h4 className="font-medium text-gray-900 mb-2">
+          <h4 className="font-medium text-foreground mb-2">
             {contractTitle || "Untitled Contract"}
           </h4>
           <Badge variant="outline" className="text-xs">
-            {contractType === "hourly"
+            {contractType === JobType.HOURLY
               ? "Hourly Contract"
               : "Fixed Price Contract"}
           </Badge>
         </div>
 
         <div className="space-y-3">
-          {contractType === "hourly" ? (
+          {contractType === JobType.HOURLY ? (
             <>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Hourly Rate:</span>
+                <span className="text-sm text-foreground">Hourly Rate:</span>
                 <span className="font-medium">${hourlyRate || "0"}/hr</span>
               </div>
               {weeklyLimit && (
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Weekly Limit:</span>
+                  <span className="text-sm text-foreground">Weekly Limit:</span>
                   <span className="font-medium">{weeklyLimit} hours</span>
                 </div>
               )}
             </>
           ) : (
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Fixed Price:</span>
+              <span className="text-sm text-foreground">Fixed Price:</span>
               <span className="font-medium">${fixedPrice || "0"}</span>
             </div>
           )}
 
           <div className="flex justify-between">
-            <span className="text-sm text-gray-600">Duration:</span>
+            <span className="text-sm text-foreground">Duration:</span>
             <span className="font-medium">{projectDuration || "Not set"}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-sm text-gray-600">Start Date:</span>
+            <span className="text-sm text-foreground">Start Date:</span>
             <span className="font-medium">{formatDate(startDate)}</span>
           </div>
         </div>
@@ -91,7 +92,7 @@ ContractSummaryProps) {
             <div className="space-y-2">
               {milestones.map((milestone, index) => (
                 <div key={index} className="flex justify-between text-sm">
-                  <span className="text-gray-600 truncate">
+                  <span className="text-foreground truncate">
                     {milestone.name || `Milestone ${index + 1}`}
                   </span>
                   <span className="font-medium">

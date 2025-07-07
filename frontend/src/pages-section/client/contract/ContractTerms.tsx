@@ -16,12 +16,12 @@ import { JobType } from "@/types/jobs";
 interface ContractTermsProps {
   contractType: "HOURLY" | "FIXED_PRICE";
   setContractType: (type: "HOURLY" | "FIXED_PRICE") => void;
-  hourlyRate: string;
-  setHourlyRate: (rate: string) => void;
+  hourlyRate: number;
+  setHourlyRate: (rate: number) => void;
   weeklyLimit: string;
   setWeeklyLimit: (limit: string) => void;
-  fixedPrice: string;
-  setFixedPrice: (price: string) => void;
+  fixedPrice: number;
+  setFixedPrice: (price: number) => void;
   projectDuration: string;
   setProjectDuration: (duration: string) => void;
   startDate: string;
@@ -30,8 +30,6 @@ interface ContractTermsProps {
   setContractTitle: (title: string) => void;
   description: string;
   setDescription: (description: string) => void;
-  proposalType: string;
-  proposalRate: number;
 }
 
 export function ContractTerms({
@@ -51,8 +49,6 @@ export function ContractTerms({
   setContractTitle,
   description,
   setDescription,
-  proposalType,
-  proposalRate,
 }: ContractTermsProps) {
   return (
     <Card>
@@ -114,21 +110,18 @@ export function ContractTerms({
                   id="hourly-rate"
                   type="number"
                   value={hourlyRate}
-                  onChange={(e) => setHourlyRate(e.target.value)}
-                  placeholder={
-                    proposalType === "hourly" ? proposalRate.toString() : "0.00"
-                  }
+                  onChange={(e) => setHourlyRate(+e.target.value)}
+                  placeholder={hourlyRate ? hourlyRate.toString() : "0.00"}
                   className="pl-8"
                 />
                 <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                   /hr
                 </span>
               </div>
-              {proposalType === "hourly" && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Freelancer proposed: ${proposalRate}/hr
-                </p>
-              )}
+
+              <p className="text-xs text-gray-500 mt-1">
+                Freelancer proposed: ${hourlyRate}/hr
+              </p>
             </div>
 
             <div>
@@ -160,18 +153,14 @@ export function ContractTerms({
                 id="fixed-price"
                 type="number"
                 value={fixedPrice}
-                onChange={(e) => setFixedPrice(e.target.value)}
-                placeholder={
-                  proposalType === "fixed" ? proposalRate.toString() : "0.00"
-                }
+                onChange={(e) => setFixedPrice(+e.target.value)}
+                placeholder={fixedPrice ? fixedPrice.toString() : "0.00"}
                 className="pl-8"
               />
             </div>
-            {proposalType === "fixed" && (
-              <p className="text-xs text-gray-500 mt-1">
-                Freelancer proposed: ${proposalRate.toLocaleString()}
-              </p>
-            )}
+            <p className="text-xs text-gray-500 mt-1">
+              Freelancer proposed: ${fixedPrice.toLocaleString()}
+            </p>
           </div>
         )}
 

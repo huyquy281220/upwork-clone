@@ -25,7 +25,7 @@ export function ContractActions({
             className="flex-1 bg-transparent"
             onClick={onSaveDraft}
           >
-            Save as Draft
+            Back to proposal
           </Button>
           <Button
             className="flex-1 bg-green-600 hover:bg-green-700"
