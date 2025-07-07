@@ -61,6 +61,11 @@ export class ProposalsController {
     );
   }
 
+  @Get('/proposalId')
+  async getOneProposal(@Param('proposalId') proposalId: string) {
+    return this.proposalsService.findOneProposal(proposalId);
+  }
+
   @Post('/create')
   @UseInterceptors(FileInterceptor('attachment'))
   async create(
