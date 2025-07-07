@@ -353,9 +353,9 @@ export class ProposalsService {
   }
 
   async acceptProposal(proposalId: string, clientId: string) {
-    return this.prismaService.$transaction(async (tx) => {
+    try {
       // Check proposal
-      const proposal = await tx.proposal.findUnique({
+      const proposal = await this.prismaService.proposal.findUnique({
         where: { id: proposalId },
         include: { job: { select: { clientId: true } } },
       });
@@ -370,39 +370,21 @@ export class ProposalsService {
       }
 
       // Update proposal status
-      await tx.proposal.update({
+      await this.prismaService.proposal.update({
         where: { id: proposalId },
         data: { status: ProposalStatus.ACCEPTED },
       });
 
-      // Create contract
-      const contract = await tx.contract.create({
-        data: {
-          jobId: proposal.jobId,
-          clientId,
-          freelancerId: proposal.freelancerId,
-          status: ContractStatus.ACTIVE,
-          startedAt: new Date(),
-        },
-      });
-
       // Create notification for freelancer
-      await tx.notification.create({
+      await this.prismaService.notification.create({
         data: {
           userId: proposal.freelancerId,
           content: `Your proposal for job "${proposal.jobId}" has been accepted`,
         },
       });
-
-      return tx.contract.findUnique({
-        where: { id: contract.id },
-        include: {
-          job: { select: { id: true, title: true } },
-          freelancer: { select: { userId: true, title: true } },
-          client: { select: { userId: true, companyName: true } },
-        },
-      });
-    });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async rejectProposal(proposalId: string, clientId: string) {

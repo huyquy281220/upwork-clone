@@ -6,7 +6,12 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
-import { ContractStatus, Role } from '@prisma/client';
+import {
+  ContractStatus,
+  ContractType,
+  MilestoneStatus,
+  Role,
+} from '@prisma/client';
 import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
@@ -16,15 +21,17 @@ export class ContractsService {
     private notificationsService: NotificationsService,
   ) {}
 
-  async createContract(data: CreateContractDto, clientId: string) {
+  async createContract(data: CreateContractDto) {
     return this.prisma.$transaction(async (tx) => {
       // Check if client exists
       const client = await tx.user.findUnique({
-        where: { id: clientId },
+        where: { id: data.clientId },
         include: { clientProfile: true },
       });
       if (!client || !client.clientProfile) {
-        throw new NotFoundException(`Client with ID ${clientId} not found`);
+        throw new NotFoundException(
+          `Client with ID ${data.clientId} not found`,
+        );
       }
 
       // Check if freelancer exists
@@ -48,7 +55,7 @@ export class ContractsService {
       }
 
       // Check if client owns the job
-      if (job.client.userId !== clientId) {
+      if (job.client.userId !== data.clientId) {
         throw new BadRequestException('Client does not own this job');
       }
 
@@ -68,18 +75,38 @@ export class ContractsService {
       // Create contract
       const contract = await tx.contract.create({
         data: {
-          jobId: data.jobId,
-          clientId: clientId,
-          freelancerId: data.freelancerId,
+          job: { connect: { id: data.jobId } },
+          client: { connect: { id: data.clientId } },
+          freelancer: { connect: { id: data.freelancerId } },
+          title: data.title,
+          description: data.description,
           status: ContractStatus.ACTIVE,
-          startedAt: new Date(),
-        },
-        include: {
-          job: { select: { id: true, title: true } },
-          client: { select: { userId: true, companyName: true } },
-          freelancer: { select: { userId: true, title: true } },
+          contractType: job.jobType,
+          hourlyRate: data.hourlyRate ?? null,
+          totalPrice: data.fixedPrice ?? null,
+          startedAt: null,
+          completedAt: null,
+          canceledAt: null,
         },
       });
+
+      if (
+        contract.contractType === ContractType.FIXED_PRICE &&
+        data.milestone
+      ) {
+        for (const m of data.milestone) {
+          await tx.milestone.create({
+            data: {
+              contractId: contract.id,
+              title: m.title,
+              description: m.description,
+              amount: m.amount ?? 0,
+              dueDate: m.dueDate,
+              status: MilestoneStatus.PENDING,
+            },
+          });
+        }
+      }
 
       // Create notification for freelancer using notifications service
       await this.notificationsService.notifyContractCreated(

@@ -181,7 +181,7 @@ model Contract {
   id           String            @id @default(uuid())
   title        String
   description  String
-  milestoneId  String
+  milestoneId  String?
   jobId        String
   clientId     String
   freelancerId String
@@ -193,7 +193,8 @@ model Contract {
   client       ClientProfile     @relation("ClientContracts", fields: [clientId], references: [userId])
   freelancer   FreelancerProfile @relation("FreelancerContracts", fields: [freelancerId], references: [userId])
   job          Job               @relation(fields: [jobId], references: [id])
-  milestone    Milestone[]         @relation("MilestoneContract")
+  milestone    Milestone[]       @relation("MilestoneContract")
+  workLog      WorkLog[]           @relation("WorkLogContract")
   payments     Payment[]
   reviews      Review[]
 
@@ -204,7 +205,7 @@ model Contract {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-   @@unique([jobId,freelancerId,clientId,milestoneId])
+   @@unique([jobId,freelancerId,clientId])
 }
 
 model Milestone {
@@ -219,6 +220,16 @@ model Milestone {
   updatedAt    DateTime @updatedAt
 
   contract     Contract @relation("MilestoneContract",fields: [contractId], references: [id])
+}
+
+model WorkLog {
+  id          String   @id @default(uuid())
+  contractId  String
+  date        DateTime
+  hours       Float
+  description String?
+
+  contract    Contract?  @relation("WorkLogContract",fields: [contractId], references: [id])
 }
 
 model Message {

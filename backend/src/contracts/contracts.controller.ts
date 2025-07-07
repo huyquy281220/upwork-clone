@@ -24,14 +24,14 @@ import { AuthenticatedUser, Role } from 'src/types';
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
 
-  @Post()
+  @Post('/create')
   @Roles(PrismaRole.CLIENT)
   @UsePipes(new ValidationPipe())
   create(
     @Body() createContractDto: CreateContractDto,
-    @CurrentUser() user: AuthenticatedUser,
+    // @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.contractsService.createContract(createContractDto, user.id);
+    return this.contractsService.createContract(createContractDto);
   }
 
   @Get()
