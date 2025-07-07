@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ContractStatus, ProposalStatus } from '@prisma/client';
+import { ProposalStatus } from '@prisma/client';
 import { CreateProposalDto } from './dto/create-proposal';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
 import { cloudinary } from 'src/provider/cloudinary';
