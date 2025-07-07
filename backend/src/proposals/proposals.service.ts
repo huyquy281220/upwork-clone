@@ -252,7 +252,13 @@ export class ProposalsService {
       where: { id },
       include: {
         freelancer: { select: { userId: true, title: true } },
-        job: { select: { id: true, title: true, clientId: true } },
+        job: {
+          select: {
+            id: true,
+            title: true,
+            jobType: true,
+          },
+        },
       },
     });
 
