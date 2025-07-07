@@ -13,8 +13,8 @@ export function ContractHeader({
   jobTitle,
 }: ContractHeaderProps) {
   return (
-    <div className="bg-white border-b">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="border-b">
+      <div className="max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           <Button variant="ghost" size="sm" asChild className="mr-4">
             <a href="/client-proposals">
@@ -23,11 +23,11 @@ export function ContractHeader({
             </a>
           </Button>
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">
+            <h1 className="text-xl font-semibold text-foreground">
               Create Contract
             </h1>
-            <p className="text-sm text-gray-600">
-              Hiring {freelancerName} for "{jobTitle}"
+            <p className="text-sm text-foreground opacity-80">
+              Hiring {freelancerName} for &#34;{jobTitle}&#34;
             </p>
           </div>
         </div>
