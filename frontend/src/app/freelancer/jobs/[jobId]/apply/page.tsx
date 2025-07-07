@@ -17,6 +17,7 @@ import { LoadingComp } from "@/components/common/LoadingComp";
 import { FreelancerUser } from "@/types/user";
 import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
+import { formatSelectValue } from "@/utils/formatSelectValue";
 
 const jobData = {
   id: 1,
@@ -90,6 +91,7 @@ export default function Apply() {
     try {
       const res = await createProposal({
         ...proposal,
+        timeline: formatSelectValue(proposal.timeline),
         jobId,
         freelancerId: user?.freelancerProfile.id,
       });
