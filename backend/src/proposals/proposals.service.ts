@@ -96,7 +96,11 @@ export class ProposalsService {
     searchQuery?: string,
     sortedBy?: string,
   ) {
-    const { where, orderBy } = buildProposalFilters({ searchQuery, sortedBy });
+    const { where, orderBy } = buildProposalFilters({
+      jobId,
+      searchQuery,
+      sortedBy,
+    });
 
     try {
       const [proposals, totalProposals] = await Promise.all([
