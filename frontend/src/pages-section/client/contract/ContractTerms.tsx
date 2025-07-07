@@ -1,0 +1,223 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+
+interface ContractTermsProps {
+  contractType: "hourly" | "fixed";
+  setContractType: (type: "hourly" | "fixed") => void;
+  hourlyRate: string;
+  setHourlyRate: (rate: string) => void;
+  weeklyLimit: string;
+  setWeeklyLimit: (limit: string) => void;
+  fixedPrice: string;
+  setFixedPrice: (price: string) => void;
+  projectDuration: string;
+  setProjectDuration: (duration: string) => void;
+  startDate: string;
+  setStartDate: (date: string) => void;
+  contractTitle: string;
+  setContractTitle: (title: string) => void;
+  description: string;
+  setDescription: (description: string) => void;
+  proposalType: string;
+  proposalRate: number;
+}
+
+export function ContractTerms({
+  contractType,
+  setContractType,
+  hourlyRate,
+  setHourlyRate,
+  weeklyLimit,
+  setWeeklyLimit,
+  fixedPrice,
+  setFixedPrice,
+  projectDuration,
+  setProjectDuration,
+  startDate,
+  setStartDate,
+  contractTitle,
+  setContractTitle,
+  description,
+  setDescription,
+  proposalType,
+  proposalRate,
+}: ContractTermsProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Contract Terms</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Contract Title */}
+        <div>
+          <Label htmlFor="contract-title">Contract Title</Label>
+          <Input
+            id="contract-title"
+            value={contractTitle}
+            onChange={(e) => setContractTitle(e.target.value)}
+            placeholder="Enter contract title"
+            className="mt-1"
+          />
+        </div>
+
+        {/* Contract Type */}
+        <div>
+          <Label className="text-sm font-medium">Contract Type</Label>
+          <div className="flex space-x-4 mt-2">
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id="hourly"
+                name="contract-type"
+                checked={contractType === "hourly"}
+                onChange={() => setContractType("hourly")}
+                className="w-4 h-4"
+              />
+              <Label htmlFor="hourly">Hourly</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id="fixed"
+                name="contract-type"
+                checked={contractType === "fixed"}
+                onChange={() => setContractType("fixed")}
+                className="w-4 h-4"
+              />
+              <Label htmlFor="fixed">Fixed Price</Label>
+            </div>
+          </div>
+        </div>
+
+        {/* Hourly Contract Fields */}
+        {contractType === "hourly" && (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="hourly-rate">Hourly Rate</Label>
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                  $
+                </span>
+                <Input
+                  id="hourly-rate"
+                  type="number"
+                  value={hourlyRate}
+                  onChange={(e) => setHourlyRate(e.target.value)}
+                  placeholder={
+                    proposalType === "hourly" ? proposalRate.toString() : "0.00"
+                  }
+                  className="pl-8"
+                />
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                  /hr
+                </span>
+              </div>
+              {proposalType === "hourly" && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Freelancer proposed: ${proposalRate}/hr
+                </p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="weekly-limit">Weekly Hour Limit (Optional)</Label>
+              <Input
+                id="weekly-limit"
+                type="number"
+                value={weeklyLimit}
+                onChange={(e) => setWeeklyLimit(e.target.value)}
+                placeholder="40"
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Maximum hours per week
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Fixed Price Contract Fields */}
+        {contractType === "fixed" && (
+          <div>
+            <Label htmlFor="fixed-price">Fixed Price</Label>
+            <div className="relative mt-1">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                $
+              </span>
+              <Input
+                id="fixed-price"
+                type="number"
+                value={fixedPrice}
+                onChange={(e) => setFixedPrice(e.target.value)}
+                placeholder={
+                  proposalType === "fixed" ? proposalRate.toString() : "0.00"
+                }
+                className="pl-8"
+              />
+            </div>
+            {proposalType === "fixed" && (
+              <p className="text-xs text-gray-500 mt-1">
+                Freelancer proposed: ${proposalRate.toLocaleString()}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Project Duration */}
+        <div>
+          <Label htmlFor="project-duration">Project Duration</Label>
+          <Select value={projectDuration} onValueChange={setProjectDuration}>
+            <SelectTrigger className="mt-1">
+              <SelectValue placeholder="Select duration" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="less-than-1-month">
+                Less than 1 month
+              </SelectItem>
+              <SelectItem value="1-3-months">1-3 months</SelectItem>
+              <SelectItem value="3-6-months">3-6 months</SelectItem>
+              <SelectItem value="6-12-months">6-12 months</SelectItem>
+              <SelectItem value="more-than-1-year">More than 1 year</SelectItem>
+              <SelectItem value="ongoing">Ongoing</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Start Date */}
+        <div>
+          <Label htmlFor="start-date">Start Date</Label>
+          <Input
+            id="start-date"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="mt-1"
+          />
+        </div>
+
+        {/* Description */}
+        <div>
+          <Label htmlFor="description">Project Description</Label>
+          <Textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe the work to be done, deliverables, and any specific requirements..."
+            className="mt-1 min-h-[120px]"
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
