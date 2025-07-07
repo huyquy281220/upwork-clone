@@ -137,6 +137,16 @@ svg {
   overflow: hidden;
 }
 
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* Chrome, Safari, Edge */
+  margin: 0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .consultant-slider {
