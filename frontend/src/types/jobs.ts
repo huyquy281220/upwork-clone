@@ -42,6 +42,12 @@ export interface JobProps {
 export interface JobDetailProps extends JobProps {
   client: {
     id: string;
+    user: {
+      fullName: string;
+      avatarUrl: string;
+      address: string;
+      verified: boolean;
+    };
   };
   proposals: Omit<ProposalProps, "job">[];
 }

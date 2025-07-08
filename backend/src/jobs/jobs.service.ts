@@ -73,7 +73,18 @@ export class JobsService {
       where: { id },
       include: {
         skills: { select: { skill: { select: { id: true, name: true } } } },
-        client: { select: { id: true } },
+        client: {
+          include: {
+            user: {
+              select: {
+                fullName: true,
+                avatarUrl: true,
+                address: true,
+                verified: true,
+              },
+            },
+          },
+        },
         proposals: { select: { id: true, freelancerId: true, status: true } },
       },
     });

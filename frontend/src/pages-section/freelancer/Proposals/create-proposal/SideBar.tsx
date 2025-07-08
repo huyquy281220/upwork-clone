@@ -1,32 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { JobDetailProps, JobType } from "@/types/jobs";
 import { Clock, DollarSign, MapPin, Star, Users } from "lucide-react";
 
 interface ProposalSidebarProps {
-  jobData: {
-    title: string;
-    description: string;
-    budget: { type: string; min?: number; max?: number; amount?: number };
-    duration: string;
-    proposalsCount: number;
-    client: {
-      name: string;
-      avatar: string;
-      location: string;
-      rating: number;
-      verified: boolean;
-    };
-    skills: string[];
-  };
+  jobData: JobDetailProps;
 }
 
 export function ProposalSidebar({ jobData }: ProposalSidebarProps) {
-  const formatBudget = (budget: any) => {
-    if (budget.type === "hourly") {
-      return `$${budget.min}-$${budget.max}/hr`;
+  const formatBudget = (jobType: JobType) => {
+    if (jobType === JobType.HOURLY) {
+      return `$${jobData.hourlyRateMin}-$${jobData.hourlyRateMax}`;
     } else {
-      return `$${budget.amount?.toLocaleString()}`;
+      return `$${jobData.fixedPrice}`;
     }
   };
 
@@ -37,8 +24,10 @@ export function ProposalSidebar({ jobData }: ProposalSidebarProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <h3 className="font-semibold text-gray-900 mb-2">{jobData.title}</h3>
-          <p className="text-sm text-gray-600 line-clamp-4">
+          <h3 className="font-semibold text-foreground mb-2">
+            {jobData.title}
+          </h3>
+          <p className="text-sm text-foreground opacity-75 line-clamp-4">
             {jobData.description}
           </p>
         </div>
@@ -46,23 +35,25 @@ export function ProposalSidebar({ jobData }: ProposalSidebarProps) {
         <div className="space-y-3">
           <div className="flex items-center space-x-2 text-sm">
             <DollarSign className="w-4 h-4 text-gray-400" />
-            <span className="font-medium">{formatBudget(jobData.budget)}</span>
+            <span className="font-medium">{formatBudget(jobData.jobType)}</span>
           </div>
           <div className="flex items-center space-x-2 text-sm">
             <Clock className="w-4 h-4 text-gray-400" />
-            <span>{jobData.duration}</span>
+            <span>{jobData.jobDuration}</span>
           </div>
           <div className="flex items-center space-x-2 text-sm">
             <Users className="w-4 h-4 text-gray-400" />
-            <span>{jobData.proposalsCount} proposals</span>
+            <span>{jobData.proposals.length} proposals</span>
           </div>
         </div>
 
         <div className="flex items-center space-x-3 pt-4 border-t">
           <Avatar className="w-10 h-10">
-            <AvatarImage src={jobData.client.avatar || "/placeholder.svg"} />
+            <AvatarImage
+              src={jobData.client.user.avatarUrl || "/placeholder.svg"}
+            />
             <AvatarFallback>
-              {jobData.client.name
+              {jobData.client.user.fullName
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
@@ -70,8 +61,10 @@ export function ProposalSidebar({ jobData }: ProposalSidebarProps) {
           </Avatar>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-medium text-sm">{jobData.client.name}</span>
-              {jobData.client.verified && (
+              <span className="font-medium text-sm">
+                {jobData.client.user.fullName}
+              </span>
+              {jobData.client.user.verified && (
                 <Badge
                   variant="outline"
                   className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
@@ -80,14 +73,14 @@ export function ProposalSidebar({ jobData }: ProposalSidebarProps) {
                 </Badge>
               )}
             </div>
-            <div className="flex items-center space-x-3 text-xs text-gray-600">
+            <div className="flex items-center space-x-3 text-xs text-foreground opacity-75">
               <div className="flex items-center space-x-1">
                 <MapPin className="w-3 h-3" />
-                <span>{jobData.client.location}</span>
+                <span>{jobData.client.user.address}</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                <span>{jobData.client.rating}</span>
+                {/* <span>{jobData.client.rating}</span> */}
               </div>
             </div>
           </div>
@@ -95,8 +88,12 @@ export function ProposalSidebar({ jobData }: ProposalSidebarProps) {
 
         <div className="flex flex-wrap gap-1 pt-4 border-t">
           {jobData.skills.map((skill, index) => (
-            <Badge key={index} variant="secondary" className="text-xs">
-              {skill}
+            <Badge
+              key={index}
+              variant="secondary"
+              className="bg-background text-foreground flex items-center gap-1 py-1.5 border border-gray-700"
+            >
+              {skill.name}
             </Badge>
           ))}
         </div>

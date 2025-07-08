@@ -18,36 +18,8 @@ import { FreelancerUser } from "@/types/user";
 import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
 import { formatSelectValue } from "@/utils/formatSelectValue";
-
-const jobData = {
-  id: 1,
-  title: "Full Stack Developer for SaaS Platform",
-  description:
-    "We're looking for an experienced full-stack developer to help build our next-generation SaaS platform. You'll work with React, Node.js, and PostgreSQL to create scalable web applications. The ideal candidate should have 3+ years of experience and be comfortable working in an agile environment.",
-  budget: { type: "hourly", min: 40, max: 80 },
-  duration: "3-6 months",
-  experienceLevel: "Expert",
-  skills: ["React", "Node.js", "PostgreSQL", "TypeScript", "AWS"],
-  client: {
-    name: "TechCorp Solutions",
-    avatar: "/placeholder.svg?height=40&width=40",
-    location: "United States",
-    rating: 4.9,
-    totalSpent: "$50K+",
-    hireRate: 85,
-    verified: true,
-  },
-  postedTime: "2 hours ago",
-  proposalsCount: 12,
-  interviewingCount: 3,
-  paymentVerified: true,
-  featured: true,
-  questions: [
-    "What is your experience with React and Node.js?",
-    "Can you provide examples of similar SaaS platforms you've built?",
-    "What is your availability for this project?",
-  ],
-};
+import { useQueryClient } from "@tanstack/react-query";
+import { JobDetailProps } from "@/types/jobs";
 
 const initialProposal = {
   coverLetter: "",
@@ -58,10 +30,16 @@ const initialProposal = {
 
 export default function Apply() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const { data: user } = useUser<FreelancerUser>(session?.user.id ?? "");
+
   const params = useParams();
   const jobId = params.jobId as string;
+  const jobData = queryClient.getQueryData<JobDetailProps>([
+    "job-detail",
+    jobId,
+  ]);
 
   const [proposal, setProposal] = useState<{
     coverLetter: string;
@@ -84,7 +62,8 @@ export default function Apply() {
     );
   }, [proposal]);
 
-  if (!session || !user) return <LoadingComp progress={session ? 100 : 50} />;
+  if (!session || !user || !jobData)
+    return <LoadingComp progress={session ? 100 : 50} />;
 
   const handleSubmit = async () => {
     setStatus("loading");
@@ -161,6 +140,7 @@ export default function Apply() {
               <PricingSection
                 pricing={proposal.pricing}
                 setPricing={handleSetPricing}
+                jobType={jobData.jobType}
               />
 
               <TimelineSection
