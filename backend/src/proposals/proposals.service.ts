@@ -55,6 +55,7 @@ export class ProposalsService {
                 hourlyRateMin: true,
                 hourlyRateMax: true,
                 fixedPrice: true,
+                jobType: true,
               },
             },
             freelancer: {

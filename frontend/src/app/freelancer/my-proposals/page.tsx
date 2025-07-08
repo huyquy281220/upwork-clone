@@ -1,6 +1,7 @@
 "use client";
 
 import { Pagination } from "@/components/common/Pagination";
+import useFilter from "@/hooks/useFilter";
 import {
   ProposalsEmptyState,
   ProposalsFilters,
@@ -12,7 +13,6 @@ import { getPaginatedProposalsByFreelancer } from "@/services/proposals";
 import { ProposalProps } from "@/types/proposals";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
 
 interface PaginatedProposalsProps {
   data: ProposalProps[];
@@ -25,12 +25,21 @@ const ITEMS_PER_PAGE = 5;
 export default function ProposalsPage() {
   const { data: session } = useSession();
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("newest");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [dateFilter, setDateFilter] = useState("all");
-  const [budgetRangeFilter, setBudgetRangeFilter] = useState("all");
+  const { getFilter, setFilter, resetFilters } = useFilter({
+    search: "",
+    status: "all",
+    sortBy: "newest",
+    date: "all",
+    budget: "all",
+    page: "1",
+  });
+
+  const searchQuery = getFilter("search");
+  const statusFilter = getFilter("status");
+  const sortBy = getFilter("sortBy");
+  const dateFilter = getFilter("date");
+  const budgetRangeFilter = getFilter("budget");
+  const currentPage = parseInt(getFilter("page"));
 
   const {
     data: paginatedProposals,
@@ -75,15 +84,7 @@ export default function ProposalsPage() {
       .length,
   };
 
-  const resetPagination = () => setCurrentPage(1);
-
-  const handleClearFilters = () => {
-    setStatusFilter("all");
-    setDateFilter("all");
-    setBudgetRangeFilter("all");
-    setSearchQuery("");
-    resetPagination();
-  };
+  const resetPagination = () => setFilter("page", "1");
 
   return (
     <div className="min-h-screen">
@@ -96,32 +97,32 @@ export default function ProposalsPage() {
             <ProposalsFilters
               statusFilter={statusFilter}
               setStatusFilter={(value) => {
-                setStatusFilter(value);
+                setFilter("status", value);
                 resetPagination();
               }}
               dateFilter={dateFilter}
               setDateFilter={(value) => {
-                setDateFilter(value);
+                setFilter("date", value);
                 resetPagination();
               }}
               budgetRangeFilter={budgetRangeFilter}
               setBudgetRangeFilter={(value) => {
-                setBudgetRangeFilter(value);
+                setFilter("budget", value);
                 resetPagination();
               }}
               statusCounts={statusCounts}
               // filteredCount={filteredProposals.length}
-              onClearFilters={handleClearFilters}
+              onClearFilters={resetFilters}
             />
           </div>
 
           {/* Main Content */}
           <div className="lg:col-span-3">
             <ProposalsSearchSort
-              setSearchQuery={setSearchQuery}
+              setSearchQuery={(value) => setFilter("search", value)}
               sortBy={sortBy}
               setSortBy={(value) => {
-                setSortBy(value);
+                setFilter("sortBy", value);
                 resetPagination();
               }}
             />
@@ -134,7 +135,7 @@ export default function ProposalsPage() {
               <Pagination
                 currentPage={currentPage}
                 totalPages={paginatedProposals.totalPage}
-                onPageChange={setCurrentPage}
+                onPageChange={(value) => setFilter("page", value.toString())}
               />
             ) : (
               <ProposalsEmptyState />

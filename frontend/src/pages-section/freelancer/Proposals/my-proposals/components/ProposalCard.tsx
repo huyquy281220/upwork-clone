@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { JobType } from "@/types/jobs";
 import { ProposalProps } from "@/types/proposals";
 import { formatRelativeTime } from "@/utils/getRelativeTime";
 import {
@@ -127,7 +128,10 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
                   {proposal.status}
                 </Badge>
                 <span className="text-sm font-medium text-foreground">
-                  Your rate: {proposal.pricing}$/hr
+                  Your rate:{" "}
+                  {proposal.job.jobType === JobType.HOURLY
+                    ? `${proposal.pricing}$/hr`
+                    : `${proposal.pricing}$`}
                 </span>
                 {/* {proposal.viewed && (
                   <div className="flex items-center space-x-1 text-sm text-foreground-muted opacity-85">
