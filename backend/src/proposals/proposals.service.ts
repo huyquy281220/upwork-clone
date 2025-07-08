@@ -144,7 +144,7 @@ export class ProposalsService {
           skip: (page - 1) * limit,
         }),
         this.prismaService.proposal.count({
-          where: { jobId },
+          where: { jobId, status: { not: 'PENDING' } },
         }),
       ]);
 

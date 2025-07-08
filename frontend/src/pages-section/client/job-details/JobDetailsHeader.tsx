@@ -24,8 +24,10 @@ ClientProposalsHeaderProps) {
               </a>
             </Button> */}
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">Proposals</h1>
-              <p className="text-sm text-gray-600">
+              <h1 className="text-xl font-semibold text-foreground">
+                Proposals
+              </h1>
+              <p className="text-sm text-gray-400">
                 {proposalsCount} proposals received
               </p>
             </div>
