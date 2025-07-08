@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
 import { Role, User } from "@/types/user";
 import JobSkeleton from "@/components/common/JobSkeleton";
+import { UserImg } from "@/assets/images";
 
 export default function UserAvatar() {
   const { avatarMenu } = useHeaderContentByRole();
@@ -126,7 +127,7 @@ export default function UserAvatar() {
       <PopoverTrigger>
         <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white cursor-pointer">
           <Image
-            src="/placeholder-avatar.jpg"
+            src={user?.avatarUrl || UserImg}
             alt="User Avatar"
             width={32}
             height={32}
@@ -144,7 +145,7 @@ export default function UserAvatar() {
           <div className="p-4 border-b border-gray-700 flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full overflow-hidden">
               <Image
-                src="/placeholder-avatar.jpg"
+                src={user?.avatarUrl || UserImg}
                 alt="User Avatar"
                 width={40}
                 height={40}

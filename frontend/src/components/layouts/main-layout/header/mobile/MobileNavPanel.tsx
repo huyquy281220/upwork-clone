@@ -11,7 +11,6 @@ import {
   Bell,
 } from "lucide-react";
 import Image from "next/image";
-import { GoogleSvg } from "@/assets/svg";
 import {
   themeOptions,
   bottomLinks,
@@ -25,11 +24,17 @@ import { getDynamicIcon } from "@/utils/getDynamicIcon";
 import Link from "next/link";
 import { useHeaderContentByRole } from "@/hooks/useHeaderContentByRole";
 import { useAuth } from "@/hooks/useAuth";
+import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUserInfo";
+import { BaseUser } from "@/types/user";
+import { UserImg } from "@/assets/images";
 interface MobileNavPanelProps {
   isOpen: boolean;
 }
 
 export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
+  const { data: session } = useSession();
+  const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
   const { navHeader } = useHeaderContentByRole();
   const { logout } = useAuth();
   // State for expanded menus
@@ -51,6 +56,8 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
     setExpandedMenu((prev) => (prev === menuKey ? null : menuKey));
   };
 
+  if (!user || !session) return;
+
   return (
     <div
       className={`md:hidden h-full pb-5 bg-background overflow-y-auto transition-transform duration-300 ${
@@ -70,7 +77,7 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
             {/* Attempt to load user image */}
             <div className="absolute inset-0">
               <Image
-                src={GoogleSvg}
+                src={user.avatarUrl || UserImg}
                 alt="User Profile"
                 className="object-cover"
                 fill
