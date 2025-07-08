@@ -14,12 +14,15 @@ import {
   MessageSquare,
   Star,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ProposalCardProps {
   proposal: ProposalProps;
 }
 
 export function ProposalCard({ proposal }: ProposalCardProps) {
+  const router = useRouter();
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PENDING":
@@ -39,7 +42,12 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
-              <h3 className="text-lg font-semibold text-green-600 cursor-pointer">
+              <h3
+                className="text-lg font-semibold text-green-600 cursor-pointer"
+                onClick={() =>
+                  router.push(`/freelancer/jobs/${proposal.jobId}`)
+                }
+              >
                 {proposal.job.title}
               </h3>
             </div>
