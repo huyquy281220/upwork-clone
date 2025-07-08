@@ -1,6 +1,7 @@
 "use client";
 
 import { Pagination } from "@/components/common/Pagination";
+import useFilter from "@/hooks/useFilter";
 import { useModalManager } from "@/hooks/useModalManager";
 import {
   FreelancerDetailsModal,
@@ -28,13 +29,15 @@ export default function ClientProposalsPage() {
   const params = useParams();
   const jobId = params.jobId as string;
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
-  const [filterBy, setFilterBy] = useState("all");
   const [selectedProposal, setSelectedProposal] = useState<ProposalProps>();
-
   const { closeModal, isModalOpen, openModal } = useModalManager();
+
+  const { getFilter, setFilter } = useFilter({
+    search: "",
+    page: "1",
+    sort: "newest",
+    filter: "all",
+  });
 
   const { data: jobDetail } = useQuery({
     queryKey: ["job-detail", jobId],
@@ -49,13 +52,16 @@ export default function ClientProposalsPage() {
     enabled: !!jobId,
   });
 
+  const searchQuery = getFilter("search");
+  const sortBy = getFilter("sort");
+  const filterBy = getFilter("filter");
+  const currentPage = parseInt(getFilter("page"));
+
   const handleViewDetails = (proposal: ProposalProps) => {
     openModal("freelancer-details");
     setSelectedProposal(proposal);
   };
-  // const handleMessage = (proposal: ProposalProps) => {
-  //   setSelectedProposal(proposal);
-  // };
+
   if (!paginatedProposals || !jobDetail) return;
 
   return (
@@ -76,11 +82,11 @@ export default function ClientProposalsPage() {
           <div className="lg:col-span-3">
             <ProposalsFilters
               searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
+              setSearchQuery={(value) => setFilter("search", value)}
               sortBy={sortBy}
-              setSortBy={setSortBy}
+              setSortBy={(value) => setFilter("sort", value)}
               filterBy={filterBy}
-              setFilterBy={setFilterBy}
+              setFilterBy={(value) => setFilter("filter", value)}
             />
 
             <ProposalsList
@@ -92,7 +98,7 @@ export default function ClientProposalsPage() {
             {paginatedProposals.data.length > pageLimit && (
               <Pagination
                 currentPage={currentPage}
-                onPageChange={setCurrentPage}
+                onPageChange={(value) => setFilter("page", value.toString())}
                 totalPages={paginatedProposals.totalPage}
               />
             )}
