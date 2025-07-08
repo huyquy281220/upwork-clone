@@ -92,4 +92,12 @@ export class ProposalsController {
   ) {
     return this.proposalsService.deleteProposal(proposalId, fId);
   }
+
+  @Patch('/reject/:proposalId')
+  async rejectProposal(
+    @Param('proposalId') proposalId: string,
+    @Query('clientId') clientId: string,
+  ) {
+    return this.proposalsService.rejectProposal(proposalId, clientId);
+  }
 }
