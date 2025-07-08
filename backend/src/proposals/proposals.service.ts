@@ -374,14 +374,6 @@ export class ProposalsService {
         where: { id: proposalId },
         data: { status: ProposalStatus.ACCEPTED },
       });
-
-      // Create notification for freelancer
-      await this.prismaService.notification.create({
-        data: {
-          userId: proposal.freelancerId,
-          content: `Your proposal for job "${proposal.jobId}" has been accepted`,
-        },
-      });
     } catch (error) {
       console.error(error);
     }
