@@ -20,8 +20,6 @@ export function JobContent() {
 
   if (!jobDetail) return;
 
-  console.log(jobDetail);
-
   return (
     <div className="space-y-8">
       <JobDetails

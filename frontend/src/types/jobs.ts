@@ -1,3 +1,5 @@
+import { ProposalProps } from "./proposals";
+
 export interface CreateJobProps {
   title: string;
   description: string;
@@ -41,6 +43,7 @@ export interface JobDetailProps extends JobProps {
   client: {
     id: string;
   };
+  proposals: Omit<ProposalProps, "job">[];
 }
 
 export enum ExperienceLevel {

@@ -4,18 +4,29 @@ import { Button } from "@/components/ui/button";
 import { ClientInfo } from "./ClientInfo";
 import { JobActions } from "./JobActions";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-export function JobSidebar({ jobId }: { jobId: string }) {
+export function JobSidebar({
+  jobId,
+  isApplied,
+}: {
+  jobId: string;
+  isApplied: boolean;
+}) {
   const router = useRouter();
 
   return (
     <div className="space-y-6 pb-10 border-b md:border-0">
       <div className="bg-muted/30 p-4 rounded-lg">
         <Button
-          className="w-full bg-green-600 hover:bg-green-700 text-white mb-2"
+          className={cn(
+            "w-full bg-green-600 hover:bg-green-700 text-white mb-2",
+            isApplied ? "cursor-not-allowed" : "cursor-pointer"
+          )}
           onClick={() => router.push(`/freelancer/jobs/${jobId}/apply`)}
+          disabled={isApplied}
         >
-          Apply
+          {isApplied ? "Applied" : "Apply"}
         </Button>
       </div>
 

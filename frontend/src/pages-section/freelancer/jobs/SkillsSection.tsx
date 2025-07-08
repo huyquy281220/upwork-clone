@@ -5,8 +5,6 @@ interface SkillsProps {
 }
 
 export function SkillsSection({ skills }: SkillsProps) {
-  console.log(skills);
-
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-foreground">

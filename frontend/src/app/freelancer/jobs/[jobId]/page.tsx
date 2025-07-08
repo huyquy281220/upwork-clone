@@ -9,9 +9,12 @@ import {
 import { getJobById } from "@/services/jobs";
 import { JobDetailProps } from "@/types/jobs";
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
+import { useMemo } from "react";
 
 export default function JobDetailPage() {
+  const { data: session } = useSession();
   const params = useParams();
   const jobId = params.jobId as string;
 
@@ -21,7 +24,16 @@ export default function JobDetailPage() {
     enabled: !!jobId,
   });
 
-  if (!jobDetail) return <LoadingComp progress={isLoading ? 50 : 100} />;
+  const isApplied = useMemo(() => {
+    return (
+      jobDetail?.proposals.some(
+        (proposal) => proposal.freelancerId === session?.user.id
+      ) ?? false
+    );
+  }, [jobDetail, session]);
+
+  if (!jobDetail || !session)
+    return <LoadingComp progress={isLoading ? 50 : 100} />;
 
   const { title, createdAt } = jobDetail;
 
@@ -34,7 +46,7 @@ export default function JobDetailPage() {
             <JobContent />
           </div>
           <div className="lg:col-span-1 order-1 md:order-2">
-            <JobSidebar jobId={jobId} />
+            <JobSidebar jobId={jobId} isApplied={isApplied} />
           </div>
         </div>
       </div>
