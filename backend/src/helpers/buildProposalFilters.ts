@@ -107,7 +107,7 @@ export function buildProposalFilters({
 
   const where: Prisma.ProposalWhereInput = {
     ...(freelancerId && { freelancerId }),
-    ...(jobId && { jobId }),
+    ...(jobId && { jobId, status: ProposalStatus.PENDING }),
     ...(searchQuery && {
       job: {
         title: {
