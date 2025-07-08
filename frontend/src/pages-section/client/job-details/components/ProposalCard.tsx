@@ -5,8 +5,10 @@ import { Badge } from "@/components/ui/badge";
 // import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { rejectProposal } from "@/services/proposals";
 import { HoursPerWeek } from "@/types/jobs";
 import { ProposalProps } from "@/types/proposals";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Eye,
   MapPin,
@@ -16,7 +18,9 @@ import {
   ThumbsUp,
   Verified,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface ProposalCardProps {
   proposal: ProposalProps;
@@ -25,14 +29,39 @@ interface ProposalCardProps {
 
 export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
 
-  // const formatRate = (proposal: ProposalProps) => {
-  //   if (proposal.proposalType === "hourly") {
-  //     return `$${proposal.rate}/hr`;
-  //   } else {
-  //     return `$${proposal.rate.toLocaleString()}`;
-  //   }
-  // };
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
+  if (!session) return;
+
+  const handleRejectProposal = async (proposalId: string, clientId: string) => {
+    setStatus("loading");
+    try {
+      const res = await rejectProposal(proposalId, clientId);
+
+      if (res.status !== 200) {
+        setStatus("error");
+      }
+      setStatus("success");
+
+      await queryClient.invalidateQueries({
+        queryKey: ["paginated-proposals-by-job", proposal.jobId],
+      });
+
+      setTimeout(() => {
+        setStatus("idle");
+      }, 500);
+    } catch (error) {
+      console.error(error);
+      setTimeout(() => {
+        setStatus("idle");
+      }, 500);
+    }
+  };
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -181,9 +210,10 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
               variant="outline"
               size="sm"
               className="text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 bg-transparent"
+              onClick={() => handleRejectProposal(proposal.id, session.user.id)}
             >
               <ThumbsDown className="w-4 h-4 mr-1" />
-              Reject
+              {status === "loading" ? "Rejecting..." : "Reject"}
             </Button>
           </div>
         </div>

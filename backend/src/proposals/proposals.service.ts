@@ -380,7 +380,7 @@ export class ProposalsService {
     }
   }
 
-  async rejectProposal(proposalId: string, clientId: string) {
+  async rejectProposal(proposalId: string, userId: string) {
     return this.prismaService.$transaction(async (tx) => {
       const proposal = await tx.proposal.findUnique({
         where: { id: proposalId },
@@ -389,7 +389,12 @@ export class ProposalsService {
       if (!proposal) {
         throw new NotFoundException(`Proposal with ID ${proposalId} not found`);
       }
-      if (proposal.job.clientId !== clientId) {
+
+      const client = await tx.clientProfile.findUnique({
+        where: { userId },
+      });
+
+      if (proposal.job.clientId !== client.id) {
         throw new BadRequestException('Client does not own this job');
       }
       if (proposal.status !== ProposalStatus.PENDING) {

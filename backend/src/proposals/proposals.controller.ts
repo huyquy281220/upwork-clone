@@ -96,8 +96,8 @@ export class ProposalsController {
   @Patch('/reject/:proposalId')
   async rejectProposal(
     @Param('proposalId') proposalId: string,
-    @Query('clientId') clientId: string,
+    @Query('userId') userId: string,
   ) {
-    return this.proposalsService.rejectProposal(proposalId, clientId);
+    return this.proposalsService.rejectProposal(proposalId, userId);
   }
 }

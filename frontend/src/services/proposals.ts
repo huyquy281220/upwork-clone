@@ -57,9 +57,9 @@ export const getOneProposal = async (proposalId: string) => {
   return response.data;
 };
 
-export const rejectProposal = async (proposalId: string, clientId: string) => {
+export const rejectProposal = async (proposalId: string, userId: string) => {
   const response = await api.patch(
-    `${apiURL}/proposals/${proposalId}?clientId=${clientId}`
+    `${apiURL}/proposals/reject/${proposalId}?userId=${userId}`
   );
 
   return response.data;
