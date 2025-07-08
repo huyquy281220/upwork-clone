@@ -36,7 +36,7 @@ export default function MainLayout({ children }: ChildrenProps) {
       <div className="w-full max-w-[120rem] mx-auto">
         <div className="max-w-[100rem] mx-auto">
           <MainHeader />
-          <div className="pt-11 md:pt-0">
+          <div className="pt-20 md:pt-0">
             <Suspense fallback={<Loading />}>{children}</Suspense>
             <Toaster
               position="top-center"

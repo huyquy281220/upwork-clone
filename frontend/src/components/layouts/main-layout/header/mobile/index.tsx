@@ -8,10 +8,24 @@ import MobileSearchPanel from "./MobileSearchPanel";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/icons/Logo";
+import { getCookie } from "@/lib/cookie";
 
 export default function MobileHeader() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const role = getCookie("role");
+
+  const getRedirectUrlByRole = () => {
+    switch (role) {
+      case "CLIENT":
+        return "/client/dashboard";
+      case "FREELANCER":
+        return "/freelancer/find-work";
+      default:
+        break;
+    }
+  };
 
   useScrollLock({
     enabled: isNavOpen || isSearchOpen,
@@ -34,10 +48,10 @@ export default function MobileHeader() {
     <div
       className={cn(
         "fixed inset-x-0 md:hidden overflow-y-auto",
-        isNavOpen || isSearchOpen ? "h-full z-50" : ""
+        isNavOpen || isSearchOpen ? "h-full z-50" : "z-10"
       )}
     >
-      <div className="relative z-50 py-3 px-4 flex items-center justify-between bg-background">
+      <div className="relative z-50 py-3 px-4 flex items-center justify-between bg-background border-b border-gray-600">
         {/* Left section - X or Menu icon */}
         <button
           onClick={toggleNav}
@@ -48,7 +62,10 @@ export default function MobileHeader() {
         </button>
 
         {/* Center section - Logo */}
-        <Link href="/" className="flex-1 flex justify-center">
+        <Link
+          href={getRedirectUrlByRole()!}
+          className="flex-1 flex justify-center"
+        >
           <Logo className="w-24 h-6" />
         </Link>
 

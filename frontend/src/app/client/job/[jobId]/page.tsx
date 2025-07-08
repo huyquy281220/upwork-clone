@@ -22,6 +22,8 @@ interface PaginatedProposalsProps {
   totalPage: number;
 }
 
+const pageLimit = 6;
+
 export default function ClientProposalsPage() {
   const params = useParams();
   const jobId = params.jobId as string;
@@ -43,7 +45,7 @@ export default function ClientProposalsPage() {
   const { data: paginatedProposals } = useQuery<PaginatedProposalsProps>({
     queryKey: ["paginated-proposals-by-job", jobId],
     queryFn: () =>
-      getPaginatedProposalsByJob(jobId, 5, currentPage, searchQuery),
+      getPaginatedProposalsByJob(jobId, pageLimit, currentPage, searchQuery),
     enabled: !!jobId,
   });
 
@@ -51,7 +53,6 @@ export default function ClientProposalsPage() {
     openModal("freelancer-details");
     setSelectedProposal(proposal);
   };
-  console.log(paginatedProposals);
   // const handleMessage = (proposal: ProposalProps) => {
   //   setSelectedProposal(proposal);
   // };
@@ -88,7 +89,7 @@ export default function ClientProposalsPage() {
               // onMessage={handleMessage}
             />
 
-            {paginatedProposals.data.length > 0 && (
+            {paginatedProposals.data.length > pageLimit && (
               <Pagination
                 currentPage={currentPage}
                 onPageChange={setCurrentPage}
