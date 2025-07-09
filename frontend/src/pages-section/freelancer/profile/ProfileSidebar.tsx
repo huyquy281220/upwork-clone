@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { MapPin, Clock, Github, CirclePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import JobSkeletion from "@/components/common/JobSkeleton";
 import { useUser } from "@/hooks/useUserInfo";
 import { useSession } from "next-auth/react";
 import CirclePencil from "@/components/common/CirclePencil";
@@ -18,6 +17,7 @@ import { AvailabilityModal } from "@/components/modals/freelancer/AvailabilityMo
 import CircleTrash from "@/components/common/CircleTrash";
 import useLocalTime from "@/hooks/useLocalTime";
 import ImageUploadModal from "@/components/modals/freelancer/ImageUploadModal";
+import { EditCountryModal } from "@/components/modals/freelancer/EditCountryModal";
 
 const availabilityOptions = {
   MORE_THAN_30: "More than 30 hrs/week",
@@ -35,11 +35,13 @@ export function ProfileSidebar() {
 
   const { time, location } = useLocalTime();
 
-  if (isLoading || status === "loading") return <JobSkeletion />;
+  if (isLoading || status === "loading") return;
 
   const currentLanguages = user?.freelancerProfile?.languages;
   const educations = user?.freelancerProfile?.education;
   const avatar = user?.avatarUrl;
+
+  if (!user || !session) return;
 
   return (
     <div className="space-y-6">
@@ -121,6 +123,22 @@ export function ProfileSidebar() {
                 ? availabilityOptions[user.freelancerProfile.available]
                 : "Not specified"}
             </p>
+          </div>
+
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <p className="font-medium">Country</p>
+              <div className="flex items-center gap-2">
+                <CirclePencil onEdit={() => openModal("country")} />
+              </div>
+            </div>
+
+            {user.address && (
+              <p className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">Country: </span>
+                {user.address}
+              </p>
+            )}
           </div>
 
           <div>
@@ -222,6 +240,13 @@ export function ProfileSidebar() {
       <ImageUploadModal
         open={isModalOpen("image-upload")}
         onOpenChange={() => closeModal()}
+      />
+
+      <EditCountryModal
+        open={isModalOpen("country")}
+        onOpenChange={() => closeModal()}
+        currentCountry={user.address ?? ""}
+        userId={user.id}
       />
     </div>
   );
