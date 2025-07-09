@@ -7,7 +7,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { verifyEmail } from "@/services/userService";
-import { useState } from "react";
 
 interface VerifyEmailModalProps {
   isOpen: boolean;
@@ -20,11 +19,8 @@ export default function VerifyEmailModal({
   email,
   onClose,
 }: VerifyEmailModalProps) {
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
-
   const handleVerifyEmail = async (email: string) => {
+    onClose();
     await verifyEmail(email);
   };
 
