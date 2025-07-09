@@ -5,7 +5,7 @@ import { getSkillsByName } from "@/services/skills";
 import { Skill } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SkillsInputProps {
@@ -37,7 +37,8 @@ export const SkillsInput = ({ onAddSkill, classes }: SkillsInputProps) => {
 
   return (
     <div className={cn("relative", classes ?? "")}>
-      <div className="flex flex-wrap gap-2 p-2 min-h-10 rounded-md border border-gray-700 bg-transparent">
+      <div className="flex flex-wrap items-center gap-2 p-2 min-h-10 rounded-md border border-gray-700 bg-transparent">
+        <Search />
         <input
           type="text"
           value={searchValue}
@@ -45,7 +46,7 @@ export const SkillsInput = ({ onAddSkill, classes }: SkillsInputProps) => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setTimeout(() => setIsFocused(false), 200)}
           placeholder="Search skills"
-          className="flex-1 min-w-[120px] h-8 bg-transparent border-0 focus-visible:bg-none p-0 pl-8"
+          className="flex-1 min-w-[120px] h-8 bg-transparent border-0 focus-visible:bg-none focus:outline-none p-0 pl-2"
         />
       </div>
 
