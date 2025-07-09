@@ -6,8 +6,8 @@ import MainHeader from "./header";
 import { usePathname } from "next/navigation";
 import ThemeProvider from "@/providers/ThemeProvider";
 import { Suspense } from "react";
-import Loading from "@/components/common/Loading";
 import { Toaster } from "@/components/ui/sonner";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export default function MainLayout({ children }: ChildrenProps) {
   const pathname = usePathname();
@@ -25,7 +25,7 @@ export default function MainLayout({ children }: ChildrenProps) {
     return (
       <div className="w-full max-w-[120rem] mx-auto">
         <div className="max-w-[100rem] mx-auto">
-          <Suspense fallback={<Loading />}>{children}</Suspense>
+          <Suspense fallback={<InfiniteLoading />}>{children}</Suspense>
         </div>
       </div>
     );
@@ -37,7 +37,7 @@ export default function MainLayout({ children }: ChildrenProps) {
         <div className="max-w-[100rem] mx-auto">
           <MainHeader />
           <div className="pt-20 md:pt-0">
-            <Suspense fallback={<Loading />}>{children}</Suspense>
+            <Suspense fallback={<InfiniteLoading />}>{children}</Suspense>
             <Toaster
               position="top-center"
               toastOptions={{

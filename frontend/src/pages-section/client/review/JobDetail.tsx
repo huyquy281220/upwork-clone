@@ -26,7 +26,7 @@ import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
 import { getSkillsByJobId } from "@/services/skills";
 import { Skill } from "@/types";
-import { LoadingComp } from "@/components/common/LoadingComp";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export default function JobDetail() {
   const queryClient = useQueryClient();
@@ -100,7 +100,7 @@ export default function JobDetail() {
 
   if (isJobDetailLoading || isSkillsLoading) {
     return (
-      <LoadingComp
+      <InfiniteLoading
         progress={isJobDetailLoading || isSkillsLoading ? 30 : 100}
       />
     );

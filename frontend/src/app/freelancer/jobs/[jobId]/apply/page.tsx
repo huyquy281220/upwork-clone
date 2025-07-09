@@ -13,7 +13,7 @@ import { createProposal } from "@/services/proposals";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
-import { LoadingComp } from "@/components/common/LoadingComp";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { FreelancerUser } from "@/types/user";
 import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
@@ -63,7 +63,7 @@ export default function Apply() {
   }, [proposal]);
 
   if (!session || !user || !jobData)
-    return <LoadingComp progress={session ? 100 : 50} />;
+    return <InfiniteLoading progress={session ? 100 : 50} />;
 
   const handleSubmit = async () => {
     setStatus("loading");

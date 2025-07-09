@@ -1,6 +1,6 @@
 "use client";
 
-import { LoadingComp } from "@/components/common/LoadingComp";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import {
   JobSidebar,
   JobHeader,
@@ -33,7 +33,7 @@ export default function JobDetailPage() {
   }, [jobDetail, session]);
 
   if (!jobDetail || !session)
-    return <LoadingComp progress={isLoading ? 50 : 100} />;
+    return <InfiniteLoading progress={isLoading ? 50 : 100} />;
 
   const { title, createdAt } = jobDetail;
 

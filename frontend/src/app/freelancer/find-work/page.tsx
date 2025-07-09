@@ -14,6 +14,9 @@ export default function FindWork() {
 
   const { openModal, closeModal, isModalOpen } = useModalManager();
 
+  console.log(session);
+  console.log(user);
+
   useEffect(() => {
     if (!user?.verified) {
       openModal("verify-email");
