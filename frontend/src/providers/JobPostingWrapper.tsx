@@ -61,7 +61,11 @@ export default function JobPostingWrapper({
   };
 
   const handlePrev = () => {
-    router.push(`/client/job-post/${getPrevRoute()}`);
+    if (currentStep === 1) {
+      router.back();
+    } else {
+      router.push(`/client/job-post/${getPrevRoute()}`);
+    }
   };
 
   const handleSubmit = async () => {
