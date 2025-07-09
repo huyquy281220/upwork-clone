@@ -12,7 +12,7 @@ type NotificationsProps = {
 export const useNotifications = ({ socket, userId }: NotificationsProps) => {
   const queryClient = useQueryClient();
 
-  const { data: notifications = [], refetch } = useQuery({
+  const { data: notifications = [], refetch } = useQuery<NotificationProps[]>({
     queryKey: ["notifications", userId],
     queryFn: () => getNotificationsByUserId(userId),
     enabled: !!userId,

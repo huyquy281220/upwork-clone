@@ -11,9 +11,12 @@ import { useSession } from "next-auth/react";
 import { useNotifications } from "@/hooks/useNotifications";
 import { NotificationProps } from "@/types/notification";
 import { formatRelativeTime } from "@/utils/getRelativeTime";
+import { useRouter } from "next/navigation";
+import { NotificationRedirectMap } from "@/utils/notificationRedirectMap";
 
 export default function Notification() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const socket = useSocket(session?.user.id ?? "");
 
@@ -24,6 +27,14 @@ export default function Notification() {
 
   const handleNotificationToggle = () => {
     setIsNotificationOpen(!isNotificationOpen);
+  };
+
+  const handleNotificationClick = (notification: NotificationProps) => {
+    console.log(notification);
+    console.log(NotificationRedirectMap[notification.type]);
+    const redirectUrl = NotificationRedirectMap[notification.type];
+    console.log(redirectUrl);
+    // const url = redirectUrl
   };
 
   return (
@@ -46,7 +57,11 @@ export default function Notification() {
       >
         <div className="max-h-80 overflow-y-auto">
           {notifications.map((notification: NotificationProps) => (
-            <div key={notification.id} className="border-b border-gray-700 p-4">
+            <div
+              key={notification.id}
+              className="border-b border-gray-700 p-4 cursor-pointer"
+              onClick={() => handleNotificationClick(notification)}
+            >
               <div className="flex">
                 <div className="mr-3 mt-1">
                   <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">

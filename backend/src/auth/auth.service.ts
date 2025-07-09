@@ -71,65 +71,61 @@ export class AuthService {
   }
 
   async googleSignin(email: string, role: string, name: string) {
+    let existingUser = null;
     try {
-      let existingUser = await this.userService.findByEmail(email);
-
-      if (!existingUser && !role) {
-        throw new NotFoundException(
-          'Account does not exist. Please sign up or try again later.',
-        );
-      }
-      if (!existingUser && role) {
-        const randomPassword = Math.random().toString(36).slice(-10);
-        const user = await this.userService.create({
-          email,
-          fullName: name,
-          password: randomPassword,
-          address: '',
-          role: role as Role,
-        });
-
-        existingUser = user;
-      }
-
-      const payload = {
-        sub: existingUser.email,
-        username: existingUser.fullName,
-        role: existingUser.role,
-      };
-
-      const accessToken = await this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: '15m',
-      });
-
-      const refreshToken = await this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: '7d',
-      });
-
-      const updatedUser = await this.userService.updatePartialById({
-        id: existingUser.id,
-        refreshToken,
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, verificationToken, ...result } = updatedUser;
-
-      return {
-        user: result,
-        accessToken,
-        refreshToken,
-      };
-    } catch (error) {
-      if (
-        error instanceof NotFoundException ||
-        error instanceof BadRequestException ||
-        error instanceof UnauthorizedException
-      ) {
-        throw error;
-      }
+      existingUser = await this.userService.findByEmail(email);
+    } catch (err) {
+      console.error(err);
+      existingUser = null;
     }
+
+    if (!existingUser && !role) {
+      throw new NotFoundException(
+        'Account does not exist. Please sign up or try again later.',
+      );
+    }
+    if (!existingUser && role) {
+      const randomPassword = Math.random().toString(36).slice(-10);
+      const user = await this.userService.create({
+        email,
+        fullName: name,
+        password: randomPassword,
+        address: '',
+        role: role as Role,
+      });
+
+      existingUser = user;
+    }
+
+    const payload = {
+      sub: existingUser.email,
+      username: existingUser.fullName,
+      role: existingUser.role,
+    };
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '15m',
+    });
+
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: '7d',
+    });
+
+    const updatedUser = await this.userService.updatePartialById({
+      id: existingUser.id,
+      refreshToken,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, verificationToken, ...result } = updatedUser;
+
+    return {
+      user: result,
+      accessToken,
+      refreshToken,
+    };
   }
 
   async signout(id: string, res: Response) {

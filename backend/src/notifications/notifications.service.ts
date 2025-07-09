@@ -20,16 +20,16 @@ export class NotificationsService {
     }
 
     // Create notification
-    return this.prisma.notification.create({
-      data: {
-        userId: data.userId,
-        content: data.content,
-        isRead: false,
-      },
-      include: {
-        user: { select: { id: true, email: true } },
-      },
-    });
+    // return this.prisma.notification.create({
+    //   data: {
+    //     userId: data.userId,
+    //     content: data.content,
+    //     isRead: false,
+    //   },
+    //   include: {
+    //     user: { select: { fullName: true, email: true } },
+    //   },
+    // });
   }
 
   // Contract-specific notification methods

@@ -229,14 +229,14 @@ export class ProposalsService {
         },
       });
 
-      const notification = await tx.notification.create({
-        data: {
-          userId: client.id,
-          content: `A freelancer has submitted a proposal to your job "${job.title}"`,
-        },
-      });
+      // const notification = await tx.notification.create({
+      //   data: {
+      //     userId: client.id,
+      //     content: `A freelancer has submitted a proposal to your job "${job.title}"`,
+      //   },
+      // });
 
-      this.notificationGateway.sendNotificationToUser(client.id, notification);
+      // this.notificationGateway.sendNotificationToUser(client.id, notification);
 
       return tx.proposal.findUnique({
         where: { id: proposal.id },
@@ -309,17 +309,17 @@ export class ProposalsService {
       });
 
       // If status changes, create notification for client
-      if (data.status && data.status !== proposal.status) {
-        const job = await tx.job.findUnique({ where: { id: proposal.jobId } });
-        if (job) {
-          await tx.notification.create({
-            data: {
-              userId: job.clientId,
-              content: `Proposal for job "${job.title}" updated to status ${data.status}`,
-            },
-          });
-        }
-      }
+      // if (data.status && data.status !== proposal.status) {
+      //   const job = await tx.job.findUnique({ where: { id: proposal.jobId } });
+      //   if (job) {
+      //     await tx.notification.create({
+      //       data: {
+      //         userId: job.clientId,
+      //         content: `Proposal for job "${job.title}" updated to status ${data.status}`,
+      //       },
+      //     });
+      //   }
+      // }
 
       return tx.proposal.findUnique({
         where: { id: proposalId },
@@ -406,12 +406,12 @@ export class ProposalsService {
         data: { status: ProposalStatus.REJECTED },
       });
 
-      await tx.notification.create({
-        data: {
-          userId: proposal.freelancerId,
-          content: `Your proposal for job "${proposal.jobId}" has been rejected`,
-        },
-      });
+      // await tx.notification.create({
+      //   data: {
+      //     userId: proposal.freelancerId,
+      //     content: `Your proposal for job "${proposal.jobId}" has been rejected`,
+      //   },
+      // });
 
       const freelancer = await tx.freelancerProfile.findFirst({
         where: {

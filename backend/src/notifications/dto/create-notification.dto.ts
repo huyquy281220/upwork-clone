@@ -1,4 +1,11 @@
-import { IsString, IsBoolean } from 'class-validator';
+import { IsString, IsBoolean, IsEnum } from 'class-validator';
+
+enum NotificationType {
+  APPLY_JOB = 'APPLY_JOB',
+  CREATE_CONTRACT = 'CREATE_CONTRACT',
+  REJECT_PROPOSAL = 'REJECT_PROPOSAL',
+  MESSAGE = 'MESSAGE',
+}
 
 export class CreateNotificationDto {
   @IsString()
@@ -9,4 +16,7 @@ export class CreateNotificationDto {
 
   @IsBoolean()
   isRead: boolean;
+
+  @IsEnum(NotificationType)
+  type: NotificationType;
 }
