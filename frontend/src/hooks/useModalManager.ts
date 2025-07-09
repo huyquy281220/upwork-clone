@@ -22,7 +22,8 @@ type ModalState =
   | { type: "edit-budget" }
   | { type: "edit-skills" }
   | { type: "image-upload" }
-  | { type: "freelancer-details" };
+  | { type: "freelancer-details" }
+  | { type: "verify-email" };
 
 export const useModalManager = () => {
   const [modalState, setModalState] = useState<ModalState>({

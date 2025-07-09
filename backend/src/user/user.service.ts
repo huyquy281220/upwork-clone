@@ -241,6 +241,13 @@ export class UserService {
         throw new BadRequestException('User is already verified');
       }
 
+      await this.prismaService.user.update({
+        where: { email },
+        data: {
+          verificationToken: token,
+        },
+      });
+
       await this.emailService.sendVerificationEmail(email, token);
     } catch (error) {
       throw new Error('Failed to send email');

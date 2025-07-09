@@ -33,3 +33,11 @@ export const imageUpload = async (userId: string, file: File) => {
 
   return response.data;
 };
+
+export const verifyEmail = async (email: string) => {
+  const response = await api.post(`${apiURL}/user/request-verify-email`, {
+    email,
+  });
+
+  return response.data;
+};
