@@ -177,7 +177,7 @@ export default function SignIn() {
                 id="rememberMe"
                 {...register("rememberMe")}
                 type="checkbox"
-                className="h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
+                className="h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500 custom-checkbox"
               />
               <label
                 htmlFor="rememberMe"

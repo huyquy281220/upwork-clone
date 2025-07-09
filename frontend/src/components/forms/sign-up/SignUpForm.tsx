@@ -46,6 +46,7 @@ export default function SignupForm() {
 
   const {
     register,
+    watch,
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
@@ -62,6 +63,8 @@ export default function SignupForm() {
       agreeTerms: false,
     },
   });
+
+  const agreeTerms = watch("agreeTerms", false);
 
   const togglePasswordVisibility = (): void => {
     setShowPassword(!showPassword);
@@ -284,26 +287,14 @@ export default function SignupForm() {
 
       <div>
         <label className="flex items-start gap-2 cursor-pointer">
-          <input
-            {...register("emailUpdates")}
-            type="checkbox"
-            className="mt-1 h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
-            disabled={isSubmitting}
-          />
-          <span className="text-sm text-gray-700">
-            Send me helpful emails to find rewarding work and job leads.
-          </span>
-        </label>
-      </div>
-
-      <div>
-        <label className="flex items-start gap-2 cursor-pointer">
-          <input
-            {...register("agreeTerms")}
-            type="checkbox"
-            className="mt-1 h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
-            disabled={isSubmitting}
-          />
+          <div>
+            <input
+              {...register("agreeTerms")}
+              type="checkbox"
+              className="mt-1 h-4 w-4 rounded border-gray-300 custom-checkbox"
+              disabled={isSubmitting}
+            />
+          </div>
           <span className="text-sm text-gray-700">
             Yes, I understand and agree to the{" "}
             <Link href="#" className="text-green-600 hover:underline">
@@ -330,7 +321,7 @@ export default function SignupForm() {
       <button
         type="submit"
         className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-md mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !agreeTerms}
       >
         {isSubmitting ? "Creating account..." : "Create my account"}
       </button>

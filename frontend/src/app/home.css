@@ -29,3 +29,7 @@
     --chart-5: 27 87% 67%;
   }
 }
+
+.custom-checkbox:checked {
+  accent-color: green;
+}
