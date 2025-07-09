@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { NotificationType, Prisma } from '@prisma/client';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 
 @Injectable()
@@ -20,16 +20,17 @@ export class NotificationsService {
     }
 
     // Create notification
-    // return this.prisma.notification.create({
-    //   data: {
-    //     userId: data.userId,
-    //     content: data.content,
-    //     isRead: false,
-    //   },
-    //   include: {
-    //     user: { select: { fullName: true, email: true } },
-    //   },
-    // });
+    return this.prisma.notification.create({
+      data: {
+        userId: data.userId,
+        content: data.content,
+        isRead: false,
+        type: data.type as NotificationType,
+      },
+      include: {
+        user: { select: { fullName: true, email: true } },
+      },
+    });
   }
 
   // Contract-specific notification methods

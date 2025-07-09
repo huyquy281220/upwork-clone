@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ProposalStatus } from '@prisma/client';
+import { NotificationType, ProposalStatus } from '@prisma/client';
 import { CreateProposalDto } from './dto/create-proposal';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
 import { cloudinary } from 'src/provider/cloudinary';
@@ -229,14 +229,15 @@ export class ProposalsService {
         },
       });
 
-      // const notification = await tx.notification.create({
-      //   data: {
-      //     userId: client.id,
-      //     content: `A freelancer has submitted a proposal to your job "${job.title}"`,
-      //   },
-      // });
+      const notification = await tx.notification.create({
+        data: {
+          userId: client.id,
+          content: `A freelancer has submitted a proposal to your job "${job.title}"`,
+          type: NotificationType.APPLY_JOB,
+        },
+      });
 
-      // this.notificationGateway.sendNotificationToUser(client.id, notification);
+      this.notificationGateway.sendNotificationToUser(client.id, notification);
 
       return tx.proposal.findUnique({
         where: { id: proposal.id },
@@ -406,12 +407,13 @@ export class ProposalsService {
         data: { status: ProposalStatus.REJECTED },
       });
 
-      // await tx.notification.create({
-      //   data: {
-      //     userId: proposal.freelancerId,
-      //     content: `Your proposal for job "${proposal.jobId}" has been rejected`,
-      //   },
-      // });
+      await tx.notification.create({
+        data: {
+          userId: proposal.freelancerId,
+          content: `Your proposal for job "${proposal.jobId}" has been rejected`,
+          type: NotificationType.REJECT_PROPOSAL,
+        },
+      });
 
       const freelancer = await tx.freelancerProfile.findFirst({
         where: {
