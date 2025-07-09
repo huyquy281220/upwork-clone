@@ -8,10 +8,12 @@ import { EmailService } from 'src/email/email.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     PrismaModule,
+    JwtModule,
     MessageModule,
     MulterModule.register({
       storage: diskStorage({
