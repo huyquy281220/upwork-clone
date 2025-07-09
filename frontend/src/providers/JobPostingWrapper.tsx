@@ -73,15 +73,15 @@ export default function JobPostingWrapper({
         );
 
         if (res.status === 201) {
-          resetJobData();
           showSuccessToast(
             "Job posted successfully",
             "Redirecting to dashboard",
             1500
           );
           setTimeout(() => {
+            resetJobData();
             router.push("/client/dashboard");
-          }, 2000);
+          }, 1700);
         }
       } catch (error) {
         console.log(error);
