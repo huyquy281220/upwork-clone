@@ -24,6 +24,11 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Post('request-verify-email')
+  async requestVerifyEmail(@Body('email') email: string) {
+    return this.userService.requestToVerifyEmail(email);
+  }
+
   @Get('verify-email')
   async verifyEmail(@Query('token') token: string): Promise<string> {
     console.log('Verification endpoint hit with token:', token);

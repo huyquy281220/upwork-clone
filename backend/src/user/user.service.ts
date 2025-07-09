@@ -14,6 +14,7 @@ import { cloudinary } from 'src/provider/cloudinary';
 import * as fs from 'fs';
 import * as util from 'util';
 import { Express } from 'express';
+import { JwtService } from '@nestjs/jwt';
 
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -22,6 +23,7 @@ export class UserService {
   constructor(
     private prismaService: PrismaService,
     private emailService: EmailService,
+    private jwtService: JwtService,
   ) {}
 
   async findAll() {
@@ -107,18 +109,11 @@ export class UserService {
         throw new BadRequestException('Email already exist');
       }
 
-      const verificationToken = crypto.randomBytes(32).toString('hex');
-
-      await this.emailService.sendVerificationEmail(
-        data.email,
-        verificationToken,
-      );
-
       return this.prismaService.user.create({
         data: {
           ...data,
           password: hashedPassword,
-          verificationToken,
+          // verificationToken,
           avatarUrl: '',
           phoneNumber: '',
           verified: false,
@@ -223,6 +218,32 @@ export class UserService {
     } catch (error) {
       console.log(error);
       return 'User not found';
+    }
+  }
+
+  async requestToVerifyEmail(email: string) {
+    const token = this.jwtService.sign(
+      { email },
+      {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '2m',
+      },
+    );
+
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { email },
+      });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      if (user.verified) {
+        throw new BadRequestException('User is already verified');
+      }
+
+      await this.emailService.sendVerificationEmail(email, token);
+    } catch (error) {
+      throw new Error('Failed to send email');
     }
   }
 
