@@ -57,9 +57,7 @@ export const SkillsInput = ({ onAddSkill, classes }: SkillsInputProps) => {
               Searching...
             </div>
           ) : isError ? (
-            <div className="p-3 text-sm text-red-500">
-              Error fetching skills.
-            </div>
+            <div className="p-3 text-sm text-red-500">No skill found.</div>
           ) : skills && skills.length > 0 ? (
             skills.map((skill, index) => (
               <button

@@ -29,7 +29,7 @@ export default function Step5Description() {
         <textarea
           value={jobData.description}
           onChange={(e) => updateJobData({ description: e.target.value })}
-          className="w-full bg-gray-800 border-gray-600 text-white min-h-[200px] p-2 mb-2 rounded-md"
+          className="w-full bg-gray-800 border-gray-600 text-white min-h-[300px] p-2 mb-2 rounded-md"
           maxLength={49490}
         />
         <div className="text-right text-gray-400 text-sm mb-6">

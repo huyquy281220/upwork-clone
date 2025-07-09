@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Clock, DollarSign } from "lucide-react";
 import { useJobPostingContext } from "@/store/JobPostingContext";
 import { JobType } from "@/types/jobs";
+import { Input } from "@/components/ui/input";
 
 export default function Step4Budget() {
   const { jobData, updateJobData } = useJobPostingContext();
@@ -71,7 +72,7 @@ export default function Step4Budget() {
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white">
                     $
                   </span>
-                  <input
+                  <Input
                     value={jobData.hourlyRateMin}
                     onChange={(e) =>
                       updateJobData({ hourlyRateMin: Number(e.target.value) })
@@ -89,7 +90,7 @@ export default function Step4Budget() {
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white">
                     $
                   </span>
-                  <input
+                  <Input
                     value={jobData.hourlyRateMax}
                     onChange={(e) =>
                       updateJobData({ hourlyRateMax: Number(e.target.value) })
@@ -162,12 +163,12 @@ export default function Step4Budget() {
               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white">
                 $
               </span>
-              <input
+              <Input
                 value={jobData.fixedPrice}
                 onChange={(e) =>
                   updateJobData({ fixedPrice: Number(e.target.value) })
                 }
-                className="bg-gray-800 border-gray-600 text-white pl-8 text-center text-lg py-3"
+                className="max-w-48 bg-gray-800 border-gray-600 text-white pl-8 text-center text-lg py-3"
               />
             </div>
 

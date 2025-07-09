@@ -21,7 +21,7 @@ export default function Step3Scope() {
       </div>
       <div className="space-y-6">
         {/* Scope Selection */}
-        <div>
+        <div className="bg-subBackground p-4 rounded-lg">
           <RadioGroup
             value={jobData.projectLength}
             onValueChange={(value) =>
@@ -91,7 +91,7 @@ export default function Step3Scope() {
 
         {/* Duration Selection */}
         {jobData.projectLength && (
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-subBackground p-4 rounded-lg">
             {/* <div className="flex items-center justify-between mb-4">
               <button className="text-green-400">
                 <Edit className="w-4 h-4" />
@@ -119,19 +119,28 @@ export default function Step3Scope() {
                 <RadioGroupItem
                   value="More than 6 months"
                   id="More than 6 months"
+                  className="border-2 border-gray-400"
                 />
                 <label htmlFor="More than 6 months" className="text-white">
                   More than 6 months
                 </label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3 to 6 months" id="3 to 6 months" />
+                <RadioGroupItem
+                  value="3 to 6 months"
+                  id="3 to 6 months"
+                  className="border-2 border-gray-400"
+                />
                 <label htmlFor="3 to 6 months" className="text-white">
                   3 to 6 months
                 </label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1 to 3 months" id="1 to 3 months" />
+                <RadioGroupItem
+                  value="1 to 3 months"
+                  id="1 to 3 months"
+                  className="border-2 border-gray-400"
+                />
                 <label htmlFor="1 to 3 months" className="text-white">
                   1 to 3 months
                 </label>
@@ -140,6 +149,7 @@ export default function Step3Scope() {
                 <RadioGroupItem
                   value="Less than one month"
                   id="Less than one month"
+                  className="border-2 border-gray-400"
                 />
                 <label htmlFor="Less than one month" className="text-white">
                   Less than one month
@@ -151,7 +161,7 @@ export default function Step3Scope() {
 
         {/* Experience Level */}
         {jobData.jobDuration && (
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-subBackground p-4 rounded-lg">
             <div className="flex items-center justify-between mb-4">
               <span className="text-white font-semibold">
                 {jobData.jobDuration === JobDuration.MORE_THAN_SIX_MONTHS
@@ -162,9 +172,6 @@ export default function Step3Scope() {
                   ? "1 to 3 months"
                   : "Less than one month"}
               </span>
-              <button className="text-green-400">
-                <Edit className="w-4 h-4" />
-              </button>
             </div>
 
             <label className="text-white font-semibold block mb-2">
@@ -186,7 +193,7 @@ export default function Step3Scope() {
                 <RadioGroupItem
                   value="Entry Level"
                   id="Entry Level"
-                  className="mt-1"
+                  className="mt-1 border-2 border-gray-400"
                 />
                 <div>
                   <label
@@ -204,7 +211,7 @@ export default function Step3Scope() {
                 <RadioGroupItem
                   value="Intermediate"
                   id="Intermediate"
-                  className="mt-1"
+                  className="mt-1 border-2 border-gray-400"
                 />
                 <div>
                   <label
@@ -219,7 +226,11 @@ export default function Step3Scope() {
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <RadioGroupItem value="Expert" id="Expert" className="mt-1" />
+                <RadioGroupItem
+                  value="Expert"
+                  id="Expert"
+                  className="mt-1 border-2 border-gray-400"
+                />
                 <div>
                   <label htmlFor="Expert" className="text-white font-semibold">
                     Expert
@@ -235,7 +246,7 @@ export default function Step3Scope() {
 
         {/* Contract to Hire */}
         {jobData.experienceLevel && (
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-subBackground p-4 rounded-lg">
             <div className="flex items-center justify-between mb-4">
               <span className="text-foreground font-semibold">
                 {jobData.experienceLevel === ExperienceLevel.ENTRY
@@ -265,7 +276,11 @@ export default function Step3Scope() {
               className="space-y-3"
             >
               <div className="flex items-start space-x-3">
-                <RadioGroupItem value="true" id="true" className="mt-1" />
+                <RadioGroupItem
+                  value="true"
+                  id="true"
+                  className="mt-1 border-2 border-gray-400"
+                />
                 <div>
                   <label
                     htmlFor="true"
@@ -283,7 +298,11 @@ export default function Step3Scope() {
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <RadioGroupItem value="false" id="false" className="mt-1" />
+                <RadioGroupItem
+                  value="false"
+                  id="false"
+                  className="mt-1 border-2 border-gray-400"
+                />
                 <div>
                   <label
                     htmlFor="false"
