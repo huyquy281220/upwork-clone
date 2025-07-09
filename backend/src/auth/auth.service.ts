@@ -92,6 +92,7 @@ export class AuthService {
         password: randomPassword,
         address: '',
         role: role as Role,
+        verified: true,
       });
 
       existingUser = user;

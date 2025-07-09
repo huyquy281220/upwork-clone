@@ -121,6 +121,7 @@ export class UserService {
           verificationToken,
           avatarUrl: '',
           phoneNumber: '',
+          verified: false,
           role: data.role.toUpperCase() as unknown as Role,
 
           ...(data.role === 'FREELANCER' && {
