@@ -23,15 +23,12 @@ export default function SearchInput() {
   const handleSearch = () => {
     switch (searchType) {
       case "jobs":
-        console.log("jobs");
         router.push(`/search/jobs?query=${debouncedSearchQuery}`);
         break;
       case "talent":
-        console.log("talent");
         router.push(`/search/talent?query=${debouncedSearchQuery}`);
         break;
       case "projects":
-        console.log("projects");
         router.push(`/search/projects?query=${debouncedSearchQuery}`);
         break;
       default:
@@ -82,7 +79,7 @@ export default function SearchInput() {
                 className="flex items-start px-4 py-3 hover:bg-hover"
                 onClick={() => setSearchType(category.id)}
               >
-                <div className="mr-3 mt-1 text-gray-300">
+                <div className="mr-3 mt-1 text-foreground">
                   {getDynamicIcon(category.iconName)}
                 </div>
                 <div>

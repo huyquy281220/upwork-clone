@@ -125,7 +125,7 @@ export default function UserAvatar() {
   return (
     <Popover open={isOpenPopover} onOpenChange={handleOpenPopover}>
       <PopoverTrigger>
-        <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white cursor-pointer">
+        <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-gray-300 cursor-pointer">
           <Image
             src={user?.avatarUrl || UserImg}
             alt="User Avatar"
@@ -143,7 +143,7 @@ export default function UserAvatar() {
         <div className="bg-background border">
           {/* User info section */}
           <div className="p-4 border-b border-gray-700 flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
               <Image
                 src={user?.avatarUrl || UserImg}
                 alt="User Avatar"
