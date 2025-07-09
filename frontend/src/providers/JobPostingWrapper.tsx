@@ -41,6 +41,8 @@ export default function JobPostingWrapper({
 
   const getPrevRoute = () => {
     switch (currentStep) {
+      case 1:
+        return "back";
       case 2:
         return "title";
       case 3:

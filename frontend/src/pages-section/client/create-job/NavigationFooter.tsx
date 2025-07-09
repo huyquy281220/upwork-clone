@@ -41,7 +41,6 @@ export default function NavigationFooter({
         <Button
           variant="outline"
           onClick={onPrevStep}
-          disabled={currentStep === 1}
           className="bg-transparent border-gray-600 text-white hover:bg-gray-800"
         >
           Back
