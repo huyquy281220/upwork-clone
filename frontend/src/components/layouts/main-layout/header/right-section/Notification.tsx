@@ -45,9 +45,11 @@ export default function Notification() {
           className="p-1 rounded-full hover:bg-gray-800 relative hover:text-white"
         >
           <Bell className="w-5 h-5" />
-          <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full text-xs flex items-center justify-center">
-            {notifications.length}
-          </span>
+          {notifications.length > 0 ? (
+            <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full text-xs flex items-center justify-center"></span>
+          ) : (
+            <></>
+          )}
         </button>
       </PopoverTrigger>
       <PopoverContent
