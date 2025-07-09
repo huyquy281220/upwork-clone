@@ -63,6 +63,7 @@ export default function SignupForm() {
       agreeTerms: false,
     },
   });
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
 
   const agreeTerms = watch("agreeTerms", false);
 
@@ -119,19 +120,25 @@ export default function SignupForm() {
         return;
       }
 
-      const signInResponse = await login({
-        redirect: true,
-        email: data.email,
-        password: data.password,
-      });
+      setSignUpSuccess(true);
 
-      if (signInResponse?.error) {
-        setError("root", {
-          type: "manual",
-          message: signInResponse.error || "Sign in failed after registration",
+      setTimeout(async () => {
+        setSignUpSuccess(false);
+        const signInResponse = await login({
+          redirect: true,
+          email: data.email,
+          password: data.password,
         });
-        return;
-      }
+
+        if (signInResponse?.error) {
+          setError("root", {
+            type: "manual",
+            message:
+              signInResponse.error || "Sign in failed after registration",
+          });
+          return;
+        }
+      }, 1000);
 
       // const redirectUrl =
       //   signInResponse?.url ||
@@ -153,6 +160,11 @@ export default function SignupForm() {
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
           {errors.root.message}
         </div>
+      )}
+      {signUpSuccess && (
+        <p className="text-green-500 text-sm">
+          Create account successfully. Please wait a minutes for logging
+        </p>
       )}
 
       <div className="flex gap-4">
