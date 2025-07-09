@@ -26,6 +26,7 @@ export class NotificationsService {
         content: data.content,
         isRead: false,
         type: data.type as NotificationType,
+        itemId: data.itemId,
       },
       include: {
         user: { select: { fullName: true, email: true } },

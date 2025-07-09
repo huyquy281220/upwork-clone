@@ -30,11 +30,8 @@ export default function Notification() {
   };
 
   const handleNotificationClick = (notification: NotificationProps) => {
-    console.log(notification);
-    console.log(NotificationRedirectMap[notification.type]);
     const redirectUrl = NotificationRedirectMap[notification.type];
-    console.log(redirectUrl);
-    // const url = redirectUrl
+    const url = redirectUrl({ id: "" });
   };
 
   return (

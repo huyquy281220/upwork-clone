@@ -412,6 +412,7 @@ export class ProposalsService {
           userId: proposal.freelancerId,
           content: `Your proposal for job "${proposal.jobId}" has been rejected`,
           type: NotificationType.REJECT_PROPOSAL,
+          itemId: proposal.jobId,
         },
       });
 

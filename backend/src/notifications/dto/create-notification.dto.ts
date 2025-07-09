@@ -12,6 +12,9 @@ export class CreateNotificationDto {
   userId: string;
 
   @IsString()
+  itemId: string;
+
+  @IsString()
   content: string;
 
   @IsBoolean()
