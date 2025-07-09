@@ -45,7 +45,7 @@ export const SkillsInput = ({ onAddSkill, classes }: SkillsInputProps) => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setTimeout(() => setIsFocused(false), 200)}
           placeholder="Search skills"
-          className="flex-1 min-w-[120px] h-8 bg-transparent border-0 focus-visible:bg-none p-0 pl-2"
+          className="flex-1 min-w-[120px] h-8 bg-transparent border-0 focus-visible:bg-none p-0 pl-8"
         />
       </div>
 

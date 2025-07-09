@@ -29,7 +29,7 @@ export default function NavigationFooter({
       case 4:
         return "Next: Description";
       case 5:
-        return "Review Job Post";
+        return "Post Job";
       default:
         return "Next";
     }

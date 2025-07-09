@@ -1,17 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { FileText } from "lucide-react";
 import { JobProps } from "@/types/jobs";
 import CirclePencil from "@/components/common/CirclePencil";
 import { useRouter } from "next/navigation";
+import { formatRelativeTime } from "@/utils/getRelativeTime";
 
 export function DraftListItem({
   id,
   title,
   description,
   isLast,
+  createdAt,
 }: JobProps & { isLast: boolean }) {
   const router = useRouter();
 
@@ -30,14 +31,13 @@ export function DraftListItem({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 mb-1">
           <h3 className="font-medium text-foreground">{title}</h3>
-          <Badge
-            variant="secondary"
-            className="bg-blue-600/20 text-blue-400 border-blue-600/30"
-          >
-            <p>Draft job post</p>
-          </Badge>
+          <p className="text-foreground text-[12px] opacity-65">
+            ( {formatRelativeTime(createdAt)} )
+          </p>
         </div>
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="max-w-96 text-muted-foreground line-clamp-1">
+          {description}
+        </p>
       </div>
 
       {/* Actions */}

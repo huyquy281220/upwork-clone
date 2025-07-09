@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Paperclip } from "lucide-react";
 import { useJobPostingContext } from "@/store/JobPostingContext";
 
 export default function Step5Description() {
@@ -36,26 +34,6 @@ export default function Step5Description() {
         />
         <div className="text-right text-gray-400 text-sm mb-6">
           {49490 - jobData.description.length} characters left
-        </div>
-
-        <div className="mb-6">
-          <label className="text-white font-semibold block mb-2">
-            Need help?
-          </label>
-          <button className="text-green-400 underline text-sm">
-            See examples of effective descriptions
-          </button>
-        </div>
-
-        <div>
-          <Button
-            variant="outline"
-            className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700 mb-2"
-          >
-            <Paperclip className="w-4 h-4 mr-2" />
-            Attach file
-          </Button>
-          <p className="text-gray-400 text-sm">Max file size: 100MB</p>
         </div>
       </div>
     </div>
