@@ -17,12 +17,14 @@ import { useUser } from "@/hooks/useUserInfo";
 import { BaseUser } from "@/types/user";
 import VerifyEmailModal from "@/components/modals/shared/VerifyEmailModal";
 import { useModalManager } from "@/hooks/useModalManager";
+import { useUserLocationTime } from "@/hooks/useUserLocalTime";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
   const { resetJobData } = useJobPostingContext();
   const { openModal, closeModal, isModalOpen } = useModalManager();
+  useUserLocationTime(user?.address);
 
   useQuery({
     queryKey: ["jobs", session?.user.id],
