@@ -8,7 +8,7 @@ export const getUserById = async (id: string) => {
 };
 
 export const updateUserById = async (id: string, data: UserUpdateInput) => {
-  const response = await api.patch(`${apiURL}/user/${id}`, data);
+  const response = await api.patch(`${apiURL}/user/${id}/update`, data);
   return response.data;
 };
 
@@ -19,6 +19,12 @@ export const getUserLanguages = async (id: string) => {
 
 export const getUserEducation = async (id: string) => {
   const response = await api.get(`${apiURL}/user/${id}/education`);
+  return response.data;
+};
+
+export const getClientByJobId = async (jobId: string) => {
+  const response = await api.get(`${apiURL}/user/get-client-by-jobId/${jobId}`);
+
   return response.data;
 };
 

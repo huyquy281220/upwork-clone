@@ -26,6 +26,19 @@ export class UserService {
     private jwtService: JwtService,
   ) {}
 
+  async findClientByJobId(jobId: string) {
+    try {
+      const client = await this.prismaService.clientProfile.findFirst({
+        where: { jobs: { some: { id: jobId } } },
+      });
+
+      return client;
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundException('Client not found');
+    }
+  }
+
   async findAll() {
     return await this.prismaService.user.findMany({
       include: {
@@ -156,12 +169,12 @@ export class UserService {
   //   }
   // }
 
-  async updatePartialById(data: UpdateUserDto) {
+  async updatePartialById(userId: string, data: UpdateUserDto) {
     try {
-      const { clientProfile, freelancerProfile, id, ...userData } = data;
+      const { clientProfile, freelancerProfile, ...userData } = data;
 
       return this.prismaService.user.update({
-        where: { id },
+        where: { id: userId },
         data: {
           ...userData,
           ...(clientProfile && {

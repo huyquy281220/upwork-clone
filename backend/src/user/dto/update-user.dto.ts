@@ -43,9 +43,6 @@ export class UpdateFreelancerProfileDto {
 }
 
 export class UpdateUserDto {
-  @IsString()
-  id: string;
-
   @IsOptional()
   @IsEmail()
   email?: string;
@@ -69,6 +66,10 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(Role)
   role?: Role;
+
+  @IsOptional()
+  @IsString()
+  timezone?: string;
 
   @IsOptional()
   @IsString()

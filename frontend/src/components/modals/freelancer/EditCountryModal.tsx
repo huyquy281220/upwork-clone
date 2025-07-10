@@ -53,8 +53,8 @@ export function EditCountryModal({
 
     try {
       const response = await api.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/user/update`,
-        { id: userId, address: country }
+        `${process.env.NEXT_PUBLIC_API_URL}/user/${userId}/update`,
+        { address: country }
       );
 
       if (response.status !== 200) {

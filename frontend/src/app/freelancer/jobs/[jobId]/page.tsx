@@ -7,7 +7,9 @@ import {
   JobContent,
 } from "@/pages-section/freelancer/jobs";
 import { getJobById } from "@/services/jobs";
+import { getClientByJobId } from "@/services/userService";
 import { JobDetailProps } from "@/types/jobs";
+import { ClientUser } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
@@ -18,9 +20,15 @@ export default function JobDetailPage() {
   const params = useParams();
   const jobId = params.jobId as string;
 
-  const { data: jobDetail, isLoading } = useQuery<JobDetailProps>({
+  const { data: jobDetail } = useQuery<JobDetailProps>({
     queryKey: ["job-detail", jobId],
     queryFn: () => getJobById(jobId),
+    enabled: !!jobId,
+  });
+
+  const { data: client } = useQuery<ClientUser>({
+    queryKey: ["get-client-by-jobId", jobId],
+    queryFn: () => getClientByJobId(jobId),
     enabled: !!jobId,
   });
 
@@ -32,7 +40,7 @@ export default function JobDetailPage() {
     );
   }, [jobDetail, session]);
 
-  if (!jobDetail || !session) return <InfiniteLoading />;
+  if (!jobDetail || !session || !client) return <InfiniteLoading />;
 
   const { title, createdAt } = jobDetail;
 
@@ -45,7 +53,7 @@ export default function JobDetailPage() {
             <JobContent />
           </div>
           <div className="lg:col-span-1 order-1 md:order-2">
-            <JobSidebar jobId={jobId} isApplied={isApplied} />
+            <JobSidebar jobId={jobId} isApplied={isApplied} client={client} />
           </div>
         </div>
       </div>

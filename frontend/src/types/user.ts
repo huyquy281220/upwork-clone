@@ -49,6 +49,7 @@ export interface BaseUser {
   phoneNumber?: string;
   address?: string;
   verified: boolean;
+  timezone?: string;
 }
 
 export interface ClientProfile {
@@ -164,4 +165,7 @@ export interface FreelancerUserUpdateInput extends BaseUserUpdateInput {
   };
 }
 
-export type UserUpdateInput = ClientUserUpdateInput | FreelancerUserUpdateInput;
+export type UserUpdateInput =
+  | ClientUserUpdateInput
+  | FreelancerUserUpdateInput
+  | Partial<BaseUser>;

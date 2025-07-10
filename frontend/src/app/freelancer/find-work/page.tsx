@@ -3,6 +3,7 @@
 import VerifyEmailModal from "@/components/modals/shared/VerifyEmailModal";
 import { useModalManager } from "@/hooks/useModalManager";
 import { useUser } from "@/hooks/useUserInfo";
+import { useUserLocationTime } from "@/hooks/useUserLocalTime";
 import { JobListing, UserSidebar } from "@/pages-section/freelancer/find-work";
 import { BaseUser } from "@/types/user";
 import { useSession } from "next-auth/react";
@@ -11,11 +12,9 @@ import { useEffect } from "react";
 export default function FindWork() {
   const { data: session } = useSession();
   const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
+  useUserLocationTime(user?.timezone);
 
   const { openModal, closeModal, isModalOpen } = useModalManager();
-
-  console.log(session);
-  console.log(user);
 
   useEffect(() => {
     if (!user?.verified) {

@@ -49,7 +49,6 @@ export function JobListing() {
     }
   }, [activeTab, bestMatchesJobs, mostRecentJobs, savedJobs]);
 
-  console.log(bestMatchesJobs);
   const handleSaveJob = useCallback(
     (jobId: string) => {
       const jobSaved = usedJobs.find((job) => job.id === jobId);

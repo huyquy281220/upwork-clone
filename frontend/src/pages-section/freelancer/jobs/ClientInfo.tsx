@@ -1,10 +1,15 @@
 import { StarRating } from "@/components/common/StarRating";
+import { useUserLocationTime } from "@/hooks/useUserLocalTime";
+import { ClientUser } from "@/types/user";
 import { MapPin, Clock } from "lucide-react";
 
-export function ClientInfo() {
+export function ClientInfo({ client }: { client: ClientUser }) {
+  const clientLocalTime = useUserLocationTime(client.timezone);
+  console.log(clientLocalTime);
+
   const clientStats = [
-    { label: "United States", icon: MapPin },
-    { label: "Aurora 7:36 AM", icon: Clock },
+    { label: client.address, icon: MapPin },
+    { label: ``, icon: Clock },
     { label: "133 jobs posted", value: "86% hire rate, 0 open jobs" },
     { label: "$340K total spent", value: "$7 /hr avg. hourly rate" },
     { label: "Member since Jul 16, 2024" },

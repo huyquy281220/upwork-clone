@@ -5,12 +5,15 @@ import { ClientInfo } from "./ClientInfo";
 import { JobActions } from "./JobActions";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { ClientUser } from "@/types/user";
 
 export function JobSidebar({
   jobId,
   isApplied,
+  client,
 }: {
   jobId: string;
+  client: ClientUser;
   isApplied: boolean;
 }) {
   const router = useRouter();
@@ -31,7 +34,7 @@ export function JobSidebar({
       </div>
 
       <JobActions />
-      <ClientInfo />
+      <ClientInfo client={client} />
     </div>
   );
 }

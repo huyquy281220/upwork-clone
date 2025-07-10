@@ -52,8 +52,7 @@ export class AuthService {
         expiresIn: '7d',
       });
 
-      const updatedUser = await this.userService.updatePartialById({
-        id: user.id,
+      const updatedUser = await this.userService.updatePartialById(user.id, {
         refreshToken,
       });
 
@@ -114,10 +113,12 @@ export class AuthService {
       expiresIn: '7d',
     });
 
-    const updatedUser = await this.userService.updatePartialById({
-      id: existingUser.id,
-      refreshToken,
-    });
+    const updatedUser = await this.userService.updatePartialById(
+      existingUser.id,
+      {
+        refreshToken,
+      },
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, verificationToken, ...result } = updatedUser;
@@ -131,8 +132,7 @@ export class AuthService {
 
   async signout(id: string, res: Response) {
     try {
-      await this.userService.updatePartialById({
-        id,
+      await this.userService.updatePartialById(id, {
         refreshToken: null,
       });
 

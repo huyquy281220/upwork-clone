@@ -15,7 +15,7 @@ import { useModalManager } from "@/hooks/useModalManager";
 import { EditEducationModal } from "@/components/modals/freelancer/EditEducationModal";
 import { AvailabilityModal } from "@/components/modals/freelancer/AvailabilityModal";
 import CircleTrash from "@/components/common/CircleTrash";
-import useLocalTime from "@/hooks/useLocalTime";
+import { useUserLocationTime } from "@/hooks/useUserLocalTime";
 import ImageUploadModal from "@/components/modals/freelancer/ImageUploadModal";
 import { EditCountryModal } from "@/components/modals/freelancer/EditCountryModal";
 
@@ -33,7 +33,7 @@ export function ProfileSidebar() {
     session?.user.id ?? ""
   );
 
-  const { time, location } = useLocalTime();
+  const localData = useUserLocationTime();
 
   if (isLoading || status === "loading") return;
 
@@ -67,12 +67,12 @@ export function ProfileSidebar() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-2 text-muted-foreground">
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
-              <span>{location}</span>
+              <span>{`${localData?.city}, ${localData?.country}`}</span>
             </div>
             <span>•</span>
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
-              <span>{time}</span>
+              <span>{localData?.localTime}</span>
             </div>
           </div>
           <div className="flex justify-center gap-2 pt-6">

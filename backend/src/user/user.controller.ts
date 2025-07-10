@@ -24,6 +24,11 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get('/get-client-by-jobId/:jobId')
+  async getClientByJobId(@Param('jobId') jobId: string) {
+    return this.userService.findClientByJobId(jobId);
+  }
+
   @Post('request-verify-email')
   async requestVerifyEmail(@Body('email') email: string) {
     return this.userService.requestToVerifyEmail(email);
@@ -49,9 +54,12 @@ export class UserController {
     return this.userService.uploadAvatar(userId, file);
   }
 
-  @Patch('update')
-  async update(@Body() updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
-    return this.userService.updatePartialById(updateUserDto);
+  @Patch('/:userId/update')
+  async update(
+    @Param('userId') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
+    return this.userService.updatePartialById(userId, updateUserDto);
   }
 
   @Delete('delete/:id')
