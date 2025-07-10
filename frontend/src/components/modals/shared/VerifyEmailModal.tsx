@@ -29,7 +29,7 @@ export default function VerifyEmailModal({
       onClose();
       setMessage("");
       verifyEmail(email);
-    }, 1000);
+    }, 2000);
   };
 
   return (
@@ -56,7 +56,9 @@ export default function VerifyEmailModal({
             to verify your email.
           </p>
 
-          <p className="text-sm">{message}</p>
+          <p className="pt-4 text-sm text-center text-foreground font-bold">
+            {message}
+          </p>
         </div>
       </DialogContent>
     </Dialog>

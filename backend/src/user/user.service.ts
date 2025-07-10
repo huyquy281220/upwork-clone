@@ -269,8 +269,12 @@ export class UserService {
 
   async verifyEmail(token: string) {
     try {
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+
       const user = await this.prismaService.user.findFirst({
-        where: { verificationToken: token },
+        where: { email: payload.email },
       });
 
       if (!user) {
@@ -292,7 +296,7 @@ export class UserService {
       return 'email verified';
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
-        throw new BadRequestException('Token đã hết hạn');
+        return 'Token đã hết hạn';
       }
       console.error('Verification error:', error);
       throw new InternalServerErrorException('Lỗi khi xác thực email.');
