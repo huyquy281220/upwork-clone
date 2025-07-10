@@ -11,10 +11,12 @@ export function JobSidebar({
   jobId,
   isApplied,
   client,
+  totalJobs,
 }: {
   jobId: string;
   client: ClientUser;
   isApplied: boolean;
+  totalJobs: number;
 }) {
   const router = useRouter();
 
@@ -34,7 +36,7 @@ export function JobSidebar({
       </div>
 
       <JobActions />
-      <ClientInfo client={client} />
+      <ClientInfo client={client} totalJobs={totalJobs} />
     </div>
   );
 }

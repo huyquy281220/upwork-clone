@@ -3,14 +3,22 @@ import { useUserLocationTime } from "@/hooks/useUserLocalTime";
 import { ClientUser } from "@/types/user";
 import { MapPin, Clock } from "lucide-react";
 
-export function ClientInfo({ client }: { client: ClientUser }) {
+export function ClientInfo({
+  client,
+  totalJobs,
+}: {
+  client: ClientUser;
+  totalJobs: number;
+}) {
   const clientLocalTime = useUserLocationTime(client.timezone);
-  console.log(clientLocalTime);
 
   const clientStats = [
     { label: client.address, icon: MapPin },
-    { label: ``, icon: Clock },
-    { label: "133 jobs posted", value: "86% hire rate, 0 open jobs" },
+    {
+      label: `${clientLocalTime?.city} ${clientLocalTime?.localTime}`,
+      icon: Clock,
+    },
+    { label: `${totalJobs} jobs posted`, value: "86% hire rate, 0 open jobs" },
     { label: "$340K total spent", value: "$7 /hr avg. hourly rate" },
     { label: "Member since Jul 16, 2024" },
   ];
@@ -35,7 +43,7 @@ export function ClientInfo({ client }: { client: ClientUser }) {
                 <stat.icon className="w-4 h-4 text-muted-foreground mt-0.5" />
               )}
               <div>
-                <div className="text-foreground">{stat.label}</div>
+                <div className="text-muted-foreground">{stat.label}</div>
                 {stat.value && (
                   <div className="text-muted-foreground">{stat.value}</div>
                 )}

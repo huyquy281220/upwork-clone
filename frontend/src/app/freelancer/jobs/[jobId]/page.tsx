@@ -15,6 +15,11 @@ import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
+type ClientInfoProps = {
+  client: ClientUser;
+  totalJobs: number;
+};
+
 export default function JobDetailPage() {
   const { data: session } = useSession();
   const params = useParams();
@@ -26,7 +31,7 @@ export default function JobDetailPage() {
     enabled: !!jobId,
   });
 
-  const { data: client } = useQuery<ClientUser>({
+  const { data: clientInfo } = useQuery<ClientInfoProps>({
     queryKey: ["get-client-by-jobId", jobId],
     queryFn: () => getClientByJobId(jobId),
     enabled: !!jobId,
@@ -40,7 +45,7 @@ export default function JobDetailPage() {
     );
   }, [jobDetail, session]);
 
-  if (!jobDetail || !session || !client) return <InfiniteLoading />;
+  if (!jobDetail || !session || !clientInfo) return <InfiniteLoading />;
 
   const { title, createdAt } = jobDetail;
 
@@ -53,7 +58,12 @@ export default function JobDetailPage() {
             <JobContent />
           </div>
           <div className="lg:col-span-1 order-1 md:order-2">
-            <JobSidebar jobId={jobId} isApplied={isApplied} client={client} />
+            <JobSidebar
+              jobId={jobId}
+              isApplied={isApplied}
+              client={clientInfo.client}
+              totalJobs={clientInfo.totalJobs}
+            />
           </div>
         </div>
       </div>

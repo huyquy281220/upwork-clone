@@ -32,7 +32,13 @@ export class UserService {
         where: { jobs: { some: { id: jobId } } },
       });
 
-      return client;
+      const totalJobs = await this.prismaService.job.count({
+        where: {
+          clientId: client.id,
+        },
+      });
+
+      return { client, totalJobs };
     } catch (error) {
       console.error(error);
       throw new NotFoundException('Client not found');
