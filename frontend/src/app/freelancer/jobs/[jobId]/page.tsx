@@ -32,8 +32,7 @@ export default function JobDetailPage() {
     );
   }, [jobDetail, session]);
 
-  if (!jobDetail || !session)
-    return <InfiniteLoading progress={isLoading ? 50 : 100} />;
+  if (!jobDetail || !session) return <InfiniteLoading />;
 
   const { title, createdAt } = jobDetail;
 

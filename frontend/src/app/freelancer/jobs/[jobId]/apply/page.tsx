@@ -62,8 +62,7 @@ export default function Apply() {
     );
   }, [proposal]);
 
-  if (!session || !user || !jobData)
-    return <InfiniteLoading progress={session ? 100 : 50} />;
+  if (!session || !user || !jobData) return <InfiniteLoading />;
 
   const handleSubmit = async () => {
     setStatus("loading");

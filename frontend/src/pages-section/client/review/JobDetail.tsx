@@ -99,11 +99,7 @@ export default function JobDetail() {
   };
 
   if (isJobDetailLoading || isSkillsLoading) {
-    return (
-      <InfiniteLoading
-        progress={isJobDetailLoading || isSkillsLoading ? 30 : 100}
-      />
-    );
+    return <InfiniteLoading />;
   }
 
   return (
