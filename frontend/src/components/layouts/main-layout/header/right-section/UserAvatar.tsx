@@ -71,12 +71,18 @@ export default function UserAvatar() {
     iconName: string;
     href?: string;
   }) => {
+    if (session?.user.role === "CLIENT" && item.label === "Your profile") {
+      return null;
+    }
+
     if (item.href) {
       return (
         <Link
           key={item.id}
           href={
-            item.label === "Your profile"
+            session?.user.role === "CLIENT" && item.label === "Account settings"
+              ? "/client/info"
+              : item.label === "Your profile"
               ? `/freelancer/${session?.user.id}`
               : item.href
           }
@@ -108,7 +114,6 @@ export default function UserAvatar() {
         );
       }
 
-      // For logout or other action items
       return (
         <div
           key={item.id}
