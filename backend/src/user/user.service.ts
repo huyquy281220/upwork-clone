@@ -291,6 +291,9 @@ export class UserService {
 
       return 'email verified';
     } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        throw new BadRequestException('Token đã hết hạn');
+      }
       console.error('Verification error:', error);
       throw new InternalServerErrorException('Lỗi khi xác thực email.');
     }
