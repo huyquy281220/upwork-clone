@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { verifyEmail } from "@/services/userService";
+import { useState } from "react";
 
 interface VerifyEmailModalProps {
   isOpen: boolean;
@@ -19,15 +20,22 @@ export default function VerifyEmailModal({
   email,
   onClose,
 }: VerifyEmailModalProps) {
+  const [message, setMessage] = useState("");
+
   const handleVerifyEmail = async (email: string) => {
-    onClose();
-    await verifyEmail(email);
+    setMessage("Verification email sent! Please check your email.");
+
+    setTimeout(() => {
+      onClose();
+      setMessage("");
+      verifyEmail(email);
+    }, 1000);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="w-full sm:max-w-xl bg-gray-900 border-gray-700 text-foreground"
+        className="w-full sm:max-w-xl bg-background text-foreground"
         showCloseButton={false}
       >
         <DialogHeader>
@@ -47,6 +55,8 @@ export default function VerifyEmailModal({
             </span>{" "}
             to verify your email.
           </p>
+
+          <p className="text-sm">{message}</p>
         </div>
       </DialogContent>
     </Dialog>
