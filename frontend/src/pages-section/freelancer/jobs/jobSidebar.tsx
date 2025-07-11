@@ -14,7 +14,7 @@ export function JobSidebar({
   totalJobs,
 }: {
   jobId: string;
-  client: ClientUser;
+  client: ClientUser & { user: { fullName: string; address: string } };
   isApplied: boolean;
   totalJobs: number;
 }) {

@@ -411,7 +411,7 @@ export class ProposalsService {
       await tx.notification.create({
         data: {
           userId: proposal.freelancerId,
-          content: `Your proposal for job "${proposal.jobId}" has been rejected`,
+          content: `Your proposal for job "${proposal.job.title}" has been rejected`,
           type: NotificationType.REJECT_PROPOSAL,
           itemId: proposal.jobId,
         },
