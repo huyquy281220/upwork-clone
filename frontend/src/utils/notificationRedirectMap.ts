@@ -4,4 +4,5 @@ export const NotificationRedirectMap: Record<
 > = {
   APPLY_JOB: ({ id }) => `/client/job/${id}`,
   CREATE_CONTRACT: ({ id }) => `freelancer/contract/${id}`,
+  REJECT_PROPOSAL: ({ id }) => `/freelancer/jobs/${id}`,
 };

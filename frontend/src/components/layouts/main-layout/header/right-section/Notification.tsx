@@ -31,7 +31,9 @@ export default function Notification() {
 
   const handleNotificationClick = (notification: NotificationProps) => {
     const redirectUrl = NotificationRedirectMap[notification.type];
-    const url = redirectUrl({ id: "" });
+    const url = redirectUrl({ id: notification.itemId ?? "" });
+
+    router.push(url);
   };
 
   return (

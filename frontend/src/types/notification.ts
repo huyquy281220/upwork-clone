@@ -10,6 +10,7 @@ export interface NotificationProps {
   isRead: boolean;
   createdAt: string;
   type: NotificationType;
+  itemId?: string;
   user: {
     fullName: string;
     email: string;
