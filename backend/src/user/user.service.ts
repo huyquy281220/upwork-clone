@@ -30,6 +30,9 @@ export class UserService {
     try {
       const client = await this.prismaService.clientProfile.findFirst({
         where: { jobs: { some: { id: jobId } } },
+        include: {
+          user: { select: { address: true, fullName: true } },
+        },
       });
 
       const totalJobs = await this.prismaService.job.count({
@@ -37,6 +40,8 @@ export class UserService {
           clientId: client.id,
         },
       });
+
+      console.log(client);
 
       return { client, totalJobs };
     } catch (error) {

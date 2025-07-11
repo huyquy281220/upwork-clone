@@ -7,13 +7,13 @@ export function ClientInfo({
   client,
   totalJobs,
 }: {
-  client: ClientUser;
+  client: ClientUser & { user: { fullName: string; address: string } };
   totalJobs: number;
 }) {
   const clientLocalTime = useUserLocationTime(client.timezone);
 
   const clientStats = [
-    { label: client.address, icon: MapPin },
+    { label: client.user.address ?? "", icon: MapPin },
     {
       label: `${clientLocalTime?.city} ${clientLocalTime?.localTime}`,
       icon: Clock,

@@ -16,7 +16,7 @@ import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
 type ClientInfoProps = {
-  client: ClientUser;
+  client: ClientUser & { user: { fullName: string; address: string } };
   totalJobs: number;
 };
 
