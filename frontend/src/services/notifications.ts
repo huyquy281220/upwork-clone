@@ -8,9 +8,12 @@ export const getNotificationsByUserId = async (userId: string) => {
   return response.data;
 };
 
-export const markNotificationAsRead = async (notificationId: string) => {
+export const markNotificationAsRead = async (
+  notificationId: string,
+  userId: string
+) => {
   const response = await api.patch(
-    `${apiURL}/notifications/${notificationId}/read`
+    `${apiURL}/notifications/${notificationId}/read?userId=${userId}`
   );
 
   return response.data;

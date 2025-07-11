@@ -45,7 +45,7 @@ export const useNotifications = ({ socket, userId }: NotificationsProps) => {
 
   const markAsReadMutation = useMutation({
     mutationFn: (notificationId: string) =>
-      markNotificationAsRead(notificationId),
+      markNotificationAsRead(notificationId, userId),
     onSuccess: () => {
       // Refetch or update cache after mutation
       queryClient.invalidateQueries({ queryKey: ["notifications", userId] });

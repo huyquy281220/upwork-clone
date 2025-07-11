@@ -234,7 +234,7 @@ export class ProposalsService {
           userId: client.id,
           content: `A freelancer has submitted a proposal to your job "${job.title}"`,
           type: NotificationType.APPLY_JOB,
-          itemId: proposal.id,
+          itemId: job.id,
         },
       });
 

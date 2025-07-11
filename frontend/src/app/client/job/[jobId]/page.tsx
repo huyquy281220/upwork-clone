@@ -1,5 +1,6 @@
 "use client";
 
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { Pagination } from "@/components/common/Pagination";
 import useFilter from "@/hooks/useFilter";
 import { useModalManager } from "@/hooks/useModalManager";
@@ -62,7 +63,7 @@ export default function ClientProposalsPage() {
     setSelectedProposal(proposal);
   };
 
-  if (!paginatedProposals || !jobDetail) return;
+  if (!paginatedProposals || !jobDetail) return <InfiniteLoading />;
 
   return (
     <div className="min-h-screen">
