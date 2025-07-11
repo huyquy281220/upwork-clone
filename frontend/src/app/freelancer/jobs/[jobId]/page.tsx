@@ -40,7 +40,9 @@ export default function JobDetailPage() {
   const isApplied = useMemo(() => {
     return (
       jobDetail?.proposals.some(
-        (proposal) => proposal.freelancerId === session?.user.id
+        (proposal) =>
+          proposal.freelancerId === session?.user.id &&
+          proposal.status !== "REJECTED"
       ) ?? false
     );
   }, [jobDetail, session]);
