@@ -7,3 +7,11 @@ export const getNotificationsByUserId = async (userId: string) => {
 
   return response.data;
 };
+
+export const markNotificationAsRead = async (notificationId: string) => {
+  const response = await api.patch(
+    `${apiURL}/notifications/${notificationId}/read`
+  );
+
+  return response.data;
+};

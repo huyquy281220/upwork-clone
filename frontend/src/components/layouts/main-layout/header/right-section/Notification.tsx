@@ -20,7 +20,7 @@ export default function Notification() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const socket = useSocket(session?.user.id ?? "");
 
-  const { notifications } = useNotifications({
+  const { notifications, markAsRead } = useNotifications({
     socket: socket!,
     userId: session?.user.id ?? "",
   });
@@ -33,7 +33,11 @@ export default function Notification() {
     const redirectUrl = NotificationRedirectMap[notification.type];
     const url = redirectUrl({ id: notification.itemId ?? "" });
 
-    router.push(url);
+    markAsRead(notification.id, {
+      onSuccess: () => {
+        router.push(url);
+      },
+    });
   };
 
   return (
@@ -44,11 +48,9 @@ export default function Notification() {
           className="p-1 rounded-full hover:bg-gray-800 relative hover:text-white"
         >
           <Bell className="w-5 h-5" />
-          {notifications.length > 0 ? (
+          {notifications.some((n) => !n.isRead) ? (
             <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full text-xs flex items-center justify-center"></span>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </button>
       </PopoverTrigger>
       <PopoverContent

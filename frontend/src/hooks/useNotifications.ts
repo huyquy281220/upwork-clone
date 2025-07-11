@@ -1,6 +1,9 @@
-import { getNotificationsByUserId } from "@/services/notifications";
+import {
+  getNotificationsByUserId,
+  markNotificationAsRead,
+} from "@/services/notifications";
 import { NotificationProps } from "@/types/notification";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Socket } from "socket.io-client";
 
@@ -40,5 +43,14 @@ export const useNotifications = ({ socket, userId }: NotificationsProps) => {
     };
   }, [socket, userId, queryClient]);
 
-  return { notifications, refetch };
+  const markAsReadMutation = useMutation({
+    mutationFn: (notificationId: string) =>
+      markNotificationAsRead(notificationId),
+    onSuccess: () => {
+      // Refetch or update cache after mutation
+      queryClient.invalidateQueries({ queryKey: ["notifications", userId] });
+    },
+  });
+
+  return { notifications, refetch, markAsRead: markAsReadMutation.mutate };
 };

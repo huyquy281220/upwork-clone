@@ -177,9 +177,11 @@ export class NotificationsService {
   }
 
   async markAsRead(id: string, userId: string) {
-    return this.prisma.$transaction(async (tx) => {
+    try {
       // Check if notification and ownership
-      const notification = await tx.notification.findUnique({ where: { id } });
+      const notification = await this.prisma.notification.findUnique({
+        where: { id },
+      });
       if (!notification) {
         throw new NotFoundException(`Notification with ID ${id} not found`);
       }
@@ -191,14 +193,17 @@ export class NotificationsService {
       }
 
       // Update status
-      return tx.notification.update({
+      return await this.prisma.notification.update({
         where: { id },
         data: { isRead: true },
         include: {
           user: { select: { id: true, email: true } },
         },
       });
-    });
+    } catch (error) {
+      // Optionally log or handle error
+      throw error;
+    }
   }
 
   async markAllAsRead(userId: string) {

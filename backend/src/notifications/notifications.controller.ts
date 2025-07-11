@@ -9,6 +9,7 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
+  Patch,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
@@ -38,7 +39,7 @@ export class NotificationsController {
     });
   }
 
-  @Put('/:id/read')
+  @Patch('/:id/read')
   markAsRead(@Param('id') id: string, @Query('userId') userId: string) {
     return this.notificationsService.markAsRead(id, userId);
   }
