@@ -46,6 +46,7 @@ export function ProposalsSearchSort({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value="all">All</SelectItem>
           <SelectItem value="newest">Newest</SelectItem>
           <SelectItem value="oldest">Oldest</SelectItem>
           <SelectItem value="highest">Highest Budget</SelectItem>

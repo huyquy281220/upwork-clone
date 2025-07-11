@@ -36,13 +36,22 @@ export function buildProposalFilters({
       dateFilterCondition = today;
       break;
     case 'week':
-      dateFilterCondition = subDays(today, 7);
+      dateFilterCondition = {
+        gte: subDays(today, 7),
+        lt: startOfToday(),
+      };
       break;
     case 'month':
-      dateFilterCondition = subDays(today, 30);
+      dateFilterCondition = {
+        gte: subDays(today, 30),
+        lt: startOfToday(),
+      };
       break;
     case 'quarter':
-      dateFilterCondition = subDays(today, 90);
+      dateFilterCondition = {
+        gte: subDays(today, 90),
+        lt: startOfToday(),
+      };
       break;
     default:
       dateFilterCondition = null;
@@ -122,9 +131,7 @@ export function buildProposalFilters({
         : undefined,
     }),
     ...(dateFilterCondition && {
-      createdAt: {
-        gte: dateFilterCondition,
-      },
+      createdAt: dateFilterCondition,
     }),
   };
 
