@@ -80,8 +80,12 @@ export default function UserAvatar() {
         <Link
           key={item.id}
           href={
-            session?.user.role === "CLIENT" && item.label === "Account settings"
-              ? "/client/info"
+            item.label === "Account settings"
+              ? session?.user.role === "CLIENT"
+                ? "/client/info"
+                : session?.user.role === "FREELANCER"
+                ? "/freelancer/info"
+                : item.href
               : item.label === "Your profile"
               ? `/freelancer/${session?.user.id}`
               : item.href
