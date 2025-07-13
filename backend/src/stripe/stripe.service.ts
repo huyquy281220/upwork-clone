@@ -121,9 +121,22 @@ export class StripeService {
   /* PaymentMethod */
   async attachPaymentMethod(paymentMethodId: string, customerId: string) {
     try {
-      return await this.stripe.paymentMethods.attach(paymentMethodId, {
-        customer: customerId,
+      const paymentMethod = await this.stripe.paymentMethods.attach(
+        paymentMethodId,
+        {
+          customer: customerId,
+        },
+      );
+
+      // Optionally set as default
+      await this.stripe.customers.update(customerId, {
+        invoice_settings: {
+          default_payment_method: paymentMethod.id,
+        },
       });
+
+      // Return the payment method details to store reference in DB
+      return paymentMethod;
     } catch (error) {
       throw new Error(error);
     }
