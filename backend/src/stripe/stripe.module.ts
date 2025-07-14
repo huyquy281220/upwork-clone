@@ -1,8 +1,10 @@
 import { Module, Global } from '@nestjs/common';
+import { PrismaModule } from 'src/prisma/prisma.module';
 import Stripe from 'stripe';
 
 @Global()
 @Module({
+  imports: [PrismaModule],
   providers: [
     {
       provide: 'STRIPE_CLIENT',

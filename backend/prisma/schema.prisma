@@ -22,6 +22,7 @@ model User {
   timezone              String?
   verificationToken     String?
   verified              Boolean        @default(false)
+  stripeCustomerId      String?
 
   clientProfile         ClientProfile?
   freelancerProfile     FreelancerProfile?

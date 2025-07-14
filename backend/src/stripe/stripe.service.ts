@@ -1,9 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
+import { CreatePaymentMethodDto } from './dto/create-payment-method';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class StripeService {
-  constructor(@Inject('STRIPE_CLIENT') private stripe: Stripe) {}
+  constructor(
+    @Inject('STRIPE_CLIENT') private stripe: Stripe,
+    private prismaService: PrismaService,
+  ) {}
 
   //   create freelancer account
   async createConnectedAccount(email: string) {
@@ -66,6 +71,53 @@ export class StripeService {
       return await this.stripe.customers.del(customerId);
     } catch (error) {
       throw new Error(`Failed to delete Stripe customer: ${error.message}`);
+    }
+  }
+
+  async createPaymentMethod(data: CreatePaymentMethodDto) {
+    try {
+      const billingAddress = data.billing_details.address;
+
+      const user = await this.prismaService.user.findUnique({
+        where: { email: data.email },
+      });
+
+      if (!user.stripeCustomerId) {
+        const customer = await this.createCustomer(
+          data.email,
+          data.billing_details.name,
+        );
+
+        await this.prismaService.user.update({
+          where: {
+            email: user.email,
+          },
+          data: {
+            stripeCustomerId: customer.id,
+          },
+        });
+      }
+
+      const paymentMethod = await this.stripe.paymentMethods.create({
+        type: 'card',
+        customer: data.customerId,
+        billing_details: {
+          name: data.billing_details.name,
+          address: {
+            city: billingAddress.city,
+            line1: billingAddress.line1,
+            line2: billingAddress.line2,
+            country: billingAddress.country,
+            postal_code: billingAddress.postal_code,
+            state: billingAddress.state,
+          },
+        },
+      });
+
+      return paymentMethod;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 
