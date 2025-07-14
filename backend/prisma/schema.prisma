@@ -23,6 +23,7 @@ model User {
   verificationToken     String?
   verified              Boolean        @default(false)
   stripeCustomerId      String?
+  stripeAccountId       String?
 
   clientProfile         ClientProfile?
   freelancerProfile     FreelancerProfile?

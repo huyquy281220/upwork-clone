@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 import { CreatePaymentMethodDto } from './dto/create-payment-method';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class StripeService {
@@ -82,20 +83,27 @@ export class StripeService {
         where: { email: data.email },
       });
 
-      if (!user.stripeCustomerId) {
-        const customer = await this.createCustomer(
-          data.email,
-          data.billing_details.name,
-        );
+      if (user.role === Role.CLIENT) {
+        if (!user.stripeCustomerId) {
+          const customer = await this.createCustomer(
+            data.email,
+            data.billing_details.name,
+          );
 
-        await this.prismaService.user.update({
-          where: {
-            email: user.email,
-          },
-          data: {
-            stripeCustomerId: customer.id,
-          },
-        });
+          await this.prismaService.user.update({
+            where: { email: user.email },
+            data: { stripeCustomerId: customer.id },
+          });
+        }
+      } else if (user.role === Role.FREELANCER) {
+        if (!user.stripeAccountId) {
+          const account = await this.createConnectedAccount(data.email);
+
+          await this.prismaService.user.update({
+            where: { email: user.email },
+            data: { stripeAccountId: account.id },
+          });
+        }
       }
 
       const paymentMethod = await this.stripe.paymentMethods.create({
