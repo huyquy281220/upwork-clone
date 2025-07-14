@@ -84,7 +84,7 @@ export default function UserAvatar() {
               ? session?.user.role === "CLIENT"
                 ? "/client/info"
                 : session?.user.role === "FREELANCER"
-                ? "/freelancer/info"
+                ? "/freelancer/settings"
                 : item.href
               : item.label === "Your profile"
               ? `/freelancer/${session?.user.id}`
