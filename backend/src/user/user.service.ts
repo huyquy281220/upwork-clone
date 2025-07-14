@@ -14,6 +14,7 @@ import * as fs from 'fs';
 import * as util from 'util';
 import { Express } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { StripeService } from 'src/stripe/stripe.service';
 
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -23,6 +24,7 @@ export class UserService {
     private prismaService: PrismaService,
     private emailService: EmailService,
     private jwtService: JwtService,
+    private stripeService: StripeService,
   ) {}
 
   async findClientByJobId(jobId: string) {
@@ -130,6 +132,12 @@ export class UserService {
 
       if (user) {
         throw new BadRequestException('Email already exist');
+      }
+
+      if (data.role === Role.CLIENT) {
+        await this.stripeService.createCustomer(data.email, data.fullName);
+      } else if (data.role === Role.FREELANCER) {
+        await this.stripeService.createConnectedAccount(data.email);
       }
 
       return this.prismaService.user.create({

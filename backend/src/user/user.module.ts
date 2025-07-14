@@ -9,10 +9,12 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { JwtModule } from '@nestjs/jwt';
+import { StripeModule } from 'src/stripe/stripe.module';
 
 @Module({
   imports: [
     PrismaModule,
+    StripeModule,
     JwtModule,
     MessageModule,
     MulterModule.register({
