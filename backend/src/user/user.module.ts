@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -10,11 +10,12 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { JwtModule } from '@nestjs/jwt';
 import { StripeModule } from 'src/stripe/stripe.module';
+import { StripeService } from 'src/stripe/stripe.service';
 
 @Module({
   imports: [
     PrismaModule,
-    StripeModule,
+    forwardRef(() => StripeModule),
     JwtModule,
     MessageModule,
     MulterModule.register({

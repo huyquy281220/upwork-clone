@@ -1,10 +1,12 @@
-import { Module, Global } from '@nestjs/common';
+import { Module, Global, forwardRef } from '@nestjs/common';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { UserModule } from 'src/user/user.module';
 import Stripe from 'stripe';
+import { StripeService } from './stripe.service';
 
 @Global()
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, forwardRef(() => UserModule)],
   providers: [
     {
       provide: 'STRIPE_CLIENT',
@@ -14,7 +16,8 @@ import Stripe from 'stripe';
         });
       },
     },
+    StripeService,
   ],
-  exports: ['STRIPE_CLIENT'],
+  exports: ['STRIPE_CLIENT', StripeService],
 })
 export class StripeModule {}

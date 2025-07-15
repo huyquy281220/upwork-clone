@@ -21,6 +21,9 @@ import {
 } from "@stripe/react-stripe-js";
 import { CreditCard, HelpCircle, Lock } from "lucide-react";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { CreatePaymentMethodProps } from "@/types/payments";
+import { createPaymentMethod } from "@/services/stripe";
 
 interface BillingAddress {
   country: string;
@@ -50,6 +53,7 @@ const COUNTRIES = [
   { code: "KR", name: "South Korea" },
   { code: "SG", name: "Singapore" },
 ];
+
 const CARD_ELEMENT_OPTIONS = {
   style: {
     base: {
@@ -70,16 +74,22 @@ export function PaymentForm() {
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<PaymentFormData>({
-    firstName: "Hai",
-    lastName: "Hai",
+    firstName: "",
+    lastName: "",
     expirationMonth: "",
     expirationYear: "",
     billingAddress: {
       country: "VN",
       addressLine1: "",
       addressLine2: "",
-      city: "Hanoi",
-      postalCode: "000084",
+      city: "",
+      postalCode: "",
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: (data: CreatePaymentMethodProps) => {
+      return createPaymentMethod(data);
     },
   });
 
@@ -100,7 +110,7 @@ export function PaymentForm() {
     }
 
     // Here you would typically create a payment method and handle the payment
-    // For demo purposes, we'll just log the form data
+    // mutation.mutate(formData)
     console.log("Form data:", formData);
 
     setIsLoading(false);
