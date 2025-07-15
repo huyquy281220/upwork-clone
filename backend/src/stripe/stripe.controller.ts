@@ -1,10 +1,15 @@
-import { Controller, Post, Body, Param } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { AddCardDto } from './dto/add-card.dto';
 
 @Controller('stripe')
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
+
+  @Get('/retrieve/:paymentMethodId')
+  async getPaymentMethod(@Param('paymentMethodId') paymentMethodId: string) {
+    return this.stripeService.getPaymentMethod(paymentMethodId);
+  }
 
   @Post('add-cart')
   async AddCard(@Body() data: AddCardDto) {

@@ -129,6 +129,10 @@ export class StripeService {
     }
   }
 
+  async getPaymentMethod(paymentMethodId: string) {
+    return this.stripe.paymentMethods.retrieve(paymentMethodId);
+  }
+
   //   create payment intent
   async createPaymentIntent(amount: number, currency: string) {
     try {
