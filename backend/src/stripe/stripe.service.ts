@@ -130,7 +130,17 @@ export class StripeService {
   }
 
   async getPaymentMethod(paymentMethodId: string) {
-    return this.stripe.paymentMethods.retrieve(paymentMethodId);
+    if (!paymentMethodId) {
+      throw new Error('Payment method ID is required');
+    }
+
+    try {
+      const paymentMethod =
+        await this.stripe.paymentMethods.retrieve(paymentMethodId);
+      return paymentMethod;
+    } catch (error) {
+      throw new Error('Failed to retrieve payment method');
+    }
   }
 
   //   create payment intent
