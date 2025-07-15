@@ -24,20 +24,21 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { CreatePaymentMethodProps } from "@/types/payments";
 import { createPaymentMethod } from "@/services/stripe";
+import { useSession } from "next-auth/react";
 
-interface BillingAddress {
+interface BillingDetails {
   country: string;
-  addressLine1: string;
-  addressLine2?: string;
+  line1: string;
+  line2?: string;
   city: string;
-  postalCode?: string;
+  postal_code: string;
 }
 
 interface PaymentFormData {
   cardHolderName: string;
   expirationMonth: string;
   expirationYear: string;
-  billingAddress: BillingAddress;
+  billing_details: BillingDetails;
 }
 
 const COUNTRIES = [
@@ -69,19 +70,22 @@ const CARD_ELEMENT_OPTIONS = {
 };
 
 export function PaymentForm() {
+  const { data: session } = useSession();
   const stripe = useStripe();
   const elements = useElements();
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [formData, setFormData] = useState<PaymentFormData>({
     cardHolderName: "",
     expirationMonth: "",
     expirationYear: "",
-    billingAddress: {
+    billing_details: {
       country: "VN",
-      addressLine1: "",
-      addressLine2: "",
+      line1: "",
+      line2: "",
       city: "",
-      postalCode: "",
+      postal_code: "",
     },
   });
 
@@ -89,6 +93,9 @@ export function PaymentForm() {
     mutationFn: (data: CreatePaymentMethodProps) => {
       return createPaymentMethod(data);
     },
+
+    onSuccess: () => setStatus("success"),
+    onError: () => setStatus("error"),
   });
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -98,29 +105,27 @@ export function PaymentForm() {
       return;
     }
 
-    setIsLoading(true);
+    setStatus("loading");
 
     const cardElement = elements.getElement(CardNumberElement);
 
     if (!cardElement) {
-      setIsLoading(false);
+      setStatus("idle");
       return;
     }
 
-    // Here you would typically create a payment method and handle the payment
-    // mutation.mutate(formData)
-    console.log("Form data:", formData);
+    mutation.mutate({ ...formData, email: session?.user.email ?? "" });
 
-    setIsLoading(false);
+    setStatus("idle");
   };
 
   const updateFormData = (field: string, value: string) => {
-    if (field.startsWith("billingAddress.")) {
-      const addressField = field.replace("billingAddress.", "");
+    if (field.startsWith("billing_details.")) {
+      const addressField = field.replace("billing_details.", "");
       setFormData((prev) => ({
         ...prev,
-        billingAddress: {
-          ...prev.billingAddress,
+        billing_details: {
+          ...prev.billing_details,
           [addressField]: value,
         },
       }));
@@ -249,9 +254,9 @@ export function PaymentForm() {
             <div className="space-y-2">
               <Label className="text-white font-medium">Country</Label>
               <Select
-                value={formData.billingAddress.country}
+                value={formData.billing_details.country}
                 onValueChange={(value) =>
-                  updateFormData("billingAddress.country", value)
+                  updateFormData("billing_details.country", value)
                 }
               >
                 <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
@@ -274,9 +279,9 @@ export function PaymentForm() {
             <div className="space-y-2">
               <Label className="text-white font-medium">Address line 1</Label>
               <Input
-                value={formData.billingAddress.addressLine1}
+                value={formData.billing_details.line1}
                 onChange={(e) =>
-                  updateFormData("billingAddress.addressLine1", e.target.value)
+                  updateFormData("billing_details.line1", e.target.value)
                 }
                 className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
               />
@@ -287,9 +292,9 @@ export function PaymentForm() {
                 Address line 2 <span className="text-gray-400">(optional)</span>
               </Label>
               <Input
-                value={formData.billingAddress.addressLine2}
+                value={formData.billing_details.line2}
                 onChange={(e) =>
-                  updateFormData("billingAddress.addressLine2", e.target.value)
+                  updateFormData("billing_details.line2", e.target.value)
                 }
                 className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
               />
@@ -299,9 +304,9 @@ export function PaymentForm() {
               <div className="space-y-2">
                 <Label className="text-white font-medium">City</Label>
                 <Input
-                  value={formData.billingAddress.city}
+                  value={formData.billing_details.city}
                   onChange={(e) =>
-                    updateFormData("billingAddress.city", e.target.value)
+                    updateFormData("billing_details.city", e.target.value)
                   }
                   className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                 />
@@ -311,9 +316,12 @@ export function PaymentForm() {
                   Postal code <span className="text-gray-400">(optional)</span>
                 </Label>
                 <Input
-                  value={formData.billingAddress.postalCode}
+                  value={formData.billing_details.postal_code}
                   onChange={(e) =>
-                    updateFormData("billingAddress.postalCode", e.target.value)
+                    updateFormData(
+                      "billing_details.postal_code",
+                      e.target.value
+                    )
                   }
                   className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                 />
@@ -321,13 +329,24 @@ export function PaymentForm() {
             </div>
           </div>
 
+          {status === "success" && (
+            <p className="text-green-500 font-medium">
+              Payment method saved successfully!
+            </p>
+          )}
+          {status === "error" && (
+            <p className="text-red-500 font-medium">
+              Failed to save payment method. Please try again.
+            </p>
+          )}
+
           {/* Submit Button */}
           <Button
             type="submit"
-            disabled={!stripe || isLoading}
+            disabled={!stripe || status === "loading"}
             className="bg-green-500 hover:bg-green-600 text-white font-medium px-8 py-3 rounded-md"
           >
-            {isLoading ? "Processing..." : "Save"}
+            {status === "loading" ? "Processing..." : "Save"}
           </Button>
         </form>
       </CardContent>
