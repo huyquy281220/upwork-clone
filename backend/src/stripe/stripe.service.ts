@@ -130,10 +130,6 @@ export class StripeService {
   }
 
   async getPaymentMethod(paymentMethodId: string) {
-    if (!paymentMethodId) {
-      throw new Error('Payment method ID is required');
-    }
-
     try {
       const paymentMethod =
         await this.stripe.paymentMethods.retrieve(paymentMethodId);
