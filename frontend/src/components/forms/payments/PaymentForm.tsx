@@ -34,8 +34,7 @@ interface BillingAddress {
 }
 
 interface PaymentFormData {
-  firstName: string;
-  lastName: string;
+  cardHolderName: string;
   expirationMonth: string;
   expirationYear: string;
   billingAddress: BillingAddress;
@@ -74,8 +73,7 @@ export function PaymentForm() {
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<PaymentFormData>({
-    firstName: "",
-    lastName: "",
+    cardHolderName: "",
     expirationMonth: "",
     expirationYear: "",
     billingAddress: {
@@ -182,24 +180,18 @@ export function PaymentForm() {
           {/* Name Fields */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName" className="text-white font-medium">
-                First name
+              <Label
+                htmlFor="cardHolderName"
+                className="text-white font-medium"
+              >
+                Cardholder name
               </Label>
               <Input
-                id="firstName"
-                value={formData.firstName}
-                onChange={(e) => updateFormData("firstName", e.target.value)}
-                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName" className="text-white font-medium">
-                Last name
-              </Label>
-              <Input
-                id="lastName"
-                value={formData.lastName}
-                onChange={(e) => updateFormData("lastName", e.target.value)}
+                id="cardholderName"
+                value={formData.cardHolderName}
+                onChange={(e) =>
+                  updateFormData("cardHolderName", e.target.value)
+                }
                 className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
               />
             </div>
