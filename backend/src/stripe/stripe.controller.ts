@@ -6,7 +6,7 @@ import { AddCardDto } from './dto/add-card.dto';
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
-  @Get('/retrieve/:paymentMethodId')
+  @Get('/retrieve-payment-method/:paymentMethodId')
   async getPaymentMethod(
     @Param('paymentMethodId') paymentMethodId: string,
     // @Query('userId') userId: string,

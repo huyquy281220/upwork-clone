@@ -9,9 +9,10 @@ export const createPaymentMethod = async (data: CreatePaymentMethodProps) => {
   return response.data;
 };
 
-export const getPaymentMethod = async (
-  paymentMethodId: string,
-  userId: string
-) => {
-  return;
+export const getPaymentMethod = async (paymentMethodId: string) => {
+  const response = await api.get(
+    `${apiURL}/stripe/retrieve-payment-method/${paymentMethodId}`
+  );
+
+  return response.data;
 };
