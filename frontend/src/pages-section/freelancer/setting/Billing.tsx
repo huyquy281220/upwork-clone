@@ -5,6 +5,16 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AddBillingMethodForm } from "./components/AddBillingMethod";
 import StripeElementWrapper from "@/providers/StripeElementWrapper";
+// import { SavedBillingMethods } from "./components/SavedBillingMethod";
+
+export interface CardInfo {
+  id: string;
+  type: "card" | "paypal";
+  cardNumber?: string;
+  cardholderName?: string;
+  expirationMonth?: string;
+  expirationYear?: string;
+}
 
 export function BillingContent() {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -31,6 +41,8 @@ export function BillingContent() {
                 Upwork earnings is not sufficient to pay for your monthly
                 membership and/or Connects.
               </p>
+
+              {/* <SavedBillingMethods /> */}
 
               <Button
                 onClick={() => setShowAddForm(true)}

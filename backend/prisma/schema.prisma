@@ -24,6 +24,7 @@ model User {
   verified              Boolean        @default(false)
   stripeCustomerId      String?
   stripeAccountId       String?
+  paymentMethodInfo     PaymentMethod[]
 
   clientProfile         ClientProfile?
   freelancerProfile     FreelancerProfile?
@@ -291,13 +292,29 @@ model Payment {
   amount              Float
   currency            String        @default("USD")
   status              PaymentStatus
-  method              PaymentMethod
+  method              PaymentMethodType
   paymentIntentId     String?       @unique
   captureMethod       String?       
   applicationFeeAmount Float?
   paidAt              DateTime?
   createdAt           DateTime      @default(now())
   contract            Contract      @relation(fields: [contractId], references: [id])
+}
+
+model PaymentMethod {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type           String 
+  brand          String?
+  last4          String?
+  expMonth       Int?
+  expYear        Int?
+  stripeMethodId String  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Add more fields as needed (e.g., isDefault, country, etc.)
 }
 
 model Review {
@@ -337,7 +354,7 @@ enum PaymentStatus {
   REFUNDED
 }
 
-enum PaymentMethod {
+enum PaymentMethodType {
   CARD
   BANK_TRANSFER
 }

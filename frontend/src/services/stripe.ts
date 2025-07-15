@@ -8,3 +8,10 @@ export const createPaymentMethod = async (data: CreatePaymentMethodProps) => {
 
   return response.data;
 };
+
+export const getPaymentMethod = async (
+  paymentMethodId: string,
+  userId: string
+) => {
+  return;
+};
