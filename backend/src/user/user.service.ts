@@ -27,6 +27,10 @@ export class UserService {
     private stripeService: StripeService,
   ) {}
 
+  async test() {
+    return 'test workflow';
+  }
+
   async findClientByJobId(jobId: string) {
     try {
       const client = await this.prismaService.clientProfile.findFirst({
