@@ -32,9 +32,7 @@ export function BillingContent() {
         user?.email ?? ""
       );
 
-      console.log(res);
-
-      return res;
+      router.push(res);
     } catch (error) {
       console.error(error);
     }
@@ -62,7 +60,7 @@ export function BillingContent() {
           {/* <SavedBillingMethods /> */}
 
           <Button
-            onClick={() => handleAddPayoutMethod}
+            onClick={handleAddPayoutMethod}
             className="bg-green-600 hover:bg-green-700 text-white"
           >
             <Plus className="w-4 h-4 mr-2" />

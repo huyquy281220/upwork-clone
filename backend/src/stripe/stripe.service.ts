@@ -31,12 +31,7 @@ export class StripeService {
   // async getAccountLink
 
   // create account onboarding link
-  async createAccountLink(
-    accountId: string,
-    email: string,
-    // refreshUrl: string,
-    // returnUrl: string,
-  ) {
+  async createAccountLink(accountId: string, email: string) {
     try {
       let accountLink;
       let accountIdToUse = accountId;
