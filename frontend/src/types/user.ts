@@ -50,6 +50,8 @@ export interface BaseUser {
   address?: string;
   verified: boolean;
   timezone?: string;
+  stripeCustomerId?: string;
+  stripeAccountId?: string;
 }
 
 export interface ClientProfile {

@@ -3,6 +3,12 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StripeElementWrapper from "@/providers/StripeElementWrapper";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUserInfo";
+import { useSession } from "next-auth/react";
+import { createOnboardLink } from "@/services/stripe";
+import { BaseUser } from "@/types/user";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 // import { SavedBillingMethods } from "./components/SavedBillingMethod";
 
 // export interface CardInfo {
@@ -15,6 +21,27 @@ import StripeElementWrapper from "@/providers/StripeElementWrapper";
 // }
 
 export function BillingContent() {
+  const { data: session } = useSession();
+  const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
+  const router = useRouter();
+
+  const handleAddPayoutMethod = async () => {
+    try {
+      const res = await createOnboardLink(
+        user?.stripeAccountId ?? "",
+        user?.email ?? ""
+      );
+
+      console.log(res);
+
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (!session || !user) return <InfiniteLoading />;
+
   return (
     <StripeElementWrapper>
       <div className="max-w-4xl">
@@ -35,7 +62,7 @@ export function BillingContent() {
           {/* <SavedBillingMethods /> */}
 
           <Button
-            // onClick={() => setShowAddForm(true)}
+            onClick={() => handleAddPayoutMethod}
             className="bg-green-600 hover:bg-green-700 text-white"
           >
             <Plus className="w-4 h-4 mr-2" />

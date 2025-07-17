@@ -17,10 +17,10 @@ export const getPaymentMethod = async (paymentMethodId: string) => {
   return response.data;
 };
 
-export const createOnboardLink = async (accountId: string) => {
+export const createOnboardLink = async (accountId: string, email: string) => {
   const response = await api.post(
     `${apiURL}/stripe/freelancer/onboarding-link`,
-    { accountId }
+    { accountId, email }
   );
   return response.data;
 };
