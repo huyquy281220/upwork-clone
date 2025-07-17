@@ -11,6 +11,7 @@ export default function NotFound() {
   const [redirectUrl, setRedirectUrl] = useState("/client");
 
   useEffect(() => {
+    if (!session) return;
     if (session?.user.role === Role.FREELANCER) {
       setRedirectUrl("/freelancer/find-work");
     } else {
