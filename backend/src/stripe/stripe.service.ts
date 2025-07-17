@@ -38,12 +38,12 @@ export class StripeService {
     // returnUrl: string,
   ) {
     try {
-      let account;
       let accountLink;
-      const connectedAccount = await this.stripe.accounts.retrieve(accountId);
+      let accountIdToUse = accountId;
 
-      if (!connectedAccount) {
-        account = await this.createConnectedAccount(email);
+      if (!accountIdToUse) {
+        const account = await this.createConnectedAccount(email);
+        accountIdToUse = account.id;
 
         accountLink = await this.stripe.accountLinks.create({
           account: account.id,
@@ -60,7 +60,7 @@ export class StripeService {
         });
       }
 
-      return accountLink;
+      return accountLink.url;
     } catch (error) {
       throw new Error(error);
     }
