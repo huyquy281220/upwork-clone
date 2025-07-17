@@ -1,5 +1,5 @@
 import { JobSearchFilters } from "@/pages-section/search/jobs/JobSearchFilter";
-import { JobListings } from "@/pages-section/search/jobs/JobsListing";
+// import { JobListings } from "@/pages-section/search/jobs/JobsListing";
 
 export default function SearchJobs() {
   return (
@@ -12,9 +12,7 @@ export default function SearchJobs() {
           </div>
 
           {/* Job Listings */}
-          <div className="min-w-0">
-            <JobListings />
-          </div>
+          <div className="min-w-0">{/* <JobListings /> */}</div>
         </div>
       </div>
     </div>
