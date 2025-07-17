@@ -1,6 +1,4 @@
-import type { JobProps } from "@/types";
-
-export const jobsData: JobProps[] = [
+export const jobsData = [
   {
     id: "1",
     title: "60-Minute Testing Job - Android App UI/UX & Bug Testing",
