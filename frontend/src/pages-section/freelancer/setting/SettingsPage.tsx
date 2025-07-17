@@ -5,14 +5,14 @@ import { SwapContent } from "./SwapContent";
 import { SettingsSidebar } from "./SettingSidebar";
 
 export type SettingsSection =
-  | "billing-payments"
+  | "payout-methods"
   | "contact-info"
   | "get-paid"
   | "password-security";
 
 export function SettingsPage() {
   const [activeSection, setActiveSection] =
-    useState<SettingsSection>("billing-payments");
+    useState<SettingsSection>("payout-methods");
 
   return (
     <div className="min-h-screen bg-background text-foreground">

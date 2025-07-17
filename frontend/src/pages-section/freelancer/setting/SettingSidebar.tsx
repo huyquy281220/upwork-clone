@@ -20,7 +20,7 @@ const navigationData: NavigationSection[] = [
   },
   {
     title: "Billing",
-    items: [{ label: "Billing & Payments", section: "billing-payments" }],
+    items: [{ label: "Payout methods", section: "payout-methods" }],
   },
   {
     title: "User Settings",

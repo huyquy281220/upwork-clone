@@ -10,7 +10,7 @@ interface SwapContentProps {
 
 export function SwapContent({ activeSection }: SwapContentProps) {
   switch (activeSection) {
-    case "billing-payments":
+    case "payout-methods":
       return <BillingContent />;
     case "contact-info":
       return <ContactInfoContent />;
