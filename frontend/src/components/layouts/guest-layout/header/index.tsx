@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import MobileMenu from "./mobile/MobileMenu";
 import { Logo } from "@/components/icons/Logo";
 import { useRouter } from "next/navigation";
 import { deleteCookie, getCookie } from "@/lib/cookie";
 
-const navLinks = [
-  { label: "Find Talent", href: "#", hasDropdown: true },
-  { label: "Find Work", href: "#", hasDropdown: true },
-  { label: "Why Upwork", href: "#", hasDropdown: true },
-  { label: "Enterprise", href: "#" },
-];
+// const navLinks = [
+//   { label: "Find Talent", href: "#", hasDropdown: true },
+//   { label: "Find Work", href: "#", hasDropdown: true },
+//   { label: "Why Upwork", href: "#", hasDropdown: true },
+//   { label: "Enterprise", href: "#" },
+// ];
 
 export default function Header() {
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-6">
+            {/* <nav className="hidden md:flex space-x-6">
               {navLinks.map((link, index) => (
                 <Link
                   key={index}
@@ -48,7 +48,7 @@ export default function Header() {
                   {link.hasDropdown && <ChevronDown className="ml-1 h-4 w-4" />}
                 </Link>
               ))}
-            </nav>
+            </nav> */}
           </div>
 
           {/* Search, Auth Buttons, Mobile Menu Toggle */}
@@ -83,7 +83,7 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu */}
-      {isMenuOpen && <MobileMenu links={navLinks} />}
+      {isMenuOpen && <MobileMenu />}
     </header>
   );
 }

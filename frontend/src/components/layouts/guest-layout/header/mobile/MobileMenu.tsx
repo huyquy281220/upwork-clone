@@ -1,18 +1,18 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+// import { ChevronRight } from "lucide-react";
 
-interface MobileMenuProps {
-  links: {
-    label: string;
-    href: string;
-    hasDropdown?: boolean;
-  }[];
-}
+// interface MobileMenuProps {
+//   links: {
+//     label: string;
+//     href: string;
+//     hasDropdown?: boolean;
+//   }[];
+// }
 
-export default function MobileMenu({ links }: MobileMenuProps) {
+export default function MobileMenu() {
   return (
     <div className="md:hidden bg-white border-b border-gray-200 px-4 py-4">
-      <nav className="flex flex-col space-y-4">
+      {/* <nav className="flex flex-col space-y-4">
         {links.map((link, index) => (
           <Link
             key={index}
@@ -23,7 +23,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
             {link.hasDropdown && <ChevronRight className="h-4 w-4" />}
           </Link>
         ))}
-      </nav>
+      </nav> */}
 
       <div className="mt-6 flex flex-col space-y-3">
         <Link href="/sign-in" className="w-full">
