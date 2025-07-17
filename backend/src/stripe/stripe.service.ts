@@ -22,34 +22,29 @@ export class StripeService {
         },
       });
 
+      return account;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  // async getAccountLink
+
+  // create account onboarding link
+  async createAccountLink(
+    accountId: string,
+    // refreshUrl: string,
+    // returnUrl: string,
+  ) {
+    try {
       const accountLink = await this.stripe.accountLinks.create({
-        account: account.id,
+        account: accountId,
         refresh_url: 'http://localhost:3000/reauth',
         return_url: 'http://localhost:3000/onboarding-success',
         type: 'account_onboarding',
       });
 
       return accountLink;
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  // create account onboarding link
-  async createAccountLink(
-    accountId: string,
-    refreshUrl: string,
-    returnUrl: string,
-  ) {
-    try {
-      const accountLink = await this.stripe.accountLinks.create({
-        account: accountId,
-        refresh_url: refreshUrl,
-        return_url: returnUrl,
-        type: 'account_onboarding',
-      });
-
-      return accountLink.url;
     } catch (error) {
       throw new Error(error);
     }

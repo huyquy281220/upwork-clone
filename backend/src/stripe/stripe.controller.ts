@@ -34,12 +34,7 @@ export class StripeController {
     // @Param('freelancerId') freelancerId: string,
     @Body() body: { accountId: string; refreshUrl: string; returnUrl: string },
   ) {
-    const url = await this.stripeService.createAccountLink(
-      body.accountId,
-      body.refreshUrl,
-      body.returnUrl,
-    );
-    return { url };
+    return this.stripeService.createAccountLink(body.accountId);
   }
 
   @Post('payment/escrow')
