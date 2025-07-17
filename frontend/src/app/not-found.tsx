@@ -1,12 +1,24 @@
+"use client";
+
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { Role } from "@/types/user";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { headers } from "next/headers";
+import { useEffect, useState } from "react";
 
-export default async function NotFound() {
-  const headersList = await headers();
-  const role = headersList.get("role");
+export default function NotFound() {
+  const { data: session, status } = useSession();
+  const [redirectUrl, setRedirectUrl] = useState("/client");
 
-  const redirectUrl =
-    role === "freelancer" ? "/freelancer/find-work" : "/client";
+  useEffect(() => {
+    if (session?.user.role === Role.FREELANCER) {
+      setRedirectUrl("/freelancer/find-work");
+    } else {
+      setRedirectUrl("/client/dashboard");
+    }
+  }, [session]);
+
+  if (status === "loading") return <InfiniteLoading />;
 
   return (
     <div>
