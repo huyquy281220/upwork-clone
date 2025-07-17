@@ -22,7 +22,14 @@ export class StripeService {
         },
       });
 
-      return account;
+      const accountLink = await this.stripe.accountLinks.create({
+        account: account.id,
+        refresh_url: 'http://localhost:3000/reauth',
+        return_url: 'http://localhost:3000/onboarding-success',
+        type: 'account_onboarding',
+      });
+
+      return accountLink;
     } catch (error) {
       throw new Error(error);
     }
@@ -83,9 +90,11 @@ export class StripeService {
         where: { email: data.email },
       });
 
+      let customer;
+
       if (user.role === Role.CLIENT) {
         if (!user.stripeCustomerId) {
-          const customer = await this.createCustomer(
+          customer = await this.createCustomer(
             data.email,
             data.billing_details.name,
           );
@@ -95,20 +104,11 @@ export class StripeService {
             data: { stripeCustomerId: customer.id },
           });
         }
-      } else if (user.role === Role.FREELANCER) {
-        if (!user.stripeAccountId) {
-          const account = await this.createConnectedAccount(data.email);
-
-          await this.prismaService.user.update({
-            where: { email: user.email },
-            data: { stripeAccountId: account.id },
-          });
-        }
       }
 
       const paymentMethod = await this.stripe.paymentMethods.create({
         type: 'card',
-        customer: data.customerId,
+        customer: customer.id ?? '',
         billing_details: {
           name: data.billing_details.name,
           address: {
@@ -121,6 +121,8 @@ export class StripeService {
           },
         },
       });
+
+      await this.attachPaymentMethod(paymentMethod.id, customer.id);
 
       return paymentMethod;
     } catch (error) {

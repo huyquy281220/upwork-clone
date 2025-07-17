@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Param, Get, Query } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { AddCardDto } from './dto/add-card.dto';
+import { CreatePaymentMethodDto } from './dto/create-payment-method';
 
 @Controller('stripe')
 export class StripeController {
@@ -15,11 +16,8 @@ export class StripeController {
   }
 
   @Post('add-card')
-  async addCard(@Body() data: AddCardDto) {
-    return this.stripeService.attachPaymentMethod(
-      data.paymentMethodId,
-      data.customerId,
-    );
+  async addCard(@Body() data: CreatePaymentMethodDto) {
+    return this.stripeService.createPaymentMethod(data);
   }
 
   @Post('freelancer/:freelancerId/account')

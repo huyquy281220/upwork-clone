@@ -3,10 +3,12 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { UserModule } from 'src/user/user.module';
 import Stripe from 'stripe';
 import { StripeService } from './stripe.service';
+import { StripeController } from './stripe.controller';
 
 @Global()
 @Module({
   imports: [PrismaModule, forwardRef(() => UserModule)],
+  controllers: [StripeController],
   providers: [
     {
       provide: 'STRIPE_CLIENT',
