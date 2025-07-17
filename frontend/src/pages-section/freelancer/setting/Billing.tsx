@@ -11,14 +11,14 @@ import { BaseUser } from "@/types/user";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 // import { SavedBillingMethods } from "./components/SavedBillingMethod";
 
-// export interface CardInfo {
-//   id: string;
-//   type: "card" | "paypal";
-//   cardNumber?: string;
-//   cardholderName?: string;
-//   expirationMonth?: string;
-//   expirationYear?: string;
-// }
+export interface CardInfo {
+  id: string;
+  type: "card" | "paypal";
+  cardNumber?: string;
+  cardholderName?: string;
+  expirationMonth?: string;
+  expirationYear?: string;
+}
 
 export function BillingContent() {
   const { data: session } = useSession();
