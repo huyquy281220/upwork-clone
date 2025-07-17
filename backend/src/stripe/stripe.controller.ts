@@ -29,12 +29,12 @@ export class StripeController {
     return account;
   }
 
-  @Post('freelancer/:freelancerId/onboarding-link')
+  @Post('freelancer/onboarding-link')
   async createOnboardingLink(
     // @Param('freelancerId') freelancerId: string,
-    @Body() body: { accountId: string; refreshUrl: string; returnUrl: string },
+    @Body() body: { accountId: string; email: string },
   ) {
-    return this.stripeService.createAccountLink(body.accountId);
+    return this.stripeService.createAccountLink(body.accountId, body.email);
   }
 
   @Post('payment/escrow')

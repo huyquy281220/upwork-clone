@@ -33,16 +33,32 @@ export class StripeService {
   // create account onboarding link
   async createAccountLink(
     accountId: string,
+    email: string,
     // refreshUrl: string,
     // returnUrl: string,
   ) {
     try {
-      const accountLink = await this.stripe.accountLinks.create({
-        account: accountId,
-        refresh_url: 'http://localhost:3000/reauth',
-        return_url: 'http://localhost:3000/onboarding-success',
-        type: 'account_onboarding',
-      });
+      let account;
+      let accountLink;
+      const connectedAccount = await this.stripe.accounts.retrieve(accountId);
+
+      if (!connectedAccount) {
+        account = await this.createConnectedAccount(email);
+
+        accountLink = await this.stripe.accountLinks.create({
+          account: account.id,
+          refresh_url: 'http://localhost:3000/reauth',
+          return_url: 'http://localhost:3000/onboarding-success',
+          type: 'account_onboarding',
+        });
+      } else {
+        accountLink = await this.stripe.accountLinks.create({
+          account: accountId,
+          refresh_url: 'http://localhost:3000/reauth',
+          return_url: 'http://localhost:3000/onboarding-success',
+          type: 'account_onboarding',
+        });
+      }
 
       return accountLink;
     } catch (error) {
