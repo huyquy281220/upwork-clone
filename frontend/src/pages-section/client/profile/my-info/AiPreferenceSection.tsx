@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { useState } from "react";
+// import { useState } from "react";
 
 export function AiPreferenceSection() {
-  const [isOptedOut, setIsOptedOut] = useState(true);
+  // const [isOptedOut, setIsOptedOut] = useState(true);
 
   return (
     <div className="bg-background border border-border rounded-lg p-6">
