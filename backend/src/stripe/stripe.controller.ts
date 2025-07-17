@@ -14,7 +14,7 @@ export class StripeController {
     return this.stripeService.getPaymentMethod(paymentMethodId);
   }
 
-  @Post('add-cart')
+  @Post('add-card')
   async AddCard(@Body() data: AddCardDto) {
     return this.stripeService.attachPaymentMethod(
       data.paymentMethodId,
