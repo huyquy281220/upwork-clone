@@ -24,3 +24,10 @@ export const createOnboardLink = async (accountId: string, email: string) => {
   );
   return response.data;
 };
+
+export const getAccountInfo = async (accountId: string) => {
+  const response = await api.get(
+    `${apiURL}/stripe/retrieve-account-info/${accountId}`
+  );
+  return response.data;
+};

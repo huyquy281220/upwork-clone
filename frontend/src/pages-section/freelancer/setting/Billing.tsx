@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import StripeElementWrapper from "@/providers/StripeElementWrapper";
 import { useUser } from "@/hooks/useUserInfo";
 import { useSession } from "next-auth/react";
-import { createOnboardLink } from "@/services/stripe";
+import { createOnboardLink, getAccountInfo } from "@/services/stripe";
 import { BaseUser } from "@/types/user";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { SavedBillingMethods } from "./components/SavedBillingMethod";
+import { useQuery } from "@tanstack/react-query";
 
 export interface CardInfo {
   id: string;
@@ -18,9 +20,25 @@ export interface CardInfo {
   expirationYear?: string;
 }
 
+const test: CardInfo = {
+  id: "1",
+  type: "card",
+  cardNumber: "4532123456781234", // Starts with 4 = Visa
+  cardholderName: "John Smith",
+  expirationMonth: "12",
+  expirationYear: "25",
+};
+
 export function BillingContent() {
   const { data: session, status } = useSession();
   const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
+
+  const { data: accountInfo } = useQuery({
+    queryKey: ["accountInfo", user?.stripeAccountId],
+    queryFn: () => getAccountInfo(user?.stripeAccountId ?? ""),
+  });
+
+  console.log(accountInfo);
 
   const handleAddPayoutMethod = async () => {
     try {
@@ -55,7 +73,9 @@ export function BillingContent() {
             method to receive your earnings.
           </p>
 
-          {/* <SavedBillingMethods /> */}
+          <div className="flex flex-col gap-4 mb-8">
+            <SavedBillingMethods methods={[test]} onDelete={() => {}} />
+          </div>
 
           <Button
             onClick={handleAddPayoutMethod}
