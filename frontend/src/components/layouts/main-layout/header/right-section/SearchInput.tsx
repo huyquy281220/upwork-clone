@@ -37,7 +37,7 @@ export default function SearchInput() {
   };
 
   return (
-    <div className="flex items-center space-x-2 py-1 border border-gray-700 rounded-md">
+    <div className="hidden lg:flex items-center space-x-2 py-1 border border-gray-700 rounded-md">
       {/* Search Input */}
       <div className="relative">
         <div className="bg-background flex items-center rounded-md px-2 py-1.5">
@@ -45,7 +45,7 @@ export default function SearchInput() {
           <input
             type="text"
             placeholder="Search"
-            className="bg-transparent  text-sm w-52 focus:outline-none"
+            className="bg-transparent text-sm w-32 xl:w-52 focus:outline-none"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
