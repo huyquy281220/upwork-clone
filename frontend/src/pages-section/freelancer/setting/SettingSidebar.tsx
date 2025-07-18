@@ -42,7 +42,7 @@ export function SettingsSidebar({
   onSectionChange,
 }: SettingsSidebarProps) {
   return (
-    <aside className="w-80 bg-background border-r border-border p-6">
+    <aside className="w-56 lg:w-80 bg-background border-r border-border p-6">
       <nav className="space-y-6">
         {navigationData.map((section) => (
           <div key={section.title}>

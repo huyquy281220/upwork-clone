@@ -1,8 +1,12 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Plus } from "lucide-react";
+import { CreditCard, Plus, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import CirclePencil from "@/components/common/CirclePencil";
+import { useState } from "react";
+import { PaymentForm } from "@/components/forms/payments/PaymentForm";
 
 interface PaymentMethod {
   id: string;
@@ -33,6 +37,8 @@ const paymentMethods: PaymentMethod[] = [
 ];
 
 export function BillingPaymentsContent() {
+  const [openPaymentForm, setOpenPaymentForm] = useState(false);
+
   return (
     <div className="max-w-4xl px-6 lg:px-0">
       <div className="mb-8">
@@ -47,26 +53,29 @@ export function BillingPaymentsContent() {
       <div className="space-y-6">
         {/* Payment Methods Section */}
         <Card>
-          <div className="flex items-center justify-between mb-6 p-8">
+          <div className="flex flex-col md:flex-row gap-2 items-center justify-between mb-6 p-8">
             <div className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-blue-600" />
+              <CreditCard className="h-5 w-5 text-green-600" />
               <h2 className="text-lg font-semibold text-foreground">
                 Payment Methods
               </h2>
             </div>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button
+              className="bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => setOpenPaymentForm(true)}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Payment Method
             </Button>
           </div>
 
-          <div className="space-y-4 px-8 pb-6">
+          <div className="space-y-4 px-4 md:px-8 pb-6 border-b">
             {paymentMethods.map((method) => (
               <div
                 key={method.id}
-                className="flex items-center justify-between p-4 border border-border rounded-lg"
+                className="flex flex-wrap md:flex-nowrap items-center justify-between gap-4 p-4 border border-border rounded-lg"
               >
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap md:flex-nowrap items-center gap-4">
                   <div className="p-2 bg-muted rounded-lg">
                     <CreditCard className="h-5 w-5 text-muted-foreground" />
                   </div>
@@ -76,7 +85,12 @@ export function BillingPaymentsContent() {
                         {method.type} •••• {method.last4}
                       </span>
                       {method.isDefault && (
-                        <Badge variant="secondary">Default</Badge>
+                        <Badge
+                          variant="secondary"
+                          className="text-muted-foreground"
+                        >
+                          Default
+                        </Badge>
                       )}
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -88,16 +102,18 @@ export function BillingPaymentsContent() {
                 <div className="flex items-center gap-2">
                   <CirclePencil />
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
-                    className="bg-transparent"
+                    // onClick={() => onDelete(method.id)}
+                    className="text-muted-foreground hover:text-destructive"
                   >
-                    Remove
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
             ))}
           </div>
+          {openPaymentForm && <PaymentForm />}
         </Card>
       </div>
     </div>

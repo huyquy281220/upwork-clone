@@ -21,7 +21,7 @@ export function SettingsPage() {
           activeSection={activeSection}
           onSectionChange={setActiveSection}
         />
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="p-6 lg:p-8">
           <SwapContent activeSection={activeSection} />
         </main>
       </div>

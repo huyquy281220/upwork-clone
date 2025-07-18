@@ -38,7 +38,7 @@ export function SettingsSidebar({
   onSectionChange,
 }: SettingsSidebarProps) {
   return (
-    <aside className="w-full md:w-80 bg-background md:border-r border-border p-6">
+    <aside className="w-full md:w-56 lg:w-80 bg-background md:border-r border-border p-6">
       <h2 className="text-3xl font-semibold text-foreground">Settings</h2>
       <nav className="space-y-3 mt-5 border-b md:border-none pb-8 md:pb-0">
         {navigationData.map((section, index) => (
