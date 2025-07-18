@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Upwork Clone - Find Freelancers & Jobs",
+  title: "Prowork - Find Freelancers & Jobs",
   description:
     "Connect with skilled freelancers or find your next project. A modern platform for remote work and professional services.",
   keywords: ["freelancer", "jobs", "remote work", "hire", "projects"],
@@ -29,22 +29,20 @@ export const metadata: Metadata = {
   ),
 
   openGraph: {
-    title: "Upwork Clone - Find Freelancers & Jobs",
+    title: "Prowork - Find Freelancers & Jobs",
     description:
       "Connect with skilled freelancers or find your next project. A modern platform for remote work and professional services.",
-    siteName: "Upwork Clone",
+    siteName: "Prowork",
     images: ["/og-image.png"],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Upwork Clone - Find Freelancers & Jobs",
+    title: "Prowork - Find Freelancers & Jobs",
     description:
       "Connect with skilled freelancers or find your next project. A modern platform for remote work and professional services.",
     images: ["/og-image.png"],
   },
-
-  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
