@@ -15,6 +15,11 @@ export class StripeController {
     return this.stripeService.getPaymentMethod(paymentMethodId);
   }
 
+  @Get('/retrieve-account-info/:accountId')
+  async getAccountInfo(@Param('accountId') accountId: string) {
+    return this.stripeService.getAccountInfo(accountId);
+  }
+
   @Post('add-card')
   async addCard(@Body() data: CreatePaymentMethodDto) {
     return this.stripeService.createPaymentMethod(data);

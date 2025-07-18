@@ -28,7 +28,14 @@ export class StripeService {
     }
   }
 
-  // async getAccountLink
+  async getAccountInfo(accountId: string) {
+    try {
+      const account = await this.stripe.accounts.retrieve(accountId);
+      return account;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 
   // create account onboarding link
   async createAccountLink(accountId: string, email: string) {
