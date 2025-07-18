@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { StepOne } from "@/pages-section/client/create-job";
 import JobPostingWrapper from "@/providers/JobPostingWrapper";
 

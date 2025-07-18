@@ -1,10 +1,12 @@
-import { StepFive } from "@/pages-section/client/create-job";
+export const dynamic = "force-dynamic";
+
+import { StepFour } from "@/pages-section/client/create-job";
 import JobPostingWrapper from "@/providers/JobPostingWrapper";
 
 export default function PostJobDescription() {
   return (
-    <JobPostingWrapper currentStep={5}>
-      <StepFive />
+    <JobPostingWrapper currentStep={4}>
+      <StepFour />
     </JobPostingWrapper>
   );
 }

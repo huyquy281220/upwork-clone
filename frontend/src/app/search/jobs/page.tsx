@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { JobSearchFilters } from "@/pages-section/search/jobs/JobSearchFilter";
 // import { JobListings } from "@/pages-section/search/jobs/JobsListing";
 
