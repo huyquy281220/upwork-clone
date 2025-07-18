@@ -70,22 +70,19 @@ export class AuthService {
   }
 
   async googleSignin(email: string, role: string, name: string) {
-    let existingUser = null;
-    try {
-      existingUser = await this.userService.findByEmail(email);
-    } catch (err) {
-      console.error(err);
-      existingUser = null;
-    }
+    const existingUser = await this.userService.findByEmail(email);
 
-    if (!existingUser && !role) {
-      throw new NotFoundException(
-        'Account does not exist. Please sign up or try again later.',
-      );
-    }
-    if (!existingUser && role) {
+    let user = existingUser;
+
+    if (!existingUser) {
+      if (!role) {
+        throw new NotFoundException(
+          'Account does not exist. Please sign up with role information.',
+        );
+      }
+
       const randomPassword = Math.random().toString(36).slice(-10);
-      const user = await this.userService.create({
+      user = await this.userService.create({
         email,
         fullName: name,
         password: randomPassword,
@@ -93,8 +90,6 @@ export class AuthService {
         role: role as Role,
         verified: true,
       });
-
-      existingUser = user;
     }
 
     const payload = {
