@@ -23,7 +23,7 @@ export default function MobileHeader() {
       case "FREELANCER":
         return "/freelancer/find-work";
       default:
-        break;
+        return "/";
     }
   };
 

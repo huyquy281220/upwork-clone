@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { setCookie } from "@/lib/cookie";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,9 @@ export default function Loading() {
       router.push("/sign-in");
       return;
     }
+
+    // Set role cookie after successful authentication
+    setCookie("role", session.user.role);
 
     if (session.user.role === "CLIENT") {
       router.push("/client/dashboard");

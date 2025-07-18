@@ -17,7 +17,7 @@ export default function MainHeader() {
       case "FREELANCER":
         return "/freelancer/find-work";
       default:
-        break;
+        return "/";
     }
   };
   return (
