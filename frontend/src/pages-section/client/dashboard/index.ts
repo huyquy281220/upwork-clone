@@ -4,6 +4,7 @@ import { OverviewSection } from "./Overview";
 import { ConsultationSection } from "./Consultant";
 import { PaymentsSafetySection } from "./PaymentSafety";
 import { HelpResourcesSection } from "./HelpAndResource";
+import { ClientDashboard } from "./ClientDashboard";
 
 export {
   WelcomeSection,
@@ -12,4 +13,5 @@ export {
   ConsultationSection,
   PaymentsSafetySection,
   HelpResourcesSection,
+  ClientDashboard,
 };
