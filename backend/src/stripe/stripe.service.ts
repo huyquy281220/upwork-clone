@@ -126,6 +126,10 @@ export class StripeService {
         where: { email: data.email },
       });
 
+      if (!user) {
+        throw new Error(`User with email ${data.email} not found`);
+      }
+
       let customer;
 
       if (user.role === Role.CLIENT) {
@@ -134,11 +138,15 @@ export class StripeService {
             data.email,
             data.billing_details.name,
           );
-
+          console.log(customer);
           await this.prismaService.user.update({
             where: { email: user.email },
             data: { stripeCustomerId: customer.id },
           });
+        } else {
+          customer = await this.stripe.customers.retrieve(
+            user.stripeCustomerId,
+          );
         }
       }
 

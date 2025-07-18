@@ -26,17 +26,21 @@ import { CreatePaymentMethodProps } from "@/types/payments";
 import { createPaymentMethod } from "@/services/stripe";
 import { useSession } from "next-auth/react";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { useUser } from "@/hooks/useUserInfo";
 
 interface BillingDetails {
-  country: string;
-  line1: string;
-  line2?: string;
-  city: string;
-  postal_code: string;
+  cardHolderName: string;
+  address: {
+    country: string;
+    line1: string;
+    line2?: string;
+    city: string;
+    postal_code: string;
+    state?: string;
+  };
 }
 
 interface PaymentFormData {
-  cardHolderName: string;
   expirationMonth: string;
   expirationYear: string;
   billing_details: BillingDetails;
@@ -72,21 +76,24 @@ const CARD_ELEMENT_OPTIONS = {
 
 export function PaymentForm() {
   const { data: session } = useSession();
+  const { data: user } = useUser(session?.user.id ?? "");
   const stripe = useStripe();
   const elements = useElements();
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [formData, setFormData] = useState<PaymentFormData>({
-    cardHolderName: "",
     expirationMonth: "",
     expirationYear: "",
     billing_details: {
-      country: "VN",
-      line1: "",
-      line2: "",
-      city: "",
-      postal_code: "",
+      cardHolderName: "",
+      address: {
+        country: "VN",
+        line1: "",
+        line2: "",
+        city: "",
+        postal_code: "",
+      },
     },
   });
 
@@ -121,13 +128,24 @@ export function PaymentForm() {
   };
 
   const updateFormData = (field: string, value: string) => {
-    if (field.startsWith("billing_details.")) {
-      const addressField = field.replace("billing_details.", "");
+    if (field.startsWith("billing_details.address.")) {
+      const addressField = field.replace("billing_details.address.", "");
       setFormData((prev) => ({
         ...prev,
         billing_details: {
           ...prev.billing_details,
-          [addressField]: value,
+          address: {
+            ...prev.billing_details.address,
+            [addressField]: value,
+          },
+        },
+      }));
+    } else if (field === "billing_details.name") {
+      setFormData((prev) => ({
+        ...prev,
+        billing_details: {
+          ...prev.billing_details,
+          name: value,
         },
       }));
     } else {
@@ -138,7 +156,7 @@ export function PaymentForm() {
     }
   };
 
-  if (!session) return <InfiniteLoading />;
+  if (!session || !user) return <InfiniteLoading />;
 
   return (
     <Card className="w-full bg-transparent border-0 px-4 md:px-8">
@@ -195,9 +213,12 @@ export function PaymentForm() {
               </Label>
               <Input
                 id="cardholderName"
-                value={formData.cardHolderName}
+                value={formData.billing_details.cardHolderName}
                 onChange={(e) =>
-                  updateFormData("cardHolderName", e.target.value)
+                  updateFormData(
+                    "billing_details.cardHolderName",
+                    e.target.value
+                  )
                 }
                 className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
               />
@@ -256,9 +277,9 @@ export function PaymentForm() {
             <div className="space-y-2">
               <Label className="text-white font-medium">Country</Label>
               <Select
-                value={formData.billing_details.country}
+                value={formData.billing_details.address.country}
                 onValueChange={(value) =>
-                  updateFormData("billing_details.country", value)
+                  updateFormData("billing_details.address.country", value)
                 }
               >
                 <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
@@ -281,9 +302,12 @@ export function PaymentForm() {
             <div className="space-y-2">
               <Label className="text-white font-medium">Address line 1</Label>
               <Input
-                value={formData.billing_details.line1}
+                value={formData.billing_details.address.line1}
                 onChange={(e) =>
-                  updateFormData("billing_details.line1", e.target.value)
+                  updateFormData(
+                    "billing_details.address.line1",
+                    e.target.value
+                  )
                 }
                 className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
               />
@@ -294,9 +318,12 @@ export function PaymentForm() {
                 Address line 2 <span className="text-gray-400">(optional)</span>
               </Label>
               <Input
-                value={formData.billing_details.line2}
+                value={formData.billing_details.address.line2}
                 onChange={(e) =>
-                  updateFormData("billing_details.line2", e.target.value)
+                  updateFormData(
+                    "billing_details.address.line2",
+                    e.target.value
+                  )
                 }
                 className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
               />
@@ -306,9 +333,12 @@ export function PaymentForm() {
               <div className="space-y-2">
                 <Label className="text-white font-medium">City</Label>
                 <Input
-                  value={formData.billing_details.city}
+                  value={formData.billing_details.address.city}
                   onChange={(e) =>
-                    updateFormData("billing_details.city", e.target.value)
+                    updateFormData(
+                      "billing_details.address.city",
+                      e.target.value
+                    )
                   }
                   className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                 />
@@ -318,10 +348,10 @@ export function PaymentForm() {
                   Postal code <span className="text-gray-400">(optional)</span>
                 </Label>
                 <Input
-                  value={formData.billing_details.postal_code}
+                  value={formData.billing_details.address.postal_code}
                   onChange={(e) =>
                     updateFormData(
-                      "billing_details.postal_code",
+                      "billing_details.address.postal_code",
                       e.target.value
                     )
                   }
