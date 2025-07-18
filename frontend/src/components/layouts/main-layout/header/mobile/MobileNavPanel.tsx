@@ -34,7 +34,7 @@ interface MobileNavPanelProps {
 }
 
 export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
   const { navHeader } = useHeaderContentByRole();
   const { logout } = useAuth();
@@ -57,7 +57,8 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
     setExpandedMenu((prev) => (prev === menuKey ? null : menuKey));
   };
 
-  if (!user || !session) return <InfiniteLoading />;
+  if (status === "loading") return <InfiniteLoading />;
+  if (!user || !session) return null;
 
   return (
     <div

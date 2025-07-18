@@ -26,7 +26,7 @@ export default function UserAvatar() {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const themeMenuRef = useRef<HTMLDivElement>(null);
   const { logout } = useAuth();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { data: user, isLoading } = useUser<User>(session?.user.id ?? "");
 
   const getThemeDisplayText = () => {
@@ -40,7 +40,8 @@ export default function UserAvatar() {
     }
   };
 
-  if (!session) return <InfiniteLoading />;
+  if (status === "loading") return <InfiniteLoading />;
+  if (!session) return null;
 
   const handleOpenPopover = () => {
     if (!isOpenPopover) {

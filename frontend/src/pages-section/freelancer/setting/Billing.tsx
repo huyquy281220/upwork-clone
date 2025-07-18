@@ -21,7 +21,7 @@ export interface CardInfo {
 }
 
 export function BillingContent() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
   const router = useRouter();
 
@@ -38,6 +38,7 @@ export function BillingContent() {
     }
   };
 
+  if (status === "loading") return <InfiniteLoading />;
   if (!session || !user) return <InfiniteLoading />;
 
   return (

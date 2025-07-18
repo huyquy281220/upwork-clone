@@ -16,7 +16,7 @@ import { NotificationRedirectMap } from "@/utils/notificationRedirectMap";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export default function Notification() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const socket = useSocket(session?.user.id ?? "");
@@ -26,7 +26,8 @@ export default function Notification() {
     userId: session?.user.id ?? "",
   });
 
-  if (!session) return <InfiniteLoading />;
+  if (status === "loading") return <InfiniteLoading />;
+  if (!session) return null;
 
   const handleNotificationToggle = () => {
     setIsNotificationOpen(!isNotificationOpen);
