@@ -1,7 +1,6 @@
-import { AccountSection } from "./AccountSection";
-import { CompanyDetailsSection } from "./CompanyDetail";
-import { CompanyContactsSection } from "./CompanyContract";
-import { AiPreferenceSection } from "./AiPreferenceSection";
+import { AccountSection } from "./components/AccountSection";
+import { CompanyDetailsSection } from "./components/CompanyDetail";
+import { CompanyContactsSection } from "./components/CompanyContract";
 
 export function MyInfoContent() {
   return (
@@ -18,7 +17,6 @@ export function MyInfoContent() {
           <AccountSection />
           <CompanyDetailsSection />
           <CompanyContactsSection />
-          <AiPreferenceSection />
         </div>
       </div>
     </div>

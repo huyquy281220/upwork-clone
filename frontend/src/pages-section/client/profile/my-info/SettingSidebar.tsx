@@ -1,48 +1,73 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import type { SettingsSection } from "./SettingPage";
 
-interface SidebarItem {
-  id: string;
+interface NavigationItem {
   label: string;
-  active?: boolean;
+  section: SettingsSection;
 }
 
-const sidebarItems: SidebarItem[] = [
-  { id: "my-info", label: "My info", active: true },
-  { id: "billing", label: "Billing & Payments" },
-  { id: "password", label: "Password & Security" },
-  { id: "membership", label: "Membership Settings" },
-  { id: "teams", label: "Teams" },
-  { id: "notifications", label: "Notification Settings" },
-  { id: "members", label: "Members & Permissions" },
-  { id: "tax", label: "Tax Information" },
-  { id: "connected", label: "Connected Services" },
+interface NavigationSection {
+  title?: string;
+  items: NavigationItem[];
+}
+
+const navigationData: NavigationSection[] = [
+  {
+    // title: "Settings",
+    items: [{ label: "My Info", section: "my-info" }],
+  },
+  {
+    // title: "Billing",
+    items: [{ label: "Payout methods", section: "billing" }],
+  },
+  {
+    // title: "User Settings",
+    items: [{ label: "Password & Security", section: "password-security" }],
+  },
 ];
 
-export function SettingsSidebar() {
-  const [activeItem, setActiveItem] = useState("my-info");
+interface SettingsSidebarProps {
+  activeSection: SettingsSection;
+  onSectionChange: (section: SettingsSection) => void;
+}
 
+export function SettingsSidebar({
+  activeSection,
+  onSectionChange,
+}: SettingsSidebarProps) {
   return (
-    <div className="w-64 bg-background border-r border-border p-6">
-      <h1 className="text-2xl font-semibold text-foreground mb-8">Settings</h1>
-      <nav className="space-y-1">
-        {sidebarItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setActiveItem(item.id)}
-            className={cn(
-              "w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              activeItem === item.id
-                ? "bg-muted text-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+    <aside className="w-full md:w-80 bg-background md:border-r border-border p-6">
+      <h2 className="text-3xl font-semibold text-foreground">Settings</h2>
+      <nav className="space-y-3 mt-5 border-b md:border-none pb-8 md:pb-0">
+        {navigationData.map((section, index) => (
+          <div key={index}>
+            <h2 className="text-xl font-semibold text-foreground">
+              {section.title}
+            </h2>
+            {section.items.length > 0 && (
+              <ul>
+                {section.items.map((item, index) => (
+                  <li key={index} className="mt-0">
+                    <button
+                      onClick={() => onSectionChange(item.section)}
+                      className={cn(
+                        "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
+                        activeSection === item.section
+                          ? "bg-primary/10 text-primary border-l-2 border-primary"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      )}
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             )}
-          >
-            {item.label}
-          </button>
+          </div>
         ))}
       </nav>
-    </div>
+    </aside>
   );
 }

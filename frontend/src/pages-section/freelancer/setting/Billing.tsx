@@ -44,9 +44,6 @@ export function BillingContent() {
       })
     ) || [];
 
-  console.log("Account Info:", detailedAccountInfo);
-  console.log("Transformed Payment Methods:", paymentMethods);
-
   const handleAddPayoutMethod = async () => {
     try {
       const res = await createOnboardLink(
