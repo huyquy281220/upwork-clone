@@ -37,6 +37,29 @@ export class StripeService {
     }
   }
 
+  async getDetailedAccountInfo(accountId: string) {
+    try {
+      const account = await this.stripe.accounts.retrieve(accountId);
+
+      // Get external accounts (bank accounts, debit cards) for the connected account
+      const externalAccounts = await this.stripe.accounts.listExternalAccounts(
+        accountId,
+        {
+          limit: 10,
+        },
+      );
+
+      return {
+        account,
+        externalAccounts: externalAccounts.data,
+        isVerified: account.details_submitted && account.charges_enabled,
+        payoutsEnabled: account.payouts_enabled,
+      };
+    } catch (error) {
+      throw new Error(`Failed to retrieve account info: ${error.message}`);
+    }
+  }
+
   // create account onboarding link
   async createAccountLink(accountId: string, email: string) {
     try {

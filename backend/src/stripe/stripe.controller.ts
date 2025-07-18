@@ -15,6 +15,11 @@ export class StripeController {
     return this.stripeService.getPaymentMethod(paymentMethodId);
   }
 
+  @Get('/retrieve-detailed-account-info/:accountId')
+  async getDetailedAccountInfo(@Param('accountId') accountId: string) {
+    return this.stripeService.getDetailedAccountInfo(accountId);
+  }
+
   @Get('/retrieve-account-info/:accountId')
   async getAccountInfo(@Param('accountId') accountId: string) {
     return this.stripeService.getAccountInfo(accountId);
