@@ -3,13 +3,11 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StripeElementWrapper from "@/providers/StripeElementWrapper";
-import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUserInfo";
 import { useSession } from "next-auth/react";
 import { createOnboardLink } from "@/services/stripe";
 import { BaseUser } from "@/types/user";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
-// import { SavedBillingMethods } from "./components/SavedBillingMethod";
 
 export interface CardInfo {
   id: string;
@@ -23,7 +21,6 @@ export interface CardInfo {
 export function BillingContent() {
   const { data: session, status } = useSession();
   const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
-  const router = useRouter();
 
   const handleAddPayoutMethod = async () => {
     try {
@@ -32,7 +29,7 @@ export function BillingContent() {
         user?.email ?? ""
       );
 
-      router.push(res);
+      window.open(res, "_blank");
     } catch (error) {
       console.error(error);
     }
