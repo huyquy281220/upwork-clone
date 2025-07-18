@@ -1,50 +1,52 @@
-"use client";
+// ... existing imports ...
 
-import { CreditCard, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CardInfo } from "../Billing";
-
-interface SavedBillingMethodsProps {
-  methods: CardInfo[];
-  onDelete: (id: string) => void;
-}
+import { CardInfo } from "@/types/stripe";
+import { CreditCard, Landmark, Trash2 } from "lucide-react";
 
 export function SavedBillingMethods({
   methods,
   onDelete,
-}: SavedBillingMethodsProps) {
-  const formatCardNumber = (cardNumber: string) => {
-    if (!cardNumber) return "**** **** **** ****";
-    const cleaned = cardNumber.replace(/\s/g, "");
-    const last4 = cleaned.slice(-4);
-    return `**** **** **** ${last4}`;
+}: {
+  methods: CardInfo[];
+  onDelete: (id: string) => void;
+}) {
+  const formatCardNumber = (method: CardInfo) => {
+    if (method.type === "bank_account") {
+      return `**** ${method.last4 || "****"}`;
+    }
+    return `**** **** **** ${method.last4 || "****"}`;
   };
 
-  const getCardBrand = (cardNumber: string) => {
-    if (!cardNumber) return "Card";
-    const cleaned = cardNumber.replace(/\s/g, "");
-    if (cleaned.startsWith("4")) return "Visa";
-    if (cleaned.startsWith("5") || cleaned.startsWith("2")) return "Mastercard";
-    if (cleaned.startsWith("3")) return "American Express";
-    return "Card";
+  const getCardBrand = (method: CardInfo) => {
+    if (method.type === "bank_account") {
+      return method.bank_name || "Bank Account";
+    }
+    if (!method.brand) return "Card";
+    return method.brand.charAt(0).toUpperCase() + method.brand.slice(1);
   };
 
-  const getCardIcon = (brand: string) => {
+  const getCardIcon = (method: CardInfo) => {
+    if (method.type === "bank_account") {
+      return <Landmark className="w-5 h-5 text-muted-foreground" />;
+    }
+
+    const brand = method.brand?.toLowerCase();
     switch (brand) {
-      case "Visa":
+      case "visa":
         return (
           <div className="w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">
             VISA
           </div>
         );
-      case "Mastercard":
+      case "mastercard":
         return (
           <div className="w-8 h-5 bg-red-500 rounded flex items-center justify-center">
             <div className="w-3 h-3 bg-red-600 rounded-full"></div>
           </div>
         );
-      case "American Express":
+      case "amex":
         return (
           <div className="w-8 h-5 bg-blue-500 rounded text-white text-xs flex items-center justify-center font-bold">
             AE
@@ -58,27 +60,37 @@ export function SavedBillingMethods({
   return (
     <div className="space-y-3">
       {methods.map((method) => {
-        const cardBrand = getCardBrand(method.cardNumber || "");
+        const displayName = getCardBrand(method);
 
         return (
           <Card key={method.id} className="border border-border">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  {getCardIcon(cardBrand)}
+                  {getCardIcon(method)}
                   <div>
                     <div className="flex items-center space-x-2">
                       <span className="font-medium text-foreground">
-                        {cardBrand}
+                        {displayName}
                       </span>
                       <span className="font-mono text-sm text-muted-foreground">
-                        {formatCardNumber(method.cardNumber || "")}
+                        {formatCardNumber(method)}
                       </span>
                     </div>
-                    {method.expirationMonth && method.expirationYear && (
-                      <p className="text-xs text-muted-foreground">
-                        Expires {method.expirationMonth}/{method.expirationYear}
-                      </p>
+                    {method.type === "card" &&
+                      method.exp_month &&
+                      method.exp_year && (
+                        <p className="text-xs text-muted-foreground">
+                          Expires {method.exp_month.toString().padStart(2, "0")}
+                          /{method.exp_year.toString().slice(-2)}
+                        </p>
+                      )}
+                    {method.type === "bank_account" && (
+                      <div className="text-xs text-muted-foreground">
+                        {method.account_holder_type && (
+                          <span>{method.account_holder_type} account</span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

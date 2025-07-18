@@ -31,3 +31,10 @@ export const getAccountInfo = async (accountId: string) => {
   );
   return response.data;
 };
+
+export const getDetailedAccountInfo = async (accountId: string) => {
+  const response = await api.get(
+    `${apiURL}/stripe/retrieve-detailed-account-info/${accountId}`
+  );
+  return response.data;
+};
