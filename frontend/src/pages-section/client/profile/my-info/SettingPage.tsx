@@ -12,7 +12,7 @@ export function SettingsPage() {
     useState<SettingsSection>("my-info");
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground pb-4 sm:pb-0">
       <div className="flex flex-col md:flex-row">
         <SettingsSidebar
           activeSection={activeSection}
