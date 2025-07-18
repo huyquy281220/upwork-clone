@@ -4,7 +4,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
     turbo: {
-      loaders: {},
+      rules: {
+        "*.css": {
+          loaders: ["style-loader", "css-loader"],
+        },
+      },
     },
   },
 };
