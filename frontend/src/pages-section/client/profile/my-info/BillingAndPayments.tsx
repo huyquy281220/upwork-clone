@@ -34,7 +34,7 @@ const paymentMethods: PaymentMethod[] = [
 
 export function BillingPaymentsContent() {
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl px-6 lg:px-0">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold text-foreground mb-2">
           Billing & Payments

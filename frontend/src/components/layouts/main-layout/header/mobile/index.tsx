@@ -48,7 +48,7 @@ export default function MobileHeader() {
     <div
       className={cn(
         "fixed inset-x-0 md:hidden overflow-y-auto",
-        isNavOpen || isSearchOpen ? "h-full z-50" : "z-10"
+        isNavOpen || isSearchOpen ? "h-full z-50" : "h-14 z-10"
       )}
     >
       <div className="relative z-50 py-3 px-4 flex items-center justify-between bg-background border-b border-gray-600">

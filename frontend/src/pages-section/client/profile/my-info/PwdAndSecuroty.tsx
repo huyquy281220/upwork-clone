@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 
 export function PasswordSecurityContent() {
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl px-6 lg:px-0">
       <h1 className="text-3xl font-bold text-foreground mb-8">
         Password & Security
       </h1>
