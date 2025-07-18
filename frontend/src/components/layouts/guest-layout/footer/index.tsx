@@ -29,7 +29,7 @@ const footerLinks = [
     links: [
       { label: "Help & Support", href: "#" },
       { label: "Success Stories", href: "#" },
-      { label: "Upwork Reviews", href: "#" },
+      { label: "Prowork Reviews", href: "#" },
       { label: "Resources", href: "#" },
       { label: "Blog", href: "#" },
       { label: "Community", href: "#" },
@@ -100,7 +100,7 @@ export default function Footer() {
             </div>
 
             <div className="text-gray-400 text-sm">
-              © 2015 - {new Date().getFullYear()} Upwork® Global Inc.
+              © 2015 - {new Date().getFullYear()} Prowork® Global Inc.
             </div>
           </div>
         </div>

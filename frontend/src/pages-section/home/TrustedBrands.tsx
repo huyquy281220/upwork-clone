@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 const testimonials = [
   {
     quote:
-      "We used Upwork to find, hire, and pay skilled professionals from around the world. The platform helps us find the right talent for our business needs.",
+      "We used Prowork to find, hire, and pay skilled professionals from around the world. The platform helps us find the right talent for our business needs.",
     author: "John Smith",
     position: "Product Manager",
     company: "Tech Company",
@@ -20,7 +20,7 @@ const testimonials = [
   },
   {
     quote:
-      "One of the advantages of utilizing freelancers is flexibility. Upwork makes quality, speed, and agility possible for our business.",
+      "One of the advantages of utilizing freelancers is flexibility. Prowork makes quality, speed, and agility possible for our business.",
     author: "Jane Doe",
     position: "Director of Marketing",
     company: "Microsoft",
@@ -28,7 +28,7 @@ const testimonials = [
   },
   {
     quote:
-      "One of the advantages of utilizing freelancers is flexibility. Upwork makes quality, speed, and agility possible for our business.",
+      "One of the advantages of utilizing freelancers is flexibility. Prowork makes quality, speed, and agility possible for our business.",
     author: "Jane Doe",
     position: "Director of Marketing",
     company: "Google",
@@ -36,7 +36,7 @@ const testimonials = [
   },
   {
     quote:
-      "One of the advantages of utilizing freelancers is flexibility. Upwork makes quality, speed, and agility possible for our business.",
+      "One of the advantages of utilizing freelancers is flexibility. Prowork makes quality, speed, and agility possible for our business.",
     author: "Jane Doe",
     position: "Director of Marketing",
     company: "Google",

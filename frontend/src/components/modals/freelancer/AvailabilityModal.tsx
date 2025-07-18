@@ -107,8 +107,8 @@ AvailabilityModalProps) {
           <div>
             <h3 className="font-medium mb-2">Hours per week</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Knowing how much you can work helps Upwork find the right jobs for
-              you.
+              Knowing how much you can work helps Prowork find the right jobs
+              for you.
             </p>
 
             <div className="space-y-3">

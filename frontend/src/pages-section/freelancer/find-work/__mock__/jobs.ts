@@ -7,7 +7,7 @@ export const jobsData = [
     level: "Entry level",
     duration: "Est. Time: 1 to 3 months, Less than 30 hrs/week",
     description:
-      "Overview: We're looking for testers to help us evaluate a newly published Android app on the Google Play Store. This is an excellent opportunity for those looking to build their Upwork profile with minimal effort. Job Description: You will participate in a simple testing process by downloading the app and logging in daily for a short duration. Your feedback will help us identify any...",
+      "Overview: We're looking for testers to help us evaluate a newly published Android app on the Google Play Store. This is an excellent opportunity for those looking to build their Prowork profile with minimal effort. Job Description: You will participate in a simple testing process by downloading the app and logging in daily for a short duration. Your feedback will help us identify any...",
     skills: ["Android", "Mobile App Testing", "Manual Testing"],
     paymentVerified: true,
     rating: 5,
@@ -97,7 +97,7 @@ export const jobsData = [
     level: "Entry level",
     duration: "Est. Time: Less than 1 month, Less than 30 hrs/week",
     description:
-      "Hi! My name is Long, and I'm currently working full-time in e-commerce. I'm here on Upwork to find part-time projects after work to earn extra income and do what I enjoy most - editing photos and videos. I have several years of experience working with visual content for online shops and social media.",
+      "Hi! My name is Long, and I'm currently working full-time in e-commerce. I'm here on Prowork to find part-time projects after work to earn extra income and do what I enjoy most - editing photos and videos. I have several years of experience working with visual content for online shops and social media.",
     skills: ["Video Editing", "Adobe Photoshop", "Photo Editing"],
     paymentVerified: false,
     spent: "$0 spent",

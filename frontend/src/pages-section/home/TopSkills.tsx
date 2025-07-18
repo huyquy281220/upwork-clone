@@ -21,7 +21,7 @@ const skillCategories = [
     ],
   },
   {
-    title: "Trending in Upwork",
+    title: "Trending in Prowork",
     skills: [
       "Data Entry Specialist",
       "Video Editor",

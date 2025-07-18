@@ -22,7 +22,7 @@ export default function Footer() {
             title="Help & Support"
             links={[
               { label: "Help & Support", href: "/help" },
-              { label: "Upwork Foundation", href: "/foundation" },
+              { label: "Prowork Foundation", href: "/foundation" },
               { label: "Terms of Service", href: "/terms" },
             ]}
           />

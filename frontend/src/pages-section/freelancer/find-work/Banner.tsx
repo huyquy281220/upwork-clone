@@ -7,14 +7,14 @@ export function Banner() {
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <p className="text-sm font-medium">
-              Upwork 101 will guide you through the basics of our platform.
+              Prowork 101 will guide you through the basics of our platform.
             </p>
             <p className="text-sm opacity-90">
-              Learn how to get started on Upwork
+              Learn how to get started on Prowork
             </p>
           </div>
           <button className="text-green-600 hover:bg-gray-100">
-            Explore Upwork 101
+            Explore Prowork 101
           </button>
         </div>
         <button className="hover:bg-green-600">

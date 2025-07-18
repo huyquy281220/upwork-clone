@@ -132,7 +132,7 @@ export function ChangeHourlyRateModal({
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-medium">
-                  Upwork Service Fee
+                  Prowork Service Fee
                 </label>
                 <p className="text-xs text-muted-foreground">
                   Fees vary and are shown before contract acceptance

@@ -103,7 +103,7 @@ const FreelancerContent = () => {
   return (
     <div className="flex flex-col gap-4 items-center py-4">
       <p className="md:max-w-[500px] text-white text-center text-xl">
-        Build your freelancing career on Upwork, with thousands of jobs posted
+        Build your freelancing career on Prowork, with thousands of jobs posted
         every week.
       </p>
       <button className="px-4 py-2 bg-primary rounded-md text-white">

@@ -21,7 +21,7 @@ const features = [
     icon: <Check className="h-5 w-5 text-green-600" />,
     title: "Work with the best—without breaking the bank",
     description:
-      "Upwork makes it affordable to up your work and take advantage of low transaction rates.",
+      "Prowork makes it affordable to up your work and take advantage of low transaction rates.",
   },
 ];
 

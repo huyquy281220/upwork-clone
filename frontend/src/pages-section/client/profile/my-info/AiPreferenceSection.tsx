@@ -14,7 +14,7 @@ export function AiPreferenceSection() {
           AI preference
         </h2>
         <p className="text-sm text-muted-foreground">
-          Choose how your Upwork data is used for AI training and improvement.{" "}
+          Choose how your Prowork data is used for AI training and improvement.{" "}
           <a href="#" className="text-green-600 hover:underline">
             Learn more
           </a>

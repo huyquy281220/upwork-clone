@@ -310,7 +310,7 @@ export default function SignupForm() {
           <span className="text-sm text-gray-700">
             Yes, I understand and agree to the{" "}
             <Link href="#" className="text-green-600 hover:underline">
-              Upwork Terms of Service
+              Prowork Terms of Service
             </Link>
             , including the{" "}
             <Link href="#" className="text-green-600 hover:underline">

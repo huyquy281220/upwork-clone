@@ -135,7 +135,7 @@ export const clientNavHeader = [
         link: "",
       },
       {
-        label: "Bring talent to Upwork(Any hire)",
+        label: "Bring talent to Prowork(Any hire)",
         link: "",
       },
     ],

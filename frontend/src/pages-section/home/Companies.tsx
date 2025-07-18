@@ -6,7 +6,7 @@ import { EnterpriseImg } from "@/assets/images";
 const features = [
   {
     icon: <CheckCircle className="h-5 w-5" />,
-    title: "Access top 3% of talent on Upwork",
+    title: "Access top 3% of talent on Prowork",
     description:
       "We analyze your needs and connect you with top talent and agencies.",
   },

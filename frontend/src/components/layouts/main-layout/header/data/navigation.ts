@@ -111,7 +111,7 @@ export const notifications: NotificationItem[] = [
   {
     id: "1",
     message:
-      "A recent sign-in to your Upwork account from an unknown device or browser.",
+      "A recent sign-in to your Prowork account from an unknown device or browser.",
     time: "11:28 AM",
   },
   {

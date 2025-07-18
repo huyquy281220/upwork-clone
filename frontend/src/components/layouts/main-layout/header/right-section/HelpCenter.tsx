@@ -15,7 +15,7 @@ export default function HelpCenter() {
   const helpMenuItems = [
     { label: "Help center", href: "/help" },
     { label: "Your support requests", href: "/support-requests" },
-    { label: "Upwork Updates", href: "/updates" },
+    { label: "Prowork Updates", href: "/updates" },
     { label: "Release notes", href: "/release-notes" },
   ];
 

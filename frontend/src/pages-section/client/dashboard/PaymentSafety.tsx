@@ -16,7 +16,7 @@ const paymentSafetyItems = [
   {
     id: 3,
     category: "Trust & safety",
-    title: "Keep yourself and others safe on Upwork",
+    title: "Keep yourself and others safe on Prowork",
     illustration: "safety-people",
   },
 ];

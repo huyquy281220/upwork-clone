@@ -90,7 +90,7 @@ export default function SignIn() {
       {/* Main Content */}
       <main className="flex-grow flex flex-col items-center justify-center w-full max-w-md px-4 py-8">
         <h1 className="text-3xl font-medium text-gray-800 mb-8 text-center">
-          Log in to Upwork
+          Log in to Prowork
         </h1>
 
         {error && (
@@ -207,7 +207,7 @@ export default function SignIn() {
         </form>
 
         <p className="mt-6 text-sm text-gray-600 text-center">
-          Don&apos;t have an Upwork account?{" "}
+          Don&apos;t have an Prowork account?{" "}
           <Link
             href="/sign-up"
             className="text-green-600 hover:underline font-medium"

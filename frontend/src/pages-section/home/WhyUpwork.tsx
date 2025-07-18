@@ -33,7 +33,7 @@ export default function WhyUpworkSection() {
             <h2 className="text-3xl font-bold mb-6">
               Why businesses
               <br />
-              turn to Upwork
+              turn to Prowork
             </h2>
 
             <div className="space-y-6">
@@ -60,7 +60,7 @@ export default function WhyUpworkSection() {
               </div>
 
               <p className="text-sm font-medium mb-4">
-                Clients rate professionals on Upwork
+                Clients rate professionals on Prowork
               </p>
 
               <Image
