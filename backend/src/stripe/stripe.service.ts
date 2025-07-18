@@ -42,15 +42,15 @@ export class StripeService {
 
         accountLink = await this.stripe.accountLinks.create({
           account: account.id,
-          refresh_url: 'http://localhost:3000/reauth',
-          return_url: 'http://localhost:3000/onboarding-success',
+          refresh_url: 'http://localhost:3000/freelancer/settings',
+          return_url: 'http://localhost:3000/freelancer/settings',
           type: 'account_onboarding',
         });
       } else {
         accountLink = await this.stripe.accountLinks.create({
           account: accountId,
-          refresh_url: 'http://localhost:3000/reauth',
-          return_url: 'http://localhost:3000/onboarding-success',
+          refresh_url: 'http://localhost:3000/freelancer/settings',
+          return_url: 'http://localhost:3000/freelancer/settings',
           type: 'account_onboarding',
         });
       }
