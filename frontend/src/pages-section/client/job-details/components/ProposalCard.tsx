@@ -1,8 +1,8 @@
 "use client";
 
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-// import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { rejectProposal } from "@/services/proposals";
@@ -62,6 +62,8 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
       }, 500);
     }
   };
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <Card className="hover:shadow-md transition-shadow">

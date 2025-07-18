@@ -1,5 +1,6 @@
 "use client";
 
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { Pagination } from "@/components/common/Pagination";
 import useFilter from "@/hooks/useFilter";
 import {
@@ -85,6 +86,8 @@ export function MyProposals() {
   };
 
   const resetPagination = () => setFilter("page", "1");
+
+  if (!session || isLoading) return <InfiniteLoading />;
 
   return (
     <div className="min-h-screen">

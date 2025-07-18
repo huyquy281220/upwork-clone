@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
 import { getBestMatchesJobs, getMostRecentJobs } from "@/services/jobs";
 import { FreelancerUser } from "@/types/user";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 const filterTabs = [
   { id: "best-matches", label: "Best Matches" },
@@ -67,6 +68,8 @@ export function JobListing() {
     },
     [usedJobs]
   );
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <div>

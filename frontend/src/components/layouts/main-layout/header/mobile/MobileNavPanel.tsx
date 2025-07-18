@@ -28,6 +28,7 @@ import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
 import { BaseUser } from "@/types/user";
 import { UserImg } from "@/assets/images";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 interface MobileNavPanelProps {
   isOpen: boolean;
 }
@@ -56,7 +57,7 @@ export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
     setExpandedMenu((prev) => (prev === menuKey ? null : menuKey));
   };
 
-  if (!user || !session) return;
+  if (!user || !session) return <InfiniteLoading />;
 
   return (
     <div

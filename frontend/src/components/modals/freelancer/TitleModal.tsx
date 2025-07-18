@@ -12,6 +12,7 @@ import { X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import api from "@/services/api";
 import { useSession } from "next-auth/react";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface TitleModalProps {
   open: boolean;
@@ -67,6 +68,8 @@ export function TitleModal({
     setTitle(currentTitle);
     onOpenChange(false);
   };
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -17,6 +17,7 @@ import Image from "next/image";
 import { imageUpload } from "@/services/userService";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface ImageUploadModalProps {
   open: boolean;
@@ -124,6 +125,8 @@ export default function ImageUploadModal({
       fileInputRef.current.value = "";
     }
   };
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <Dialog open={open} modal onOpenChange={onOpenChange}>

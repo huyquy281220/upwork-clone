@@ -12,6 +12,7 @@ import { formatRelativeTime } from "@/utils/getRelativeTime";
 import { formatDraftSaved } from "@/utils/getLocalTime";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/useToast";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface JobPostCardProps {
   title: string;
@@ -48,6 +49,8 @@ export function JobPostCard({
       showErrorToast("Error deleting job", "Please try again", 1000);
     }
   };
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <div className="bg-muted/30 border border-muted-foreground/20 rounded-lg p-6 hover:bg-muted/50 transition-colors">

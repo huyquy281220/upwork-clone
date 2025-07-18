@@ -14,6 +14,7 @@ import { useUser } from "@/hooks/useUserInfo";
 import { Availability, User } from "@/types/user";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface AvailabilityModalProps {
   open: boolean;
@@ -46,6 +47,8 @@ AvailabilityModalProps) {
   // const [contractToHire, setContractToHire] = useState(
   //   user?.freelancerProfile?.contractToHire
   // );
+
+  if (!session) return <InfiniteLoading />;
 
   const handleSave = async () => {
     setStatus("loading");

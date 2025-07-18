@@ -12,6 +12,7 @@ import { X } from "lucide-react";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface ProfileOverviewModalProps {
   open: boolean;
@@ -67,6 +68,8 @@ export function ProfileOverviewModal({
     setOverview(currentOverview);
     onOpenChange(false);
   };
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -22,6 +22,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface EditCountryModalProps {
   open: boolean;
@@ -45,6 +46,8 @@ export function EditCountryModal({
   >("idle");
 
   const countries = useCountries();
+
+  if (!session) return <InfiniteLoading />;
 
   const handleSave = async () => {
     if (!country) return;

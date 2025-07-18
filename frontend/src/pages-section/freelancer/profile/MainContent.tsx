@@ -10,11 +10,14 @@ import { useSession } from "next-auth/react";
 import { ServiceCard } from "./components/ServiceCard";
 import { PortfolioCard } from "./components/PortfolioCard";
 import { SkillCard } from "./components/SkillCard";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export function MainContent() {
   const { data: session } = useSession();
   const { data: user } = useUser<User>(session?.user?.id ?? "");
   const { openModal, closeModal, isModalOpen } = useModalManager();
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <div className="space-y-8">

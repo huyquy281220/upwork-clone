@@ -9,18 +9,21 @@ import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSkills } from "@/services/skills";
 import { UserSkill } from "@/types/user";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export function SkillCard() {
   const { data: session } = useSession();
 
   const userId = session?.user.id;
 
-  const { data: userSkills } = useQuery<UserSkill[]>({
+  const { data: userSkills, isLoading } = useQuery<UserSkill[]>({
     queryKey: ["user-skills", session?.user.id],
     queryFn: () => getUserSkills(userId ?? ""),
     enabled: !!userId,
   });
   const { openModal, closeModal, isModalOpen } = useModalManager();
+
+  if (isLoading || !session) return <InfiniteLoading />;
 
   return (
     <>

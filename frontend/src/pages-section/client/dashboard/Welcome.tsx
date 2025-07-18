@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export function WelcomeSection() {
   const router = useRouter();
@@ -35,6 +36,8 @@ export function WelcomeSection() {
 
     return () => clearInterval(interval);
   }, []);
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

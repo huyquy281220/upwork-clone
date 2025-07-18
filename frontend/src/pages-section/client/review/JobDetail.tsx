@@ -98,7 +98,7 @@ export default function JobDetail() {
     }
   };
 
-  if (isJobDetailLoading || isSkillsLoading) {
+  if (isJobDetailLoading || isSkillsLoading || !session) {
     return <InfiniteLoading />;
   }
 

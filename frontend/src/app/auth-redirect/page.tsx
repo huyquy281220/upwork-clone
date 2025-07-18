@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { setCookie, getCookie } from "@/lib/cookie";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export default function Loading() {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,6 +19,8 @@ export default function Loading() {
       setIsLoading(false);
     }
   }, [session]);
+
+  if (!session) return <InfiniteLoading />;
 
   if (isLoading === false) {
     switch (currentRole) {

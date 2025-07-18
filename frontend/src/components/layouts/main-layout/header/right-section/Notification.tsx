@@ -13,6 +13,7 @@ import { NotificationProps } from "@/types/notification";
 import { formatRelativeTime } from "@/utils/getRelativeTime";
 import { useRouter } from "next/navigation";
 import { NotificationRedirectMap } from "@/utils/notificationRedirectMap";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export default function Notification() {
   const { data: session } = useSession();
@@ -24,6 +25,8 @@ export default function Notification() {
     socket: socket!,
     userId: session?.user.id ?? "",
   });
+
+  if (!session) return <InfiniteLoading />;
 
   const handleNotificationToggle = () => {
     setIsNotificationOpen(!isNotificationOpen);

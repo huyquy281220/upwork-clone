@@ -18,6 +18,7 @@ import { BaseUser } from "@/types/user";
 import VerifyEmailModal from "@/components/modals/shared/VerifyEmailModal";
 import { useModalManager } from "@/hooks/useModalManager";
 import { useUserLocationTime } from "@/hooks/useUserLocalTime";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export function ClientDashboard() {
   const { data: session } = useSession();
@@ -44,7 +45,7 @@ export function ClientDashboard() {
     }
   }, [user, session, openModal, closeModal]);
 
-  if (!session || !user) return;
+  if (!session || !user) return <InfiniteLoading />;
 
   return (
     <div className="min-h-screen bg-background text-foreground">

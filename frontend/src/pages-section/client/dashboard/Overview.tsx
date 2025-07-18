@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { JobProps } from "@/types/jobs";
 import Link from "next/link";
-
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 export function OverviewSection() {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
@@ -17,6 +17,8 @@ export function OverviewSection() {
   const jobs = queryClient.getQueryData<JobProps[]>(["jobs", session?.user.id]);
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <div className="space-y-3">

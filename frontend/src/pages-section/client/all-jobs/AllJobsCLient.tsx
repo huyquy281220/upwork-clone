@@ -1,5 +1,6 @@
 "use client";
 
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { Pagination } from "@/components/common/Pagination";
 import { JobPostsHeader } from "@/pages-section/client/all-jobs/JobPostsHeader";
 import { JobPostsList } from "@/pages-section/client/all-jobs/JobPostsList";
@@ -29,6 +30,8 @@ export function AllJobsClient() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <div className="max-w-[80rem] mx-auto">

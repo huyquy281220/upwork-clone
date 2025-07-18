@@ -8,6 +8,7 @@ import api from "@/services/api";
 import { useSession } from "next-auth/react";
 import { ModernToast } from "@/components/common/ModernToast";
 import { useToast } from "@/hooks/useToast";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 interface JobPostingWizardProps {
   children: React.ReactNode;
   currentStep: number;
@@ -97,6 +98,8 @@ export default function JobPostingWrapper({
   };
 
   const isNextDisabled = !validateCurrentStep(currentStep, jobData);
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <div className="min-h-screen bg-background">

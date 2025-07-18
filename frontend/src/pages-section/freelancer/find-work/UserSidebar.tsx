@@ -9,8 +9,9 @@ import { ChevronDown, ChevronUp, Edit2, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/hooks/useUserInfo";
 import { useSession } from "next-auth/react";
-import JobSkeleton from "@/components/common/JobSkeleton";
 import { FreelancerUser } from "@/types/user";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+
 export function UserSidebar() {
   const { data: session } = useSession();
   const { data: user, isLoading } = useUser<FreelancerUser>(
@@ -29,7 +30,7 @@ export function UserSidebar() {
     return () => setter((prev) => !prev);
   };
 
-  if (isLoading) return <JobSkeleton />;
+  if (isLoading || !session) return <InfiniteLoading />;
 
   return (
     <div className="space-y-4 hidden md:block">

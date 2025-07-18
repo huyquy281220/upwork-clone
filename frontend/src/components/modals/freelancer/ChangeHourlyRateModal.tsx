@@ -12,6 +12,7 @@ import { X, Info } from "lucide-react";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface ChangeHourlyRateModalProps {
   open: boolean;
@@ -35,6 +36,8 @@ export function ChangeHourlyRateModal({
 
   const serviceFee = hourlyRate * 0.1; // 10% service fee
   const youReceive = hourlyRate - serviceFee;
+
+  if (!session) return <InfiniteLoading />;
 
   const handleSave = async () => {
     setStatus("loading");

@@ -18,6 +18,7 @@ import CircleTrash from "@/components/common/CircleTrash";
 import { useUserLocationTime } from "@/hooks/useUserLocalTime";
 import ImageUploadModal from "@/components/modals/freelancer/ImageUploadModal";
 import { EditCountryModal } from "@/components/modals/freelancer/EditCountryModal";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 const availabilityOptions = {
   MORE_THAN_30: "More than 30 hrs/week",
@@ -28,20 +29,18 @@ const availabilityOptions = {
 
 export function ProfileSidebar() {
   const { openModal, closeModal, isModalOpen, getModalId } = useModalManager();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const { data: user, isLoading } = useUser<FreelancerUser>(
     session?.user.id ?? ""
   );
 
   const localData = useUserLocationTime();
 
-  if (isLoading || status === "loading") return;
-
   const currentLanguages = user?.freelancerProfile?.languages;
   const educations = user?.freelancerProfile?.education;
   const avatar = user?.avatarUrl;
 
-  if (!user || !session) return;
+  if (!user || !session || isLoading) return <InfiniteLoading />;
 
   return (
     <div className="space-y-6">

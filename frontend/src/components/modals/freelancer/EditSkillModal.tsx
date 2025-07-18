@@ -17,6 +17,7 @@ import { UserSkill } from "@/types/user";
 import { useSession } from "next-auth/react";
 import api from "@/services/api";
 import { SkillsInput } from "@/components/common/SkillsInput";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 export interface SkillsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -96,6 +97,8 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
     setStatus("idle");
     onOpenChange(false);
   };
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -18,6 +18,7 @@ import { useUserEducation } from "@/hooks/useUserInfo";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { degrees } from "./__mock__/degree";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface EditEducationModalProps {
   open: boolean;
@@ -68,6 +69,8 @@ export function EditEducationModal({
       });
     }
   }, [education]);
+
+  if (!session) return <InfiniteLoading />;
 
   const handleSave = async () => {
     setStatus("loading");

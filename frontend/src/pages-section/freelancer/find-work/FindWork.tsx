@@ -6,6 +6,7 @@ import { useUser } from "@/hooks/useUserInfo";
 import { useUserLocationTime } from "@/hooks/useUserLocalTime";
 import { JobListing, UserSidebar } from "@/pages-section/freelancer/find-work";
 import { BaseUser } from "@/types/user";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
@@ -24,7 +25,7 @@ export function FindWork() {
     }
   }, [user, session, closeModal, openModal]);
 
-  if (!session || !user) return;
+  if (!session || !user) return <InfiniteLoading />;
 
   return (
     <div className="min-h-screen bg-background">

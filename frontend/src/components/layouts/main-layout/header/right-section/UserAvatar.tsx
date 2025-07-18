@@ -17,6 +17,7 @@ import { useUser } from "@/hooks/useUserInfo";
 import { Role, User } from "@/types/user";
 import JobSkeleton from "@/components/common/JobSkeleton";
 import { UserImg } from "@/assets/images";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export default function UserAvatar() {
   const { avatarMenu } = useHeaderContentByRole();
@@ -38,6 +39,8 @@ export default function UserAvatar() {
         return "Auto";
     }
   };
+
+  if (!session) return <InfiniteLoading />;
 
   const handleOpenPopover = () => {
     if (!isOpenPopover) {

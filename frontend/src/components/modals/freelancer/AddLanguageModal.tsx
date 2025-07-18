@@ -30,6 +30,7 @@ import { getLanguagesWithoutDuplicates } from "@/utils/getLanguages";
 import { useSession } from "next-auth/react";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface AddLanguageModalProps {
   open: boolean;
@@ -65,6 +66,8 @@ export function AddLanguageModal({
     };
     fetchLanguages();
   }, []);
+
+  if (!session) return <InfiniteLoading />;
 
   const handleSave = async () => {
     if (!language || !proficiency || !session?.user?.id) return;

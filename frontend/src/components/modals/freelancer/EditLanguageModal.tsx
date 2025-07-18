@@ -20,6 +20,7 @@ import { useSession } from "next-auth/react";
 import { useUserLanguages } from "@/hooks/useUserInfo";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface EditLanguagesModalProps {
   open: boolean;
@@ -48,6 +49,8 @@ export function EditLanguagesModal({
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+
+  if (!session) return <InfiniteLoading />;
 
   const handleSave = async () => {
     if (!languages) return;

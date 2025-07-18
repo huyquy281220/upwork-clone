@@ -21,6 +21,7 @@ import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { areaOfStudyList } from "./__mock__/areaOfStudy";
 import { degrees } from "./__mock__/degree";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface AddEducationModalProps {
   open: boolean;
@@ -63,6 +64,7 @@ export function AddEducationModal({
   });
 
   const queryClient = useQueryClient();
+  if (!session) return <InfiniteLoading />;
 
   const handleSave = async () => {
     setStatus("loading");

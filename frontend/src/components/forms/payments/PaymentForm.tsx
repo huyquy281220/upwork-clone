@@ -25,6 +25,7 @@ import { useMutation } from "@tanstack/react-query";
 import { CreatePaymentMethodProps } from "@/types/payments";
 import { createPaymentMethod } from "@/services/stripe";
 import { useSession } from "next-auth/react";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 interface BillingDetails {
   country: string;
@@ -136,6 +137,8 @@ export function PaymentForm() {
       }));
     }
   };
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     // <div className="min-h-screen flex items-center justify-center">
