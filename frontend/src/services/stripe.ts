@@ -38,3 +38,17 @@ export const getDetailedAccountInfo = async (accountId: string) => {
   );
   return response.data;
 };
+
+export const retrievePaymentMethod = async (paymentMethodId: string) => {
+  const response = await api.get(
+    `${apiURL}/stripe/retrieve-payment-method/${paymentMethodId}`
+  );
+  return response.data;
+};
+
+export const retrieveListPaymentMethods = async (customerId: string) => {
+  const response = await api.get(
+    `${apiURL}/stripe/retrieve-payment-methods/${customerId}`
+  );
+  return response.data;
+};

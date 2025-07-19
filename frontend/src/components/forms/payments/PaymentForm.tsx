@@ -104,7 +104,10 @@ export function PaymentForm() {
       return attachPaymentMethod(data);
     },
 
-    onSuccess: () => setStatus("success"),
+    onSuccess: () => {
+      setStatus("success");
+      setErrorMessage("");
+    },
     onError: () => setStatus("error"),
   });
 
@@ -127,6 +130,16 @@ export function PaymentForm() {
     const { paymentMethod, error } = await stripe.createPaymentMethod({
       type: "card",
       card: cardElement,
+      billing_details: {
+        name: formData.billing_details.cardHolderName,
+        address: {
+          country: formData.billing_details.address.country,
+          line1: formData.billing_details.address.line1,
+          line2: formData.billing_details.address.line2,
+          city: formData.billing_details.address.city,
+          postal_code: formData.billing_details.address.postal_code,
+        },
+      },
     });
 
     if (error) {
@@ -144,7 +157,7 @@ export function PaymentForm() {
 
     mutation.mutate({
       paymentMethodId: paymentMethod.id,
-      customerId: user?.stripeCustomerId ?? "",
+      email: user?.email ?? "",
     });
   };
 

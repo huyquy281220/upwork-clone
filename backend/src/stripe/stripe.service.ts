@@ -186,6 +186,18 @@ export class StripeService {
     }
   }
 
+  async getListPaymentMethods(customerId: string) {
+    try {
+      const paymentMethods = await this.stripe.paymentMethods.list({
+        customer: customerId,
+      });
+
+      return paymentMethods;
+    } catch (error) {
+      throw new Error('Failed to retrieve payment methods');
+    }
+  }
+
   //   create payment intent
   async createPaymentIntent(amount: number, currency: string) {
     try {
@@ -236,8 +248,33 @@ export class StripeService {
   }
 
   /* PaymentMethod */
-  async attachPaymentMethod(paymentMethodId: string, customerId: string) {
+  async attachPaymentMethod(paymentMethodId: string, email: string) {
     try {
+      const user = await this.prismaService.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        throw new Error(`User with email ${email} not found`);
+      }
+
+      let customerId = user.stripeCustomerId;
+
+      if (!customerId) {
+        const customer = await this.stripe.customers.create({
+          email: user.email,
+          name: user.fullName,
+        });
+
+        customerId = customer.id;
+        console.log(customerId);
+
+        await this.prismaService.user.update({
+          where: { email },
+          data: { stripeCustomerId: customerId },
+        });
+      }
+
       const paymentMethod = await this.stripe.paymentMethods.attach(
         paymentMethodId,
         {
@@ -245,17 +282,10 @@ export class StripeService {
         },
       );
 
-      // Optionally set as default
-      await this.stripe.customers.update(customerId, {
-        invoice_settings: {
-          default_payment_method: paymentMethod.id,
-        },
-      });
-
-      // Return the payment method details to store reference in DB
       return paymentMethod;
     } catch (error) {
-      throw new Error(error);
+      console.error(error);
+      throw error;
     }
   }
 

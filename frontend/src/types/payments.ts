@@ -18,5 +18,20 @@ export interface CreatePaymentMethodProps {
 
 export interface AddCardProps {
   paymentMethodId: string;
-  customerId: string;
+  email: string;
+}
+
+export interface PaymentMethodProps {
+  object: string;
+  data: {
+    id: string;
+    card: {
+      brand: string;
+      last4: string;
+      exp_month: number;
+      exp_year: number;
+    };
+  }[];
+  has_more: boolean;
+  url: string;
 }

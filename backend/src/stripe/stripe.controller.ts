@@ -15,6 +15,11 @@ export class StripeController {
     return this.stripeService.getPaymentMethod(paymentMethodId);
   }
 
+  @Get('/retrieve-payment-methods/:customerId')
+  async getListPaymentMethods(@Param('customerId') customerId: string) {
+    return this.stripeService.getListPaymentMethods(customerId);
+  }
+
   @Get('/retrieve-detailed-account-info/:accountId')
   async getDetailedAccountInfo(@Param('accountId') accountId: string) {
     return this.stripeService.getDetailedAccountInfo(accountId);
@@ -29,7 +34,7 @@ export class StripeController {
   async addCard(@Body() data: AddCardDto) {
     return this.stripeService.attachPaymentMethod(
       data.paymentMethodId,
-      data.customerId,
+      data.email,
     );
   }
 

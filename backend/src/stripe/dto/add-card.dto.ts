@@ -5,5 +5,5 @@ export class AddCardDto {
   paymentMethodId: string;
 
   @IsString()
-  customerId: string;
+  email: string;
 }
