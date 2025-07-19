@@ -34,7 +34,7 @@ interface MobileNavPanelProps {
 }
 
 export default function MobileNavPanel({ isOpen }: MobileNavPanelProps) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
   const { navHeader } = useHeaderContentByRole();
   const { logout } = useAuth();
