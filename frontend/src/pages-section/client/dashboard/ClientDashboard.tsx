@@ -21,7 +21,7 @@ import { useUserLocationTime } from "@/hooks/useUserLocalTime";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export function ClientDashboard() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
   const { resetJobData } = useJobPostingContext();
   const { openModal, closeModal, isModalOpen } = useModalManager();
@@ -45,7 +45,8 @@ export function ClientDashboard() {
     }
   }, [user, session, openModal, closeModal]);
 
-  if (!session || !user) return <InfiniteLoading />;
+  if (status === "loading") return <InfiniteLoading />;
+  if (!session || !user) return null;
 
   return (
     <div className="min-h-screen bg-background text-foreground">

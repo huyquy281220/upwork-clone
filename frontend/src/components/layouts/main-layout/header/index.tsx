@@ -20,6 +20,7 @@ export default function MainHeader() {
         return "/";
     }
   };
+
   return (
     <>
       {/* Mobile Header - Only visible on small screens */}

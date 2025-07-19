@@ -8,8 +8,8 @@ export default function ThemeProvider({ children }: PageProps) {
     <NextThemeProvider
       attribute="class"
       defaultTheme="dark"
-      // enableSystem
-      // disableTransitionOnChange
+      enableSystem
+      disableTransitionOnChange
     >
       {children}
     </NextThemeProvider>
