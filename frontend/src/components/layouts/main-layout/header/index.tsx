@@ -5,13 +5,15 @@ import MobileHeader from "./mobile";
 import NavMenu from "./NavMenu";
 import RightSection from "./right-section";
 import { Logo } from "@/components/icons/Logo";
-import { getCookie } from "@/lib/cookie";
-
+import { useSession } from "next-auth/react";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 export default function MainHeader() {
-  const role = getCookie("role");
+  const { data: session } = useSession();
 
   const getRedirectUrlByRole = () => {
-    switch (role) {
+    if (!session?.user?.role) return "/";
+
+    switch (session?.user?.role) {
       case "CLIENT":
         return "/client/dashboard";
       case "FREELANCER":
@@ -20,6 +22,8 @@ export default function MainHeader() {
         return "/";
     }
   };
+
+  if (!session) return <InfiniteLoading />;
 
   return (
     <>

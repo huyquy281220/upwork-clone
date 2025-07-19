@@ -8,16 +8,19 @@ import MobileSearchPanel from "./MobileSearchPanel";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/icons/Logo";
-import { getCookie } from "@/lib/cookie";
+import { useSession } from "next-auth/react";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 export default function MobileHeader() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const role = getCookie("role");
+  const { data: session } = useSession();
 
   const getRedirectUrlByRole = () => {
-    switch (role) {
+    if (!session?.user?.role) return "/";
+
+    switch (session?.user?.role) {
       case "CLIENT":
         return "/client/dashboard";
       case "FREELANCER":
@@ -31,6 +34,7 @@ export default function MobileHeader() {
     enabled: isNavOpen || isSearchOpen,
     scrollbarGap: true,
   });
+  if (!session) return <InfiniteLoading />;
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
