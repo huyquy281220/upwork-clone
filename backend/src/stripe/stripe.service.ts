@@ -188,13 +188,38 @@ export class StripeService {
 
   async getListPaymentMethods(customerId: string) {
     try {
+      const customerResponse = await this.stripe.customers.retrieve(customerId);
+
+      const customer = customerResponse as Stripe.Customer;
+
       const paymentMethods = await this.stripe.paymentMethods.list({
         customer: customerId,
       });
 
-      return paymentMethods;
+      const paymentMethodsWithDefault = paymentMethods.data.map((pm) => ({
+        ...pm,
+        isDefault: customer.invoice_settings?.default_payment_method === pm.id,
+      }));
+
+      return paymentMethodsWithDefault;
     } catch (error) {
       throw new Error('Failed to retrieve payment methods');
+    }
+  }
+
+  async setDefaultPaymentMethod(customerId: string, paymentMethodId: string) {
+    try {
+      // Update customer's default payment method
+      await this.stripe.customers.update(customerId, {
+        invoice_settings: {
+          default_payment_method: paymentMethodId,
+        },
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error setting default payment method:', error);
+      throw error;
     }
   }
 

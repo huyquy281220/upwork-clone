@@ -30,6 +30,23 @@ export class StripeController {
     return this.stripeService.getAccountInfo(accountId);
   }
 
+  @Post('set-default-payment-method')
+  async setDefaultPaymentMethod(
+    @Body()
+    {
+      customerId,
+      paymentMethodId,
+    }: {
+      customerId: string;
+      paymentMethodId: string;
+    },
+  ) {
+    return this.stripeService.setDefaultPaymentMethod(
+      customerId,
+      paymentMethodId,
+    );
+  }
+
   @Post('add-card')
   async addCard(@Body() data: AddCardDto) {
     return this.stripeService.attachPaymentMethod(

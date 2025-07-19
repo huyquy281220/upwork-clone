@@ -7,26 +7,43 @@ import { Card } from "@/components/ui/card";
 import CirclePencil from "@/components/common/CirclePencil";
 import { useState } from "react";
 import { PaymentForm } from "@/components/forms/payments/PaymentForm";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PaymentMethodProps } from "@/types/payments";
-import { retrieveListPaymentMethods } from "@/services/stripe";
+import {
+  retrieveListPaymentMethods,
+  setDefaultPaymentMethod,
+} from "@/services/stripe";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
 import { BaseUser } from "@/types/user";
 
 export function BillingPaymentsContent() {
-  const [openPaymentForm, setOpenPaymentForm] = useState(false);
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
+  const [openPaymentForm, setOpenPaymentForm] = useState(false);
 
-  const { data: paymentMethodsData, isLoading } = useQuery<PaymentMethodProps>({
+  const { data: paymentMethods, isLoading } = useQuery<PaymentMethodProps[]>({
     queryKey: ["paymentMethod"],
     queryFn: () => retrieveListPaymentMethods(user?.stripeCustomerId ?? ""),
     enabled: !!user?.stripeCustomerId,
   });
 
-  const paymentMethods = paymentMethodsData?.data;
+  console.log(paymentMethods);
+
+  const setDefaultMutation = useMutation({
+    mutationFn: ({
+      customerId,
+      paymentMethodId,
+    }: {
+      customerId: string;
+      paymentMethodId: string;
+    }) => setDefaultPaymentMethod(customerId, paymentMethodId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["paymentMethod"] });
+    },
+  });
 
   if (isLoading) {
     return <InfiniteLoading />;
@@ -87,6 +104,19 @@ export function BillingPaymentsContent() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setDefaultMutation.mutate({
+                          customerId: user?.stripeCustomerId ?? "",
+                          paymentMethodId: method.id,
+                        })
+                      }
+                      disabled={method.isDefault}
+                    >
+                      {method.isDefault ? "Default" : "Set Default"}
+                    </Button>
                     <CirclePencil />
                     <Button
                       variant="ghost"

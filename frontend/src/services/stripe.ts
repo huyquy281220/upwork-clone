@@ -52,3 +52,14 @@ export const retrieveListPaymentMethods = async (customerId: string) => {
   );
   return response.data;
 };
+
+export const setDefaultPaymentMethod = async (
+  customerId: string,
+  paymentMethodId: string
+) => {
+  const response = await api.post("/stripe/set-default-payment-method", {
+    customerId,
+    paymentMethodId,
+  });
+  return response.data;
+};
