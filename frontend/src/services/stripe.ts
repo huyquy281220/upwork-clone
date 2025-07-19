@@ -1,9 +1,9 @@
-import { CreatePaymentMethodProps } from "@/types/payments";
 import api from "./api";
+import { AddCardProps } from "@/types/payments";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const createPaymentMethod = async (data: CreatePaymentMethodProps) => {
+export const attachPaymentMethod = async (data: AddCardProps) => {
   const response = await api.post(`${apiURL}/stripe/add-card`, data);
 
   return response.data;

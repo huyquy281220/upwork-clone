@@ -26,8 +26,11 @@ export class StripeController {
   }
 
   @Post('add-card')
-  async addCard(@Body() data: CreatePaymentMethodDto) {
-    return this.stripeService.createPaymentMethod(data);
+  async addCard(@Body() data: AddCardDto) {
+    return this.stripeService.attachPaymentMethod(
+      data.paymentMethodId,
+      data.customerId,
+    );
   }
 
   @Post('freelancer/:freelancerId/account')

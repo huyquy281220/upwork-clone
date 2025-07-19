@@ -15,5 +15,6 @@ export class CreatePaymentMethodBillingDetailsDto {
 export class CreatePaymentMethodDto {
   billing_details: CreatePaymentMethodBillingDetailsDto;
   // customerId: string;
+  card: any;
   email: string;
 }

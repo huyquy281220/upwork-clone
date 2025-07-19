@@ -16,18 +16,19 @@ import {
 import {
   CardCvcElement,
   CardNumberElement,
+  CardExpiryElement,
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
 import { CreditCard, HelpCircle, Lock } from "lucide-react";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { CreatePaymentMethodProps } from "@/types/payments";
-import { createPaymentMethod } from "@/services/stripe";
+import { AddCardProps } from "@/types/payments";
+import { attachPaymentMethod } from "@/services/stripe";
 import { useSession } from "next-auth/react";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { useUser } from "@/hooks/useUserInfo";
-
+import { BaseUser } from "@/types/user";
 interface BillingDetails {
   cardHolderName: string;
   address: {
@@ -76,12 +77,13 @@ const CARD_ELEMENT_OPTIONS = {
 
 export function PaymentForm() {
   const { data: session } = useSession();
-  const { data: user } = useUser(session?.user.id ?? "");
+  const { data: user } = useUser<BaseUser>(session?.user.id ?? "");
   const stripe = useStripe();
   const elements = useElements();
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [formData, setFormData] = useState<PaymentFormData>({
     expirationMonth: "",
     expirationYear: "",
@@ -98,8 +100,8 @@ export function PaymentForm() {
   });
 
   const mutation = useMutation({
-    mutationFn: (data: CreatePaymentMethodProps) => {
-      return createPaymentMethod(data);
+    mutationFn: (data: AddCardProps) => {
+      return attachPaymentMethod(data);
     },
 
     onSuccess: () => setStatus("success"),
@@ -115,16 +117,35 @@ export function PaymentForm() {
 
     setStatus("loading");
 
-    const cardElement = elements.getElement(CardNumberElement);
+    const cardElement = elements?.getElement(CardNumberElement);
 
     if (!cardElement) {
       setStatus("idle");
       return;
     }
 
-    mutation.mutate({ ...formData, email: session?.user.email ?? "" });
+    const { paymentMethod, error } = await stripe.createPaymentMethod({
+      type: "card",
+      card: cardElement,
+    });
 
-    setStatus("idle");
+    if (error) {
+      setErrorMessage(
+        error.message ?? "Failed to save payment method. Please try again."
+      );
+      setStatus("error");
+    }
+
+    if (!paymentMethod) {
+      setErrorMessage("Failed to create payment method");
+      setStatus("error");
+      return;
+    }
+
+    mutation.mutate({
+      paymentMethodId: paymentMethod.id,
+      customerId: user?.stripeCustomerId ?? "",
+    });
   };
 
   const updateFormData = (field: string, value: string) => {
@@ -140,12 +161,12 @@ export function PaymentForm() {
           },
         },
       }));
-    } else if (field === "billing_details.name") {
+    } else if (field === "billing_details.cardHolderName") {
       setFormData((prev) => ({
         ...prev,
         billing_details: {
           ...prev.billing_details,
-          name: value,
+          cardHolderName: value,
         },
       }));
     } else {
@@ -227,38 +248,17 @@ export function PaymentForm() {
 
           {/* Expiration and Security Code */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label className="text-white font-medium">Expiration month</Label>
-              <Input
-                placeholder="MM"
-                value={formData.expirationMonth}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, "").slice(0, 2);
-                  if (
-                    value === "" ||
-                    (Number.parseInt(value) >= 1 &&
-                      Number.parseInt(value) <= 12)
-                  ) {
-                    updateFormData("expirationMonth", value);
-                  }
-                }}
-                maxLength={2}
-                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-              />
+            <div className="flex flex-col justify-end space-y-2">
+              <div className="flex items-center gap-1">
+                <Label className="text-white font-medium">
+                  Expiration date
+                </Label>
+              </div>
+              <div className="bg-gray-700 border border-gray-600 rounded-md px-3 py-[7px]">
+                <CardExpiryElement options={CARD_ELEMENT_OPTIONS} />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label className="text-white font-medium">Expiration year</Label>
-              <Input
-                placeholder="YY"
-                value={formData.expirationYear}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, "").slice(0, 2);
-                  updateFormData("expirationYear", value);
-                }}
-                maxLength={2}
-                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-              />
-            </div>
+
             <div className="flex flex-col justify-end space-y-2">
               <div className="flex items-center gap-1">
                 <Label className="text-white font-medium">Security code</Label>
@@ -367,9 +367,7 @@ export function PaymentForm() {
             </p>
           )}
           {status === "error" && (
-            <p className="text-red-500 font-medium">
-              Failed to save payment method. Please try again.
-            </p>
+            <p className="text-red-500 font-medium">{errorMessage}</p>
           )}
 
           {/* Submit Button */}

@@ -152,7 +152,8 @@ export class StripeService {
 
       const paymentMethod = await this.stripe.paymentMethods.create({
         type: 'card',
-        customer: customer.id ?? '',
+        // customer: customer.id ?? '',
+        card: data.card,
         billing_details: {
           name: data.billing_details.name,
           address: {

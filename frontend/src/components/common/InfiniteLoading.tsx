@@ -34,15 +34,15 @@ export function InfiniteLoading({
             key={i}
             className="absolute rounded-full opacity-20 animate-float-slow"
             style={{
-              width: `${Math.random() * 100 + 50}px`,
-              height: `${Math.random() * 100 + 50}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              width: `${50 + i * 12}px`, // Fixed: 50, 62, 74, 86, 98, 110, 122, 134
+              height: `${50 + i * 12}px`, // Fixed: same as width
+              left: `${10 + i * 12}%`, // Fixed: 10%, 22%, 34%, 46%, 58%, 70%, 82%, 94%
+              top: `${15 + i * 10}%`, // Fixed: 15%, 25%, 35%, 45%, 55%, 65%, 75%, 85%
               background: `linear-gradient(45deg, ${
                 i % 3 === 0 ? "#10b981" : i % 3 === 1 ? "#3b82f6" : "#8b5cf6"
               }, transparent)`,
               animationDelay: `${i * 0.5}s`,
-              animationDuration: `${4 + Math.random() * 4}s`,
+              animationDuration: `${4 + (i % 3)}s`, // Fixed: 4s, 5s, 6s pattern
             }}
           />
         ))}

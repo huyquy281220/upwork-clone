@@ -1,5 +1,8 @@
+import { StripeElement } from "@stripe/stripe-js";
+
 export interface CreatePaymentMethodProps {
   email: string;
+  card: StripeElement;
   billing_details: {
     cardHolderName: string;
     address: {
@@ -11,4 +14,9 @@ export interface CreatePaymentMethodProps {
       state?: string;
     };
   };
+}
+
+export interface AddCardProps {
+  paymentMethodId: string;
+  customerId: string;
 }
