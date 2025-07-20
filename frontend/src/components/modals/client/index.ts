@@ -3,6 +3,7 @@ import { EditDescriptionModal } from "./EditDescriptionModal";
 import { EditSkillsModal } from "./EditSkillsModal";
 import { EditScopeModal } from "./EditScopeModal";
 import { EditBudgetModal } from "./EditBudgetModal";
+import { EditAccountInfo } from "./EditAccountInfo";
 
 export {
   EditTitleModal,
@@ -10,4 +11,5 @@ export {
   EditSkillsModal,
   EditScopeModal,
   EditBudgetModal,
+  EditAccountInfo,
 };

@@ -132,7 +132,7 @@ export default function ImageUploadModal({
     <Dialog open={open} modal onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Upload Image</DialogTitle>
+          <DialogTitle>Upload Avatar</DialogTitle>
           <DialogDescription>
             Choose an image file to upload. Drag and drop or click to browse.
           </DialogDescription>
@@ -211,10 +211,10 @@ export default function ImageUploadModal({
         </div>
 
         {status === "success" && (
-          <p className="text-green-500">Upload image successfully.</p>
+          <p className="text-green-500">Upload avatar successfully.</p>
         )}
         {status === "error" && (
-          <p className="text-red-500">Failed to upload image.</p>
+          <p className="text-red-500">Failed to upload avatar.</p>
         )}
 
         <DialogFooter className="flex gap-2">
