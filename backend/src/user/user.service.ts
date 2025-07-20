@@ -119,6 +119,24 @@ export class UserService {
     }
   }
 
+  async findByIdWithPassword(id: string) {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { id },
+        include: {
+          clientProfile: true,
+          freelancerProfile: true,
+        },
+      });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    } catch (error) {
+      throw new NotFoundException('User not found');
+    }
+  }
+
   async create(data: CreateUserDto) {
     const { password } = data;
 

@@ -57,6 +57,10 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsString()
+  password?: string;
+
+  @IsOptional()
+  @IsString()
   address?: string;
 
   @IsOptional()

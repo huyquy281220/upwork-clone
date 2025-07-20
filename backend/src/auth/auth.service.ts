@@ -172,4 +172,43 @@ export class AuthService {
       throw new UnauthorizedException('Token refresh failed');
     }
   }
+
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    try {
+      const user = await this.userService.findByIdWithPassword(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const isCurrentPasswordValid = await bcrypt.compare(
+        currentPassword,
+        user.password,
+      );
+      if (!isCurrentPasswordValid) {
+        throw new UnauthorizedException('Current password is incorrect');
+      }
+
+      const saltRounds = 10;
+      const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      // Update password in database
+      await this.userService.updatePartialById(userId, {
+        password: hashedNewPassword,
+      });
+
+      return { message: 'Password changed successfully' };
+    } catch (error) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to change password');
+    }
+  }
 }
