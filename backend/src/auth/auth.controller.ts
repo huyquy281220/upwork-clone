@@ -88,6 +88,29 @@ export class AuthController {
     return this.authService.signout(user.id, res);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  async changePassword(
+    @Req() req: Request & { user: { id: string } },
+    @Body()
+    {
+      currentPassword,
+      newPassword,
+    }: { currentPassword: string; newPassword: string },
+    @Res() res: Response,
+  ) {
+    const user = req.user;
+    await this.authService.changePassword(
+      user.id,
+      currentPassword,
+      newPassword,
+    );
+    res.clearCookie('refresh_token');
+    res.clearCookie('role');
+    return res.json({ message: 'Password changed successfully' });
+  }
+
   @UseGuards(JwtRefreshGuard)
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
