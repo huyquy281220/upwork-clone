@@ -47,3 +47,15 @@ export const verifyEmail = async (email: string) => {
 
   return response.data;
 };
+
+export const changePassword = async (
+  currentPassword: string,
+  newPassword: string
+) => {
+  const response = await api.post(`${apiURL}/auth/change-password`, {
+    currentPassword,
+    newPassword,
+  });
+
+  return response.data;
+};
