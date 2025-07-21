@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getOneProposal } from "@/services/proposals";
 import { ProposalProps } from "@/types/proposals";
 import { JobType } from "@/types/jobs";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 // import { MilestonesSection } from "./components/contract/milestones-section";
 
 type PartialProposalProps = {
@@ -61,7 +62,7 @@ export function CreateContractClient() {
   const [description, setDescription] = useState("");
   // const [milestones, setMilestones] = useState<Milestone[]>([]);
 
-  const { data: proposal } = useQuery<PartialProposalProps>({
+  const { data: proposal, isLoading } = useQuery<PartialProposalProps>({
     queryKey: ["proposal-for-contract", proposalId],
     queryFn: () => getOneProposal(proposalId),
     enabled: !!proposalId,
@@ -95,7 +96,7 @@ export function CreateContractClient() {
     ((contractType === JobType.HOURLY && hourlyRate) ||
       (contractType === JobType.FIXED_PRICE && fixedPrice));
 
-  if (!proposal) return;
+  if (!proposal || isLoading) return <InfiniteLoading />;
 
   return (
     <div className="min-h-screen bg-background">
