@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Input } from "@/components/ui/input";
 import { JobType } from "@/types/jobs";
 
 interface PricingSectionProps {
@@ -32,9 +33,10 @@ export function PricingSection({
                 id="hourly-rate"
                 type="number"
                 placeholder="0.00"
-                value={pricing}
+                defaultValue={pricing}
+                // value={pricing}
                 onChange={(e) => setPricing(Number(e.target.value))}
-                className="pl-8"
+                className="h-8 pl-8 max-w-32 rounded-sm"
               />
               <span className="ml-2 text-gray-500">/hr</span>
             </div>
@@ -52,7 +54,7 @@ export function PricingSection({
                 placeholder="0.00"
                 value={pricing}
                 onChange={(e) => setPricing(Number(e.target.value))}
-                className="pl-8"
+                className="h-8 pl-8 max-w-32 rounded-sm"
               />
             </div>
           </div>

@@ -11,7 +11,7 @@ interface ProposalSidebarProps {
 export function ProposalSidebar({ jobData }: ProposalSidebarProps) {
   const formatBudget = (jobType: JobType) => {
     if (jobType === JobType.HOURLY) {
-      return `$${jobData.hourlyRateMin}-$${jobData.hourlyRateMax}`;
+      return `$${jobData.hourlyRateMin}-$${jobData.hourlyRateMax}/hr`;
     } else {
       return `$${jobData.fixedPrice}`;
     }
