@@ -1,4 +1,4 @@
-import CirclePencil from "@/components/common/CirclePencil";
+// import CirclePencil from "@/components/common/CirclePencil";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface CompanyData {
@@ -16,7 +16,7 @@ export function CompanyDetailsSection() {
         <h2 className="text-lg font-semibold text-foreground">
           Company details
         </h2>
-        <CirclePencil />
+        {/* <CirclePencil /> */}
       </div>
 
       <div className="flex items-center gap-4">

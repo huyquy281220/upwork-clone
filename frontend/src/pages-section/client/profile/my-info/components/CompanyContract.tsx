@@ -1,4 +1,4 @@
-import CirclePencil from "@/components/common/CirclePencil";
+// import CirclePencil from "@/components/common/CirclePencil";
 
 interface ContactData {
   owner: string;
@@ -21,7 +21,7 @@ export function CompanyContactsSection() {
         <h2 className="text-lg font-semibold text-foreground">
           Company contacts
         </h2>
-        <CirclePencil />
+        {/* <CirclePencil /> */}
       </div>
 
       <div className="space-y-4">
