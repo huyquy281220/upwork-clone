@@ -2,17 +2,31 @@
 
 import { ProposalProps } from "@/types/proposals";
 import { ProposalCard } from "./ProposalCard";
+import { ProposalCardSkeleton } from "@/pages-section/freelancer/Proposals/my-proposals/components/ProposalCardSkeleton";
 
 interface ProposalsListProps {
   proposals: ProposalProps[];
   onViewDetails: (proposal: ProposalProps) => void;
+  isLoading: boolean;
 }
 
 export function ProposalsList({
   proposals,
   onViewDetails,
+  isLoading,
 }: ProposalsListProps) {
-  console.log(proposals);
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {Array(3)
+          .fill(0)
+          .map((_, index) => (
+            <ProposalCardSkeleton key={index} />
+          ))}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {proposals.map((proposal) => (

@@ -40,23 +40,33 @@ export function ClientJobDetails() {
     filter: "all",
   });
 
+  const searchQuery = getFilter("search");
+  const sortBy = getFilter("sort");
+  const filterBy = getFilter("filter");
+  const currentPage = parseInt(getFilter("page"));
+
   const { data: jobDetail } = useQuery({
     queryKey: ["job-detail", jobId],
     queryFn: () => getJobById(jobId),
     enabled: !!jobId,
   });
 
-  const { data: paginatedProposals } = useQuery<PaginatedProposalsProps>({
-    queryKey: ["paginated-proposals-by-job", jobId],
+  const {
+    data: paginatedProposals,
+    isLoading,
+    isFetching,
+  } = useQuery<PaginatedProposalsProps>({
+    queryKey: [
+      "paginated-proposals-by-job",
+      jobId,
+      pageLimit,
+      currentPage,
+      searchQuery,
+    ],
     queryFn: () =>
       getPaginatedProposalsByJob(jobId, pageLimit, currentPage, searchQuery),
     enabled: !!jobId,
   });
-
-  const searchQuery = getFilter("search");
-  const sortBy = getFilter("sort");
-  const filterBy = getFilter("filter");
-  const currentPage = parseInt(getFilter("page"));
 
   const handleViewDetails = (proposal: ProposalProps) => {
     openModal("freelancer-details");
@@ -93,7 +103,7 @@ export function ClientJobDetails() {
             <ProposalsList
               proposals={paginatedProposals.data}
               onViewDetails={handleViewDetails}
-              // onMessage={handleMessage}
+              isLoading={isLoading || isFetching}
             />
 
             {paginatedProposals.data.length > pageLimit && (
