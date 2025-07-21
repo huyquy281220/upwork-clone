@@ -50,7 +50,9 @@ export function DraftListItem({
         >
           See details
         </Button>
-        <CirclePencil />
+        <CirclePencil
+          onEdit={() => router.push(`/client/job-post/review/${id}`)}
+        />
       </div>
     </div>
   );

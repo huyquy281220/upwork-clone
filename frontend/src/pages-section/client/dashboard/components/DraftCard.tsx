@@ -36,7 +36,9 @@ export function DraftCard({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <CirclePencil />
+            <CirclePencil
+              onEdit={() => router.push(`/client/job-post/review/${id}`)}
+            />
           </div>
         </div>
         <div className="h-[2.5rem] md:h-[6rem]">
