@@ -21,6 +21,7 @@ export interface CreateJobProps {
 export interface JobProps {
   id: string;
   title: string;
+  category?: string;
   description: string;
   experienceLevel: ExperienceLevel;
   jobType: JobType;

@@ -27,6 +27,7 @@ import { ModernToast } from "@/components/common/ModernToast";
 import { getSkillsByJobId } from "@/services/skills";
 import { Skill } from "@/types";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { JobCategory } from "./JobCategory";
 
 export default function JobDetail() {
   const queryClient = useQueryClient();
@@ -62,7 +63,7 @@ export default function JobDetail() {
     if (jobDetail) {
       updateJobData(jobDetail);
     }
-  }, [jobDetail]);
+  }, [jobDetail, updateJobData]);
 
   const handleUpdate = useCallback(
     <K extends keyof CreateJobProps>(field: K, value: CreateJobProps[K]) => {
@@ -127,12 +128,12 @@ export default function JobDetail() {
             />
           </div>
 
-          {/* <div className="p-6">
-            <CategorySection
-              category={jobData.category}
-              onEdit={() => handleEdit("category")}
+          <div className="p-6">
+            <JobCategory
+              title={jobDetail?.category || ""}
+              // onEdit={() => handleEdit("category")}
             />
-          </div> */}
+          </div>
 
           <div className="p-6">
             <SkillsSection
