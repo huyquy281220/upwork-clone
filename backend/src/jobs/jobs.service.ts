@@ -38,10 +38,40 @@ export class JobsService {
       throw new BadRequestException('Fixed-Price jobs require a fixed price');
     }
 
+    let categoryName = '';
+
+    if (skills && skills.length > 0) {
+      // Get skills with their categories
+      const skillsWithCategories = await this.prisma.skill.findMany({
+        where: { id: { in: skills } },
+        include: { category: true },
+      });
+
+      // Count skills per category
+      const categoryCount = new Map<string, number>();
+
+      skillsWithCategories.forEach((skill) => {
+        const categoryName = skill.category.name;
+        categoryCount.set(
+          categoryName,
+          (categoryCount.get(categoryName) || 0) + 1,
+        );
+      });
+
+      // Find category with most skills
+      if (categoryCount.size > 0) {
+        categoryName = Array.from(categoryCount.entries()).reduce(
+          (maxEntry, currentEntry) =>
+            currentEntry[1] > maxEntry[1] ? currentEntry : maxEntry,
+        )[0];
+      }
+    }
+
     return this.prisma.$transaction(async (tx) => {
       const job = await tx.job.create({
         data: {
           ...rest,
+          category: categoryName,
           client: {
             connect: {
               userId: clientId,
