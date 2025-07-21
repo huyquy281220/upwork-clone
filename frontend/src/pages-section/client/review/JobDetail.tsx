@@ -130,7 +130,7 @@ export default function JobDetail() {
 
           <div className="p-6">
             <JobCategory
-              title={jobDetail?.category || ""}
+              category={jobDetail?.category || ""}
               // onEdit={() => handleEdit("category")}
             />
           </div>

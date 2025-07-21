@@ -14,20 +14,21 @@ export function JobDescriptionSection({
 }: JobDescriptionSectionProps) {
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-foreground">
-          {description || "Describe your project in detail..."}
+      <div className="mb-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-foreground">Description</h3>
+          {onEdit && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onEdit}
+              className="text-green-500 hover:bg-transparent"
+            >
+              <CirclePencil />
+            </Button>
+          )}
         </div>
-        {onEdit && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onEdit}
-            className="text-green-500 hover:bg-transparent"
-          >
-            <CirclePencil />
-          </Button>
-        )}
+        <p className="text-foreground line-clamp-3">{description}</p>
       </div>
     </div>
   );

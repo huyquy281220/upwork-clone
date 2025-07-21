@@ -10,11 +10,9 @@ interface JobTitleSectionProps {
 
 export function JobTitleSection({ title, onEdit }: JobTitleSectionProps) {
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-medium text-foreground">
-          {title || "Enter your job title"}
-        </h3>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium text-foreground">Title</h3>
         {onEdit && (
           <Button
             variant="ghost"
@@ -26,6 +24,7 @@ export function JobTitleSection({ title, onEdit }: JobTitleSectionProps) {
           </Button>
         )}
       </div>
+      <p className="text-md font-medium text-foreground">{title}</p>
     </div>
   );
 }
