@@ -52,6 +52,8 @@ export default function JobPostingWrapper({
         return "duration";
       case 5:
         return "budget";
+      case 6:
+        return "description";
       default:
         return "/client/dashboard";
     }
@@ -100,6 +102,8 @@ export default function JobPostingWrapper({
   const isNextDisabled = !validateCurrentStep(currentStep, jobData);
 
   if (!session) return <InfiniteLoading />;
+
+  console.log(currentStep);
 
   return (
     <div className="min-h-screen bg-background">
