@@ -53,7 +53,7 @@ export default function Notification() {
         >
           <Bell className="w-5 h-5" />
           {notifications.some((n) => !n.isRead) ? (
-            <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full text-xs flex items-center justify-center"></span>
+            <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full text-xs flex items-center justify-center"></span>
           ) : null}
         </button>
       </PopoverTrigger>
