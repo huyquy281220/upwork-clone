@@ -2,7 +2,7 @@
 
 import { ProposalProps } from "@/types/proposals";
 import { ProposalCard } from "./ProposalCard";
-import { ProposalCardSkeleton } from "@/pages-section/freelancer/Proposals/my-proposals/components/ProposalCardSkeleton";
+import { ProposalCardSkeleton } from "@/pages-section/freelancer/proposals/my-proposals/components/ProposalCardSkeleton";
 
 interface ProposalsListProps {
   proposals: ProposalProps[];

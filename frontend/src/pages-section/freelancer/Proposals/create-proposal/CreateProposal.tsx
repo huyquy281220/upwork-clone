@@ -8,7 +8,7 @@ import {
   ProposalSidebar,
   SubmitSection,
   TimelineSection,
-} from "@/pages-section/freelancer/Proposals/create-proposal";
+} from "@/pages-section/freelancer/proposals/create-proposal";
 import { createProposal } from "@/services/proposals";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -18,8 +18,9 @@ import { FreelancerUser } from "@/types/user";
 import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
 import { formatSelectValue } from "@/utils/formatSelectValue";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { JobDetailProps } from "@/types/jobs";
+import { CreateProposalProps } from "@/types/proposals";
 
 const initialProposal = {
   coverLetter: "",
@@ -62,18 +63,10 @@ export function CreateProposal() {
     );
   }, [proposal]);
 
-  if (!session || !user || !jobData) return <InfiniteLoading />;
-
-  const handleSubmit = async () => {
-    setStatus("loading");
-    try {
-      const res = await createProposal({
-        ...proposal,
-        timeline: formatSelectValue(proposal.timeline),
-        jobId,
-        freelancerId: user?.freelancerProfile.id,
-      });
-
+  const createProposalMutation = useMutation({
+    mutationFn: (proposalData: CreateProposalProps) =>
+      createProposal(proposalData),
+    onSuccess: (res) => {
       if (res.status === 201) {
         setStatus("success");
         showSuccessToast(
@@ -87,11 +80,25 @@ export function CreateProposal() {
           router.push("/freelancer/my-proposals");
         }, 1500);
       }
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error(error);
       setStatus("error");
       showErrorToast("Failed to create proposal. Please try again.", "", 1500);
-    }
+    },
+    onMutate: () => {
+      setStatus("loading");
+    },
+  });
+  if (!session || !user || !jobData) return <InfiniteLoading />;
+
+  const handleSubmit = async () => {
+    createProposalMutation.mutate({
+      ...proposal,
+      timeline: formatSelectValue(proposal.timeline),
+      jobId,
+      freelancerId: user?.freelancerProfile.id,
+    });
   };
 
   const handleSetCoverLetter = (value: string) =>

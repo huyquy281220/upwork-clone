@@ -9,7 +9,7 @@ import {
   ProposalsHeader,
   ProposalsList,
   ProposalsSearchSort,
-} from "@/pages-section/freelancer/Proposals/my-proposals";
+} from "@/pages-section/freelancer/proposals/my-proposals";
 import { getPaginatedProposalsByFreelancer } from "@/services/proposals";
 import { ProposalProps } from "@/types/proposals";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
