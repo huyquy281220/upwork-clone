@@ -28,9 +28,6 @@ export default function SearchInput() {
       case "talent":
         router.push(`/search/talent?query=${debouncedSearchQuery}`);
         break;
-      case "projects":
-        router.push(`/search/projects?query=${debouncedSearchQuery}`);
-        break;
       default:
         break;
     }
@@ -76,7 +73,7 @@ export default function SearchInput() {
             {searchCategories.map((category) => (
               <div
                 key={category.id}
-                className="flex items-start px-4 py-3 hover:bg-hover"
+                className="flex items-start px-4 py-3 hover:bg-hover cursor-pointer"
                 onClick={() => setSearchType(category.id)}
               >
                 <div className="mr-3 mt-1 text-foreground">

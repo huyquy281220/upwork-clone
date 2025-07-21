@@ -39,13 +39,6 @@ export const searchCategories: SearchCategory[] = [
     iconName: "Users",
     // href: "/talent",
   },
-  {
-    id: "projects",
-    title: "Projects",
-    description: "See projects from other pros",
-    iconName: "FileText",
-    // href: "/projects",
-  },
 ];
 
 // Theme options
