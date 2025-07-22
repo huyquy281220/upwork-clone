@@ -7,6 +7,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response, Request } from 'express';
@@ -29,6 +30,16 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
+  @Get('test-cookie')
+  testCookie(@Res() res: Response) {
+    res.cookie('test_refresh_token', 'test_value', {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    return res.json({ message: 'Test cookie set' });
+  }
+
   @Post('sign-up')
   async create(@Body() createUser: CreateUserDto) {
     return this.userService.create(createUser);
@@ -45,9 +56,9 @@ export class AuthController {
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      //   secure: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: false,
+      // secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -66,8 +77,9 @@ export class AuthController {
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      // secure: process.env.NODE_ENV === 'production',
+      secure: false,
+      sameSite: 'lax',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

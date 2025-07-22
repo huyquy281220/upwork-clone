@@ -1,20 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-// import { FreelancerSummary } from "./components/contract/freelancer-summary";
 import {
   ContractActions,
   ContractHeader,
   ContractSummary,
   ContractTerms,
 } from "@/pages-section/client/contract";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getOneProposal } from "@/services/proposals";
 import { ProposalProps } from "@/types/proposals";
 import { JobType } from "@/types/jobs";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
-// import { MilestonesSection } from "./components/contract/milestones-section";
+import { MilestonesSection } from "./Milestone";
+import { CreateContractDto, MilestoneProps } from "@/types/contract";
+import { createContract } from "@/services/contract";
+import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUserInfo";
+import { ClientUser } from "@/types/user";
+import api from "@/services/api";
 
 type PartialProposalProps = {
   id: string;
@@ -27,20 +32,13 @@ type PartialProposalProps = {
   status: "PENDING" | "ACCEPTED" | "REJECTED";
   createdAt: string;
   updatedAt: string;
-  job: Pick<ProposalProps["job"], "title" | "jobType">;
+  job: Pick<ProposalProps["job"], "title" | "jobType" | "id">;
   freelancer: {
     title: string;
+    id: string;
     user: Pick<ProposalProps["freelancer"]["user"], "fullName">;
   };
 };
-
-// interface Milestone {
-//   id: string;
-//   name: string;
-//   description: string;
-//   amount: string;
-//   dueDate: string;
-// }
 
 export function CreateContractClient() {
   const router = useRouter();
@@ -56,16 +54,22 @@ export function CreateContractClient() {
   const [projectDuration, setProjectDuration] = useState("");
   const [startDate, setStartDate] = useState("");
   const [contractTitle, setContractTitle] = useState("");
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
   const [description, setDescription] = useState("");
-  // const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [milestones, setMilestones] = useState<MilestoneProps[]>([]);
+
+  const { data: session } = useSession();
+  const { data: user } = useUser<ClientUser>(session?.user.id as string);
 
   const { data: proposal, isLoading } = useQuery<PartialProposalProps>({
     queryKey: ["proposal-for-contract", proposalId],
     queryFn: () => getOneProposal(proposalId),
     enabled: !!proposalId,
+  });
+
+  const createContractMutation = useMutation({
+    mutationFn: (data: CreateContractDto) => createContract(data),
+    onSuccess: () => {},
+    onError: () => {},
   });
 
   useEffect(() => {
@@ -78,14 +82,28 @@ export function CreateContractClient() {
     }
   }, [proposal]);
 
+  if (!proposal || isLoading || !user || !session) return <InfiniteLoading />;
+
   const handleBackToProposal = () => {
     router.back();
   };
 
   const handleSendContract = async () => {
-    setStatus("loading");
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // createContractMutation.mutate({
+      //   jobId: proposal.job.id,
+      //   freelancerId: proposal.freelancer.id,
+      //   clientId: user?.clientProfile.id,
+      //   title: contractTitle,
+      //   description: description,
+      //   startedAt: startDate,
+      //   milestones: milestones,
+      // });
+
+      await api.get("http://localhost:3001/auth/test-cookie");
+    } catch (error) {
+      console.error("Contract creation failed:", error);
+    }
   };
 
   const isValid =
@@ -95,8 +113,6 @@ export function CreateContractClient() {
     startDate &&
     ((contractType === JobType.HOURLY && hourlyRate) ||
       (contractType === JobType.FIXED_PRICE && fixedPrice));
-
-  if (!proposal || isLoading) return <InfiniteLoading />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -128,17 +144,17 @@ export function CreateContractClient() {
                 // proposalRate={jobData.proposalRate}
               />
 
-              {/* <MilestonesSection
-                    milestones={milestones}
-                    setMilestones={setMilestones}
-                    contractType={contractType}
-                /> */}
+              <MilestonesSection
+                milestones={milestones}
+                setMilestones={setMilestones}
+                contractType={contractType}
+              />
 
               <ContractActions
                 onSaveDraft={handleBackToProposal}
                 onSendContract={handleSendContract}
                 isValid={!!isValid}
-                isSending={status === "loading"}
+                isSending={createContractMutation.isPending}
               />
             </div>
           </div>

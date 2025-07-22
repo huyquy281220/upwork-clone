@@ -23,6 +23,8 @@ export class JwtRefreshStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: any) {
+    console.log(req.cookies.refresh_token);
+    console.log(payload);
     const refreshToken = req?.cookies?.refresh_token;
 
     const user = await this.userService.findByEmail(payload.sub);

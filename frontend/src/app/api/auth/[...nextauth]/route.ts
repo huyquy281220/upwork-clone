@@ -28,6 +28,7 @@ const handler = NextAuth({
           const response = await fetch(`${API_URL}/auth/sign-in`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({
               email: credentials.email,
               password: credentials.password,
@@ -82,6 +83,7 @@ const handler = NextAuth({
           const response = await fetch(`${API_URL}/auth/google-signin`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({
               email: user.email,
               name: user.name,
