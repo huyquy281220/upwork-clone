@@ -19,7 +19,6 @@ import { createContract } from "@/services/contract";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
 import { ClientUser } from "@/types/user";
-import api from "@/services/api";
 
 type PartialProposalProps = {
   id: string;
@@ -90,17 +89,15 @@ export function CreateContractClient() {
 
   const handleSendContract = async () => {
     try {
-      // createContractMutation.mutate({
-      //   jobId: proposal.job.id,
-      //   freelancerId: proposal.freelancer.id,
-      //   clientId: user?.clientProfile.id,
-      //   title: contractTitle,
-      //   description: description,
-      //   startedAt: startDate,
-      //   milestones: milestones,
-      // });
-
-      await api.get("http://localhost:3001/auth/test-cookie");
+      createContractMutation.mutate({
+        jobId: proposal.job.id,
+        freelancerId: proposal.freelancer.id,
+        clientId: user?.clientProfile.id,
+        title: contractTitle,
+        description: description,
+        startedAt: startDate,
+        milestones: milestones,
+      });
     } catch (error) {
       console.error("Contract creation failed:", error);
     }
