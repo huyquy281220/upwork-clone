@@ -24,22 +24,20 @@ export class ContractsService {
   async createContract(data: CreateContractDto) {
     return this.prisma.$transaction(async (tx) => {
       // Check if client exists
-      const client = await tx.user.findUnique({
+      const client = await tx.clientProfile.findUnique({
         where: { id: data.clientId },
-        include: { clientProfile: true },
       });
-      if (!client || !client.clientProfile) {
+      if (!client) {
         throw new NotFoundException(
           `Client with ID ${data.clientId} not found`,
         );
       }
 
       // Check if freelancer exists
-      const freelancer = await tx.user.findUnique({
+      const freelancer = await tx.freelancerProfile.findUnique({
         where: { id: data.freelancerId },
-        include: { freelancerProfile: true },
       });
-      if (!freelancer || !freelancer.freelancerProfile) {
+      if (!freelancer) {
         throw new NotFoundException(
           `Freelancer with ID ${data.freelancerId} not found`,
         );
