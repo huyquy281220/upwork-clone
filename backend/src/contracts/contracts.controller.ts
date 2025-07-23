@@ -8,24 +8,19 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
-  UseGuards,
 } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { ContractStatus, Role as PrismaRole } from '@prisma/client';
 import { UpdateContractDto } from './dto/update-contract.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AuthenticatedUser, Role } from 'src/types';
 @Controller('contracts')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
 
   @Post('/create')
-  @Roles(PrismaRole.CLIENT)
   create(
     @Body() createContractDto: CreateContractDto,
     // @CurrentUser() user: AuthenticatedUser,
