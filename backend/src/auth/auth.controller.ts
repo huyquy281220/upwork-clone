@@ -8,15 +8,17 @@ import {
   HttpCode,
   HttpStatus,
   Get,
+  UnauthorizedException,
+  Headers,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response, Request } from 'express';
 import { LocalAuthGuard } from './guards/auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserService } from 'src/user/user.service';
-import { JwtService } from '@nestjs/jwt';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 interface LoginDto {
   email: string;
@@ -28,24 +30,14 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
-
-  @Get('test-cookie')
-  testCookie(@Res() res: Response) {
-    res.cookie('test_refresh_token', 'test_value', {
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
-    });
-    return res.json({ message: 'Test cookie set' });
-  }
 
   @Post('sign-up')
   async create(@Body() createUser: CreateUserDto) {
     return this.userService.create(createUser);
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   async login(@Body() { email, password }: LoginDto, @Res() res: Response) {
@@ -54,14 +46,13 @@ export class AuthController {
       password,
     );
 
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      // secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    // res.cookie('refresh_token', refreshToken, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   secure: process.env.NODE_ENV === 'production',
+    //   sameSite: 'lax',
+    //   expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    // });
 
     return res.json({ accessToken, user });
   }
@@ -75,19 +66,17 @@ export class AuthController {
     const { accessToken, refreshToken, user } =
       await this.authService.googleSignin(email, role, name);
 
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      // secure: process.env.NODE_ENV === 'production',
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    // res.cookie('refresh_token', refreshToken, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',
+    //   secure: false,
+    //   sameSite: 'lax',
+    //   expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    // });
 
     return res.json({ accessToken, user });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('sign-out')
   @HttpCode(HttpStatus.OK)
   async logout(
@@ -100,36 +89,58 @@ export class AuthController {
     return this.authService.signout(user.id, res);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('change-password')
   @HttpCode(HttpStatus.OK)
   async changePassword(
-    @Req() req: Request & { user: { id: string } },
     @Body()
     {
       currentPassword,
       newPassword,
-    }: { currentPassword: string; newPassword: string },
+      userId,
+    }: { currentPassword: string; newPassword: string; userId: string },
     @Res() res: Response,
   ) {
-    const user = req.user;
-    await this.authService.changePassword(
-      user.id,
-      currentPassword,
-      newPassword,
-    );
+    await this.authService.changePassword(userId, currentPassword, newPassword);
     res.clearCookie('refresh_token');
     res.clearCookie('role');
     return res.json({ message: 'Password changed successfully' });
   }
 
-  @UseGuards(JwtRefreshGuard)
-  @Post('refresh-token')
+  @Post('verify-session')
   @HttpCode(HttpStatus.OK)
-  async refreshToken(
-    @Req() req: Request & { user: { email: string } },
-    @Res() res: Response,
-  ) {
-    return this.authService.refreshToken(req, res, req.user.email);
+  async verifySession(@Headers('authorization') authHeader: string) {
+    if (!authHeader) {
+      throw new UnauthorizedException('No authorization header');
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+
+    try {
+      // Verify NextAuth JWT token
+      const decoded = this.jwtService.verify(token, {
+        secret: process.env.NEXTAUTH_SECRET,
+      }) as any;
+
+      // Get fresh user data from database
+      const user = await this.userService.findByEmail(decoded.sub);
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      return { user };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
+
+  // @UseGuards(JwtRefreshGuard)
+  // @Post('refresh-token')
+  // @HttpCode(HttpStatus.OK)
+  // async refreshToken(
+  //   @Req() req: Request & { user: { email: string } },
+  //   @Res() res: Response,
+  // ) {
+  //   return this.authService.refreshToken(req, res, req.user.email);
+  // }
 }

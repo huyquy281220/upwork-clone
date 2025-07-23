@@ -1,9 +1,10 @@
-import { deleteCookie, getCookie, setCookie } from "@/lib/cookie";
+import { deleteCookie, setCookie } from "@/lib/cookie";
 import axios, {
   AxiosResponse,
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
+import { getSession } from "next-auth/react";
 
 // Types
 interface RefreshTokenResponse {
@@ -43,11 +44,21 @@ const processQueue = (
 
 // Request interceptor - Add access token to requests
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = getCookie("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config: InternalAxiosRequestConfig) => {
+    const session = await getSession();
+
+    if (session?.user) {
+      // Just send user data - trust NextAuth validation
+      config.headers["X-User-Id"] = session.user.id;
+      config.headers["X-User-Email"] = session.user.email;
+      config.headers["X-User-Role"] = session.user.role;
+
+      // Add access token if available
+      if (session.user.accessToken) {
+        config.headers.Authorization = `Bearer ${session.user.accessToken}`;
+      }
     }
+
     return config;
   },
   (error: AxiosError) => {

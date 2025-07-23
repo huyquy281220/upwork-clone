@@ -42,7 +42,6 @@ const handler = NextAuth({
 
           const data = await response.json();
 
-          // console.log(data);
           return {
             id: data.user.id,
             email: data.user.email,
@@ -82,7 +81,12 @@ const handler = NextAuth({
         try {
           const response = await fetch(`${API_URL}/auth/google-signin`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "Set-Cookie": `refresh_token=${
+                account.access_token
+              }; HttpOnly; Secure; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`,
+            },
             credentials: "include",
             body: JSON.stringify({
               email: user.email,
