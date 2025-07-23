@@ -26,7 +26,6 @@ export class ContractsController {
 
   @Post('/create')
   @Roles(PrismaRole.CLIENT)
-  @UsePipes(new ValidationPipe())
   create(
     @Body() createContractDto: CreateContractDto,
     // @CurrentUser() user: AuthenticatedUser,
