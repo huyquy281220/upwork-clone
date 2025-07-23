@@ -91,7 +91,7 @@ export function CreateContractClient() {
     try {
       createContractMutation.mutate({
         jobId: proposal.job.id,
-        freelancerId: proposal.freelancer.id,
+        freelancerId: proposal.freelancerId,
         clientId: user?.clientProfile.id,
         title: contractTitle,
         description: description,
