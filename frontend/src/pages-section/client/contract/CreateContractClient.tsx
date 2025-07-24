@@ -67,7 +67,9 @@ export function CreateContractClient() {
 
   const createContractMutation = useMutation({
     mutationFn: (data: CreateContractDto) => createContract(data),
-    onSuccess: () => {},
+    onSuccess: () => {
+      router.push("/client/contracts");
+    },
     onError: () => {},
   });
 
