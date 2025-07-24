@@ -256,6 +256,7 @@ export class ProposalsService {
       include: {
         freelancer: {
           select: {
+            id: true,
             userId: true,
             title: true,
             user: {

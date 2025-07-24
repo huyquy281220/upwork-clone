@@ -91,11 +91,13 @@ export function CreateContractClient() {
     try {
       createContractMutation.mutate({
         jobId: proposal.job.id,
-        freelancerId: proposal.freelancerId,
+        freelancerId: proposal.freelancer.id,
         clientId: user?.clientProfile.id,
         title: contractTitle,
         description: description,
-        startedAt: startDate,
+        hourlyRate: hourlyRate,
+        projectDuration: projectDuration,
+        startedAt: new Date(startDate).toISOString(),
         milestones: milestones,
       });
     } catch (error) {

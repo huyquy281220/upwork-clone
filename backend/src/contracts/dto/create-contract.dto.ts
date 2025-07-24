@@ -23,6 +23,9 @@ export class CreateContractDto {
   @IsString()
   description: string;
 
+  @IsString()
+  projectDuration: string;
+
   @IsOptional()
   @IsNumber()
   hourlyRate: number;

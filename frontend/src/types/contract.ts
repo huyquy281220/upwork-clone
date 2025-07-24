@@ -13,6 +13,7 @@ export interface CreateContractDto {
   milestones?: MilestoneProps[];
   title: string;
   description: string;
+  projectDuration: string;
   hourlyRate?: number;
   fixedPrice?: number;
   startedAt: string;

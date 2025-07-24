@@ -191,8 +191,9 @@ model Contract {
   freelancerId String
   status       ContractStatus
   contractType ContractType
+  projectDuration String @default("")
   hourlyRate   Float
-  totalPrice   Float
+  totalPrice   Float?
 
   client       ClientProfile     @relation("ClientContracts", fields: [clientId], references: [userId])
   freelancer   FreelancerProfile @relation("FreelancerContracts", fields: [freelancerId], references: [userId])

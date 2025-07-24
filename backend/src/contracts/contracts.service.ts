@@ -22,6 +22,7 @@ export class ContractsService {
   ) {}
 
   async createContract(data: CreateContractDto) {
+    console.log(data);
     return this.prisma.$transaction(async (tx) => {
       // Check if client exists
       const client = await tx.clientProfile.findUnique({
@@ -53,7 +54,7 @@ export class ContractsService {
       }
 
       // Check if client owns the job
-      if (job.client.userId !== data.clientId) {
+      if (job.client.id !== data.clientId) {
         throw new BadRequestException('Client does not own this job');
       }
 
@@ -82,7 +83,8 @@ export class ContractsService {
           contractType: job.jobType,
           hourlyRate: data.hourlyRate ?? null,
           totalPrice: data.fixedPrice ?? null,
-          startedAt: null,
+          projectDuration: data.projectDuration,
+          startedAt: data.startedAt,
           completedAt: null,
           canceledAt: null,
         },
