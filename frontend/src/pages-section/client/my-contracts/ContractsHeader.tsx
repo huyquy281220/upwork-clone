@@ -1,7 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Plus, TrendingUp, DollarSign, Clock, CheckCircle } from "lucide-react";
+import { TrendingUp, DollarSign, Clock, CheckCircle } from "lucide-react";
 
 interface Contract {
   id: number;
@@ -33,18 +32,14 @@ export function ContractsHeader({ contracts }: ContractsHeaderProps) {
       : 0;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-background rounded-lg shadow-sm border p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Contracts</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-foreground">My Contracts</h1>
+          <p className="text-card-foreground mt-1">
             Manage and track your active contracts
           </p>
         </div>
-        <Button>
-          <Plus className="w-4 h-4 mr-2" />
-          Create Contract
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

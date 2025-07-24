@@ -78,7 +78,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
 
   return (
     <div
-      className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-background rounded-lg shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
       onClick={onClick}
     >
       <div className="p-6">
@@ -86,7 +86,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+              <h3 className="text-lg font-semibold text-foreground hover:text-green-600 transition-colors">
                 {contract.title}
               </h3>
               <Badge className={getStatusColor(contract.status)}>
@@ -94,7 +94,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
               </Badge>
               <Badge variant="outline">{contract.budgetType}</Badge>
             </div>
-            <p className="text-gray-600 text-sm line-clamp-2">
+            <p className="text-foreground opacity-85 text-sm line-clamp-2">
               {contract.description}
             </p>
           </div>
@@ -117,14 +117,14 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
             </Avatar>
             <div>
               <div className="flex items-center space-x-2">
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-foreground">
                   {contract.freelancer.name}
                 </p>
                 {contract.freelancer.verified && (
                   <Shield className="w-4 h-4 text-blue-600" />
                 )}
               </div>
-              <div className="flex items-center space-x-3 text-sm text-gray-600">
+              <div className="flex items-center space-x-3 text-sm text-foreground opacity-75">
                 <div className="flex items-center space-x-1">
                   <Star className="w-3 h-3 text-yellow-400 fill-current" />
                   <span>{contract.freelancer.rating}</span>

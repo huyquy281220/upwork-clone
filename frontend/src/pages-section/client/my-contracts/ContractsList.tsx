@@ -41,7 +41,7 @@ export function ContractsList({
 }: ContractsListProps) {
   if (contracts.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+      <div className="bg-background rounded-lg shadow-sm border p-12 text-center">
         <div className="max-w-md mx-auto">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
