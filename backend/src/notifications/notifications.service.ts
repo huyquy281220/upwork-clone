@@ -189,7 +189,7 @@ export class NotificationsService {
         throw new BadRequestException('User does not own this notification');
       }
       if (notification.isRead) {
-        throw new BadRequestException('Notification is already read');
+        return notification;
       }
 
       // Update status
