@@ -10,6 +10,7 @@ import {
   ContractStatus,
   ContractType,
   MilestoneStatus,
+  NotificationType,
   Role,
 } from '@prisma/client';
 import { NotificationsService } from 'src/notifications/notifications.service';
@@ -112,6 +113,7 @@ export class ContractsService {
       await this.notificationsService.notifyContractCreated(
         data.freelancerId,
         job.title,
+        NotificationType.CREATE_CONTRACT,
         tx,
       );
 
@@ -207,14 +209,14 @@ export class ContractsService {
       });
 
       // Create notification for freelancer if status changed
-      if (data.status && data.status !== contract.status) {
-        await this.notificationsService.notifyContractUpdated(
-          contract.freelancerId,
-          contract.job.title,
-          data.status,
-          tx,
-        );
-      }
+      // if (data.status && data.status !== contract.status) {
+      //   await this.notificationsService.notifyContractUpdated(
+      //     contract.freelancerId,
+      //     contract.job.title,
+      //     data.status,
+      //     tx,
+      //   );
+      // }
 
       return updatedContract;
     });

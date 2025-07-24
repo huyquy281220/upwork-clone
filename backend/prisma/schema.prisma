@@ -204,8 +204,8 @@ model Contract {
   reviews      Review[]
 
   startedAt    DateTime
-  completedAt  DateTime
-  canceledAt   DateTime
+  completedAt  DateTime?
+  canceledAt   DateTime?
   
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -397,5 +397,7 @@ enum ContractStatus {
 enum NotificationType {
   APPLY_JOB
   CREATE_CONTRACT
+  CONTRACT_COMPLETED
+  CONTRACT_CANCELLED
   REJECT_PROPOSAL
 }
