@@ -111,7 +111,7 @@ export class ContractsService {
 
       // Create notification for freelancer using notifications service
       await this.notificationsService.notifyContractCreated(
-        data.freelancerId,
+        freelancer.userId,
         job.title,
         NotificationType.CREATE_CONTRACT,
         tx,
