@@ -5,9 +5,7 @@ import { ContractsHeader } from "./ContractsHeader";
 import { ContractsFilters } from "./ContractsFilter";
 import { ContractsList } from "./ContractsList";
 import { ContractDetails } from "./ContractDetails";
-import { useMutation } from "@tanstack/react-query";
 
-// Mock contracts data with both hourly and fixed price types
 const mockContracts = [
   {
     id: 1,
@@ -132,22 +130,6 @@ export function MyContractsPage() {
   const [selectedContract, setSelectedContract] = useState<number | null>(null);
   const [filteredContracts, setFilteredContracts] = useState(mockContracts);
 
-  const mutation = useMutation({
-    mutationFn: async (contractId: number) => {
-      const response = await fetch(
-        `/api/contracts/${contractId}/payment-method`,
-        {
-          method: "POST",
-        }
-      );
-      return response.json();
-    },
-  });
-
-  const handleAddPaymentMethod = (contractId: number) => {
-    mutation.mutate(contractId);
-  };
-
   const handleContractSelect = (contractId: number) => {
     setSelectedContract(contractId);
   };
@@ -201,9 +183,6 @@ export function MyContractsPage() {
         <ContractsHeader contracts={mockContracts} />
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-1">
-            <button onClick={() => handleAddPaymentMethod(1)}>
-              Add Payment Method
-            </button>
             <ContractsFilters onFiltersChange={handleFiltersChange} />
           </div>
           <div className="lg:col-span-3">
