@@ -29,11 +29,25 @@ export class ContractsService {
       // Check if client exists
       const client = await tx.clientProfile.findUnique({
         where: { id: data.clientId },
+        include: { user: true }, // Include the user data
       });
       if (!client) {
         throw new NotFoundException(
           `Client with ID ${data.clientId} not found`,
         );
+      }
+
+      const paymentMethods = await this.stripeService.getListPaymentMethods(
+        client.user.stripeCustomerId,
+      );
+
+      if (paymentMethods.length === 0) {
+        throw new BadRequestException('No payment method found');
+      }
+      const paymentMethod = paymentMethods.find((method) => method.isDefault);
+
+      if (!paymentMethod) {
+        throw new BadRequestException('No default payment method found');
       }
 
       // Check if freelancer exists
@@ -79,6 +93,7 @@ export class ContractsService {
           job: { connect: { id: data.jobId } },
           client: { connect: { id: data.clientId } },
           freelancer: { connect: { id: data.freelancerId } },
+          paymentMethodId: paymentMethod.id,
           title: data.title,
           description: data.description,
           status: ContractStatus.ACTIVE,
