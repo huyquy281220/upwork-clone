@@ -21,7 +21,11 @@ export function AllJobsClient() {
   const { data: session } = useSession();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: jobsPosted, isLoading } = useQuery<JobPostsProps>({
+  const {
+    data: jobsPosted,
+    isLoading,
+    isFetching,
+  } = useQuery<JobPostsProps>({
     queryKey: ["jobs-with-pagination", session?.user.id, currentPage],
     queryFn: () => getPaginatedJobs(session?.user.id ?? "", currentPage, LIMIT),
     enabled: !!session?.user.id,
@@ -31,7 +35,7 @@ export function AllJobsClient() {
     setCurrentPage(page);
   };
 
-  if (!session || isLoading) return <InfiniteLoading />;
+  if (!session || isLoading || !jobsPosted) return <InfiniteLoading />;
 
   return (
     <div className="max-w-[80rem] mx-auto">
@@ -39,12 +43,15 @@ export function AllJobsClient() {
       <JobPostsList
         jobPosts={jobsPosted?.data ?? []}
         currentPage={currentPage}
+        isLoading={isLoading || isFetching}
       />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={jobsPosted?.totalPages ?? 1}
-        onPageChange={handlePageChange}
-      />
+      {jobsPosted?.totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={jobsPosted?.totalPages ?? 1}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }
