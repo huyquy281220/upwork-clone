@@ -9,7 +9,7 @@ import { deleteJobById } from "@/services/jobs";
 import { ClientUser } from "@/types/user";
 import { ModernToast } from "@/components/common/ModernToast";
 import { formatRelativeTime } from "@/utils/getRelativeTime";
-import { formatDraftSaved } from "@/utils/getLocalTime";
+import { formatJobSaved } from "@/utils/getLocalTime";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/useToast";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
@@ -61,7 +61,7 @@ export function JobPostCard({
             Created {formatRelativeTime(createdTime)} by You
           </p>
           <p className="text-sm text-foreground">
-            {formatDraftSaved(createdTime)}
+            {formatJobSaved(createdTime)}
           </p>
         </div>
 
@@ -74,7 +74,7 @@ export function JobPostCard({
               router.push(`/client/job-post/review/${jobId}`);
             }}
           >
-            Edit draft
+            Edit job
           </Button>
           <Button
             variant="outline"

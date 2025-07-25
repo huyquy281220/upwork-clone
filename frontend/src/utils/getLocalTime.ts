@@ -4,7 +4,7 @@ export const getLocalTime = (timezone: string) => {
   return UTC;
 };
 
-export const formatDraftSaved = (timestamp: string) => {
+export const formatJobSaved = (timestamp: string) => {
   const date = new Date(timestamp);
   const options = {
     year: "numeric",
@@ -12,5 +12,5 @@ export const formatDraftSaved = (timestamp: string) => {
     day: "numeric",
   } as const;
   const formattedDate = date.toLocaleDateString("en-US", options);
-  return `Draft - Saved ${formattedDate}`;
+  return `Saved ${formattedDate}`;
 };
