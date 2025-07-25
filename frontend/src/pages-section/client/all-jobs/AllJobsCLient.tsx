@@ -21,7 +21,7 @@ export function AllJobsClient() {
   const { data: session } = useSession();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: jobPosts, isLoading } = useQuery<JobPostsProps>({
+  const { data: jobsPosted, isLoading } = useQuery<JobPostsProps>({
     queryKey: ["jobs-with-pagination", session?.user.id, currentPage],
     queryFn: () => getPaginatedJobs(session?.user.id ?? "", currentPage, LIMIT),
     enabled: !!session?.user.id,
@@ -36,10 +36,13 @@ export function AllJobsClient() {
   return (
     <div className="max-w-[80rem] mx-auto">
       <JobPostsHeader />
-      <JobPostsList jobPosts={jobPosts?.data ?? []} currentPage={currentPage} />
+      <JobPostsList
+        jobPosts={jobsPosted?.data ?? []}
+        currentPage={currentPage}
+      />
       <Pagination
         currentPage={currentPage}
-        totalPages={jobPosts?.totalPages ?? 1}
+        totalPages={jobsPosted?.totalPages ?? 1}
         onPageChange={handlePageChange}
       />
     </div>
