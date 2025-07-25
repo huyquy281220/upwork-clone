@@ -4,14 +4,6 @@ import Link from "next/link";
 export function JobPostsHeader() {
   return (
     <div className="space-y-6">
-      <div className="border-b border-muted-foreground/20">
-        <nav className="flex space-x-8">
-          <button className="py-3 px-1 border-b-2 font-medium text-sm transition-colors border-foreground text-foreground">
-            All job posts
-          </button>
-        </nav>
-      </div>
-
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-semibold text-foreground">
           All job posts
