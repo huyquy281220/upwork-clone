@@ -110,6 +110,9 @@ export const clientNavHeader = [
         label: "Proposals",
         link: "",
       },
+      // {
+      //   label: "Jobs",
+      // },
       {
         label: "Pending offers",
         link: "",
@@ -120,7 +123,7 @@ export const clientNavHeader = [
       },
       {
         label: "Post a job",
-        link: "",
+        link: "/client/job-post/title",
       },
       {
         label: "Search for talent",
