@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
@@ -34,20 +34,28 @@ export function JobPostCard({
   const queryClient = useQueryClient();
   const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
 
-  const handleDeleteJob = async () => {
-    try {
-      const res = await deleteJobById(jobId, user?.clientProfile.id ?? "");
-
+  const deleteJobMutation = useMutation({
+    mutationFn: ({ jobId, clientId }: { jobId: string; clientId: string }) =>
+      deleteJobById(jobId, clientId),
+    onSuccess: (res) => {
       if (res.status === 200) {
         showSuccessToast("Job deleted", "Your job has been deleted", 1000);
-        await queryClient.invalidateQueries({
+        queryClient.invalidateQueries({
           queryKey: ["jobs-with-pagination", session?.user.id, currentPage],
         });
       }
-    } catch (error) {
+    },
+    onError: (error) => {
       console.log(error);
       showErrorToast("Error deleting job", "Please try again", 1000);
-    }
+    },
+  });
+
+  const handleDeleteJob = async () => {
+    deleteJobMutation.mutate({
+      jobId,
+      clientId: user?.clientProfile.id ?? "",
+    });
   };
 
   if (!session) return <InfiniteLoading />;
