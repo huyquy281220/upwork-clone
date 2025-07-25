@@ -1,3 +1,5 @@
+import { PaymentMethodProps } from "./payments";
+import { ReviewProps } from "./review";
 export interface MilestoneProps {
   id: string;
   name: string;
@@ -30,8 +32,8 @@ export interface ContractProps {
   milestones?: MilestoneProps[];
   workLogs: WorkLogProps[];
 
-  // payment:
-  // review:
+  payment: PaymentMethodProps[];
+  review: ReviewProps[];
   createdAt: string;
   updatedAt: string;
   startedAt: string;
