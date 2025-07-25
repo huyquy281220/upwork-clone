@@ -78,7 +78,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
 
   return (
     <div
-      className="bg-background rounded-lg shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-card rounded-lg shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
       onClick={onClick}
     >
       <div className="p-6">
@@ -152,8 +152,12 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
         {/* Progress */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">Progress</span>
-            <span className="text-sm text-gray-600">{contract.progress}%</span>
+            <span className="text-sm font-medium text-foreground opacity-80">
+              Progress
+            </span>
+            <span className="text-sm text-foreground opacity-80">
+              {contract.progress}%
+            </span>
           </div>
           <Progress value={contract.progress} className="h-2" />
         </div>
@@ -161,25 +165,25 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
         {/* Contract Details */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
-            <div className="flex items-center space-x-1 text-gray-600 mb-1">
+            <div className="flex items-center space-x-1 text-foreground opacity-80 mb-1">
               <Calendar className="w-4 h-4" />
               <span>Started</span>
             </div>
-            <p className="font-medium text-gray-900">
+            <p className="font-medium text-foreground">
               {formatDate(contract.startDate)}
             </p>
           </div>
 
           <div>
-            <div className="flex items-center space-x-1 text-gray-600 mb-1">
+            <div className="flex items-center space-x-1 text-foreground opacity-80 mb-1">
               <DollarSign className="w-4 h-4" />
               <span>Budget</span>
             </div>
-            <p className="font-medium text-gray-900">{contract.budget}</p>
+            <p className="font-medium text-foreground">{contract.budget}</p>
           </div>
 
           <div>
-            <div className="flex items-center space-x-1 text-gray-600 mb-1">
+            <div className="flex items-center space-x-1 text-foreground opacity-80 mb-1">
               <DollarSign className="w-4 h-4" />
               <span>Paid</span>
             </div>
@@ -187,7 +191,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
           </div>
 
           <div>
-            <div className="flex items-center space-x-1 text-gray-600 mb-1">
+            <div className="flex items-center space-x-1 text-foreground opacity-80 mb-1">
               <Clock className="w-4 h-4" />
               <span>
                 {contract.budgetType === "Fixed Price" && totalMilestones > 0
@@ -195,7 +199,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
                   : "Type"}
               </span>
             </div>
-            <p className="font-medium text-gray-900">
+            <p className="font-medium text-foreground">
               {contract.budgetType === "Fixed Price" && totalMilestones > 0
                 ? `${completedMilestones}/${totalMilestones}`
                 : contract.budgetType}
