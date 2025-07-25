@@ -30,24 +30,19 @@ export class ContractsController {
 
   @Get()
   findAll(
-    @CurrentUser() user: AuthenticatedUser,
+    @Query('clientId') clientId?: string,
     @Query('skip') skip?: string,
     @Query('take') take?: string,
     @Query('jobId') jobId?: string,
     @Query('status') status?: ContractStatus,
   ) {
-    // Determine clientId or freelancerId based on user role
-    const clientId = user.role === Role.CLIENT ? user.id : undefined;
-    const freelancerId = user.role === Role.FREELANCER ? user.id : undefined;
-
-    return this.contractsService.findAllContracts({
-      skip: skip ? parseInt(skip) : undefined,
-      take: take ? parseInt(take) : undefined,
+    return this.contractsService.findAllContracts(
+      skip ? parseInt(skip) : undefined,
+      take ? parseInt(take) : undefined,
       clientId,
-      freelancerId,
       jobId,
       status,
-    });
+    );
   }
 
   @Get(':id')

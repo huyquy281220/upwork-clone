@@ -11,6 +11,7 @@ import {
   ContractType,
   MilestoneStatus,
   NotificationType,
+  Prisma,
   Role,
 } from '@prisma/client';
 import { NotificationsService } from 'src/notifications/notifications.service';
@@ -121,33 +122,99 @@ export class ContractsService {
     });
   }
 
-  async findAllContracts(params: {
-    skip?: number;
-    take?: number;
-    clientId?: string;
-    freelancerId?: string;
-    jobId?: string;
-    status?: ContractStatus;
-  }) {
-    const { skip, take, clientId, freelancerId, jobId, status } = params;
+  async findAllContracts(
+    skip?: number,
+    take?: number,
+    clientId?: string,
+    jobId?: string,
+    status?: ContractStatus,
+  ) {
+    const where: Prisma.ContractWhereInput = {
+      ...(clientId && { clientId }),
+      ...(jobId && { jobId }),
+      ...(status && { status }),
+    };
 
-    const where: any = {};
-    if (clientId) where.clientId = clientId;
-    if (freelancerId) where.freelancerId = freelancerId;
-    if (jobId) where.jobId = jobId;
-    if (status) where.status = status;
+    if (!clientId) {
+      throw new NotFoundException('Client not found');
+    }
 
-    return this.prisma.contract.findMany({
-      skip,
-      take,
-      where,
-      include: {
-        job: { select: { id: true, title: true, description: true } },
-        client: { select: { userId: true, companyName: true } },
-        freelancer: { select: { userId: true, title: true } },
-      },
-      orderBy: { startedAt: 'desc' },
-    });
+    try {
+      const [contracts, totalCount] = await Promise.all([
+        this.prisma.contract.findMany({
+          skip,
+          take,
+          where,
+          include: {
+            job: {
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                category: true,
+              },
+            },
+            client: {
+              select: {
+                userId: true,
+                companyName: true,
+                user: {
+                  select: {
+                    fullName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+            freelancer: {
+              select: {
+                userId: true,
+                title: true,
+                user: {
+                  select: {
+                    fullName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+            milestone: {
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                amount: true,
+                status: true,
+                dueDate: true,
+              },
+              orderBy: { createdAt: 'asc' },
+            },
+          },
+          orderBy: [
+            { status: 'asc' }, // Active contracts first
+            { startedAt: 'desc' },
+          ],
+        }),
+        // Get total count for pagination
+        this.prisma.contract.count({ where }),
+      ]);
+
+      return {
+        data: contracts,
+        pagination: {
+          page: Math.floor(skip / take) + 1,
+          limit: take,
+          total: totalCount,
+          totalPages: Math.ceil(totalCount / take),
+          hasNext: skip + take < totalCount,
+          hasPrevious: skip > 0,
+        },
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to fetch contracts: ${error.message}`,
+      );
+    }
   }
 
   async findOneContract(id: string, userId: string, userRole: Role) {
