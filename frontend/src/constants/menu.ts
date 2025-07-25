@@ -149,7 +149,7 @@ export const clientNavHeader = [
       },
       {
         label: "Your contracts",
-        link: "",
+        link: "/client/contracts",
       },
       {
         label: "Hourly contract activity",
