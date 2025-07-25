@@ -189,7 +189,7 @@ model Contract {
   jobId        String
   clientId     String
   freelancerId String
-  paymentMethodId String
+  paymentMethodId String?
   status       ContractStatus
   contractType ContractType
   projectDuration String @default("")

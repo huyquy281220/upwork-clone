@@ -8,6 +8,9 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
+  Patch,
+  Headers,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
@@ -19,6 +22,26 @@ import { AuthenticatedUser, Role } from 'src/types';
 @Controller('contracts')
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
+
+  @Patch(':id/payment-method')
+  async addPaymentMethodToContract(
+    @Param('id') contractId: string,
+    @Body() { paymentMethodId }: { paymentMethodId: string },
+    @Headers() headers: any,
+  ) {
+    const clientId = headers['x-user-id'];
+    const userRole = headers['x-user-role'];
+
+    if (userRole !== 'CLIENT') {
+      throw new UnauthorizedException('Only clients can add payment methods');
+    }
+
+    return this.contractsService.addPaymentMethodToContract(
+      contractId,
+      clientId,
+      paymentMethodId,
+    );
+  }
 
   @Post('/create')
   create(

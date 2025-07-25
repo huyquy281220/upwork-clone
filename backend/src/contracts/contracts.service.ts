@@ -15,16 +15,129 @@ import {
   Role,
 } from '@prisma/client';
 import { NotificationsService } from 'src/notifications/notifications.service';
-
+import { StripeService } from 'src/stripe/stripe.service';
 @Injectable()
 export class ContractsService {
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
+    private stripeService: StripeService,
   ) {}
 
+  async addPaymentMethodToContract(
+    contractId: string,
+    clientId: string,
+    paymentMethodId: string,
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      // Verify contract exists and belongs to client
+      const contract = await tx.contract.findUnique({
+        where: { id: contractId },
+        include: {
+          client: {
+            select: {
+              id: true,
+              user: {
+                select: {
+                  stripeCustomerId: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          job: {
+            select: {
+              title: true,
+            },
+          },
+        },
+      });
+
+      if (!contract) {
+        throw new NotFoundException(`Contract with ID ${contractId} not found`);
+      }
+
+      if (contract.clientId !== clientId) {
+        throw new BadRequestException('Client does not own this contract');
+      }
+
+      if (!contract.client.user.stripeCustomerId) {
+        throw new BadRequestException(
+          'Client does not have a Stripe customer account',
+        );
+      }
+
+      // Verify payment method exists and belongs to the client
+      try {
+        const paymentMethod =
+          await this.stripeService.getPaymentMethod(paymentMethodId);
+
+        if (paymentMethod.customer !== contract.client.user.stripeCustomerId) {
+          throw new BadRequestException(
+            'Payment method does not belong to this client',
+          );
+        }
+
+        // Update contract with payment method
+        const updatedContract = await tx.contract.update({
+          where: { id: contractId },
+          data: {
+            paymentMethodId: paymentMethodId,
+            updatedAt: new Date(),
+          },
+          include: {
+            job: { select: { id: true, title: true } },
+            client: {
+              select: {
+                userId: true,
+                companyName: true,
+                user: {
+                  select: {
+                    fullName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+            freelancer: {
+              select: {
+                userId: true,
+                title: true,
+                user: {
+                  select: {
+                    fullName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        return {
+          contract: updatedContract,
+          paymentMethod: {
+            id: paymentMethod.id,
+            type: paymentMethod.type,
+            card: paymentMethod.card
+              ? {
+                  brand: paymentMethod.card.brand,
+                  last4: paymentMethod.card.last4,
+                  exp_month: paymentMethod.card.exp_month,
+                  exp_year: paymentMethod.card.exp_year,
+                }
+              : null,
+          },
+        };
+      } catch (stripeError) {
+        throw new BadRequestException(
+          `Invalid payment method: ${stripeError.message}`,
+        );
+      }
+    });
+  }
+
   async createContract(data: CreateContractDto) {
-    console.log(data);
     return this.prisma.$transaction(async (tx) => {
       // Check if client exists
       const client = await tx.clientProfile.findUnique({
