@@ -32,7 +32,7 @@ export function ContractsHeader({ contracts }: ContractsHeaderProps) {
       : 0;
 
   return (
-    <div className="bg-background rounded-lg shadow-sm border p-6">
+    <div className="bg-card rounded-lg shadow-sm border p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">My Contracts</h1>
