@@ -189,6 +189,7 @@ model Contract {
   jobId        String
   clientId     String
   freelancerId String
+  paymentMethodId String
   status       ContractStatus
   contractType ContractType
   projectDuration String @default("")
@@ -200,6 +201,7 @@ model Contract {
   job          Job               @relation(fields: [jobId], references: [id])
   milestone    Milestone[]       @relation("MilestoneContract")
   workLog      WorkLog[]           @relation("WorkLogContract")
+  paymentMethod PaymentMethod?    @relation(fields: [paymentMethodId], references: [id])
   payments     Payment[]
   reviews      Review[]
 
@@ -315,7 +317,7 @@ model PaymentMethod {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  // Add more fields as needed (e.g., isDefault, country, etc.)
+  contracts Contract[]
 }
 
 model Review {

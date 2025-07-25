@@ -7,9 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+
 interface ProposalsFiltersProps {
   searchQuery: string;
   setSearchQuery: (value: string) => void;
@@ -19,49 +21,119 @@ interface ProposalsFiltersProps {
   setFilterBy: (value: string) => void;
 }
 
+// Constants outside component to prevent re-creation
+const SORT_OPTIONS = [
+  { value: "newest", label: "Newest first" },
+  { value: "oldest", label: "Oldest first" },
+  { value: "rating", label: "Highest rating" },
+  { value: "budget", label: "Budget (high to low)" },
+] as const;
+
+const FILTER_OPTIONS = [
+  { value: "all", label: "All proposals" },
+  { value: "reviewed", label: "Reviewed" },
+  { value: "pending", label: "Pending review" },
+  { value: "shortlisted", label: "Shortlisted" },
+] as const;
+
 export function ProposalsFilters({
   searchQuery,
   setSearchQuery,
   sortBy,
   setSortBy,
+  filterBy,
+  setFilterBy,
 }: ProposalsFiltersProps) {
-  const [searchValue, setSearchValue] = useState(searchQuery);
-  const debouncedSearchValue = useDebounce(searchValue, 300);
+  const [localSearchValue, setLocalSearchValue] = useState(searchQuery);
+  const debouncedSearchValue = useDebounce(localSearchValue, 300);
 
-  useEffect(() => {
+  // Sync debounced value with parent
+  const handleDebouncedSearch = useCallback(() => {
     if (debouncedSearchValue !== searchQuery) {
       setSearchQuery(debouncedSearchValue);
     }
-  }, [debouncedSearchValue, setSearchQuery, searchQuery]);
+  }, [debouncedSearchValue, searchQuery, setSearchQuery]);
 
-  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-  };
+  // Use effect replacement with callback
+  useMemo(() => {
+    handleDebouncedSearch();
+  }, [handleDebouncedSearch]);
+
+  // Memoized event handlers
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setLocalSearchValue(e.target.value);
+    },
+    []
+  );
+
+  const handleSortChange = useCallback(
+    (value: string) => {
+      setSortBy(value);
+    },
+    [setSortBy]
+  );
+
+  const handleFilterChange = useCallback(
+    (value: string) => {
+      setFilterBy(value);
+    },
+    [setFilterBy]
+  );
+
+  // Memoized select options
+  const sortOptions = useMemo(
+    () =>
+      SORT_OPTIONS.map(({ value, label }) => (
+        <SelectItem key={value} value={value}>
+          {label}
+        </SelectItem>
+      )),
+    []
+  );
+
+  const filterOptions = useMemo(
+    () =>
+      FILTER_OPTIONS.map(({ value, label }) => (
+        <SelectItem key={value} value={value}>
+          {label}
+        </SelectItem>
+      )),
+    []
+  );
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      {/* Search Input */}
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-        <input
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+        <Input
           placeholder="Search proposals..."
-          value={searchValue}
-          onChange={handleSearchValue}
-          className="pl-10 w-full h-9 rounded-sm"
+          value={localSearchValue}
+          onChange={handleSearchChange}
+          className="pl-10"
         />
       </div>
 
-      <Select value={sortBy} onValueChange={setSortBy}>
-        <SelectTrigger className="w-full sm:w-48">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="newest">Newest first</SelectItem>
-          <SelectItem value="oldest">Oldest first</SelectItem>
-          <SelectItem value="rate-low">Rate: Low to High</SelectItem>
-          <SelectItem value="rate-high">Rate: High to Low</SelectItem>
-          {/* <SelectItem value="rating">Highest Rated</SelectItem> */}
-        </SelectContent>
-      </Select>
+      {/* Sort By */}
+      <div className="min-w-[180px]">
+        <Select value={sortBy} onValueChange={handleSortChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>{sortOptions}</SelectContent>
+        </Select>
+      </div>
+
+      {/* Filter By */}
+      <div className="min-w-[180px]">
+        <Select value={filterBy} onValueChange={handleFilterChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by" />
+          </SelectTrigger>
+          <SelectContent>{filterOptions}</SelectContent>
+        </Select>
+      </div>
     </div>
   );
 }
