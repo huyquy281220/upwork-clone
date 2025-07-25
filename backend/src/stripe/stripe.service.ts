@@ -138,7 +138,6 @@ export class StripeService {
             data.email,
             data.billing_details.name,
           );
-          console.log(customer);
           await this.prismaService.user.update({
             where: { email: user.email },
             data: { stripeCustomerId: customer.id },
