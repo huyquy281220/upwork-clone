@@ -54,6 +54,37 @@ export interface ContractProps {
   startedAt: string;
   completedAt?: string;
   canceledAt?: string;
+
+  freelancer: {
+    id: string;
+    title: string;
+    user: {
+      verified: boolean;
+      fullName: string;
+      email: string;
+      address: string;
+      avatarUrl: string;
+    };
+  };
+
+  client: {
+    id: string;
+    companyName: string;
+    user: {
+      verified: boolean;
+      fullName: string;
+      email: string;
+      address: string;
+      avatarUrl: string;
+    };
+  };
+
+  job: {
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+  };
 }
 
 export interface CreateContractDto {

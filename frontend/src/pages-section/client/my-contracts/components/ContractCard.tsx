@@ -65,7 +65,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
               <Badge className={getStatusColor(contract.status)}>
                 {contract.status}
               </Badge>
-              <Badge variant="outline">{contract.contractType}</Badge>
+              {/* <Badge variant="outline">{contract.contractType}</Badge> */}
             </div>
             <p className="text-foreground opacity-85 text-sm line-clamp-2">
               {contract.description}
@@ -78,11 +78,11 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
           <div className="flex items-center space-x-3">
             <Avatar className="w-10 h-10">
               <AvatarImage
-                src={contract.freelancer.avatar || "/placeholder.svg"}
-                alt={contract.freelancer.name}
+                src={contract.freelancer.user.avatarUrl || "/placeholder.svg"}
+                alt={contract.freelancer.user.fullName}
               />
               <AvatarFallback>
-                {contract.freelancer.name
+                {contract.freelancer.user.fullName
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
@@ -91,20 +91,20 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
             <div>
               <div className="flex items-center space-x-2">
                 <p className="font-medium text-foreground">
-                  {contract.freelancer.name}
+                  {contract.freelancer.user.fullName}
                 </p>
-                {contract.freelancer.verified && (
+                {contract.freelancer.user.verified && (
                   <Shield className="w-4 h-4 text-blue-600" />
                 )}
               </div>
               <div className="flex items-center space-x-3 text-sm text-foreground opacity-75">
                 <div className="flex items-center space-x-1">
                   <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                  <span>{contract.freelancer.rating}</span>
+                  {/* <span>{contract.freelancer.rating}</span> */}
                 </div>
                 <div className="flex items-center space-x-1">
                   <MapPin className="w-3 h-3" />
-                  <span>{contract.freelancer.location}</span>
+                  <span>{contract.freelancer.user.address}</span>
                 </div>
               </div>
             </div>
