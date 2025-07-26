@@ -26,10 +26,9 @@ export class ContractsService {
 
   async createContract(data: CreateContractDto) {
     return this.prisma.$transaction(async (tx) => {
-      // Check if client exists
       const client = await tx.clientProfile.findUnique({
         where: { id: data.clientId },
-        include: { user: true }, // Include the user data
+        include: { user: true },
       });
       if (!client) {
         throw new NotFoundException(
@@ -50,7 +49,6 @@ export class ContractsService {
         throw new BadRequestException('No default payment method found');
       }
 
-      // Check if freelancer exists
       const freelancer = await tx.freelancerProfile.findUnique({
         where: { id: data.freelancerId },
       });
@@ -60,7 +58,6 @@ export class ContractsService {
         );
       }
 
-      // Check if job exists
       const job = await tx.job.findUnique({
         where: { id: data.jobId },
         include: { client: true },
@@ -69,12 +66,10 @@ export class ContractsService {
         throw new NotFoundException(`Job with ID ${data.jobId} not found`);
       }
 
-      // Check if client owns the job
       if (job.client.id !== data.clientId) {
         throw new BadRequestException('Client does not own this job');
       }
 
-      // Check if contract already exists for this job and freelancer
       const existingContract = await tx.contract.findFirst({
         where: {
           jobId: data.jobId,
@@ -87,7 +82,6 @@ export class ContractsService {
         );
       }
 
-      // Create contract
       const contract = await tx.contract.create({
         data: {
           job: { connect: { id: data.jobId } },
@@ -104,6 +98,45 @@ export class ContractsService {
           startedAt: data.startedAt,
           completedAt: null,
           canceledAt: null,
+        },
+        include: {
+          client: {
+            select: {
+              id: true,
+              companyName: true,
+              user: {
+                select: {
+                  fullName: true,
+                  email: true,
+                  avatarUrl: true,
+                  verified: true,
+                },
+              },
+            },
+          },
+          freelancer: {
+            select: {
+              id: true,
+              title: true,
+              user: {
+                select: {
+                  fullName: true,
+                  email: true,
+                  avatarUrl: true,
+                  verified: true,
+                  address: true,
+                },
+              },
+            },
+          },
+          job: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              category: true,
+            },
+          },
         },
       });
 
