@@ -8,7 +8,7 @@ import { ContractDetails } from "./ContractDetails";
 
 const mockContracts = [
   {
-    id: 1,
+    id: "1",
     title: "E-commerce Website Development",
     freelancer: {
       name: "Sarah Johnson",
@@ -59,7 +59,7 @@ const mockContracts = [
     ],
   },
   {
-    id: 2,
+    id: "2",
     title: "Mobile App UI/UX Design",
     freelancer: {
       name: "Alex Chen",
@@ -81,7 +81,7 @@ const mockContracts = [
     milestones: [], // No milestones for hourly contracts
   },
   {
-    id: 3,
+    id: "3",
     title: "Content Writing for Blog",
     freelancer: {
       name: "Emma Wilson",
@@ -103,7 +103,7 @@ const mockContracts = [
     milestones: [], // Fixed price but no milestones (optional)
   },
   {
-    id: 4,
+    id: "4",
     title: "Data Analysis & Visualization",
     freelancer: {
       name: "Michael Rodriguez",
@@ -127,10 +127,10 @@ const mockContracts = [
 ];
 
 export function MyContractsPage() {
-  const [selectedContract, setSelectedContract] = useState<number | null>(null);
+  const [selectedContract, setSelectedContract] = useState<string | null>(null);
   const [filteredContracts, setFilteredContracts] = useState(mockContracts);
 
-  const handleContractSelect = (contractId: number) => {
+  const handleContractSelect = (contractId: string) => {
     setSelectedContract(contractId);
   };
 
