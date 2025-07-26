@@ -1,37 +1,10 @@
 "use client";
 
+import { ContractProps } from "@/types/contract";
 import { ContractCard } from "./components/ContractCard";
 
-interface Contract {
-  id: number;
-  title: string;
-  freelancer: {
-    name: string;
-    avatar: string;
-    rating: number;
-    location: string;
-    verified: boolean;
-  };
-  status: string;
-  startDate: string;
-  budget: string;
-  budgetType: string;
-  hourlyRate: string | null;
-  totalPaid: string;
-  progress: number;
-  category: string;
-  description: string;
-  milestones: Array<{
-    id: number;
-    title: string;
-    amount: string;
-    status: string;
-    dueDate: string;
-  }>;
-}
-
 interface ContractsListProps {
-  contracts: Contract[];
+  contracts: ContractProps[];
   onContractSelect: (contractId: number) => void;
 }
 

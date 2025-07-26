@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Calendar,
@@ -13,37 +13,10 @@ import {
   Clock,
   Shield,
 } from "lucide-react";
-
-interface Contract {
-  id: number;
-  title: string;
-  freelancer: {
-    name: string;
-    avatar: string;
-    rating: number;
-    location: string;
-    verified: boolean;
-  };
-  status: string;
-  startDate: string;
-  budget: string;
-  budgetType: string;
-  hourlyRate: string | null;
-  totalPaid: string;
-  progress: number;
-  category: string;
-  description: string;
-  milestones: Array<{
-    id: number;
-    title: string;
-    amount: string;
-    status: string;
-    dueDate: string;
-  }>;
-}
+import { ContractProps, ContractType, MilestoneStatus } from "@/types/contract";
 
 interface ContractCardProps {
-  contract: Contract;
+  contract: ContractProps;
   onClick: () => void;
 }
 
@@ -71,10 +44,10 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
     });
   };
 
-  const completedMilestones = contract.milestones.filter(
-    (m) => m.status === "Completed"
+  const completedMilestones = contract.milestones?.filter(
+    (m) => m.status === MilestoneStatus.COMPLETED
   ).length;
-  const totalMilestones = contract.milestones.length;
+  const totalMilestones = contract.milestones?.length;
 
   return (
     <div
@@ -92,7 +65,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
               <Badge className={getStatusColor(contract.status)}>
                 {contract.status}
               </Badge>
-              <Badge variant="outline">{contract.budgetType}</Badge>
+              <Badge variant="outline">{contract.contractType}</Badge>
             </div>
             <p className="text-foreground opacity-85 text-sm line-clamp-2">
               {contract.description}
@@ -150,7 +123,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
         </div>
 
         {/* Progress */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-foreground opacity-80">
               Progress
@@ -160,7 +133,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
             </span>
           </div>
           <Progress value={contract.progress} className="h-2" />
-        </div>
+        </div> */}
 
         {/* Contract Details */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -170,7 +143,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
               <span>Started</span>
             </div>
             <p className="font-medium text-foreground">
-              {formatDate(contract.startDate)}
+              {formatDate(contract.startedAt)}
             </p>
           </div>
 
@@ -179,7 +152,12 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
               <DollarSign className="w-4 h-4" />
               <span>Budget</span>
             </div>
-            <p className="font-medium text-foreground">{contract.budget}</p>
+            <p className="font-medium text-foreground">
+              {contract.contractType === ContractType.FIXED_PRICE &&
+              contract.totalPrice
+                ? `$${contract.totalPrice}`
+                : `$${contract.hourlyRate}/hr`}
+            </p>
           </div>
 
           <div>
@@ -187,22 +165,26 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
               <DollarSign className="w-4 h-4" />
               <span>Paid</span>
             </div>
-            <p className="font-medium text-green-600">{contract.totalPaid}</p>
+            {/* <p className="font-medium text-green-600">{contract.totalPaid}</p> */}
           </div>
 
           <div>
             <div className="flex items-center space-x-1 text-foreground opacity-80 mb-1">
               <Clock className="w-4 h-4" />
               <span>
-                {contract.budgetType === "Fixed Price" && totalMilestones > 0
+                {contract.contractType === ContractType.FIXED_PRICE &&
+                totalMilestones &&
+                totalMilestones > 0
                   ? "Milestones"
                   : "Type"}
               </span>
             </div>
             <p className="font-medium text-foreground">
-              {contract.budgetType === "Fixed Price" && totalMilestones > 0
+              {contract.contractType === ContractType.FIXED_PRICE &&
+              totalMilestones &&
+              totalMilestones > 0
                 ? `${completedMilestones}/${totalMilestones}`
-                : contract.budgetType}
+                : contract.contractType}
             </p>
           </div>
         </div>

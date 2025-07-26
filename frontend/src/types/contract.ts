@@ -1,11 +1,26 @@
 import { PaymentMethodProps } from "./payments";
 import { ReviewProps } from "./review";
+
+export enum MilestoneStatus {
+  PENDING = "PENDING",
+  IN_PROGRESS = "IN_PROGRESS",
+  SUBMITTED = "SUBMITTED",
+  COMPLETED = "COMPLETED",
+  CANCELED = "CANCELED",
+}
+
+export enum ContractType {
+  FIXED_PRICE = "FIXED_PRICE",
+  HOURLY = "HOURLY",
+}
+
 export interface MilestoneProps {
   id: string;
   name: string;
   description: string;
   amount: string;
   dueDate: string;
+  status: MilestoneStatus;
 }
 
 export interface WorkLogProps {
