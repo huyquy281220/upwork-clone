@@ -5,7 +5,7 @@ import { ContractCard } from "./components/ContractCard";
 
 interface ContractsListProps {
   contracts: ContractProps[];
-  onContractSelect: (contractId: number) => void;
+  onContractSelect: (contractId: string) => void;
 }
 
 export function ContractsList({
