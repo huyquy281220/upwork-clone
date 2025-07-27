@@ -11,6 +11,7 @@ import useFilter from "@/hooks/useFilter";
 import { ContractProps } from "@/types/contract";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { getPaginatedContracts } from "@/services/contract";
+import { Pagination } from "@/components/common/Pagination";
 
 type PaginatedContractsProps = {
   contracts: ContractProps[];
@@ -96,6 +97,14 @@ export function MyContractsPage() {
               contracts={paginatedContracts.contracts ?? []}
               onContractSelect={handleContractSelect}
             />
+
+            {paginatedContracts.contracts.length >= LIMIT && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={paginatedContracts.totalPage}
+                onPageChange={setCurrentPage}
+              />
+            )}
           </div>
         </div>
       </div>

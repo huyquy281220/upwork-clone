@@ -24,37 +24,10 @@ import {
   Eye,
   Trash2,
 } from "lucide-react";
-
-interface Contract {
-  id: number;
-  title: string;
-  freelancer: {
-    name: string;
-    avatar: string;
-    rating: number;
-    location: string;
-    verified: boolean;
-  };
-  status: string;
-  startDate: string;
-  budget: string;
-  budgetType: string;
-  hourlyRate: string | null;
-  totalPaid: string;
-  progress: number;
-  category: string;
-  description: string;
-  milestones: Array<{
-    id: number;
-    title: string;
-    amount: string;
-    status: string;
-    dueDate: string;
-  }>;
-}
+import { ContractProps } from "@/types/contract";
 
 interface ContractFilesProps {
-  contract: Contract;
+  contract: ContractProps;
 }
 
 // Mock files data
@@ -282,7 +255,7 @@ export function ContractFiles({ contract }: ContractFilesProps) {
                         <span>
                           {file.uploadedBy === "client"
                             ? "You"
-                            : contract.freelancer.name}
+                            : contract.freelancer.user.fullName}
                         </span>
                       </div>
                       <div className="flex items-center space-x-1">
