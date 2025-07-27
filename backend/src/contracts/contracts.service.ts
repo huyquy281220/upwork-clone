@@ -249,14 +249,8 @@ export class ContractsService {
 
       return {
         data: contracts,
-        pagination: {
-          page: Math.floor(skip / take) + 1,
-          limit: take,
-          total: totalCount,
-          totalPages: Math.ceil(totalCount / take),
-          hasNext: skip + take < totalCount,
-          hasPrevious: skip > 0,
-        },
+        totalPage: Math.ceil(totalCount / take),
+        totalContracts: totalCount,
       };
     } catch (error) {
       throw new BadRequestException(

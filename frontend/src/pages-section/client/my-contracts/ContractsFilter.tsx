@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,54 +15,17 @@ import { Search, Filter, X } from "lucide-react";
 import useFilter from "@/hooks/useFilter";
 
 interface ContractsFiltersProps {
-  onFiltersChange: (filters: {
-    search: string;
-    status: string;
-    contractType: string;
-    dateRange: string;
-  }) => void;
+  onFiltersChange: (key: string, value: string) => void;
+  resetFilters: () => void;
 }
 
-export function ContractsFilters({ onFiltersChange }: ContractsFiltersProps) {
-  const { getFilter, setFilter, resetFilters } = useFilter({
-    search: "",
-    status: "all",
-    contractType: "all",
-    dateRange: "all",
-  });
-
-  // Get current filter values
-  const filters = {
-    search: getFilter("search"),
-    status: getFilter("status"),
-    contractType: getFilter("contractType"),
-    dateRange: getFilter("dateRange"),
-  };
-
-  // Notify parent when filters change
-  useEffect(() => {
-    onFiltersChange(filters);
-  }, [
-    filters.search,
-    filters.status,
-    filters.contractType,
-    filters.dateRange,
-    onFiltersChange,
-  ]);
-
-  const handleFilterChange = (key: keyof typeof filters, value: string) => {
-    setFilter(key, value);
-  };
-
+export function ContractsFilters({
+  onFiltersChange,
+  resetFilters,
+}: ContractsFiltersProps) {
   const clearFilters = () => {
     resetFilters();
   };
-
-  const hasActiveFilters =
-    filters.search ||
-    filters.status !== "all" ||
-    filters.contractType !== "all" ||
-    filters.dateRange !== "all";
 
   return (
     <Card>
