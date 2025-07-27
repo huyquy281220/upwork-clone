@@ -15,10 +15,11 @@ export const getContracts = async (
   take: number,
   searchQuery?: string,
   type?: string,
+  date?: string,
   status?: string
 ) => {
   const response = await api.get(
-    `${apiURL}/contracts?clientId=${userId}&skip=${skip}&take=${take}&searchQuery=${searchQuery}&type=${type}&status=${status}`
+    `${apiURL}/contracts?clientId=${userId}&skip=${skip}&take=${take}&searchQuery=${searchQuery}&type=${type}&date=${date}&status=${status}`
   );
 
   return response.data;
