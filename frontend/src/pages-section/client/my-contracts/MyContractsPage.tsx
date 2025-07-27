@@ -98,7 +98,7 @@ export function MyContractsPage() {
               onContractSelect={handleContractSelect}
             />
 
-            {paginatedContracts.contracts.length >= LIMIT && (
+            {paginatedContracts.contracts?.length >= LIMIT && (
               <Pagination
                 currentPage={currentPage}
                 totalPages={paginatedContracts.totalPage}
