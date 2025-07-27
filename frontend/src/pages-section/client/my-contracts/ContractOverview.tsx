@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,12 +39,12 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
   const isHourlyContract = contract.contractType === ContractType.HOURLY;
   const hasMilestones =
     contract.contractType === ContractType.FIXED_PRICE &&
-    contract.milestones?.length > 0;
+    (contract.milestones?.length ?? 0) > 0;
 
   const completedMilestones = contract.milestones?.filter(
     (m) => m.status === MilestoneStatus.COMPLETED
   ).length;
-  const totalMilestones = contract.milestones?.length;
+  // const totalMilestones = contract.milestones?.length;
   const nextMilestone = contract.milestones?.find(
     (m) =>
       m.status === MilestoneStatus.IN_PROGRESS ||

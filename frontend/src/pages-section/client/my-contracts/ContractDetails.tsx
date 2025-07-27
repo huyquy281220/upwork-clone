@@ -52,7 +52,7 @@ export function ContractDetails({ contract, onBack }: ContractDetailsProps) {
 
   const hasMilestones =
     contract.contractType === ContractType.FIXED_PRICE &&
-    contract.milestones?.length > 0;
+    (contract.milestones?.length ?? 0) > 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
