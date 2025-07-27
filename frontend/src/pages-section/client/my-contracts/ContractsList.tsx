@@ -31,10 +31,10 @@ export function ContractsList({
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-foreground mb-2">
             No contracts found
           </h3>
-          <p className="text-gray-600">
+          <p className="text-foreground opacity-85">
             Try adjusting your filters or create a new contract to get started.
           </p>
         </div>

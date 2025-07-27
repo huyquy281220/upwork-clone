@@ -17,7 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Search, Filter, X } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useState } from "react";
 
