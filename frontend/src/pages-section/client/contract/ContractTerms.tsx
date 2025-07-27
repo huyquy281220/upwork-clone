@@ -30,6 +30,8 @@ interface ContractTermsProps {
   setContractTitle: (title: string) => void;
   description: string;
   setDescription: (description: string) => void;
+  clientBudget: number;
+  setClientBudget: (budget: number) => void;
 }
 
 export function ContractTerms({
@@ -49,6 +51,8 @@ export function ContractTerms({
   setContractTitle,
   description,
   setDescription,
+  clientBudget,
+  setClientBudget,
 }: ContractTermsProps) {
   return (
     <Card>
@@ -95,6 +99,29 @@ export function ContractTerms({
               <Label htmlFor="fixed">Fixed Price</Label>
             </div>
           </div>
+        </div>
+
+        {/* Budget */}
+        <div>
+          <Label htmlFor="client-budget">Your Budget</Label>
+          <div className="relative mt-1">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+              $
+            </span>
+            <Input
+              id="client-budget"
+              type="number"
+              value={clientBudget}
+              onChange={(e) => setClientBudget(+e.target.value)}
+              placeholder="0.00"
+              className="pl-8"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            {contractType === "HOURLY"
+              ? "Your maximum budget for this project"
+              : "Your budget for this fixed-price project"}
+          </p>
         </div>
 
         {/* Hourly Contract Fields */}
