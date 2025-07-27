@@ -13,37 +13,10 @@ import {
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
-
-interface Contract {
-  id: number;
-  title: string;
-  freelancer: {
-    name: string;
-    avatar: string;
-    rating: number;
-    location: string;
-    verified: boolean;
-  };
-  status: string;
-  startDate: string;
-  budget: string;
-  budgetType: string;
-  hourlyRate: string | null;
-  totalPaid: string;
-  progress: number;
-  category: string;
-  description: string;
-  milestones: Array<{
-    id: number;
-    title: string;
-    amount: string;
-    status: string;
-    dueDate: string;
-  }>;
-}
+import { ContractProps, ContractType } from "@/types/contract";
 
 interface ContractPaymentsProps {
-  contract: Contract;
+  contract: ContractProps;
 }
 
 // Mock payment data
@@ -114,7 +87,7 @@ const mockHourlyPayments = [
 ];
 
 export function ContractPayments({ contract }: ContractPaymentsProps) {
-  const isHourlyContract = contract.budgetType === "Hourly";
+  const isHourlyContract = contract.contractType === ContractType.HOURLY;
   const payments = isHourlyContract ? mockHourlyPayments : mockPayments;
 
   const formatDate = (dateString: string) => {
@@ -206,17 +179,17 @@ export function ContractPayments({ contract }: ContractPaymentsProps) {
                   Budget Progress
                 </span>
                 <span className="text-sm text-gray-600">
-                  ${totalPaid.toLocaleString()} / {contract.budget}
+                  {/* ${totalPaid.toLocaleString()} / {contract.budget} */}
                 </span>
               </div>
-              <Progress
+              {/* <Progress
                 value={
                   (totalPaid /
                     Number.parseFloat(contract.budget.replace(/[$,]/g, ""))) *
                   100
                 }
                 className="h-3"
-              />
+              /> */}
             </div>
           )}
         </CardContent>
