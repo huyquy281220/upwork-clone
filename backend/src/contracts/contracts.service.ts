@@ -174,13 +174,23 @@ export class ContractsService {
     skip?: number,
     take?: number,
     clientId?: string,
-    jobId?: string,
-    status?: ContractStatus,
+    status?: ContractStatus | 'all',
+    searchQuery?: string,
+    type?: string,
+    date?: string,
   ) {
     const where: Prisma.ContractWhereInput = {
       ...(clientId && { clientId }),
-      ...(jobId && { jobId }),
-      ...(status && { status }),
+      ...(status && status !== 'all' && { status }),
+      ...(searchQuery && {
+        OR: [{ title: { contains: searchQuery, mode: 'insensitive' } }],
+      }),
+      ...(type && type !== 'all' && { contractType: type as ContractType }),
+      ...(date && {
+        createdAt: {
+          gte: new Date(date),
+        },
+      }),
     };
 
     if (!clientId) {

@@ -37,14 +37,19 @@ export class ContractsController {
     @Query('skip') skip?: string,
     @Query('take') take?: string,
     @Query('jobId') jobId?: string,
+    @Query('searchQuery') searchQuery?: string,
+    @Query('type') type?: string,
+    @Query('date') date?: string,
     @Query('status') status?: ContractStatus,
   ) {
     return this.contractsService.findAllContracts(
       skip ? parseInt(skip) : undefined,
       take ? parseInt(take) : undefined,
       clientId,
-      jobId,
       status,
+      searchQuery,
+      type,
+      date,
     );
   }
 
