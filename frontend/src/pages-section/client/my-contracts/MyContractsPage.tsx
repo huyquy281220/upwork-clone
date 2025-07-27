@@ -5,6 +5,8 @@ import { ContractsHeader } from "./ContractsHeader";
 import { ContractsFilters } from "./ContractsFilter";
 import { ContractsList } from "./ContractsList";
 import { ContractDetails } from "./ContractDetails";
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 
 const mockContracts = [
   {
@@ -127,8 +129,15 @@ const mockContracts = [
 ];
 
 export function MyContractsPage() {
+  const { data: session } = useSession();
   const [selectedContract, setSelectedContract] = useState<string | null>(null);
   const [filteredContracts, setFilteredContracts] = useState(mockContracts);
+
+  const { data: contracts, isLoading } = useQuery({
+    queryKey: ["contracts", session?.user?.id],
+    queryFn: () => {},
+    enabled: !!session?.user?.id,
+  });
 
   const handleContractSelect = (contractId: string) => {
     setSelectedContract(contractId);
@@ -139,7 +148,6 @@ export function MyContractsPage() {
   };
 
   const handleFiltersChange = (filters: any) => {
-    // Apply filters logic here
     let filtered = mockContracts;
 
     if (filters.status && filters.status !== "all") {
