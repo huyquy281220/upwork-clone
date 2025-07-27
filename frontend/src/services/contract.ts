@@ -8,3 +8,18 @@ export const createContract = async (data: CreateContractDto) => {
 
   return response.data;
 };
+
+export const getContracts = async (
+  userId: string,
+  skip: number,
+  take: number,
+  searchQuery?: string,
+  type?: string,
+  status?: string
+) => {
+  const response = await api.get(
+    `${apiURL}/contracts?clientId=${userId}&skip=${skip}&take=${take}&searchQuery=${searchQuery}&type=${type}&status=${status}`
+  );
+
+  return response.data;
+};
