@@ -12,19 +12,34 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, Filter, X } from "lucide-react";
-import useFilter from "@/hooks/useFilter";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useState } from "react";
 
 interface ContractsFiltersProps {
   onFiltersChange: (key: string, value: string) => void;
   resetFilters: () => void;
+  status: string;
+  contractType: string;
+  dateRange: string;
 }
 
 export function ContractsFilters({
   onFiltersChange,
   resetFilters,
+  status,
+  contractType,
+  dateRange,
 }: ContractsFiltersProps) {
+  const [searchValue, setSearchValue] = useState("");
+  const debouncedValue = useDebounce(searchValue, 500);
+
   const clearFilters = () => {
     resetFilters();
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchValue(value);
+    onFiltersChange("search", debouncedValue);
   };
 
   return (
@@ -35,12 +50,11 @@ export function ContractsFilters({
             <Filter className="w-5 h-5 mr-2" />
             Filters
           </CardTitle>
-          {hasActiveFilters && (
-            <Button variant="ghost" size="sm" onClick={clearFilters}>
-              <X className="w-4 h-4 mr-1" />
-              Clear
-            </Button>
-          )}
+
+          <Button variant="ghost" size="sm" onClick={clearFilters}>
+            <X className="w-4 h-4 mr-1" />
+            Clear
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -52,8 +66,8 @@ export function ContractsFilters({
             <Input
               id="search"
               placeholder="Search contracts..."
-              value={filters.search}
-              onChange={(e) => handleFilterChange("search", e.target.value)}
+              value={searchValue}
+              onChange={(e) => handleSearch(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -63,8 +77,8 @@ export function ContractsFilters({
         <div>
           <Label htmlFor="status">Status</Label>
           <Select
-            value={filters.status}
-            onValueChange={(value) => handleFilterChange("status", value)}
+            value={status}
+            onValueChange={(value) => onFiltersChange("status", value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Statuses" />
@@ -83,8 +97,8 @@ export function ContractsFilters({
         <div>
           <Label htmlFor="contractType">Contract Type</Label>
           <Select
-            value={filters.contractType}
-            onValueChange={(value) => handleFilterChange("contractType", value)}
+            value={contractType}
+            onValueChange={(value) => onFiltersChange("contractType", value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Types" />
@@ -101,8 +115,8 @@ export function ContractsFilters({
         <div>
           <Label htmlFor="dateRange">Date Range</Label>
           <Select
-            value={filters.dateRange}
-            onValueChange={(value) => handleFilterChange("dateRange", value)}
+            value={dateRange}
+            onValueChange={(value) => onFiltersChange("dateRange", value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Time" />

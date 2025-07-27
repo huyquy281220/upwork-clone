@@ -23,19 +23,29 @@ export async function middleware(request: NextRequest) {
 
   // Check if user is authenticated
   const token = await getToken({ req: request });
+  console.log(token);
 
   if (!token) {
     // Redirect to sign-in if not authenticated
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
-  // Role-based access
+  // Block unauthorized role access
   if (path.startsWith("/client") && token.role !== "CLIENT") {
     return NextResponse.redirect(new URL("/freelancer/find-work", request.url));
   }
 
   if (path.startsWith("/freelancer") && token.role !== "FREELANCER") {
     return NextResponse.redirect(new URL("/client/dashboard", request.url));
+  }
+
+  // Redirect base paths to default dashboards
+  if (path === "/client" && token.role === "CLIENT") {
+    return NextResponse.redirect(new URL("/client/dashboard", request.url));
+  }
+
+  if (path === "/freelancer" && token.role === "FREELANCER") {
+    return NextResponse.redirect(new URL("/freelancer/find-work", request.url));
   }
 
   return NextResponse.next();

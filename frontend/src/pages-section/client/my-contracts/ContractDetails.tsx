@@ -17,37 +17,10 @@ import { ContractOverview } from "./ContractOverview";
 import { ContractMilestones } from "./ContractMilestone";
 import { ContractPayments } from "./ContractPayment";
 import { ContractFiles } from "./ContractFile";
-
-interface Contract {
-  id: number;
-  title: string;
-  freelancer: {
-    name: string;
-    avatar: string;
-    rating: number;
-    location: string;
-    verified: boolean;
-  };
-  status: string;
-  startDate: string;
-  budget: string;
-  budgetType: string;
-  hourlyRate: string | null;
-  totalPaid: string;
-  progress: number;
-  category: string;
-  description: string;
-  milestones: Array<{
-    id: number;
-    title: string;
-    amount: string;
-    status: string;
-    dueDate: string;
-  }>;
-}
+import { ContractProps, ContractType } from "@/types/contract";
 
 interface ContractDetailsProps {
-  contract: Contract;
+  contract: ContractProps;
   onBack: () => void;
 }
 
@@ -78,7 +51,8 @@ export function ContractDetails({ contract, onBack }: ContractDetailsProps) {
   };
 
   const hasMilestones =
-    contract.budgetType === "Fixed Price" && contract.milestones.length > 0;
+    contract.contractType === ContractType.FIXED_PRICE &&
+    contract.milestones?.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -98,7 +72,7 @@ export function ContractDetails({ contract, onBack }: ContractDetailsProps) {
                   <Badge className={getStatusColor(contract.status)}>
                     {contract.status}
                   </Badge>
-                  <Badge variant="outline">{contract.budgetType}</Badge>
+                  <Badge variant="outline">{contract.contractType}</Badge>
                 </div>
               </div>
             </div>
@@ -109,11 +83,11 @@ export function ContractDetails({ contract, onBack }: ContractDetailsProps) {
             <div className="flex items-center space-x-4">
               <Avatar className="w-12 h-12">
                 <AvatarImage
-                  src={contract.freelancer.avatar || "/placeholder.svg"}
-                  alt={contract.freelancer.name}
+                  src={contract.freelancer.user.avatarUrl || "/placeholder.svg"}
+                  alt={contract.freelancer.user.fullName}
                 />
                 <AvatarFallback>
-                  {contract.freelancer.name
+                  {contract.freelancer.user.fullName
                     .split(" ")
                     .map((n) => n[0])
                     .join("")}
@@ -122,20 +96,20 @@ export function ContractDetails({ contract, onBack }: ContractDetailsProps) {
               <div>
                 <div className="flex items-center space-x-2">
                   <h2 className="text-lg font-semibold text-gray-900">
-                    {contract.freelancer.name}
+                    {contract.freelancer.user.fullName}
                   </h2>
-                  {contract.freelancer.verified && (
+                  {contract.freelancer.user.verified && (
                     <Shield className="w-5 h-5 text-blue-600" />
                   )}
                 </div>
                 <div className="flex items-center space-x-4 text-sm text-gray-600">
                   <div className="flex items-center space-x-1">
                     <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span>{contract.freelancer.rating}</span>
+                    {/* <span>{contract.freelancer.user.rating}</span> */}
                   </div>
                   <div className="flex items-center space-x-1">
                     <MapPin className="w-4 h-4" />
-                    <span>{contract.freelancer.location}</span>
+                    <span>{contract.freelancer.user.address}</span>
                   </div>
                 </div>
               </div>
@@ -148,7 +122,7 @@ export function ContractDetails({ contract, onBack }: ContractDetailsProps) {
                   <span>Started</span>
                 </div>
                 <p className="font-medium text-gray-900">
-                  {formatDate(contract.startDate)}
+                  {formatDate(contract.startedAt)}
                 </p>
               </div>
               <div className="text-center">
@@ -156,7 +130,7 @@ export function ContractDetails({ contract, onBack }: ContractDetailsProps) {
                   <DollarSign className="w-4 h-4" />
                   <span>Budget</span>
                 </div>
-                <p className="font-medium text-gray-900">{contract.budget}</p>
+                {/* <p className="font-medium text-gray-900">{contract.budget}</p> */}
               </div>
               <div className="text-center">
                 <div className="flex items-center space-x-1 text-gray-600 mb-1">
@@ -164,7 +138,7 @@ export function ContractDetails({ contract, onBack }: ContractDetailsProps) {
                   <span>Paid</span>
                 </div>
                 <p className="font-medium text-gray-900">
-                  {contract.totalPaid}
+                  {/* {contract.totalPaid} */}
                 </p>
               </div>
             </div>

@@ -9,7 +9,7 @@ export const createContract = async (data: CreateContractDto) => {
   return response.data;
 };
 
-export const getContracts = async (
+export const getPaginatedContracts = async (
   userId: string,
   skip: number,
   take: number,

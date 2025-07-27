@@ -1,17 +1,10 @@
 "use client";
 
+import { ContractProps } from "@/types/contract";
 import { TrendingUp, DollarSign, Clock, CheckCircle } from "lucide-react";
 
-interface Contract {
-  id: number;
-  status: string;
-  budgetType: string;
-  totalPaid: string;
-  progress: number;
-}
-
 interface ContractsHeaderProps {
-  contracts: Contract[];
+  contracts: ContractProps[];
 }
 
 export function ContractsHeader({ contracts }: ContractsHeaderProps) {
@@ -19,17 +12,17 @@ export function ContractsHeader({ contracts }: ContractsHeaderProps) {
   const completedContracts = contracts.filter(
     (c) => c.status === "Completed"
   ).length;
-  const totalSpent = contracts.reduce((sum, contract) => {
-    const amount = Number.parseFloat(contract.totalPaid.replace(/[$,]/g, ""));
-    return sum + amount;
-  }, 0);
-  const avgProgress =
-    contracts.length > 0
-      ? Math.round(
-          contracts.reduce((sum, contract) => sum + contract.progress, 0) /
-            contracts.length
-        )
-      : 0;
+  // const totalSpent = contracts.reduce((sum, contract) => {
+  //   const amount = Number.parseFloat(contract.totalPaid.replace(/[$,]/g, ""));
+  //   return sum + amount;
+  // }, 0);
+  // const avgProgress =
+  //   contracts.length > 0
+  //     ? Math.round(
+  //         contracts.reduce((sum, contract) => sum + contract.progress, 0) /
+  //           contracts.length
+  //       )
+  //     : 0;
 
   return (
     <div className="bg-card rounded-lg shadow-sm border p-6">
@@ -74,7 +67,7 @@ export function ContractsHeader({ contracts }: ContractsHeaderProps) {
             <div>
               <p className="text-sm font-medium text-purple-600">Total Spent</p>
               <p className="text-2xl font-bold text-purple-900">
-                ${totalSpent.toLocaleString()}
+                {/* ${totalSpent.toLocaleString()} */}
               </p>
             </div>
             <DollarSign className="w-8 h-8 text-purple-600" />
@@ -88,7 +81,7 @@ export function ContractsHeader({ contracts }: ContractsHeaderProps) {
                 Avg Progress
               </p>
               <p className="text-2xl font-bold text-orange-900">
-                {avgProgress}%
+                {/* {avgProgress}% */}
               </p>
             </div>
             <TrendingUp className="w-8 h-8 text-orange-600" />

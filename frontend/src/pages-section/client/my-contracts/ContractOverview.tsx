@@ -16,37 +16,11 @@ import {
   X,
   Timer,
 } from "lucide-react";
-
-interface Contract {
-  id: number;
-  title: string;
-  freelancer: {
-    name: string;
-    avatar: string;
-    rating: number;
-    location: string;
-    verified: boolean;
-  };
-  status: string;
-  startDate: string;
-  budget: string;
-  budgetType: string;
-  hourlyRate: string | null;
-  totalPaid: string;
-  progress: number;
-  category: string;
-  description: string;
-  milestones: Array<{
-    id: number;
-    title: string;
-    amount: string;
-    status: string;
-    dueDate: string;
-  }>;
-}
+import { ContractProps, ContractType, MilestoneStatus } from "@/types/contract";
+import { ContractStatus } from "@/types/user";
 
 interface ContractOverviewProps {
-  contract: Contract;
+  contract: ContractProps;
 }
 
 export function ContractOverview({ contract }: ContractOverviewProps) {
@@ -58,16 +32,19 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
     });
   };
 
-  const isHourlyContract = contract.budgetType === "Hourly";
+  const isHourlyContract = contract.contractType === ContractType.HOURLY;
   const hasMilestones =
-    contract.budgetType === "Fixed Price" && contract.milestones.length > 0;
+    contract.contractType === ContractType.FIXED_PRICE &&
+    contract.milestones?.length > 0;
 
-  const completedMilestones = contract.milestones.filter(
-    (m) => m.status === "Completed"
+  const completedMilestones = contract.milestones?.filter(
+    (m) => m.status === MilestoneStatus.COMPLETED
   ).length;
-  const totalMilestones = contract.milestones.length;
-  const nextMilestone = contract.milestones.find(
-    (m) => m.status === "In Progress" || m.status === "Pending"
+  const totalMilestones = contract.milestones?.length;
+  const nextMilestone = contract.milestones?.find(
+    (m) =>
+      m.status === MilestoneStatus.IN_PROGRESS ||
+      m.status === MilestoneStatus.PENDING
   );
 
   // Mock data for hourly contracts
@@ -88,7 +65,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
               {contract.description}
             </p>
             <div className="mt-4">
-              <Badge variant="outline">{contract.category}</Badge>
+              {/* <Badge variant="outline">{contract.category}</Badge> */}
             </div>
           </CardContent>
         </Card>
@@ -109,10 +86,10 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                     Overall Progress
                   </span>
                   <span className="text-sm text-gray-600">
-                    {contract.progress}%
+                    {/* {contract.progress}% */}
                   </span>
                 </div>
-                <Progress value={contract.progress} className="h-3" />
+                {/* <Progress value={contract.progress} className="h-3" /> */}
               </div>
 
               {isHourlyContract ? (
@@ -146,7 +123,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
                     <Target className="w-8 h-8 text-blue-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-blue-600">
-                      {totalMilestones - completedMilestones}
+                      {/* {totalMilestones - completedMilestones} */}
                     </p>
                     <p className="text-sm text-gray-600">
                       Remaining Milestones
@@ -179,7 +156,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-medium text-gray-900">
-                    {nextMilestone.title}
+                    {/* {nextMilestone.title} */}
                   </h3>
                   <p className="text-sm text-gray-600">
                     Due: {formatDate(nextMilestone.dueDate)}
@@ -191,7 +168,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                   </p>
                   <Badge
                     variant={
-                      nextMilestone.status === "In Progress"
+                      nextMilestone.status === MilestoneStatus.IN_PROGRESS
                         ? "default"
                         : "secondary"
                     }
@@ -220,7 +197,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                 <span className="text-sm text-gray-600">Start Date</span>
               </div>
               <span className="text-sm font-medium">
-                {formatDate(contract.startDate)}
+                {formatDate(contract.startedAt)}
               </span>
             </div>
 
@@ -229,7 +206,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                 <DollarSign className="w-4 h-4 text-gray-500" />
                 <span className="text-sm text-gray-600">Budget</span>
               </div>
-              <span className="text-sm font-medium">{contract.budget}</span>
+              {/* <span className="text-sm font-medium">{contract.budget}</span> */}
             </div>
 
             <div className="flex items-center justify-between">
@@ -237,7 +214,9 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                 <Clock className="w-4 h-4 text-gray-500" />
                 <span className="text-sm text-gray-600">Type</span>
               </div>
-              <span className="text-sm font-medium">{contract.budgetType}</span>
+              <span className="text-sm font-medium">
+                {contract.contractType}
+              </span>
             </div>
 
             {contract.hourlyRate && (
@@ -268,7 +247,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                 <span className="text-sm text-gray-600">Total Paid</span>
               </div>
               <span className="text-sm font-medium text-green-600">
-                {contract.totalPaid}
+                {/* {contract.totalPaid} */}
               </span>
             </div>
           </CardContent>
@@ -286,7 +265,7 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
             <Button className="w-full bg-transparent" variant="outline">
               Request Update
             </Button>
-            {contract.status === "Active" && (
+            {contract.status === ContractStatus.ACTIVE && (
               <Button className="w-full bg-transparent" variant="outline">
                 <Pause className="w-4 h-4 mr-2" />
                 Pause Contract
@@ -313,12 +292,12 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                 <span className="text-sm text-gray-600">
                   {isHourlyContract ? "Hourly Rate" : "Total Budget"}
                 </span>
-                <span className="text-sm font-medium">{contract.budget}</span>
+                {/* <span className="text-sm font-medium">{contract.budget}</span> */}
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Amount Paid</span>
                 <span className="text-sm font-medium text-green-600">
-                  {contract.totalPaid}
+                  {/* {contract.totalPaid} */}
                 </span>
               </div>
               {!isHourlyContract && (
@@ -326,13 +305,13 @@ export function ContractOverview({ contract }: ContractOverviewProps) {
                   <span className="text-sm font-medium text-gray-900">
                     Remaining
                   </span>
-                  <span className="text-sm font-medium text-gray-900">
+                  {/* <span className="text-sm font-medium text-gray-900">
                     $
                     {(
                       Number.parseFloat(contract.budget.replace(/[$,]/g, "")) -
                       Number.parseFloat(contract.totalPaid.replace(/[$,]/g, ""))
                     ).toLocaleString()}
-                  </span>
+                  </span> */}
                 </div>
               )}
             </div>

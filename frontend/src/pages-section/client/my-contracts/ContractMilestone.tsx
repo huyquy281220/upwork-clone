@@ -14,37 +14,10 @@ import {
   Edit,
   X,
 } from "lucide-react";
-
-interface Contract {
-  id: number;
-  title: string;
-  freelancer: {
-    name: string;
-    avatar: string;
-    rating: number;
-    location: string;
-    verified: boolean;
-  };
-  status: string;
-  startDate: string;
-  budget: string;
-  budgetType: string;
-  hourlyRate: string | null;
-  totalPaid: string;
-  progress: number;
-  category: string;
-  description: string;
-  milestones: Array<{
-    id: number;
-    title: string;
-    amount: string;
-    status: string;
-    dueDate: string;
-  }>;
-}
+import { ContractProps, MilestoneStatus } from "@/types/contract";
 
 interface ContractMilestonesProps {
-  contract: Contract;
+  contract: ContractProps;
 }
 
 export function ContractMilestones({ contract }: ContractMilestonesProps) {
@@ -82,12 +55,12 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
     }
   };
 
-  const completedMilestones = contract.milestones.filter(
-    (m) => m.status === "Completed"
+  const completedMilestones = contract.milestones?.filter(
+    (m) => m.status === MilestoneStatus.COMPLETED
   ).length;
-  const totalMilestones = contract.milestones.length;
-  const progressPercentage =
-    totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
+  const totalMilestones = contract.milestones?.length;
+  // const progressPercentage =
+  //   totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
 
   return (
     <div className="space-y-6">
@@ -115,8 +88,9 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
               <Clock className="w-8 h-8 text-blue-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-blue-600">
                 {
-                  contract.milestones.filter((m) => m.status === "In Progress")
-                    .length
+                  contract.milestones?.filter(
+                    (m) => m.status === MilestoneStatus.IN_PROGRESS
+                  ).length
                 }
               </p>
               <p className="text-sm text-gray-600">In Progress</p>
@@ -125,8 +99,9 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
               <AlertCircle className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-yellow-600">
                 {
-                  contract.milestones.filter((m) => m.status === "Pending")
-                    .length
+                  contract.milestones?.filter(
+                    (m) => m.status === MilestoneStatus.PENDING
+                  ).length
                 }
               </p>
               <p className="text-sm text-gray-600">Pending</p>
@@ -139,17 +114,17 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
                 Overall Progress
               </span>
               <span className="text-sm text-gray-600">
-                {Math.round(progressPercentage)}%
+                {/* {Math.round(progressPercentage)}% */}
               </span>
             </div>
-            <Progress value={progressPercentage} className="h-3" />
+            {/* <Progress value={progressPercentage} className="h-3" /> */}
           </div>
         </CardContent>
       </Card>
 
       {/* Milestones List */}
       <div className="space-y-4">
-        {contract.milestones.map((milestone, index) => (
+        {contract.milestones?.map((milestone, index) => (
           <Card key={milestone.id}>
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
@@ -160,7 +135,7 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {milestone.title}
+                        {milestone.name}
                       </h3>
                       <Badge className={getStatusColor(milestone.status)}>
                         {milestone.status}
@@ -204,7 +179,7 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
                   <Button variant="outline" size="sm">
                     <Edit className="w-4 h-4" />
                   </Button>
-                  {milestone.status === "Pending" && (
+                  {milestone.status === MilestoneStatus.PENDING && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -216,7 +191,7 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
                 </div>
               </div>
 
-              {milestone.status === "In Progress" && (
+              {milestone.status === MilestoneStatus.IN_PROGRESS && (
                 <div className="mt-4 pt-4 border-t">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Progress</span>
@@ -230,7 +205,7 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
                 </div>
               )}
 
-              {milestone.status === "Completed" && (
+              {milestone.status === MilestoneStatus.COMPLETED && (
                 <div className="mt-4 pt-4 border-t">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2 text-sm text-green-600">
