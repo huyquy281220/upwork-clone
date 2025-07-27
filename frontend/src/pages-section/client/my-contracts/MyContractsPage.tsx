@@ -80,7 +80,7 @@ export function MyContractsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ContractsHeader contracts={paginatedContracts.contracts} />
+        <ContractsHeader contracts={paginatedContracts.contracts ?? []} />
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-1">
             <ContractsFilters
@@ -93,7 +93,7 @@ export function MyContractsPage() {
           </div>
           <div className="lg:col-span-3">
             <ContractsList
-              contracts={paginatedContracts.contracts}
+              contracts={paginatedContracts.contracts ?? []}
               onContractSelect={handleContractSelect}
             />
           </div>

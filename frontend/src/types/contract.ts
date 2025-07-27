@@ -14,6 +14,12 @@ export enum ContractType {
   HOURLY = "HOURLY",
 }
 
+export enum ContractStatus {
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+}
+
 export interface MilestoneProps {
   id: string;
   name: string;

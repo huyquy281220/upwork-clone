@@ -31,12 +31,6 @@ export enum ProposalStatus {
   REJECTED = "REJECTED",
 }
 
-export enum ContractStatus {
-  ACTIVE = "ACTIVE",
-  COMPLETED = "COMPLETED",
-  CANCELLED = "CANCELLED",
-}
-
 // Base interfaces
 export interface BaseUser {
   id: string;

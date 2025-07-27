@@ -1,6 +1,6 @@
 "use client";
 
-import { ContractProps } from "@/types/contract";
+import { ContractProps, ContractStatus } from "@/types/contract";
 import { TrendingUp, DollarSign, Clock, CheckCircle } from "lucide-react";
 
 interface ContractsHeaderProps {
@@ -8,10 +8,10 @@ interface ContractsHeaderProps {
 }
 
 export function ContractsHeader({ contracts }: ContractsHeaderProps) {
-  const activeContracts = contracts.filter((c) => c.status === "Active").length;
-  const completedContracts = contracts.filter(
-    (c) => c.status === "Completed"
-  ).length;
+  const activeContracts =
+    contracts?.filter((c) => c.status === ContractStatus.ACTIVE).length ?? 0;
+  const completedContracts =
+    contracts?.filter((c) => c.status === ContractStatus.COMPLETED).length ?? 0;
   // const totalSpent = contracts.reduce((sum, contract) => {
   //   const amount = Number.parseFloat(contract.totalPaid.replace(/[$,]/g, ""));
   //   return sum + amount;

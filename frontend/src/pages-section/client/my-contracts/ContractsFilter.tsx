@@ -10,7 +10,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Search, Filter, X } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useState } from "react";
@@ -50,11 +56,6 @@ export function ContractsFilters({
             <Filter className="w-5 h-5 mr-2" />
             Filters
           </CardTitle>
-
-          <Button variant="ghost" size="sm" onClick={clearFilters}>
-            <X className="w-4 h-4 mr-1" />
-            Clear
-          </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -131,6 +132,16 @@ export function ContractsFilters({
           </Select>
         </div>
       </CardContent>
+      <CardFooter>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full bg-transparent"
+          onClick={clearFilters}
+        >
+          Clear All Filters
+        </Button>
+      </CardFooter>
     </Card>
   );
 }

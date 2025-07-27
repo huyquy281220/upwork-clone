@@ -16,8 +16,12 @@ import {
   X,
   Timer,
 } from "lucide-react";
-import { ContractProps, ContractType, MilestoneStatus } from "@/types/contract";
-import { ContractStatus } from "@/types/user";
+import {
+  ContractProps,
+  ContractType,
+  MilestoneStatus,
+  ContractStatus,
+} from "@/types/contract";
 
 interface ContractOverviewProps {
   contract: ContractProps;
