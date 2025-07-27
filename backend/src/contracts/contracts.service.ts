@@ -186,11 +186,12 @@ export class ContractsService {
         OR: [{ title: { contains: searchQuery, mode: 'insensitive' } }],
       }),
       ...(type && type !== 'all' && { contractType: type as ContractType }),
-      ...(date && {
-        createdAt: {
-          gte: new Date(date),
-        },
-      }),
+      ...(date &&
+        date !== 'all' && {
+          createdAt: {
+            gte: new Date(date),
+          },
+        }),
     };
 
     if (!clientId) {
