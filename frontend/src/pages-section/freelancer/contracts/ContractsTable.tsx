@@ -10,7 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ContractProps, ContractType } from "@/types/contract";
+import { ContractProps, ContractStatus, ContractType } from "@/types/contract";
+import { cn } from "@/lib/utils";
 
 interface ContractsTableProps {
   contracts: ContractProps[];
@@ -18,7 +19,7 @@ interface ContractsTableProps {
 
 const titles = [
   "Contract Details",
-  "Client & Freelancer",
+  "Client",
   "Status & Type",
   "Budget & Progress",
   "Timeline",
@@ -28,12 +29,22 @@ const titles = [
 export function ContractsTable({ contracts }: ContractsTableProps) {
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      active: { color: "bg-green-100 text-green-800", label: "Active" },
-      completed: { color: "bg-blue-100 text-blue-800", label: "Completed" },
-      paused: { color: "bg-yellow-100 text-yellow-800", label: "Paused" },
-      cancelled: { color: "bg-red-100 text-red-800", label: "Cancelled" },
+      [ContractStatus.ACTIVE]: {
+        color: "bg-green-100 text-green-800",
+        label: "Active",
+      },
+      [ContractStatus.COMPLETED]: {
+        color: "bg-blue-100 text-blue-800",
+        label: "Completed",
+      },
+      [ContractStatus.CANCELLED]: {
+        color: "bg-red-100 text-red-800",
+        label: "Cancelled",
+      },
     };
-    const config = statusConfig[status as keyof typeof statusConfig];
+    const config =
+      statusConfig[status as ContractStatus] ||
+      statusConfig[ContractStatus.ACTIVE];
     return <Badge className={`${config.color} text-xs`}>{config.label}</Badge>;
   };
 
@@ -60,10 +71,14 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
           <table className="w-full over">
             <thead className="rounded-t-lg">
               <tr className="border-b bg-subBackground">
-                {titles.map((title) => (
+                {titles.map((title, index) => (
                   <th
                     key={title}
-                    className="px-6 py-4 text-left text-xs text-foreground font-bold uppercase tracking-wider"
+                    className={cn(
+                      "px-6 py-4 text-left text-xs text-foreground font-bold uppercase tracking-wider",
+                      index === 0 && "rounded-tl-lg",
+                      index === titles.length - 1 && "rounded-tr-lg"
+                    )}
                   >
                     {title}
                   </th>
@@ -84,27 +99,27 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                   </td>
                 </tr>
               ) : (
-                contracts.map((contract) => (
+                contracts.map((contract, index) => (
                   <tr key={contract.id} className="bg-subBackground">
-                    <td className="px-6 py-4">
+                    <td
+                      className={cn(
+                        "px-6 py-4",
+                        index === contracts.length - 1 && "rounded-bl-lg"
+                      )}
+                    >
                       <div>
-                        <div className="text-sm font-medium text-foreground">
+                        <p className="text-sm font-medium text-foreground">
                           {contract.title}
-                        </div>
-                        <div className="text-sm text-foreground opacity-80">
+                        </p>
+                        <p className="text-sm text-foreground opacity-80">
                           ID: #{contract.id}
-                        </div>
+                        </p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div>
-                        <div className="text-sm font-medium text-foreground">
-                          {contract.client.user.fullName}
-                        </div>
-                        <div className="text-sm text-foreground opacity-80">
-                          {contract.freelancer.user.fullName}
-                        </div>
-                      </div>
+                      <p className="text-sm font-medium text-foreground">
+                        {contract.client.user.fullName}
+                      </p>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap items-center gap-2">
@@ -114,12 +129,12 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm font-medium text-foreground">
+                        <p className="text-sm font-medium text-foreground">
                           {formatBudget(contract)}
-                        </div>
-                        <div className="text-sm text-foreground opacity-80">
+                        </p>
+                        <p className="text-sm text-foreground opacity-80">
                           {/* {contract.progress}% complete */}
-                        </div>
+                        </p>
                         <div className="w-full bg-foreground rounded-full h-2 mt-1">
                           <div
                             className="bg-green-600 h-2 rounded-full"
@@ -130,17 +145,17 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm text-foreground flex items-center">
+                        <p className="text-sm text-foreground flex items-center">
                           <Calendar className="w-4 h-4 mr-1" />
                           {new Date(contract.startedAt).toLocaleDateString()}
-                        </div>
+                        </p>
                         {contract.completedAt && (
-                          <div className="text-sm text-foreground opacity-80">
+                          <p className="text-sm text-foreground opacity-80">
                             Due:{" "}
                             {new Date(
                               contract.completedAt
                             ).toLocaleDateString()}
-                          </div>
+                          </p>
                         )}
                         {/* <div className="text-xs text-foreground opacity-80">
                           Last activity:{" "}
@@ -148,7 +163,12 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                         </div> */}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td
+                      className={cn(
+                        "px-6 py-4 text-right",
+                        index === contracts.length - 1 && "rounded-br-lg"
+                      )}
+                    >
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">

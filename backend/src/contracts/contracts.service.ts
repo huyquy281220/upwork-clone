@@ -287,6 +287,51 @@ export class ContractsService {
         skip: (page - 1) * limit,
         take: limit,
         where,
+        include: {
+          job: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              category: true,
+            },
+          },
+          client: {
+            select: {
+              userId: true,
+              companyName: true,
+              user: {
+                select: {
+                  fullName: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          freelancer: {
+            select: {
+              userId: true,
+              title: true,
+              user: {
+                select: {
+                  fullName: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          milestone: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              amount: true,
+              status: true,
+              dueDate: true,
+            },
+            orderBy: { createdAt: 'asc' },
+          },
+        },
         orderBy,
       }),
       this.prisma.contract.count({ where }),

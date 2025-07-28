@@ -123,7 +123,7 @@ export function ContractsPage() {
   if (isLoading || !paginatedContract) return <InfiniteLoading />;
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 px-3 md:px-0">
       <ContractsHeader />
 
       <ContractsFilters
