@@ -90,6 +90,7 @@ export function MyContractsPage() {
               status={status}
               contractType={type}
               dateRange={date}
+              searchQuery={searchQuery}
             />
           </div>
           <div className="lg:col-span-3">

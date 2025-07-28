@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/card";
 import { Search, Filter } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ContractsFiltersProps {
   onFiltersChange: (key: string, value: string) => void;
@@ -27,6 +27,7 @@ interface ContractsFiltersProps {
   status: string;
   contractType: string;
   dateRange: string;
+  searchQuery: string;
 }
 
 export function ContractsFilters({
@@ -35,17 +36,17 @@ export function ContractsFilters({
   status,
   contractType,
   dateRange,
+  searchQuery,
 }: ContractsFiltersProps) {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState(searchQuery);
   const debouncedValue = useDebounce(searchValue, 500);
 
-  const clearFilters = () => {
-    resetFilters();
-  };
-
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
+  useEffect(() => {
     onFiltersChange("search", debouncedValue);
+  }, [debouncedValue, onFiltersChange]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
   };
 
   return (
@@ -68,7 +69,7 @@ export function ContractsFilters({
               id="search"
               placeholder="Search contracts..."
               value={searchValue}
-              onChange={(e) => handleSearch(e.target.value)}
+              onChange={handleSearch}
               className="pl-10"
             />
           </div>
@@ -138,7 +139,7 @@ export function ContractsFilters({
           variant="outline"
           size="sm"
           className="w-full bg-transparent"
-          onClick={clearFilters}
+          onClick={resetFilters}
         >
           Clear All Filters
         </Button>
