@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { ContractsHeader } from "./ContractsHeader";
 import { ContractsFilters } from "./ContractsFilter";
 import { ContractsTable } from "./ContractsTable";
@@ -120,49 +120,6 @@ export function ContractsPage() {
 
   console.log(paginatedContract);
 
-  const filteredContracts = useMemo(() => {
-    const filtered = mockContracts.filter((contract) => {
-      const matchesSearch =
-        contract.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contract.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contract.freelancer.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesStatus =
-        statusFilter === "all" || contract.status === statusFilter;
-      const matchesType = typeFilter === "all" || contract.type === typeFilter;
-
-      return matchesSearch && matchesStatus && matchesType;
-    });
-
-    // Sort contracts
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "newest":
-          return (
-            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-          );
-        case "oldest":
-          return (
-            new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-          );
-        case "budget-high":
-          const budgetA = a.budget || (a.hourlyRate ? a.hourlyRate * 40 : 0);
-          const budgetB = b.budget || (b.hourlyRate ? b.hourlyRate * 40 : 0);
-          return budgetB - budgetA;
-        case "budget-low":
-          const budgetA2 = a.budget || (a.hourlyRate ? a.hourlyRate * 40 : 0);
-          const budgetB2 = b.budget || (b.hourlyRate ? b.hourlyRate * 40 : 0);
-          return budgetA2 - budgetB2;
-        case "progress":
-          return b.progress - a.progress;
-        default:
-          return 0;
-      }
-    });
-
-    return filtered;
-  }, [searchQuery, statusFilter, typeFilter, sortBy]);
-
   if (isLoading || !paginatedContract) return <InfiniteLoading />;
 
   return (
@@ -179,11 +136,11 @@ export function ContractsPage() {
         sortBy={sortBy}
         setSortBy={(sort: string) => setFilter("sortBy", sort)}
         totalContracts={mockContracts.length}
-        filteredCount={filteredContracts.length}
+        filteredCount={paginatedContract.totalCount}
         onClearFilters={resetFilters}
       />
 
-      <ContractsTable contracts={filteredContracts} />
+      <ContractsTable contracts={paginatedContract.data} />
 
       {paginatedContract.totalPages > LIMIT && (
         <Pagination
