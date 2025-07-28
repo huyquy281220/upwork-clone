@@ -5,7 +5,7 @@ import { ContractsHeader } from "./ContractsHeader";
 import { ContractsFilters } from "./ContractsFilter";
 import { ContractsTable } from "./ContractsTable";
 import useFilter from "@/hooks/useFilter";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getPaginatedContractsForFreelancer } from "@/services/contract";
 import { useSession } from "next-auth/react";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
@@ -115,6 +115,7 @@ export function ContractsPage() {
         sortBy
       ),
     enabled: !!session?.user?.id,
+    placeholderData: keepPreviousData,
   });
 
   console.log(paginatedContract);
