@@ -10,7 +10,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import useFilter from "@/hooks/useFilter";
 import { ContractProps } from "@/types/contract";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
-import { getPaginatedContracts } from "@/services/contract";
+import { getPaginatedContractsForClient } from "@/services/contract";
 import { Pagination } from "@/components/common/Pagination";
 
 type PaginatedContractsProps = {
@@ -42,7 +42,7 @@ export function MyContractsPage() {
     useQuery<PaginatedContractsProps>({
       queryKey: ["contracts", session?.user?.id],
       queryFn: () =>
-        getPaginatedContracts(
+        getPaginatedContractsForClient(
           session?.user?.id ?? "",
           LIMIT,
           currentPage,

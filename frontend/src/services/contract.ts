@@ -9,7 +9,7 @@ export const createContract = async (data: CreateContractDto) => {
   return response.data;
 };
 
-export const getPaginatedContracts = async (
+export const getPaginatedContractsForClient = async (
   userId: string,
   skip: number,
   take: number,
@@ -19,7 +19,7 @@ export const getPaginatedContracts = async (
   status?: string
 ) => {
   const response = await api.get(
-    `${apiURL}/contracts?clientId=${userId}&skip=${skip}&take=${take}&searchQuery=${searchQuery}&type=${type}&date=${date}&status=${status}`
+    `${apiURL}/contracts/client?clientId=${userId}&skip=${skip}&take=${take}&searchQuery=${searchQuery}&type=${type}&date=${date}&status=${status}`
   );
 
   return response.data;
