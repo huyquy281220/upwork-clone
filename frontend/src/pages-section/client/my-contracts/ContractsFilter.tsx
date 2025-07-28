@@ -39,7 +39,7 @@ export function ContractsFilters({
   searchQuery,
 }: ContractsFiltersProps) {
   const [searchValue, setSearchValue] = useState(searchQuery);
-  const debouncedValue = useDebounce(searchValue, 500);
+  const debouncedValue = useDebounce(searchValue, 300);
 
   useEffect(() => {
     onFiltersChange("search", debouncedValue);
