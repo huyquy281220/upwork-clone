@@ -143,12 +143,12 @@ export class NotificationsService {
   }
 
   async findAllNotifications(params: {
-    skip?: number;
-    take?: number;
+    limit?: number;
+    page?: number;
     userId: string;
     isRead?: boolean;
   }) {
-    const { skip, take, userId, isRead } = params;
+    const { limit, page, userId, isRead } = params;
 
     // Check if user exists
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
@@ -160,8 +160,8 @@ export class NotificationsService {
     if (isRead !== undefined) where.isRead = isRead;
 
     return this.prisma.notification.findMany({
-      skip,
-      take,
+      skip: (page - 1) * limit,
+      take: limit,
       where,
       include: {
         user: { select: { id: true, email: true } },

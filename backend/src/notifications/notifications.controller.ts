@@ -26,14 +26,14 @@ export class NotificationsController {
 
   @Get()
   findAll(
-    @Query('skip') skip: string,
-    @Query('take') take: string,
+    @Query('limit') limit: string,
+    @Query('page') page: string,
     @Query('userId') userId: string,
     @Query('isRead') isRead?: string,
   ) {
     return this.notificationsService.findAllNotifications({
-      skip: skip ? parseInt(skip) : undefined,
-      take: take ? parseInt(take) : undefined,
+      limit: limit ? parseInt(limit) : undefined,
+      page: page ? parseInt(page) : undefined,
       userId,
       isRead: isRead ? isRead === 'true' : undefined,
     });

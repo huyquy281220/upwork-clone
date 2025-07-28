@@ -57,8 +57,8 @@ export class ContractsController {
   @Get('client')
   findAll(
     @Query('clientId') clientId?: string,
-    @Query('skip') skip?: string,
-    @Query('take') take?: string,
+    @Query('limit') limit?: string,
+    @Query('page') page?: string,
     @Query('jobId') jobId?: string,
     @Query('searchQuery') searchQuery?: string,
     @Query('type') type?: string,
@@ -66,8 +66,8 @@ export class ContractsController {
     @Query('status') status?: ContractStatus,
   ) {
     return this.contractsService.findAllContractsForClient(
-      skip ? parseInt(skip) : undefined,
-      take ? parseInt(take) : undefined,
+      limit ? parseInt(limit) : undefined,
+      page ? parseInt(page) : undefined,
       clientId,
       status,
       searchQuery,
