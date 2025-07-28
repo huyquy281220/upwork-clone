@@ -5,6 +5,10 @@ import { ContractsHeader } from "./ContractsHeader";
 import { ContractsFilters } from "./ContractsFilter";
 import { ContractsTable } from "./ContractsTable";
 import useFilter from "@/hooks/useFilter";
+import { useQuery } from "@tanstack/react-query";
+import { getPaginatedContractsForFreelancer } from "@/services/contract";
+import { useSession } from "next-auth/react";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 // Mock data for contracts
 const mockContracts = [
@@ -80,18 +84,39 @@ const mockContracts = [
   },
 ];
 
+const LIMIT = 10;
+
 export function ContractsPage() {
+  const { data: session } = useSession();
   const { getFilter, setFilter, resetFilters } = useFilter({
     searchQuery: "",
     statusFilter: "all",
     typeFilter: "all",
     sortBy: "newest",
   });
+  const [currentPage, setCurrentPage] = useState(1);
 
   const searchQuery = getFilter("searchQuery");
   const statusFilter = getFilter("statusFilter");
   const typeFilter = getFilter("typeFilter");
   const sortBy = getFilter("sortBy");
+
+  const { data: paginatedContract, isLoading } = useQuery({
+    queryKey: ["freelancer-contracts", session?.user?.id],
+    queryFn: () =>
+      getPaginatedContractsForFreelancer(
+        session?.user?.id ?? "",
+        LIMIT,
+        currentPage,
+        statusFilter,
+        searchQuery,
+        typeFilter,
+        sortBy
+      ),
+    enabled: !!session?.user?.id,
+  });
+
+  console.log(paginatedContract);
 
   // Filter and sort contracts
   const filteredContracts = useMemo(() => {
@@ -136,6 +161,8 @@ export function ContractsPage() {
 
     return filtered;
   }, [searchQuery, statusFilter, typeFilter, sortBy]);
+
+  if (isLoading || !paginatedContract) return <InfiniteLoading />;
 
   return (
     <div className="container mx-auto py-10">
