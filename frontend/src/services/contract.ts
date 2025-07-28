@@ -11,15 +11,15 @@ export const createContract = async (data: CreateContractDto) => {
 
 export const getPaginatedContractsForClient = async (
   userId: string,
-  skip: number,
-  take: number,
+  limit: number,
+  page: number,
   searchQuery?: string,
   type?: string,
   date?: string,
   status?: string
 ) => {
   const response = await api.get(
-    `${apiURL}/contracts/client?clientId=${userId}&skip=${skip}&take=${take}&searchQuery=${searchQuery}&type=${type}&date=${date}&status=${status}`
+    `${apiURL}/contracts/client?clientId=${userId}&limit=${limit}&page=${page}&searchQuery=${searchQuery}&type=${type}&date=${date}&status=${status}`
   );
 
   return response.data;
@@ -32,11 +32,10 @@ export const getPaginatedContractsForFreelancer = async (
   status?: string,
   searchQuery?: string,
   type?: string,
-  date?: string,
   sortedBy?: string
 ) => {
   const response = await api.get(
-    `${apiURL}/contracts/freelancer?freelancerId=${freelancerId}&limit=${limit}&page=${page}&status=${status}&searchQuery=${searchQuery}&type=${type}&date=${date}&sortedBy=${sortedBy}`
+    `${apiURL}/contracts/freelancer?freelancerId=${freelancerId}&limit=${limit}&page=${page}&status=${status}&searchQuery=${searchQuery}&type=${type}&sortedBy=${sortedBy}`
   );
 
   return response.data;
