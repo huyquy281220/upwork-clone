@@ -24,3 +24,20 @@ export const getPaginatedContractsForClient = async (
 
   return response.data;
 };
+
+export const getPaginatedContractsForFreelancer = async (
+  freelancerId: string,
+  skip: number,
+  take: number,
+  status?: string,
+  searchQuery?: string,
+  type?: string,
+  date?: string,
+  sortedBy?: string
+) => {
+  const response = await api.get(
+    `${apiURL}/contracts/freelancer?freelancerId=${freelancerId}&skip=${skip}&take=${take}&status=${status}&searchQuery=${searchQuery}&type=${type}&date=${date}&sortedBy=${sortedBy}`
+  );
+
+  return response.data;
+};
