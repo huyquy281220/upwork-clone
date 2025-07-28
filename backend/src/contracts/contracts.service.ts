@@ -16,6 +16,7 @@ import {
 } from '@prisma/client';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { StripeService } from 'src/stripe/stripe.service';
+import { buildContractsFilter } from 'src/helpers/buildContractsFilter';
 @Injectable()
 export class ContractsService {
   constructor(
@@ -179,20 +180,13 @@ export class ContractsService {
     type?: string,
     date?: string,
   ) {
-    const where: Prisma.ContractWhereInput = {
-      ...(clientId && { clientId }),
-      ...(status && status !== 'all' && { status }),
-      ...(searchQuery && {
-        OR: [{ title: { contains: searchQuery, mode: 'insensitive' } }],
-      }),
-      ...(type && type !== 'all' && { contractType: type as ContractType }),
-      ...(date &&
-        date !== 'all' && {
-          createdAt: {
-            gte: new Date(date),
-          },
-        }),
-    };
+    const { where, orderBy } = buildContractsFilter({
+      clientId,
+      status,
+      searchQuery,
+      type,
+      date,
+    });
 
     if (!clientId) {
       throw new NotFoundException('Client not found');
@@ -279,19 +273,14 @@ export class ContractsService {
     date?: string,
     sortedBy?: string,
   ) {
-    const where: Prisma.ContractWhereInput = {
-      ...(freelancerId && { freelancerId }),
-      ...(status && status !== 'all' && { status }),
-      ...(searchQuery && {
-        OR: [{ title: { contains: searchQuery, mode: 'insensitive' } }],
-      }),
-      ...(type && type !== 'all' && { contractType: type as ContractType }),
-      ...(date && date !== 'all' && { createdAt: { gte: new Date(date) } }),
-    };
-
-    const orderBy: Prisma.ContractOrderByWithRelationInput =
-      sortedBy === 'newest' ? { createdAt: 'desc' } : { createdAt: 'asc' };
-
+    const { where, orderBy } = buildContractsFilter({
+      freelancerId,
+      status,
+      searchQuery,
+      type,
+      date,
+      sortedBy,
+    });
     if (!freelancerId) {
       throw new NotFoundException('Freelancer not found');
     }

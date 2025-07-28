@@ -1,7 +1,8 @@
 import { Prisma, ProposalStatus } from '@prisma/client';
-import { subDays, startOfToday } from 'date-fns';
+import { buildDateFilter, buildSortByFilter, parseBudgetFilter } from '.';
+import { cleanFilter } from '.';
 
-interface BuildFiltersParams {
+type BuildFiltersParams = {
   freelancerId?: string;
   jobId?: string;
   searchQuery?: string;
@@ -9,7 +10,7 @@ interface BuildFiltersParams {
   dateFilter?: string;
   budgetFilter?: string;
   sortedBy?: string;
-}
+};
 
 export function buildProposalFilters({
   freelancerId,
@@ -27,92 +28,9 @@ export function buildProposalFilters({
   const dateFilterCleaned = cleanFilter(dateFilter);
   const budgetFilterCleaned = cleanFilter(budgetFilter);
 
-  const today = startOfToday();
   const budget = parseBudgetFilter(budgetFilterCleaned);
-
-  let dateFilterCondition;
-  switch (dateFilterCleaned) {
-    case 'today':
-      dateFilterCondition = today;
-      break;
-    case 'week':
-      dateFilterCondition = {
-        gte: subDays(today, 7),
-        lt: startOfToday(),
-      };
-      break;
-    case 'month':
-      dateFilterCondition = {
-        gte: subDays(today, 30),
-        lt: startOfToday(),
-      };
-      break;
-    case 'quarter':
-      dateFilterCondition = {
-        gte: subDays(today, 90),
-        lt: startOfToday(),
-      };
-      break;
-    default:
-      dateFilterCondition = null;
-  }
-
-  let orderBy: Prisma.ProposalOrderByWithRelationInput[] = [
-    { createdAt: 'desc' },
-  ];
-
-  switch (sortedBy) {
-    case 'newest':
-      orderBy = [{ createdAt: 'desc' }];
-      break;
-    case 'oldest':
-      orderBy = [{ createdAt: 'asc' }];
-      break;
-    case 'highest':
-      orderBy = [
-        {
-          job: {
-            fixedPrice: 'desc',
-          },
-        },
-        {
-          job: {
-            hourlyRateMax: 'desc',
-          },
-        },
-      ];
-      break;
-    case 'lowest':
-      orderBy = [
-        {
-          job: {
-            fixedPrice: 'asc',
-          },
-        },
-        {
-          job: {
-            hourlyRateMin: 'asc',
-          },
-        },
-      ];
-      break;
-    case 'rate-highest':
-      orderBy = [
-        {
-          pricing: 'desc',
-        },
-      ];
-      break;
-    case 'rate-lowest':
-      orderBy = [
-        {
-          pricing: 'asc',
-        },
-      ];
-      break;
-    default:
-      break;
-  }
+  const orderBy = buildSortByFilter(sortedBy);
+  const dateFilterCondition = buildDateFilter(dateFilterCleaned);
 
   const where: Prisma.ProposalWhereInput = {
     ...(freelancerId && { freelancerId }),
@@ -161,23 +79,4 @@ export function buildProposalFilters({
   }
 
   return { where, orderBy };
-}
-
-function cleanFilter(value: string) {
-  return value === 'all' ? undefined : value;
-}
-
-function parseBudgetFilter(budgetFilter: string) {
-  switch (budgetFilter) {
-    case 'under-1k':
-      return { min: 0, max: 1000 };
-    case '1k-5k':
-      return { min: 1000, max: 5000 };
-    case '5k-10k':
-      return { min: 5000, max: 10000 };
-    case 'over-10k':
-      return { min: 10000, max: Infinity };
-    default:
-      return null;
-  }
 }
