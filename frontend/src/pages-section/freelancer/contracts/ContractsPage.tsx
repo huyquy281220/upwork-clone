@@ -79,7 +79,7 @@ const mockContracts = [
   },
 ];
 
-export default function ContractsPage() {
+export function ContractsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
