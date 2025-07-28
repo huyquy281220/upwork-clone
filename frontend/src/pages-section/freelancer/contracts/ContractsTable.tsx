@@ -10,26 +10,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ContractType } from "@/types/contract";
-
-interface Contract {
-  id: number;
-  title: string;
-  client: string;
-  freelancer: string;
-  status: string;
-  type: string;
-  budget: number | null;
-  hourlyRate: number | null;
-  startDate: string;
-  endDate: string | null;
-  progress: number;
-  lastActivity: string;
-}
+import { ContractProps, ContractType } from "@/types/contract";
 
 interface ContractsTableProps {
-  contracts: Contract[];
+  contracts: ContractProps[];
 }
+
+const titles = [
+  "Contract Details",
+  "Client & Freelancer",
+  "Status & Type",
+  "Budget & Progress",
+  "Timeline",
+  "Actions",
+];
 
 export function ContractsTable({ contracts }: ContractsTableProps) {
   const getStatusBadge = (status: string) => {
@@ -46,14 +40,14 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
   const getTypeBadge = (type: string) => {
     return (
       <Badge variant="outline" className="text-xs">
-        {type === ContractType.FIXED_PRICE ? "Fixed Price" : "Hourly"}
+        {type === ContractType.FIXED_PRICE ? "Fixed" : "Hourly"}
       </Badge>
     );
   };
 
-  const formatBudget = (contract: Contract) => {
-    if (contract.type === ContractType.FIXED_PRICE) {
-      return `$${contract.budget?.toLocaleString()}`;
+  const formatBudget = (contract: ContractProps) => {
+    if (contract.contractType === ContractType.FIXED_PRICE) {
+      return `$${contract.totalPrice?.toLocaleString()}`;
     } else {
       return `$${contract.hourlyRate}/hr`;
     }
@@ -63,34 +57,24 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
     <Card>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-gray-50">
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contract Details
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Client & Freelancer
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status & Type
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Budget & Progress
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Timeline
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+          <table className="w-full over">
+            <thead className="rounded-t-lg">
+              <tr className="border-b bg-subBackground">
+                {titles.map((title) => (
+                  <th
+                    key={title}
+                    className="px-6 py-4 text-left text-xs text-foreground font-bold uppercase tracking-wider"
+                  >
+                    {title}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200">
               {contracts.length === 0 ? (
-                <tr>
+                <tr className="bg-subBackground">
                   <td colSpan={6} className="px-6 py-12 text-center">
-                    <div className="text-gray-500">
+                    <div className="text-foreground">
                       <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
                       <p className="text-lg font-medium">No contracts found</p>
                       <p className="text-sm">
@@ -101,65 +85,67 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                 </tr>
               ) : (
                 contracts.map((contract) => (
-                  <tr key={contract.id} className="hover:bg-gray-50">
+                  <tr key={contract.id} className="bg-subBackground">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-foreground">
                           {contract.title}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-foreground opacity-80">
                           ID: #{contract.id}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {contract.client}
+                        <div className="text-sm font-medium text-foreground">
+                          {contract.client.user.fullName}
                         </div>
-                        <div className="text-sm text-gray-500">
-                          {contract.freelancer}
+                        <div className="text-sm text-foreground opacity-80">
+                          {contract.freelancer.user.fullName}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
                         {getStatusBadge(contract.status)}
-                        {getTypeBadge(contract.type)}
+                        {getTypeBadge(contract.contractType)}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-foreground">
                           {formatBudget(contract)}
                         </div>
-                        <div className="text-sm text-gray-500">
-                          {contract.progress}% complete
+                        <div className="text-sm text-foreground opacity-80">
+                          {/* {contract.progress}% complete */}
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                        <div className="w-full bg-foreground rounded-full h-2 mt-1">
                           <div
-                            className="bg-blue-600 h-2 rounded-full"
-                            style={{ width: `${contract.progress}%` }}
+                            className="bg-green-600 h-2 rounded-full"
+                            // style={{ width: `${contract.progress}%` }}
                           ></div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm text-gray-900 flex items-center">
+                        <div className="text-sm text-foreground flex items-center">
                           <Calendar className="w-4 h-4 mr-1" />
-                          {new Date(contract.startDate).toLocaleDateString()}
+                          {new Date(contract.startedAt).toLocaleDateString()}
                         </div>
-                        {contract.endDate && (
-                          <div className="text-sm text-gray-500">
+                        {contract.completedAt && (
+                          <div className="text-sm text-foreground opacity-80">
                             Due:{" "}
-                            {new Date(contract.endDate).toLocaleDateString()}
+                            {new Date(
+                              contract.completedAt
+                            ).toLocaleDateString()}
                           </div>
                         )}
-                        <div className="text-xs text-gray-400">
+                        {/* <div className="text-xs text-foreground opacity-80">
                           Last activity:{" "}
                           {new Date(contract.lastActivity).toLocaleDateString()}
-                        </div>
+                        </div> */}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
