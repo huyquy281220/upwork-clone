@@ -170,7 +170,7 @@ export class ContractsService {
     });
   }
 
-  async findAllContracts(
+  async findAllContractsForClient(
     skip?: number,
     take?: number,
     clientId?: string,
@@ -254,7 +254,6 @@ export class ContractsService {
             { startedAt: 'desc' },
           ],
         }),
-        // Get total count for pagination
         this.prisma.contract.count({ where }),
       ]);
 
@@ -268,6 +267,50 @@ export class ContractsService {
         `Failed to fetch contracts: ${error.message}`,
       );
     }
+  }
+
+  async findAllContractsForFreelancer(
+    skip?: number,
+    take?: number,
+    freelancerId?: string,
+    status?: ContractStatus | 'all',
+    searchQuery?: string,
+    type?: string,
+    date?: string,
+    sortedBy?: string,
+  ) {
+    const where: Prisma.ContractWhereInput = {
+      ...(freelancerId && { freelancerId }),
+      ...(status && status !== 'all' && { status }),
+      ...(searchQuery && {
+        OR: [{ title: { contains: searchQuery, mode: 'insensitive' } }],
+      }),
+      ...(type && type !== 'all' && { contractType: type as ContractType }),
+      ...(date && date !== 'all' && { createdAt: { gte: new Date(date) } }),
+    };
+
+    const orderBy: Prisma.ContractOrderByWithRelationInput =
+      sortedBy === 'newest' ? { createdAt: 'desc' } : { createdAt: 'asc' };
+
+    if (!freelancerId) {
+      throw new NotFoundException('Freelancer not found');
+    }
+
+    const [contracts, totalCount] = await Promise.all([
+      this.prisma.contract.findMany({
+        skip,
+        take,
+        where,
+        orderBy,
+      }),
+      this.prisma.contract.count({ where }),
+    ]);
+
+    return {
+      data: contracts,
+      totalPage: Math.ceil(totalCount / take),
+      totalContracts: totalCount,
+    };
   }
 
   async findOneContract(id: string, userId: string, userRole: Role) {

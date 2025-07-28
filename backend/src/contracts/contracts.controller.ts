@@ -31,7 +31,30 @@ export class ContractsController {
     return this.contractsService.createContract(createContractDto);
   }
 
-  @Get()
+  @Get('freelancer')
+  findAllForFreelancer(
+    @Query('freelancerId') freelancerId?: string,
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
+    @Query('status') status?: ContractStatus,
+    @Query('searchQuery') searchQuery?: string,
+    @Query('type') type?: string,
+    @Query('date') date?: string,
+    @Query('sortedBy') sortedBy?: string,
+  ) {
+    return this.contractsService.findAllContractsForFreelancer(
+      skip ? parseInt(skip) : undefined,
+      take ? parseInt(take) : undefined,
+      freelancerId,
+      status,
+      searchQuery,
+      type,
+      date,
+      sortedBy,
+    );
+  }
+
+  @Get('client')
   findAll(
     @Query('clientId') clientId?: string,
     @Query('skip') skip?: string,
@@ -42,7 +65,7 @@ export class ContractsController {
     @Query('date') date?: string,
     @Query('status') status?: ContractStatus,
   ) {
-    return this.contractsService.findAllContracts(
+    return this.contractsService.findAllContractsForClient(
       skip ? parseInt(skip) : undefined,
       take ? parseInt(take) : undefined,
       clientId,
