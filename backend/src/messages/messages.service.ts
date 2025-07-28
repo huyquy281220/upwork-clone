@@ -92,13 +92,13 @@ export class MessagesService {
   }
 
   async findAllMessages(params: {
-    skip?: number;
-    take?: number;
+    limit?: number;
+    page?: number;
     conversationId: string;
     userId: string;
     isRead?: boolean;
   }) {
-    const { skip, take, conversationId, userId, isRead } = params;
+    const { limit, page, conversationId, userId, isRead } = params;
 
     // Check conversation and access
     const conversation = await this.prisma.conversation.findUnique({
@@ -124,8 +124,8 @@ export class MessagesService {
     if (isRead !== undefined) where.isRead = isRead;
 
     const messages = await this.prisma.message.findMany({
-      skip,
-      take,
+      skip: (page - 1) * limit,
+      take: limit,
       where,
       include: {
         sender: { select: { id: true, email: true, fullName: true } },
@@ -144,11 +144,6 @@ export class MessagesService {
 
     return {
       messages,
-      pagination: {
-        total: totalCount,
-        skip: skip || 0,
-        take: take || totalCount,
-      },
     };
   }
 

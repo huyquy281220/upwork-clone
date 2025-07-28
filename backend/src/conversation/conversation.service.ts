@@ -140,12 +140,12 @@ export class ConversationsService {
   }
 
   async findAllConversations(params: {
-    skip?: number;
-    take?: number;
+    limit?: number;
+    page?: number;
     userId: string;
     jobId?: string;
   }) {
-    const { skip, take, userId, jobId } = params;
+    const { limit, page, userId, jobId } = params;
 
     // Check user exists
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
@@ -162,8 +162,8 @@ export class ConversationsService {
     }
 
     return this.prisma.conversation.findMany({
-      skip,
-      take,
+      skip: (page - 1) * limit,
+      take: limit,
       where: whereClause,
       include: {
         participant1: { select: { id: true, email: true, fullName: true } },

@@ -44,10 +44,9 @@ export class MessagesController {
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 50,
     @Query('isRead') isRead?: string,
   ) {
-    const skip = (page - 1) * limit;
     return this.messagesService.findAllMessages({
-      skip,
-      take: limit,
+      limit,
+      page,
       conversationId,
       userId: user.id,
       isRead: isRead ? isRead === 'true' : undefined,

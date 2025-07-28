@@ -38,13 +38,13 @@ export class ConversationsController {
   @Get()
   findAll(
     @CurrentUser() user: AuthenticatedUser,
-    @Query('skip') skip?: string,
-    @Query('take') take?: string,
+    @Query('limit') limit?: string,
+    @Query('page') page?: string,
     @Query('jobId') jobId?: string,
   ) {
     return this.conversationsService.findAllConversations({
-      skip: skip ? parseInt(skip) : undefined,
-      take: take ? parseInt(take) : undefined,
+      limit: limit ? parseInt(limit) : undefined,
+      page: page ? parseInt(page) : undefined,
       userId: user.id,
       jobId,
     });
