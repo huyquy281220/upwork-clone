@@ -103,7 +103,14 @@ export function ContractsPage() {
   const sortBy = getFilter("sortBy");
 
   const { data: paginatedContract, isLoading } = useQuery({
-    queryKey: ["freelancer-contracts", session?.user?.id],
+    queryKey: [
+      "freelancer-contracts",
+      session?.user?.id,
+      searchQuery,
+      statusFilter,
+      typeFilter,
+      sortBy,
+    ],
     queryFn: () =>
       getPaginatedContractsForFreelancer(
         session?.user?.id ?? "",

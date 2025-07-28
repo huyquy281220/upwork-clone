@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 
 interface ContractsFiltersProps {
@@ -41,12 +41,15 @@ export function ContractsFilters({
   filteredCount,
   onClearFilters,
 }: ContractsFiltersProps) {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState(searchQuery);
   const debouncedSearch = useDebounce(searchValue, 300);
+
+  useEffect(() => {
+    setSearchQuery(debouncedSearch);
+  }, [debouncedSearch, setSearchQuery]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
-    setSearchQuery(debouncedSearch);
   };
 
   const hasActiveFilters =
@@ -79,7 +82,7 @@ export function ContractsFilters({
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search contracts..."
-                value={searchQuery}
+                value={searchValue}
                 onChange={handleSearch}
                 className="pl-10"
               />
