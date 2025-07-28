@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getPaginatedContractsForFreelancer } from "@/services/contract";
 import { useSession } from "next-auth/react";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { Pagination } from "@/components/common/Pagination";
 
 // Mock data for contracts
 const mockContracts = [
@@ -90,15 +91,15 @@ export function ContractsPage() {
   const { data: session } = useSession();
   const { getFilter, setFilter, resetFilters } = useFilter({
     searchQuery: "",
-    statusFilter: "all",
-    typeFilter: "all",
+    status: "all",
+    type: "all",
     sortBy: "newest",
   });
   const [currentPage, setCurrentPage] = useState(1);
 
   const searchQuery = getFilter("searchQuery");
-  const statusFilter = getFilter("statusFilter");
-  const typeFilter = getFilter("typeFilter");
+  const statusFilter = getFilter("status");
+  const typeFilter = getFilter("type");
   const sortBy = getFilter("sortBy");
 
   const { data: paginatedContract, isLoading } = useQuery({
@@ -118,7 +119,6 @@ export function ContractsPage() {
 
   console.log(paginatedContract);
 
-  // Filter and sort contracts
   const filteredContracts = useMemo(() => {
     const filtered = mockContracts.filter((contract) => {
       const matchesSearch =
@@ -172,9 +172,9 @@ export function ContractsPage() {
         searchQuery={searchQuery}
         setSearchQuery={(query: string) => setFilter("searchQuery", query)}
         statusFilter={statusFilter}
-        setStatusFilter={(status: string) => setFilter("statusFilter", status)}
+        setStatusFilter={(status: string) => setFilter("status", status)}
         typeFilter={typeFilter}
-        setTypeFilter={(type: string) => setFilter("typeFilter", type)}
+        setTypeFilter={(type: string) => setFilter("type", type)}
         sortBy={sortBy}
         setSortBy={(sort: string) => setFilter("sortBy", sort)}
         totalContracts={mockContracts.length}
@@ -183,6 +183,14 @@ export function ContractsPage() {
       />
 
       <ContractsTable contracts={filteredContracts} />
+
+      {paginatedContract.totalPages > LIMIT && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={paginatedContract.totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </div>
   );
 }

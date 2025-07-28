@@ -27,8 +27,8 @@ export const getPaginatedContractsForClient = async (
 
 export const getPaginatedContractsForFreelancer = async (
   freelancerId: string,
-  skip: number,
-  take: number,
+  limit: number,
+  page: number,
   status?: string,
   searchQuery?: string,
   type?: string,
@@ -36,7 +36,7 @@ export const getPaginatedContractsForFreelancer = async (
   sortedBy?: string
 ) => {
   const response = await api.get(
-    `${apiURL}/contracts/freelancer?freelancerId=${freelancerId}&skip=${skip}&take=${take}&status=${status}&searchQuery=${searchQuery}&type=${type}&date=${date}&sortedBy=${sortedBy}`
+    `${apiURL}/contracts/freelancer?freelancerId=${freelancerId}&limit=${limit}&page=${page}&status=${status}&searchQuery=${searchQuery}&type=${type}&date=${date}&sortedBy=${sortedBy}`
   );
 
   return response.data;

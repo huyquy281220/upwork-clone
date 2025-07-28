@@ -270,8 +270,8 @@ export class ContractsService {
   }
 
   async findAllContractsForFreelancer(
-    skip?: number,
-    take?: number,
+    limit?: number,
+    page?: number,
     freelancerId?: string,
     status?: ContractStatus | 'all',
     searchQuery?: string,
@@ -298,8 +298,8 @@ export class ContractsService {
 
     const [contracts, totalCount] = await Promise.all([
       this.prisma.contract.findMany({
-        skip,
-        take,
+        skip: (page - 1) * limit,
+        take: limit,
         where,
         orderBy,
       }),
@@ -308,7 +308,7 @@ export class ContractsService {
 
     return {
       data: contracts,
-      totalPage: Math.ceil(totalCount / take),
+      totalPage: Math.ceil(totalCount / limit),
       totalContracts: totalCount,
     };
   }

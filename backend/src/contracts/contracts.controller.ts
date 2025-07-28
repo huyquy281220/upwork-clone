@@ -34,8 +34,8 @@ export class ContractsController {
   @Get('freelancer')
   findAllForFreelancer(
     @Query('freelancerId') freelancerId?: string,
-    @Query('skip') skip?: string,
-    @Query('take') take?: string,
+    @Query('limit') limit?: string,
+    @Query('page') page?: string,
     @Query('status') status?: ContractStatus,
     @Query('searchQuery') searchQuery?: string,
     @Query('type') type?: string,
@@ -43,8 +43,8 @@ export class ContractsController {
     @Query('sortedBy') sortedBy?: string,
   ) {
     return this.contractsService.findAllContractsForFreelancer(
-      skip ? parseInt(skip) : undefined,
-      take ? parseInt(take) : undefined,
+      limit ? parseInt(limit) : undefined,
+      page ? parseInt(page) : undefined,
       freelancerId,
       status,
       searchQuery,

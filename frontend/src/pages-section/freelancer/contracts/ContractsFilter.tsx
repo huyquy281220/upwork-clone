@@ -11,6 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface ContractsFiltersProps {
   searchQuery: string;
@@ -39,6 +41,14 @@ export function ContractsFilters({
   filteredCount,
   onClearFilters,
 }: ContractsFiltersProps) {
+  const [searchValue, setSearchValue] = useState("");
+  const debouncedSearch = useDebounce(searchValue, 300);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+    setSearchQuery(debouncedSearch);
+  };
+
   const hasActiveFilters =
     searchQuery ||
     statusFilter !== "all" ||
@@ -70,7 +80,7 @@ export function ContractsFilters({
               <Input
                 placeholder="Search contracts..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearch}
                 className="pl-10"
               />
             </div>
@@ -85,25 +95,19 @@ export function ContractsFilters({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="active">
+                <SelectItem value="ACTIVE">
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                     Active
                   </div>
                 </SelectItem>
-                <SelectItem value="completed">
+                <SelectItem value="COMPLETED">
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
                     Completed
                   </div>
                 </SelectItem>
-                <SelectItem value="paused">
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
-                    Paused
-                  </div>
-                </SelectItem>
-                <SelectItem value="cancelled">
+                <SelectItem value="CANCELLED">
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
                     Cancelled
@@ -122,13 +126,13 @@ export function ContractsFilters({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="fixedprice">
+                <SelectItem value="FIXED_PRICE">
                   <div className="flex items-center">
                     <DollarSign className="w-4 h-4 mr-2" />
                     Fixed Price
                   </div>
                 </SelectItem>
-                <SelectItem value="hourly">
+                <SelectItem value="HOURLY">
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-2" />
                     Hourly
@@ -150,7 +154,7 @@ export function ContractsFilters({
                 <SelectItem value="oldest">Oldest First</SelectItem>
                 <SelectItem value="budget-high">Budget: High to Low</SelectItem>
                 <SelectItem value="budget-low">Budget: Low to High</SelectItem>
-                <SelectItem value="progress">Progress: High to Low</SelectItem>
+                {/* <SelectItem value="progress">Progress: High to Low</SelectItem> */}
               </SelectContent>
             </Select>
           </div>
