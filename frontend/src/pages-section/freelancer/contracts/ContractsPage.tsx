@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { ContractsHeader } from "./ContractsHeader";
 import { ContractsFilters } from "./ContractsFilter";
 import { ContractsTable } from "./ContractsTable";
+import useFilter from "@/hooks/useFilter";
 
 // Mock data for contracts
 const mockContracts = [
@@ -80,10 +81,17 @@ const mockContracts = [
 ];
 
 export function ContractsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("newest");
+  const { getFilter, setFilter, resetFilters } = useFilter({
+    searchQuery: "",
+    statusFilter: "all",
+    typeFilter: "all",
+    sortBy: "newest",
+  });
+
+  const searchQuery = getFilter("searchQuery");
+  const statusFilter = getFilter("statusFilter");
+  const typeFilter = getFilter("typeFilter");
+  const sortBy = getFilter("sortBy");
 
   // Filter and sort contracts
   const filteredContracts = useMemo(() => {
@@ -129,29 +137,22 @@ export function ContractsPage() {
     return filtered;
   }, [searchQuery, statusFilter, typeFilter, sortBy]);
 
-  const clearFilters = () => {
-    setSearchQuery("");
-    setStatusFilter("all");
-    setTypeFilter("all");
-    setSortBy("newest");
-  };
-
   return (
     <div className="container mx-auto py-10">
       <ContractsHeader />
 
       <ContractsFilters
         searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+        setSearchQuery={(query: string) => setFilter("searchQuery", query)}
         statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
+        setStatusFilter={(status: string) => setFilter("statusFilter", status)}
         typeFilter={typeFilter}
-        setTypeFilter={setTypeFilter}
+        setTypeFilter={(type: string) => setFilter("typeFilter", type)}
         sortBy={sortBy}
-        setSortBy={setSortBy}
+        setSortBy={(sort: string) => setFilter("sortBy", sort)}
         totalContracts={mockContracts.length}
         filteredCount={filteredContracts.length}
-        onClearFilters={clearFilters}
+        onClearFilters={resetFilters}
       />
 
       <ContractsTable contracts={filteredContracts} />
