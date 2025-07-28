@@ -88,7 +88,7 @@ export function ContractsFilters({
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="paused">Paused</SelectItem>
+              {/* <SelectItem value="paused">Paused</SelectItem> */}
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
@@ -106,7 +106,7 @@ export function ContractsFilters({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="fixedprice">Fixed Price</SelectItem>
+              <SelectItem value="fixed_price">Fixed Price</SelectItem>
               <SelectItem value="hourly">Hourly</SelectItem>
             </SelectContent>
           </Select>
@@ -124,6 +124,7 @@ export function ContractsFilters({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Time</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
               <SelectItem value="week">Last Week</SelectItem>
               <SelectItem value="month">Last Month</SelectItem>
               <SelectItem value="quarter">Last Quarter</SelectItem>

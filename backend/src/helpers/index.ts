@@ -46,6 +46,12 @@ export function buildDateFilter(dateFilter: string) {
         lt: startOfToday(),
       };
       break;
+    case 'year':
+      dateFilterCondition = {
+        gte: subDays(today, 365),
+        lt: startOfToday(),
+      };
+      break;
     default:
       dateFilterCondition = null;
   }
