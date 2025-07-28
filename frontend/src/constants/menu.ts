@@ -37,7 +37,7 @@ export const freelancerNavHeader = [
     menu: [
       {
         label: "Your active contracts",
-        link: "",
+        link: "/freelancer/contracts",
       },
       {
         label: "Contract history",
