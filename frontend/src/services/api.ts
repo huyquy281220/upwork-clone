@@ -16,22 +16,14 @@ api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const session = await getSession();
     if (session?.user) {
-      // Verify session is still valid before making request
       try {
-        await api.post(
-          "/auth/verify-session",
-          {},
-          {
-            headers: { Authorization: `Bearer ${session.user.accessToken}` },
-          }
-        );
-
         config.headers["X-User-Id"] = session.user.id;
         config.headers["X-User-Email"] = session.user.email;
         config.headers["X-User-Role"] = session.user.role;
+        config.headers.Authorization = `Bearer ${session.user.accessToken}`;
       } catch (error) {
-        // Session invalid, redirect to login
-        signOut();
+        console.log(error);
+        // signOut();
         return Promise.reject(error);
       }
     }

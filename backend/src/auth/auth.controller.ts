@@ -19,7 +19,7 @@ import { UserService } from 'src/user/user.service';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
-
+import { Public } from './decorators/public.decorator';
 interface LoginDto {
   email: string;
   password: string;
@@ -34,11 +34,13 @@ export class AuthController {
   ) {}
 
   @Post('sign-up')
+  @Public()
   async create(@Body() createUser: CreateUserDto) {
     return this.userService.create(createUser);
   }
 
   @Post('sign-in')
+  @Public()
   @HttpCode(HttpStatus.OK)
   async login(@Body() { email, password }: LoginDto, @Res() res: Response) {
     const { accessToken, refreshToken, user } = await this.authService.signIn(
@@ -54,10 +56,11 @@ export class AuthController {
     //   expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     // });
 
-    return res.json({ accessToken, user });
+    return res.json({ accessToken, user, refreshToken });
   }
 
   @Post('google-signin')
+  @Public()
   async googleSignin(
     @Body()
     { email, role, name }: { email: string; role: string; name: string },
@@ -74,7 +77,7 @@ export class AuthController {
     //   expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     // });
 
-    return res.json({ accessToken, user });
+    return res.json({ accessToken, user, refreshToken });
   }
 
   @Post('sign-out')
@@ -134,13 +137,13 @@ export class AuthController {
     }
   }
 
-  // @UseGuards(JwtRefreshGuard)
-  // @Post('refresh-token')
-  // @HttpCode(HttpStatus.OK)
-  // async refreshToken(
-  //   @Req() req: Request & { user: { email: string } },
-  //   @Res() res: Response,
-  // ) {
-  //   return this.authService.refreshToken(req, res, req.user.email);
-  // }
+  @UseGuards(JwtRefreshGuard)
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  async refreshToken(
+    @Req() req: Request & { user: { email: string } },
+    @Res() res: Response,
+  ) {
+    return this.authService.refreshToken(req, res, req.user.email);
+  }
 }

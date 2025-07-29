@@ -64,14 +64,39 @@ const handler = NextAuth({
         session.user.role = token.role as string;
         session.user.accessToken = token.accessToken as string;
       }
+
       return session;
     },
     async jwt({ token, user, account }) {
       if (account && user) {
         token.role = user.role;
         token.accessToken = account.access_token || user.accessToken;
+        token.refreshToken = account.refresh_token;
       }
-      return token;
+
+      const isExpired = Date.now() > (token.expiresAt as number);
+
+      if (!isExpired) return token;
+
+      // Refresh token
+      try {
+        const res = await fetch(`${API_URL}/auth/refresh-token`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refreshToken: token.refreshToken }),
+        });
+
+        const refreshed = await res.json();
+
+        token.accessToken = refreshed.accessToken;
+        token.refreshToken = refreshed.refreshToken ?? token.refreshToken;
+        token.expiresAt = Date.now() + refreshed.expiresIn * 1000;
+
+        return token;
+      } catch (err) {
+        console.error("Refresh token failed:", err);
+        return { ...token, error: "RefreshAccessTokenError" };
+      }
     },
 
     async signIn({ user, account }) {
