@@ -125,13 +125,12 @@ export class AuthService {
     };
   }
 
-  async signout(id: string, res: Response) {
+  async signout(userId: string, res: Response) {
     try {
-      await this.userService.updatePartialById(id, {
+      await this.userService.updatePartialById(userId, {
         refreshToken: null,
       });
 
-      // ✅ Xóa refresh_token trong cookie
       res.clearCookie('refresh_token', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -140,6 +139,7 @@ export class AuthService {
 
       return res.status(200).json({ message: 'Logged out successfully' });
     } catch (error) {
+      console.log(error);
       throw new Error('Signout failed');
     }
   }

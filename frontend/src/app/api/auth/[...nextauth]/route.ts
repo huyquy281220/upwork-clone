@@ -160,8 +160,9 @@ const handler = NextAuth({
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${accessToken}`,
+              "X-User-Id": token.sub as string,
             },
-            credentials: "include", // Include cookies for refresh token
+            credentials: "include",
           });
 
           if (response.ok) {

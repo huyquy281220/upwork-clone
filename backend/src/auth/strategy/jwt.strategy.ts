@@ -15,7 +15,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: any) {
     // Get full user data including role and profiles
-    const user = await this.userService.findByEmail(payload.sub);
+    const user = await this.userService.findByIdIncludeRefreshToken(
+      payload.sub,
+    );
     if (!user) {
       return null;
     }

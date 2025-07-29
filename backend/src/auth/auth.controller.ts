@@ -82,14 +82,23 @@ export class AuthController {
 
   @Post('sign-out')
   @HttpCode(HttpStatus.OK)
-  async logout(
-    @Req() req: Request & { user: { id: string } },
-    @Res() res: Response,
-  ) {
-    const user = req.user;
-    res.clearCookie('refresh_token');
-    res.clearCookie('role');
-    return this.authService.signout(user.id, res);
+  async logout(@Req() req: Request, @Res() res: Response) {
+    const authHeader = req.headers.authorization;
+    let userId: string | undefined;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.substring(7);
+        const decoded = this.jwtService.verify(token, {
+          secret: process.env.JWT_SECRET,
+        });
+        userId = decoded.sub;
+      } catch (error) {
+        console.error('Invalid token:', error);
+      }
+    }
+
+    return this.authService.signout(userId as string, res);
   }
 
   @Post('change-password')

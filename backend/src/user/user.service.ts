@@ -97,6 +97,16 @@ export class UserService {
     }
   }
 
+  async findByIdIncludeRefreshToken(id: string) {
+    return await this.prismaService.user.findUnique({
+      where: { id },
+      include: {
+        clientProfile: true,
+        freelancerProfile: true,
+      },
+    });
+  }
+
   async findByEmail(email: string) {
     try {
       const user = await this.prismaService.user.findUnique({

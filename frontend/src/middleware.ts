@@ -23,7 +23,6 @@ export async function middleware(request: NextRequest) {
 
   // Check if user is authenticated
   const token = await getToken({ req: request });
-  console.log(token);
 
   if (!token) {
     // Redirect to sign-in if not authenticated
