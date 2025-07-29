@@ -42,5 +42,6 @@ import { StripeService } from 'src/stripe/stripe.service';
   ],
   controllers: [UserController],
   providers: [PrismaService, UserService, EmailService],
+  exports: [UserService],
 })
 export class UserModule {}

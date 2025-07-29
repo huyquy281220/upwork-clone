@@ -14,6 +14,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtRefreshStrategy } from './strategy/jwt-refresh.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { NextAuthGuard } from './guards/nextauth.guard';
 
 @Module({
   imports: [UserModule, JwtModule, PrismaModule, MessageModule, PassportModule],
@@ -29,7 +30,8 @@ import { RolesGuard } from './guards/roles.guard';
     JwtRefreshStrategy,
     RolesGuard,
     JwtAuthGuard,
+    NextAuthGuard,
   ],
-  exports: [JwtAuthGuard, JwtStrategy, RolesGuard],
+  exports: [JwtAuthGuard, JwtStrategy, RolesGuard, NextAuthGuard, JwtService],
 })
 export class AuthModule {}
