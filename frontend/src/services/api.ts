@@ -3,7 +3,7 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 
 // Create axios instance
 const api = axios.create({
@@ -15,19 +15,26 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const session = await getSession();
-
     if (session?.user) {
-      // Just send user data - trust NextAuth validation
-      config.headers["X-User-Id"] = session.user.id;
-      config.headers["X-User-Email"] = session.user.email;
-      config.headers["X-User-Role"] = session.user.role;
+      // Verify session is still valid before making request
+      try {
+        await api.post(
+          "/auth/verify-session",
+          {},
+          {
+            headers: { Authorization: `Bearer ${session.user.accessToken}` },
+          }
+        );
 
-      // Add access token if available
-      if (session.user.accessToken) {
-        config.headers.Authorization = `Bearer ${session.user.accessToken}`;
+        config.headers["X-User-Id"] = session.user.id;
+        config.headers["X-User-Email"] = session.user.email;
+        config.headers["X-User-Role"] = session.user.role;
+      } catch (error) {
+        // Session invalid, redirect to login
+        signOut();
+        return Promise.reject(error);
       }
     }
-
     return config;
   },
   (error: AxiosError) => {

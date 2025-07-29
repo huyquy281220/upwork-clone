@@ -10,12 +10,12 @@ import {
   ValidationPipe,
   UseGuards,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 import { ConversationsService } from './conversation.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AuthenticatedUser } from 'src/types';
 
 @Controller('conversations')
@@ -27,17 +27,17 @@ export class ConversationsController {
   @UsePipes(new ValidationPipe())
   create(
     @Body() createConversationDto: CreateConversationDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
   ) {
     return this.conversationsService.createConversation(
       createConversationDto,
-      user.id,
+      req.user.id,
     );
   }
 
   @Get()
   findAll(
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
     @Query('limit') limit?: string,
     @Query('page') page?: string,
     @Query('jobId') jobId?: string,
@@ -45,7 +45,7 @@ export class ConversationsController {
     return this.conversationsService.findAllConversations({
       limit: limit ? parseInt(limit) : undefined,
       page: page ? parseInt(page) : undefined,
-      userId: user.id,
+      userId: req.user.id,
       jobId,
     });
   }
@@ -53,20 +53,23 @@ export class ConversationsController {
   @Get(':id')
   findOne(
     @Param('id') id: string,
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 50,
   ) {
     return this.conversationsService.findOneConversation(
       id,
-      user.id,
+      req.user.id,
       page,
       limit,
     );
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.conversationsService.deleteConversation(id, user.id);
+  delete(
+    @Param('id') id: string,
+    @Req() req: Request & { user: AuthenticatedUser },
+  ) {
+    return this.conversationsService.deleteConversation(id, req.user.id);
   }
 }

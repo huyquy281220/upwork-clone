@@ -11,23 +11,23 @@ import {
   Patch,
   Headers,
   UnauthorizedException,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { ContractStatus, Role as PrismaRole } from '@prisma/client';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AuthenticatedUser, Role } from 'src/types';
+import { NextAuthGuard } from 'src/auth/guards/nextauth.guard';
+
 @Controller('contracts')
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
 
   @Post('/create')
-  create(
-    @Body() createContractDto: CreateContractDto,
-    // @CurrentUser() user: AuthenticatedUser,
-  ) {
+  create(@Body() createContractDto: CreateContractDto) {
     return this.contractsService.createContract(createContractDto);
   }
 
@@ -77,11 +77,14 @@ export class ContractsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    // Convert custom Role enum to Prisma Role enum
+  @UseGuards(NextAuthGuard)
+  findOne(
+    @Param('id') id: string,
+    @Req() req: Request & { user: AuthenticatedUser },
+  ) {
     const prismaRole =
-      user.role === Role.CLIENT ? PrismaRole.CLIENT : PrismaRole.FREELANCER;
-    return this.contractsService.findOneContract(id, user.id, prismaRole);
+      req.user.role === Role.CLIENT ? PrismaRole.CLIENT : PrismaRole.FREELANCER;
+    return this.contractsService.findOneContract(id, req.user.id, prismaRole);
   }
 
   @Put(':id')
@@ -90,20 +93,30 @@ export class ContractsController {
   update(
     @Param('id') id: string,
     @Body() updateContractDto: UpdateContractDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
   ) {
-    return this.contractsService.updateContract(id, user.id, updateContractDto);
+    return this.contractsService.updateContract(
+      id,
+      req.user.id,
+      updateContractDto,
+    );
   }
 
   @Put(':id/complete')
   @Roles(PrismaRole.CLIENT)
-  complete(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.contractsService.completeContract(id, user.id);
+  complete(
+    @Param('id') id: string,
+    @Req() req: Request & { user: AuthenticatedUser },
+  ) {
+    return this.contractsService.completeContract(id, req.user.id);
   }
 
   @Put(':id/cancel')
   @Roles(PrismaRole.CLIENT)
-  cancel(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.contractsService.cancelContract(id, user.id);
+  cancel(
+    @Param('id') id: string,
+    @Req() req: Request & { user: AuthenticatedUser },
+  ) {
+    return this.contractsService.cancelContract(id, req.user.id);
   }
 }

@@ -9,13 +9,13 @@ import {
   Query,
   UseGuards,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageStatusDto } from './dto/update-message-status.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 interface AuthenticatedUser {
   id: string;
@@ -31,15 +31,15 @@ export class MessagesController {
   @Post()
   create(
     @Body() createMessageDto: CreateMessageDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
   ) {
-    return this.messagesService.createMessage(user.id, createMessageDto);
+    return this.messagesService.createMessage(req.user.id, createMessageDto);
   }
 
   @Get()
   findAll(
     @Query('conversationId') conversationId: string,
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 50,
     @Query('isRead') isRead?: string,
@@ -48,46 +48,55 @@ export class MessagesController {
       limit,
       page,
       conversationId,
-      userId: user.id,
+      userId: req.user.id,
       isRead: isRead ? isRead === 'true' : undefined,
     });
   }
 
   @Get('unread-count')
   getUnreadCount(
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
     @Query('conversationId') conversationId?: string,
   ) {
-    return this.messagesService.getUnreadMessageCount(user.id, conversationId);
+    return this.messagesService.getUnreadMessageCount(
+      req.user.id,
+      conversationId,
+    );
   }
 
   @Get('stats/:conversationId')
   getStats(
     @Param('conversationId') conversationId: string,
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
   ) {
-    return this.messagesService.getMessageStats(conversationId, user.id);
+    return this.messagesService.getMessageStats(conversationId, req.user.id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.messagesService.findOneMessage(id, user.id);
+  findOne(
+    @Param('id') id: string,
+    @Req() req: Request & { user: AuthenticatedUser },
+  ) {
+    return this.messagesService.findOneMessage(id, req.user.id);
   }
 
   @Patch(':id/read')
-  markAsRead(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.messagesService.markAsRead(id, user.id);
+  markAsRead(
+    @Param('id') id: string,
+    @Req() req: Request & { user: AuthenticatedUser },
+  ) {
+    return this.messagesService.markAsRead(id, req.user.id);
   }
 
   @Patch(':id/status')
   updateStatus(
     @Param('id') id: string,
     @Body() updateStatusDto: UpdateMessageStatusDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
   ) {
     return this.messagesService.updateMessageStatus(
       id,
-      user.id,
+      req.user.id,
       updateStatusDto,
     );
   }
@@ -95,13 +104,16 @@ export class MessagesController {
   @Patch('conversation/:conversationId/mark-read')
   markAllAsRead(
     @Param('conversationId') conversationId: string,
-    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request & { user: AuthenticatedUser },
   ) {
-    return this.messagesService.markAllAsRead(conversationId, user.id);
+    return this.messagesService.markAllAsRead(conversationId, req.user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
-    return this.messagesService.deleteMessage(id, user.id);
+  remove(
+    @Param('id') id: string,
+    @Req() req: Request & { user: AuthenticatedUser },
+  ) {
+    return this.messagesService.deleteMessage(id, req.user.id);
   }
 }
