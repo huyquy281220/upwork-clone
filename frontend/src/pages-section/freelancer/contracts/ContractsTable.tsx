@@ -70,7 +70,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
         <div className="overflow-x-auto">
           <table className="w-full over">
             <thead className="rounded-t-lg">
-              <tr className="border-b bg-subBackground">
+              <tr className="border-b bg-card">
                 {titles.map((title, index) => (
                   <th
                     key={title}
@@ -87,7 +87,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {contracts.length === 0 ? (
-                <tr className="bg-subBackground">
+                <tr className="bg-card">
                   <td colSpan={6} className="px-6 py-12 text-center">
                     <div className="text-foreground">
                       <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -100,7 +100,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                 </tr>
               ) : (
                 contracts.map((contract, index) => (
-                  <tr key={contract.id} className="bg-subBackground">
+                  <tr key={contract.id} className="bg-card">
                     <td
                       className={cn(
                         "px-6 py-4",
