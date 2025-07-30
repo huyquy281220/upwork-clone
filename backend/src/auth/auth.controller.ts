@@ -13,13 +13,12 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response, Request } from 'express';
-import { LocalAuthGuard } from './guards/auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserService } from 'src/user/user.service';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Public } from './decorators/public.decorator';
+import { NextAuthGuard } from './guards/nextauth.guard';
 interface LoginDto {
   email: string;
   password: string;
@@ -81,27 +80,17 @@ export class AuthController {
   }
 
   @Post('sign-out')
+  @UseGuards(NextAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async logout(@Req() req: Request, @Res() res: Response) {
-    const authHeader = req.headers.authorization;
-    let userId: string | undefined;
-
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      try {
-        const token = authHeader.substring(7);
-        const decoded = this.jwtService.verify(token, {
-          secret: process.env.JWT_SECRET,
-        });
-        userId = decoded.sub;
-      } catch (error) {
-        console.error('Invalid token:', error);
-      }
-    }
-
-    return this.authService.signout(userId as string, res);
+  async logout(
+    @Req() req: Request & { user: { id: string } },
+    @Res() res: Response,
+  ) {
+    return this.authService.signout(req.user.id, res);
   }
 
   @Post('change-password')
+  @UseGuards(NextAuthGuard)
   @HttpCode(HttpStatus.OK)
   async changePassword(
     @Body()

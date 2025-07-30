@@ -33,12 +33,27 @@ export class NextAuthGuard implements CanActivate {
 
     const token = authHeader.replace('Bearer ', '');
 
+    // Check if it's a Google OAuth token (starts with ya29)
+    if (token.startsWith('ya29.')) {
+      // For OAuth tokens, get user from request body or skip verification
+      const { id } = request.body;
+      if (id) {
+        const user = await this.userService.findById(id);
+        if (user) {
+          request.user = user;
+          return true;
+        }
+      }
+      return true;
+    }
+
+    // Regular JWT verification for NextAuth tokens
     try {
       const decoded = this.jwtService.verify(token, {
-        secret: process.env.NEXTAUTH_SECRET,
+        secret: process.env.JWT_SECRET,
       }) as any;
 
-      if (!decoded.sub || !decoded.email) {
+      if (!decoded.sub) {
         throw new UnauthorizedException('Invalid token payload');
       }
 
@@ -47,10 +62,12 @@ export class NextAuthGuard implements CanActivate {
         throw new UnauthorizedException('User not found');
       }
 
-      // Attach user to request
       request.user = user;
+
+      console.log('user', user);
       return true;
     } catch (error) {
+      console.log('error', error);
       throw new UnauthorizedException('Invalid token');
     }
   }

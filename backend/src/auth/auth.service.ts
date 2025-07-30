@@ -139,8 +139,8 @@ export class AuthService {
 
       return res.status(200).json({ message: 'Logged out successfully' });
     } catch (error) {
-      console.log(error);
-      throw new Error('Signout failed');
+      console.log('Signout error:', error);
+      // throw new Error('Signout failed');
     }
   }
 

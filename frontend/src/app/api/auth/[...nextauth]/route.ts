@@ -62,15 +62,15 @@ const handler = NextAuth({
       if (token) {
         session.user.id = token.sub as string;
         session.user.role = token.role as string;
-        session.user.accessToken = token.accessToken as string;
       }
 
       return session;
     },
     async jwt({ token, user, account }) {
       if (account && user) {
+        token.id = user.id;
         token.role = user.role;
-        token.accessToken = account.access_token || user.accessToken;
+        token.backendAccessToken = account.access_token || user.accessToken;
         token.refreshToken = account.refresh_token;
       }
 
@@ -151,7 +151,7 @@ const handler = NextAuth({
     async signOut({ token }) {
       try {
         // Get access token from the token
-        const accessToken = token?.accessToken;
+        const accessToken = token?.backendAccessToken;
 
         if (accessToken) {
           // Call backend API to clear refresh token
@@ -160,8 +160,10 @@ const handler = NextAuth({
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${accessToken}`,
-              "X-User-Id": token.sub as string,
             },
+            body: JSON.stringify({
+              id: token.id,
+            }),
             credentials: "include",
           });
 
