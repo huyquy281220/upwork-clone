@@ -233,7 +233,6 @@ model WorkLog {
   id          String   @id @default(uuid())
   freelancerId String
   contractId  String
-  date        DateTime
   hours       Float
   description String?
 

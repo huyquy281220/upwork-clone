@@ -1,8 +1,11 @@
-import { IsString, IsDateString, IsOptional } from 'class-validator';
+import { IsString, IsDateString, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateWorkLogDto {
   @IsString()
   contractId: string;
+
+  @IsNumber()
+  hours: number;
 
   @IsDateString()
   loggedAt: string;
@@ -15,5 +18,6 @@ export class CreateWorkLogDto {
   @IsString()
   description?: string;
 
-  freelancerId?: string;
+  @IsString()
+  freelancerId: string;
 }

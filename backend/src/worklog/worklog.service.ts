@@ -7,7 +7,18 @@ export class WorkLogService {
   constructor(private prisma: PrismaService) {}
 
   create(data: CreateWorkLogDto) {
-    return this.prisma.workLog.create({ data });
+    const { freelancerId, contractId, hours, loggedAt, endTime, ...rest } =
+      data;
+    return this.prisma.workLog.create({
+      data: {
+        ...rest,
+        loggedAt,
+        hours,
+        freelancer: { connect: { id: freelancerId } },
+        contract: { connect: { id: contractId } },
+        endTime,
+      },
+    });
   }
 
   findByContract(contractId: string) {
