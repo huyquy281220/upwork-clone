@@ -250,10 +250,9 @@ model WorkSubmission {
   workLogId   String
   title       String
   description String
-  fileUrl     String?
+  fileUrl     String
   status       SubmissionStatus @default(PENDING)
   reviewedAt   DateTime?
-  feedback     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
