@@ -65,6 +65,7 @@ model FreelancerProfile {
   contracts       Contract[]    @relation("FreelancerContracts")
   skills          UserSkill[]   @relation("FreelancerSkills")
   savedJobs       UserSavedJob[] @relation("FreelancerSavedJobs")
+  workLogs        WorkLog[]     @relation("WorkLogFreelancer")
 }
 
 model Job {
@@ -230,12 +231,18 @@ model Milestone {
 
 model WorkLog {
   id          String   @id @default(uuid())
+  freelancerId String
   contractId  String
   date        DateTime
   hours       Float
   description String?
 
   contract    Contract?  @relation("WorkLogContract",fields: [contractId], references: [id])
+  freelancer  FreelancerProfile @relation("WorkLogFreelancer",fields: [freelancerId], references: [userId])
+  loggedAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  endTime     DateTime?
 }
 
 model Message {
