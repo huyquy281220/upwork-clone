@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, Query, Req } from '@nestjs/common';
-import { WorkLogService } from './worklog.service';
-import { CreateWorkLogDto } from './dto/create-worklog.dto';
+import { WorkLogService } from './work-log.service';
+import { CreateWorkLogDto } from './dto/create-work-log.dto';
 @Controller('work-logs')
 export class WorkLogController {
   constructor(private readonly workLogService: WorkLogService) {}

@@ -18,6 +18,9 @@ import { ProposalsModule } from './proposals/proposals.module';
 import { UserSkillsModule } from './user-skills/user-skills.module';
 import { SocketModule } from './socket/socket.module';
 import { StripeModule } from './stripe/stripe.module';
+import { WorkSubmissionsModule } from './work-submissions/work-submissions.module';
+import { WorkLogModule } from './work-log/work-log.module';
+
 @Module({
   imports: [
     UserModule,
@@ -37,6 +40,8 @@ import { StripeModule } from './stripe/stripe.module';
     UserSkillsModule,
     SocketModule,
     StripeModule,
+    WorkSubmissionsModule,
+    WorkLogModule,
   ],
   controllers: [AppController],
   providers: [AppService],
