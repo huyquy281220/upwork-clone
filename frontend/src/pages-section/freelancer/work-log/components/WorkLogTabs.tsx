@@ -1,14 +1,15 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { WorkLogStats } from "./work-log-stats";
-import { WorkOverview } from "./work-overview";
-import { TimeEntriesList } from "./time-entries-list";
-import { WorkSubmissions } from "./work-submissions";
+import { WorkLogStats } from "./WorkLogStats";
+import { WorkOverview } from "./WorkOverview";
+import { TimeEntriesList } from "./TimeEntriesList";
+import { WorkSubmissions } from "./WorkSubmissions";
 import { Clock, Upload, BarChart3 } from "lucide-react";
+import { ContractType } from "@/types/contract";
 
 interface WorkLogTabsProps {
-  contractType: "hourly" | "fixed";
+  contractType: ContractType;
   stats: any;
   timeEntries: any[];
   submissions: any[];
@@ -34,7 +35,7 @@ export function WorkLogTabs({
 }: WorkLogTabsProps) {
   const tabsConfig = [
     { value: "overview", label: "Overview", icon: BarChart3 },
-    ...(contractType === "hourly"
+    ...(contractType === ContractType.HOURLY
       ? [{ value: "time-entries", label: "Time Entries", icon: Clock }]
       : []),
     { value: "submissions", label: "Work Submissions", icon: Upload },

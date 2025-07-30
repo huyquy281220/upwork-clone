@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Target, CheckCircle } from "lucide-react";
+import { MilestoneProps, WorkLogProps } from "@/types/contract";
 
 interface WorkOverviewProps {
   contractType: "hourly" | "fixed";
@@ -17,9 +18,9 @@ interface WorkOverviewProps {
     completedMilestones?: number;
     totalMilestones?: number;
   };
-  timeEntries: any[];
+  timeEntries: WorkLogProps[];
   submissions: any[];
-  milestones?: any[];
+  milestones?: MilestoneProps[];
 }
 
 export function WorkOverview({
