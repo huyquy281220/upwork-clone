@@ -40,3 +40,8 @@ export const getPaginatedContractsForFreelancer = async (
 
   return response.data;
 };
+
+export const getContractById = async (contractId: string) => {
+  const response = await api.get(`${apiURL}/contracts/${contractId}`);
+  return response.data;
+};

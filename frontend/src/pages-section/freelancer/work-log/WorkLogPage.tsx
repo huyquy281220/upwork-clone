@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { WorkLogHeader } from "@/components/work-log/work-log-header";
-import { WorkLogTabs } from "@/components/work-log/work-log-tabs";
+import { WorkLogTabs } from "./components/WorkLogTabs";
+import { WorkLogHeader } from "./WorkLogHeader";
+import { CreateWorkSubmissionProps } from "@/types/work-submissions";
+import { useQuery } from "@tanstack/react-query";
+import { getWorkLogs } from "@/services/work-log";
+import { useSearchParams } from "next/navigation";
 
 // Mock data
 const mockContract = {
@@ -111,20 +115,27 @@ const mockMilestones = [
 ];
 
 export default function WorkLogPage() {
+  const searchParams = useSearchParams();
+  const contractId = searchParams.get("contractId");
   const [timeEntries, setTimeEntries] = useState(mockTimeEntries);
   const [submissions, setSubmissions] = useState(mockSubmissions);
 
+  // const {data:contract} = useQuery({
+  //   queryKey:["contract",contractId],
+  //   queryFn:()=>getContract(contractId)
+  // })
+
+  // const {data:worklogs} = useQuery({
+  //   queryKey:["worklogs"],
+  //   queryFn:()=>getWorkLogs()
+  // })
+
   const handleAddTimeEntry = (entry: any) => {
     const newEntry = {
-      id: `entry-${Date.now()}`,
-      date: entry.date || new Date().toISOString().split("T")[0],
       startTime: entry.startTime || "09:00",
       endTime: entry.endTime || "17:00",
       duration: entry.duration || 28800,
       description: entry.description || "New work session",
-      hourlyRate: mockContract.hourlyRate,
-      earnings: ((entry.duration || 28800) / 3600) * mockContract.hourlyRate,
-      status: "draft" as const,
       ...entry,
     };
     setTimeEntries([newEntry, ...timeEntries]);
@@ -142,7 +153,7 @@ export default function WorkLogPage() {
     setTimeEntries(timeEntries.filter((entry) => entry.id !== id));
   };
 
-  const handleAddSubmission = (submission: any) => {
+  const handleAddSubmission = (submission: CreateWorkSubmissionProps) => {
     const newSubmission = {
       id: `submission-${Date.now()}`,
       title: submission.title || "New Submission",

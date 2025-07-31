@@ -1,4 +1,4 @@
-export interface WorkLog {
+export type WorkLogProps = {
   id: string;
   hours: number;
   loggedAt: string;
@@ -9,4 +9,11 @@ export interface WorkLog {
 
   createdAt: string;
   updatedAt: string;
-}
+};
+
+export type CreateWorkLogProps = {
+  hours: number;
+  loggedAt: string;
+  endTime: string;
+  description: string;
+};
