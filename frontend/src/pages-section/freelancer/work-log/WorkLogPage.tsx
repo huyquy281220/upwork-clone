@@ -5,7 +5,7 @@ import { WorkLogTabs } from "./components/WorkLogTabs";
 import { WorkLogHeader } from "./WorkLogHeader";
 import { CreateWorkSubmissionProps } from "@/types/work-submissions";
 import { useQuery } from "@tanstack/react-query";
-import { getWorkLogs, getWorkLogsByContractId } from "@/services/work-log";
+import { getWorkLogsByContractId } from "@/services/work-log";
 import { useSearchParams } from "next/navigation";
 import { getContractById } from "@/services/contract";
 
@@ -115,7 +115,7 @@ const mockMilestones = [
   { id: "milestone-5", name: "Payment Integration", status: "pending" },
 ];
 
-export default function WorkLogPage() {
+export function WorkLogPage() {
   const searchParams = useSearchParams();
   const contractId = searchParams.get("contractId");
   const [timeEntries, setTimeEntries] = useState(mockTimeEntries);

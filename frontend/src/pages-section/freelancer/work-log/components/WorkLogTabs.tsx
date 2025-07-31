@@ -1,12 +1,12 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { WorkLogStats } from "./WorkLogStats";
-import { WorkOverview } from "./WorkOverview";
-import { TimeEntriesList } from "./TimeEntriesList";
-import { WorkSubmissions } from "./WorkSubmissions";
 import { Clock, Upload, BarChart3 } from "lucide-react";
 import { ContractType } from "@/types/contract";
+import { WorkLogStats } from "../WorkLogStats";
+import { WorkOverview } from "../WorkLogOverview";
+import { TimeEntriesList } from "../TimeEntriesList";
+import { WorkSubmissions } from "../WorkLogSubmission";
 
 interface WorkLogTabsProps {
   contractType: ContractType;

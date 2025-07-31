@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ContractProps, ContractStatus, ContractType } from "@/types/contract";
 import { cn } from "@/lib/utils";
-
+import { useRouter } from "next/navigation";
 interface ContractsTableProps {
   contracts: ContractProps[];
 }
@@ -27,6 +27,8 @@ const titles = [
 ];
 
 export function ContractsTable({ contracts }: ContractsTableProps) {
+  const router = useRouter();
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       [ContractStatus.ACTIVE]: {
@@ -180,8 +182,15 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                             <Eye className="w-4 h-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem>Edit Contract</DropdownMenuItem>
-                          <DropdownMenuItem>Download Invoice</DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              router.push(
+                                `/freelancer/contracts/${contract.id}/work-log`
+                              )
+                            }
+                          >
+                            Start Work
+                          </DropdownMenuItem>
                           <DropdownMenuItem className="text-red-600">
                             Cancel Contract
                           </DropdownMenuItem>
