@@ -344,7 +344,7 @@ export class ContractsService {
     };
   }
 
-  async findOneContract(id: string, userId: string, userRole: Role) {
+  async findOneContract(id: string) {
     const contract = await this.prisma.contract.findUnique({
       where: { id },
       include: {
@@ -358,15 +358,6 @@ export class ContractsService {
 
     if (!contract) {
       throw new NotFoundException(`Contract with ID ${id} not found`);
-    }
-
-    // Check if user has access to this contract
-    const hasAccess =
-      (userRole === Role.CLIENT && contract.clientId === userId) ||
-      (userRole === Role.FREELANCER && contract.freelancerId === userId);
-
-    if (!hasAccess) {
-      throw new BadRequestException('You do not have access to this contract');
     }
 
     return contract;

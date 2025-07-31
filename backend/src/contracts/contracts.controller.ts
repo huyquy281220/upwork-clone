@@ -76,15 +76,10 @@ export class ContractsController {
     );
   }
 
-  @Get(':id')
+  @Get(':contractId')
   @UseGuards(NextAuthGuard)
-  findOne(
-    @Param('id') id: string,
-    @Req() req: Request & { user: AuthenticatedUser },
-  ) {
-    const prismaRole =
-      req.user.role === Role.CLIENT ? PrismaRole.CLIENT : PrismaRole.FREELANCER;
-    return this.contractsService.findOneContract(id, req.user.id, prismaRole);
+  findOne(@Param('contractId') contractId: string) {
+    return this.contractsService.findOneContract(contractId);
   }
 
   @Put(':id')
