@@ -5,8 +5,9 @@ import { WorkLogTabs } from "./components/WorkLogTabs";
 import { WorkLogHeader } from "./WorkLogHeader";
 import { CreateWorkSubmissionProps } from "@/types/work-submissions";
 import { useQuery } from "@tanstack/react-query";
-import { getWorkLogs } from "@/services/work-log";
+import { getWorkLogs, getWorkLogsByContractId } from "@/services/work-log";
 import { useSearchParams } from "next/navigation";
+import { getContractById } from "@/services/contract";
 
 // Mock data
 const mockContract = {
@@ -120,15 +121,21 @@ export default function WorkLogPage() {
   const [timeEntries, setTimeEntries] = useState(mockTimeEntries);
   const [submissions, setSubmissions] = useState(mockSubmissions);
 
-  // const {data:contract} = useQuery({
-  //   queryKey:["contract",contractId],
-  //   queryFn:()=>getContract(contractId)
-  // })
+  const { data: contract } = useQuery({
+    queryKey: ["contract", contractId],
+    queryFn: () => getContractById(contractId || ""),
+    enabled: !!contractId,
+  });
 
-  // const {data:worklogs} = useQuery({
-  //   queryKey:["worklogs"],
-  //   queryFn:()=>getWorkLogs()
-  // })
+  // console.log(contract);
+
+  const { data: worklogs } = useQuery({
+    queryKey: ["worklogs", contractId],
+    queryFn: () => getWorkLogsByContractId(contractId || ""),
+    enabled: !!contractId,
+  });
+
+  console.log("worklogs", worklogs);
 
   const handleAddTimeEntry = (entry: any) => {
     const newEntry = {

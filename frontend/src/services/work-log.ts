@@ -8,8 +8,12 @@ export const createWorkLog = async (data: CreateWorkLogProps) => {
   return response.data;
 };
 
-export const getWorkLogs = async (workLogId: string | undefined) => {
-  const response = await api.get(`${apiURL}/work-logs/${workLogId}`);
+export const getWorkLogsByContractId = async (
+  contractId: string | undefined
+) => {
+  const response = await api.get(
+    `${apiURL}/work-logs/by-contract?contractId=${contractId}`
+  );
   return response.data;
 };
 
