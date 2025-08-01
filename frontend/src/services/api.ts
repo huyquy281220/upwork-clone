@@ -44,7 +44,8 @@ api.interceptors.response.use(
       // Authentication failed - NextAuth will handle refresh
       // Just redirect to login
       console.error("Authentication failed, redirecting to login");
-      window.location.href = "/sign-in";
+      console.error(error);
+      // window.location.href = "/sign-in";
     }
 
     return Promise.reject(error);

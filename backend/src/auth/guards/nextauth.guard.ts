@@ -27,6 +27,8 @@ export class NextAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
 
+    console.log('authHeader', authHeader);
+
     if (!authHeader) {
       throw new UnauthorizedException('No authorization header');
     }

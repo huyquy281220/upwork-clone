@@ -3,11 +3,18 @@
 import { useState } from "react";
 import { WorkLogTabs } from "./components/WorkLogTabs";
 import { WorkLogHeader } from "./WorkLogHeader";
+import { WorkSubmissionProps } from "@/types/work-submissions";
 import { CreateWorkSubmissionProps } from "@/types/work-submissions";
-import { useQuery } from "@tanstack/react-query";
-import { getWorkLogsByContractId } from "@/services/work-log";
-import { useSearchParams } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createWorkLog,
+  getWorkLogsByContractId,
+  updateWorkLog,
+} from "@/services/work-log";
+import { useParams } from "next/navigation";
 import { getContractById } from "@/services/contract";
+import { WorkLogProps } from "@/types/work-log";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 // Mock data
 const mockContract = {
@@ -33,80 +40,6 @@ const mockStats = {
   totalMilestones: 5,
 };
 
-const mockTimeEntries = [
-  {
-    id: "entry-1",
-    date: "2024-01-30",
-    startTime: "09:00",
-    endTime: "17:00",
-    duration: 28800, // 8 hours in seconds
-    description: "Frontend development - user authentication",
-    hourlyRate: 75,
-    earnings: 600,
-    status: "approved" as const,
-  },
-  {
-    id: "entry-2",
-    date: "2024-01-29",
-    startTime: "10:00",
-    endTime: "16:30",
-    duration: 23400, // 6.5 hours in seconds
-    description: "API integration and testing",
-    hourlyRate: 75,
-    earnings: 487.5,
-    status: "submitted" as const,
-  },
-  {
-    id: "entry-3",
-    date: "2024-01-28",
-    startTime: "09:30",
-    endTime: "18:00",
-    duration: 30600, // 8.5 hours in seconds
-    description: "Database design and implementation",
-    hourlyRate: 75,
-    earnings: 637.5,
-    status: "draft" as const,
-  },
-];
-
-const mockSubmissions = [
-  {
-    id: "submission-1",
-    title: "User Authentication System",
-    description:
-      "Complete user registration, login, and password reset functionality",
-    submittedDate: "2024-01-28",
-    status: "approved" as const,
-    files: [
-      {
-        id: "file-1",
-        name: "auth-system.zip",
-        size: 2048576,
-        type: "application/zip",
-        url: "/files/auth-system.zip",
-      },
-    ],
-    feedback: "Great work! The authentication system works perfectly.",
-  },
-  {
-    id: "submission-2",
-    title: "Product Catalog API",
-    description: "RESTful API for product management with CRUD operations",
-    submittedDate: "2024-01-25",
-    status: "revision_requested" as const,
-    files: [
-      {
-        id: "file-2",
-        name: "api-documentation.pdf",
-        size: 1024000,
-        type: "application/pdf",
-        url: "/files/api-docs.pdf",
-      },
-    ],
-    feedback: "Please add input validation for the product creation endpoint.",
-  },
-];
-
 const mockMilestones = [
   { id: "milestone-1", name: "Project Setup & Planning", status: "completed" },
   { id: "milestone-2", name: "User Authentication", status: "completed" },
@@ -116,20 +49,22 @@ const mockMilestones = [
 ];
 
 export function WorkLogPage() {
-  const searchParams = useSearchParams();
-  const contractId = searchParams.get("contractId");
-  const [timeEntries, setTimeEntries] = useState(mockTimeEntries);
-  const [submissions, setSubmissions] = useState(mockSubmissions);
+  const params = useParams();
+  const contractId = params.contractId;
+  const queryClient = useQueryClient();
 
-  const { data: contract } = useQuery({
+  console.log(contractId);
+
+  const [timeEntries, setTimeEntries] = useState<WorkLogProps[]>([]);
+  const [submissions, setSubmissions] = useState<WorkSubmissionProps[]>([]);
+
+  const { data: contract, isLoading: isContractLoading } = useQuery({
     queryKey: ["contract", contractId],
     queryFn: () => getContractById(contractId || ""),
     enabled: !!contractId,
   });
 
-  // console.log(contract);
-
-  const { data: worklogs } = useQuery({
+  const { data: worklogs, isLoading: isWorkLogsLoading } = useQuery({
     queryKey: ["worklogs", contractId],
     queryFn: () => getWorkLogsByContractId(contractId || ""),
     enabled: !!contractId,
@@ -137,18 +72,40 @@ export function WorkLogPage() {
 
   console.log("worklogs", worklogs);
 
-  const handleAddTimeEntry = (entry: any) => {
+  const createWorkLogMutation = useMutation({
+    mutationFn: (workLog: WorkLogProps) => createWorkLog(workLog),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+    },
+    onError: (error) => {
+      console.error("Error creating work log:", error);
+    },
+  });
+
+  const updateWorkLogMutation = useMutation({
+    mutationFn: (workLog: WorkLogProps) => updateWorkLog(workLog.id, workLog),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+    },
+    onError: (error) => {
+      console.error("Error updating work log:", error);
+    },
+  });
+
+  console.log("worklogs", worklogs);
+
+  const handleAddTimeEntry = (workLog: WorkLogProps) => {
     const newEntry = {
-      startTime: entry.startTime || "09:00",
-      endTime: entry.endTime || "17:00",
-      duration: entry.duration || 28800,
-      description: entry.description || "New work session",
-      ...entry,
+      ...workLog,
+      loggedAt: workLog.loggedAt || "09:00",
+      endTime: workLog.endTime || "17:00",
+      hours: workLog.hours || 28800,
+      description: workLog.description || "New work session",
     };
     setTimeEntries([newEntry, ...timeEntries]);
   };
 
-  const handleEditTimeEntry = (id: string, updatedEntry: any) => {
+  const handleEditTimeEntry = (id: string, updatedEntry: WorkLogProps) => {
     setTimeEntries(
       timeEntries.map((entry) =>
         entry.id === id ? { ...entry, ...updatedEntry } : entry
@@ -181,6 +138,10 @@ export function WorkLogPage() {
     );
   };
 
+  if (isContractLoading || isWorkLogsLoading) return <InfiniteLoading />;
+  if (!contract) return;
+  if (!worklogs) return;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -194,7 +155,7 @@ export function WorkLogPage() {
         />
 
         <WorkLogTabs
-          contractType={mockContract.type}
+          contractType={contract.contractType}
           stats={mockStats}
           timeEntries={timeEntries}
           submissions={submissions}
