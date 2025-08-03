@@ -202,6 +202,7 @@ model Contract {
   job          Job               @relation(fields: [jobId], references: [id])
   milestone    Milestone[]       @relation("MilestoneContract")
   workLog      WorkLog[]           @relation("WorkLogContract")
+  workSubmission WorkSubmission[] @relation("WorkSubmissionContract")
   payments     Payment[]
   reviews      Review[]
 
@@ -242,12 +243,11 @@ model WorkLog {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   endTime     DateTime?
-  submissions WorkSubmission[]
 }
 
 model WorkSubmission {
   id          String   @id @default(uuid())
-  workLogId   String
+  contractId   String
   title       String
   description String
   fileUrl     String
@@ -256,7 +256,7 @@ model WorkSubmission {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  workLog WorkLog @relation(fields: [workLogId], references: [id])
+  contract Contract @relation("WorkSubmissionContract", fields: [contractId], references: [id])
 }
 
 model Message {

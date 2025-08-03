@@ -3,7 +3,7 @@ import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 export class UpdateWorkSubmissionDto {
   @IsString()
   @IsNotEmpty()
-  workLogId: string;
+  contractId: string;
 
   @IsOptional()
   @IsString()

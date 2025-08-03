@@ -3,7 +3,7 @@ import { IsString, IsNotEmpty } from 'class-validator';
 export class CreateWorkSubmissionDto {
   @IsString()
   @IsNotEmpty()
-  workLogId: string;
+  contractId: string;
 
   @IsString()
   @IsNotEmpty()

@@ -8,6 +8,7 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client } from 'src/config/aws-s3.config';
 import { CreateWorkSubmissionDto } from './dto/create-work-submissions.dto';
 import { UpdateWorkSubmissionDto } from './dto/update-work-submissions.dto';
+import { Express } from 'express';
 
 @Injectable()
 export class WorkSubmissionsService {
@@ -56,7 +57,7 @@ export class WorkSubmissionsService {
           ...data,
           fileUrl: fileUrl,
         },
-        include: { workLog: true },
+        include: { contract: true },
       });
 
       return workSubmission;
@@ -70,7 +71,23 @@ export class WorkSubmissionsService {
   async findAll() {
     try {
       const workSubmissions = await this.prisma.workSubmission.findMany({
-        include: { workLog: true },
+        include: { contract: true },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return workSubmissions;
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to fetch work submissions: ${error.message}`,
+      );
+    }
+  }
+
+  async findAllByContractId(contractId: string) {
+    try {
+      const workSubmissions = await this.prisma.workSubmission.findMany({
+        where: { contractId },
+        include: { contract: true },
         orderBy: { createdAt: 'desc' },
       });
 
@@ -86,7 +103,7 @@ export class WorkSubmissionsService {
     try {
       const workSubmission = await this.prisma.workSubmission.findUnique({
         where: { id },
-        include: { workLog: true },
+        include: { contract: true },
       });
 
       if (!workSubmission) {
@@ -134,7 +151,7 @@ export class WorkSubmissionsService {
           ...data,
           fileUrl: fileUrl,
         },
-        include: { workLog: true },
+        include: { contract: true },
       });
 
       return updatedSubmission;

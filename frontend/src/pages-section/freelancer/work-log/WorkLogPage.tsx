@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { WorkLogTabs } from "./components/WorkLogTabs";
 import { WorkLogHeader } from "./WorkLogHeader";
-import { WorkSubmissionProps } from "@/types/work-submissions";
+import {
+  UpdateWorkSubmissionProps,
+  WorkSubmissionProps,
+} from "@/types/work-submissions";
 import { CreateWorkSubmissionProps } from "@/types/work-submissions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -15,6 +18,7 @@ import { useParams } from "next/navigation";
 import { getContractById } from "@/services/contract";
 import { WorkLogProps } from "@/types/work-log";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { getWorkSubmissionsByContractId } from "@/services/work-submissions";
 
 // Mock data
 const mockContract = {
@@ -56,21 +60,26 @@ export function WorkLogPage() {
   console.log(contractId);
 
   const [timeEntries, setTimeEntries] = useState<WorkLogProps[]>([]);
-  const [submissions, setSubmissions] = useState<WorkSubmissionProps[]>([]);
+  const [submissions, setSubmissions] = useState<CreateWorkSubmissionProps>();
 
   const { data: contract, isLoading: isContractLoading } = useQuery({
     queryKey: ["contract", contractId],
-    queryFn: () => getContractById(contractId || ""),
+    queryFn: () => getContractById(contractId as string),
     enabled: !!contractId,
   });
 
   const { data: worklogs, isLoading: isWorkLogsLoading } = useQuery({
     queryKey: ["worklogs", contractId],
-    queryFn: () => getWorkLogsByContractId(contractId || ""),
+    queryFn: () => getWorkLogsByContractId(contractId as string),
     enabled: !!contractId,
   });
 
-  console.log("worklogs", worklogs);
+  const { data: workSubmissions, isLoading: isWorkSubmissionsLoading } =
+    useQuery({
+      queryKey: ["workSubmissions", contractId],
+      queryFn: () => getWorkSubmissionsByContractId(contractId as string),
+      enabled: !!contractId,
+    });
 
   const createWorkLogMutation = useMutation({
     mutationFn: (workLog: WorkLogProps) => createWorkLog(workLog),
@@ -91,8 +100,6 @@ export function WorkLogPage() {
       console.error("Error updating work log:", error);
     },
   });
-
-  console.log("worklogs", worklogs);
 
   const handleAddTimeEntry = (workLog: WorkLogProps) => {
     const newEntry = {
@@ -119,18 +126,18 @@ export function WorkLogPage() {
 
   const handleAddSubmission = (submission: CreateWorkSubmissionProps) => {
     const newSubmission = {
-      id: `submission-${Date.now()}`,
       title: submission.title || "New Submission",
       description: submission.description || "",
       submittedDate: new Date().toISOString().split("T")[0],
-      status: "draft" as const,
       files: [],
-      ...submission,
     };
     setSubmissions([newSubmission, ...submissions]);
   };
 
-  const handleUpdateSubmission = (id: string, updatedSubmission: any) => {
+  const handleUpdateSubmission = (
+    id: string,
+    updatedSubmission: UpdateWorkSubmissionProps
+  ) => {
     setSubmissions(
       submissions.map((sub) =>
         sub.id === id ? { ...sub, ...updatedSubmission } : sub
@@ -138,12 +145,14 @@ export function WorkLogPage() {
     );
   };
 
-  if (isContractLoading || isWorkLogsLoading) return <InfiniteLoading />;
+  // 19038835710015
+  if (isContractLoading || isWorkLogsLoading || isWorkSubmissionsLoading)
+    return <InfiniteLoading />;
   if (!contract) return;
   if (!worklogs) return;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <WorkLogHeader
           contract={mockContract}

@@ -7,12 +7,19 @@ export type WorkSubmissionProps = {
   createdAt: string;
   updatedAt: string;
   reviewedAt?: string;
-  workLogId: string;
+  contractId: string;
 };
 
 export type CreateWorkSubmissionProps = {
   title: string;
   description: string;
   fileUrl: string;
-  workLogId: string;
+  contractId: string;
+};
+
+export type UpdateWorkSubmissionProps = {
+  title?: string;
+  description?: string;
+  fileUrl?: string;
+  status?: string;
 };

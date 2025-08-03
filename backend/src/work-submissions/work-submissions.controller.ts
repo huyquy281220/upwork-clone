@@ -18,9 +18,9 @@ export class WorkSubmissionsController {
     return this.service.create(body);
   }
 
-  @Get()
-  findAll() {
-    return this.service.findAll();
+  @Get('by-contract/:contractId')
+  findAllByContractId(@Param('contractId') contractId: string) {
+    return this.service.findAllByContractId(contractId);
   }
 
   @Get(':id')
