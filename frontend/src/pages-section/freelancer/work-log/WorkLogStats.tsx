@@ -2,9 +2,9 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, DollarSign, Target, TrendingUp } from "lucide-react";
-
+import { ContractType } from "@/types/contract";
 interface WorkLogStatsProps {
-  contractType: "hourly" | "fixed";
+  contractType: ContractType;
   stats: {
     totalHoursWorked?: number;
     totalEarnings: number;
@@ -26,10 +26,12 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-foreground opacity-80">
-                {contractType === "hourly" ? "Total Hours" : "Progress"}
+                {contractType === ContractType.HOURLY
+                  ? "Total Hours"
+                  : "Progress"}
               </p>
               <p className="text-2xl font-bold text-foreground">
-                {contractType === "hourly"
+                {contractType === ContractType.HOURLY
                   ? `${stats.totalHoursWorked?.toFixed(1) || 0}h`
                   : `${(
                       ((stats.completedMilestones || 0) /
@@ -39,7 +41,7 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
               </p>
             </div>
             <div className="p-3 bg-blue-100 rounded-full">
-              {contractType === "hourly" ? (
+              {contractType === ContractType.HOURLY ? (
                 <Clock className="w-6 h-6 text-green-600" />
               ) : (
                 <Target className="w-6 h-6 text-green-600" />
@@ -77,13 +79,13 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
                 This Week
               </p>
               <p className="text-2xl font-bold text-foreground">
-                {contractType === "hourly"
+                {contractType === ContractType.HOURLY
                   ? `${stats.thisWeekHours?.toFixed(1) || 0}h`
                   : `$${stats.thisWeekEarnings.toLocaleString()}`}
               </p>
             </div>
             <div className="p-3 bg-purple-100 rounded-full">
-              {contractType === "hourly" ? (
+              {contractType === ContractType.HOURLY ? (
                 <Clock className="w-6 h-6 text-purple-600" />
               ) : (
                 <DollarSign className="w-6 h-6 text-purple-600" />
@@ -99,10 +101,12 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-foreground opacity-80">
-                {contractType === "hourly" ? "Daily Average" : "Milestones"}
+                {contractType === ContractType.HOURLY
+                  ? "Daily Average"
+                  : "Milestones"}
               </p>
               <p className="text-2xl font-bold text-foreground">
-                {contractType === "hourly"
+                {contractType === ContractType.HOURLY
                   ? `${stats.averageHoursPerDay?.toFixed(1) || 0}h`
                   : `${stats.completedMilestones || 0}/${
                       stats.totalMilestones || 0
