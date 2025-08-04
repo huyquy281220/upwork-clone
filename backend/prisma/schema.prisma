@@ -194,6 +194,7 @@ model Contract {
   status       ContractStatus
   contractType ContractType
   projectDuration String @default("")
+  totalHours    Float?
   hourlyRate   Float?
   totalPrice   Float?
 
