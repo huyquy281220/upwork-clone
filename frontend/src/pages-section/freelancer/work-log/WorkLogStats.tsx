@@ -25,10 +25,10 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-sm font-medium text-foreground opacity-80">
                 {contractType === "hourly" ? "Total Hours" : "Progress"}
               </p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-foreground">
                 {contractType === "hourly"
                   ? `${stats.totalHoursWorked?.toFixed(1) || 0}h`
                   : `${(
@@ -40,9 +40,9 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
             </div>
             <div className="p-3 bg-blue-100 rounded-full">
               {contractType === "hourly" ? (
-                <Clock className="w-6 h-6 text-blue-600" />
+                <Clock className="w-6 h-6 text-green-600" />
               ) : (
-                <Target className="w-6 h-6 text-blue-600" />
+                <Target className="w-6 h-6 text-green-600" />
               )}
             </div>
           </div>
@@ -54,10 +54,10 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-sm font-medium text-foreground opacity-80">
                 Total Earnings
               </p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-foreground">
                 ${stats.totalEarnings.toLocaleString()}
               </p>
             </div>
@@ -73,8 +73,10 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">This Week</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-foreground opacity-80">
+                This Week
+              </p>
+              <p className="text-2xl font-bold text-foreground">
                 {contractType === "hourly"
                   ? `${stats.thisWeekHours?.toFixed(1) || 0}h`
                   : `$${stats.thisWeekEarnings.toLocaleString()}`}
@@ -96,10 +98,10 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-sm font-medium text-foreground opacity-80">
                 {contractType === "hourly" ? "Daily Average" : "Milestones"}
               </p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-foreground">
                 {contractType === "hourly"
                   ? `${stats.averageHoursPerDay?.toFixed(1) || 0}h`
                   : `${stats.completedMilestones || 0}/${

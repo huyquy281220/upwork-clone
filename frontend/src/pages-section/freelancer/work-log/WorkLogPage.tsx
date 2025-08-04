@@ -24,19 +24,6 @@ import {
 } from "@/services/work-submissions";
 import { ContractProps, ContractType } from "@/types/contract";
 
-// Mock data
-const mockContract = {
-  id: "contract-1",
-  title: "E-commerce Website Development",
-  clientName: "TechCorp Inc.",
-  type: "hourly" as const,
-  hourlyRate: 75,
-  totalBudget: 15000,
-  status: "active",
-  startDate: "2024-01-15",
-  endDate: "2024-04-15",
-};
-
 const mockStats = {
   totalHoursWorked: 127.5,
   totalEarnings: 9562.5,

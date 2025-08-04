@@ -44,7 +44,7 @@ export function WorkLogHeader({
           {/* Contract Info */}
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-foreground">
                 {contract.title}
               </h1>
               <Badge
@@ -53,6 +53,7 @@ export function WorkLogHeader({
                     ? "default"
                     : "secondary"
                 }
+                className="text-white"
               >
                 {contract.contractType === ContractType.HOURLY
                   ? "Hourly"
@@ -60,10 +61,12 @@ export function WorkLogHeader({
               </Badge>
             </div>
 
-            <div className="flex items-center gap-6 text-sm text-gray-600">
+            <div className="flex items-center gap-6 text-sm text-foreground">
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4" />
-                {/* <span>{contract.client.user.fullName}</span> */}
+                <span className="font-bold opacity-80">
+                  {contract.client.user.fullName}
+                </span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -85,7 +88,7 @@ export function WorkLogHeader({
           {contract.contractType === ContractType.HOURLY && (
             <div className="flex items-center gap-4">
               <div className="text-center">
-                <div className="text-2xl font-mono font-bold text-gray-900">
+                <div className="text-2xl font-mono font-bold text-foreground">
                   {currentSession
                     ? formatTime(currentSession.duration)
                     : "00:00:00"}
