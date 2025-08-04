@@ -115,17 +115,17 @@ export function WorkSubmissions({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold text-foreground">
             Work Submissions
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-foreground opacity-75">
             Submit your completed work and deliverables
           </p>
         </div>
 
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
+            <Button className="flex items-center gap-2 text-foreground">
               <Plus className="w-4 h-4" />
               New Submission
             </Button>
@@ -195,7 +195,9 @@ export function WorkSubmissions({
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Create Submission</Button>
+                <Button type="submit" className="text-foreground">
+                  Create Submission
+                </Button>
               </div>
             </form>
           </DialogContent>
@@ -208,19 +210,12 @@ export function WorkSubmissions({
           <Card>
             <CardContent className="p-12 text-center">
               <Upload className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 No submissions yet
               </h3>
               <p className="text-gray-500 mb-4">
                 Create your first work submission to share your progress
               </p>
-              <Button
-                onClick={() => setIsAddDialogOpen(true)}
-                className="flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Create Submission
-              </Button>
             </CardContent>
           </Card>
         ) : (
