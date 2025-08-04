@@ -355,6 +355,17 @@ export class ContractsService {
         reviews: true,
         workLog: true,
         workSubmission: true,
+        milestone: {
+          where: { status: MilestoneStatus.COMPLETED },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            amount: true,
+            dueDate: true,
+            status: true,
+          },
+        },
       },
     });
 
@@ -394,6 +405,8 @@ export class ContractsService {
       totalEarning,
       weekEarning,
       progress,
+      completedMilestones: contract.milestone.length,
+      totalMilestones: contract.milestone.length,
     };
   }
 
