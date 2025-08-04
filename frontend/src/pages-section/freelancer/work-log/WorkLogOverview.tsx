@@ -14,8 +14,8 @@ import { WorkSubmissionProps } from "@/types/work-submissions";
 
 type WorkOverviewProps = {
   contractType: ContractType;
+  totalHours: number;
   stats: {
-    totalHoursWorked: number;
     totalEarning: number;
     weekEarning: number;
     progress: number;
@@ -32,8 +32,9 @@ export function WorkOverview({
   contractType,
   stats,
   milestones,
+  totalHours,
 }: WorkOverviewProps) {
-  const progressPercentage = (stats.progress / 100) * 100;
+  const progressPercentage = (stats.progress / totalHours) * 100;
   const isOnTrack = progressPercentage >= 75;
 
   return (
@@ -81,7 +82,7 @@ export function WorkOverview({
             </div>
 
             {/* Overall Progress */}
-            {contractType === ContractType.FIXED &&
+            {contractType === ContractType.FIXED_PRICE &&
               milestones &&
               milestones.length > 0 && (
                 <div className="pt-4 border-t">

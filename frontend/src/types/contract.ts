@@ -49,6 +49,7 @@ export interface ContractProps {
   status: string;
   contractType: string;
   hourlyRate?: number;
+  totalHours?: number;
   totalPrice?: number;
   projectDuration: string;
   milestones?: MilestoneProps[];
