@@ -136,7 +136,9 @@ export function WorkLogPage() {
     setTimeEntries(timeEntries.filter((entry) => entry.id !== id));
   };
 
-  const handleAddSubmission = (submission: CreateWorkSubmissionProps) => {};
+  const handleAddSubmission = (submission: CreateWorkSubmissionProps) => {
+    createWorkSubmissionMutation.mutate(submission);
+  };
 
   const handleUpdateSubmission = (
     id: string,
@@ -149,7 +151,6 @@ export function WorkLogPage() {
     );
   };
 
-  // 19038835710015
   if (isContractLoading || isWorkLogsLoading || isWorkSubmissionsLoading)
     return <InfiniteLoading />;
   if (!contract) return;
