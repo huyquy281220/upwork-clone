@@ -11,8 +11,6 @@ import {
   ContractType,
   MilestoneStatus,
   NotificationType,
-  Prisma,
-  Role,
 } from '@prisma/client';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { StripeService } from 'src/stripe/stripe.service';
@@ -396,14 +394,13 @@ export class ContractsService {
           )
         : contract.payments.reduce((sum, p) => sum + (p.amount || 0), 0);
 
-    const progress = contract.totalPrice
-      ? (totalEarning / contract.totalPrice) * 100
-      : 0;
-
     const totalHoursWorked = contract.workLog.reduce(
       (sum, log) => sum + log.hours,
       0,
     );
+    const progress = contract.totalPrice
+      ? (totalEarning / contract.totalPrice) * 100
+      : (totalHoursWorked / contract.totalHours) * 100;
 
     return {
       data: contract,

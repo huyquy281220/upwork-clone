@@ -19,9 +19,9 @@ type WorkOverviewProps = {
     totalEarning: number;
     weekEarning: number;
     progress: number;
-    hourlyRate?: number;
-    completedMilestones?: number;
-    totalMilestones?: number;
+    completedMilestones: number;
+    totalMilestones: number;
+    totalHoursWorked: number;
   };
   timeEntries: WorkLogProps[];
   submissions: WorkSubmissionProps[];
@@ -32,10 +32,8 @@ export function WorkOverview({
   contractType,
   stats,
   milestones,
-  totalHours,
 }: WorkOverviewProps) {
-  const progressPercentage = (stats.progress / totalHours) * 100;
-  const isOnTrack = progressPercentage >= 75;
+  const isOnTrack = stats.progress >= 75;
 
   return (
     <div className="space-y-6">
@@ -52,22 +50,25 @@ export function WorkOverview({
             {/* Weekly Progress */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-foreground opacity-75">
                   {contractType === ContractType.HOURLY
                     ? "Weekly Hours Goal"
                     : "Project Progress"}
                 </span>
-                <Badge variant={isOnTrack ? "default" : "secondary"}>
+                <Badge
+                  variant={isOnTrack ? "default" : "secondary"}
+                  className="text-primary-foreground"
+                >
                   {isOnTrack ? "On Track" : "Behind Schedule"}
                 </Badge>
               </div>
 
               <Progress
-                value={Math.min(progressPercentage, 100)}
+                value={Math.min(stats.progress, 100)}
                 className="h-3 mb-2"
               />
 
-              <div className="flex justify-between text-sm text-gray-600">
+              <div className="flex justify-between text-sm text-foreground opacity-75">
                 {/* <span>
                   {contractType === ContractType.HOURLY
                     ? `${
@@ -76,7 +77,7 @@ export function WorkOverview({
                     : `${currentProgress.toFixed(0)}% complete`}
                 </span> */}
                 <span className="font-medium">
-                  {Math.min(progressPercentage, 100).toFixed(0)}%
+                  {Math.min(stats.progress, 100).toFixed(0)}%
                 </span>
               </div>
             </div>
