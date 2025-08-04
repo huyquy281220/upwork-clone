@@ -349,8 +349,8 @@ export class ContractsService {
       where: { id },
       include: {
         job: { select: { id: true, title: true, description: true } },
-        client: { select: { userId: true, companyName: true } },
-        freelancer: { select: { userId: true, title: true } },
+        client: { select: { userId: true, companyName: true, user: true } },
+        freelancer: { select: { userId: true, title: true, user: true } },
         payments: true,
         reviews: true,
       },
