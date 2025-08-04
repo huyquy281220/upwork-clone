@@ -1,41 +1,29 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Play, Pause, Square, DollarSign, User } from "lucide-react";
+import { DollarSign, User } from "lucide-react";
 import { ContractProps, ContractType } from "@/types/contract";
 
 interface WorkLogHeaderProps {
   contract: ContractProps;
-  isTimerRunning: boolean;
-  currentSession: {
-    startTime: string;
-    duration: number;
-  } | null;
-  onStartTimer: () => void;
-  onPauseTimer: () => void;
-  onStopTimer: () => void;
+  // isTimerRunning: boolean;
+  // currentSession: {
+  //   startTime: string;
+  //   duration: number;
+  // } | null;
 }
 
-export function WorkLogHeader({
-  contract,
-  isTimerRunning,
-  currentSession,
-  onStartTimer,
-  onPauseTimer,
-  onStopTimer,
-}: WorkLogHeaderProps) {
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  };
-
-  // console.log(contract);
+export function WorkLogHeader({ contract }: WorkLogHeaderProps) {
+  // const formatTime = (seconds: number) => {
+  //   const hours = Math.floor(seconds / 3600);
+  //   const minutes = Math.floor((seconds % 3600) / 60);
+  //   const secs = seconds % 60;
+  //   return `${hours.toString().padStart(2, "0")}:${minutes
+  //     .toString()
+  //     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  // };
 
   return (
     <Card className="mb-8">
@@ -85,7 +73,7 @@ export function WorkLogHeader({
           </div>
 
           {/* Timer Section (Only for Hourly Contracts) */}
-          {contract.contractType === ContractType.HOURLY && (
+          {/* {contract.contractType === ContractType.HOURLY && (
             <div className="flex items-center gap-4">
               <div className="text-center">
                 <div className="text-2xl font-mono font-bold text-foreground">
@@ -130,7 +118,7 @@ export function WorkLogHeader({
                 )}
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </CardContent>
     </Card>

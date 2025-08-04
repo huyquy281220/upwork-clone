@@ -1,5 +1,6 @@
 import { PaymentMethodProps } from "./payments";
 import { ReviewProps } from "./review";
+import { WorkSubmissionProps } from "./work-submissions";
 
 export enum MilestoneStatus {
   PENDING = "PENDING",
@@ -91,6 +92,10 @@ export interface ContractProps {
     description: string;
     category: string;
   };
+
+  workLog?: WorkLogProps[];
+  workSubmission?: WorkSubmissionProps[];
+  milestone?: MilestoneProps[];
 }
 
 export interface CreateContractDto {

@@ -400,6 +400,11 @@ export class ContractsService {
       ? (totalEarning / contract.totalPrice) * 100
       : 0;
 
+    const totalHoursWorked = contract.workLog.reduce(
+      (sum, log) => sum + log.hours,
+      0,
+    );
+
     return {
       data: contract,
       totalEarning,
@@ -407,6 +412,7 @@ export class ContractsService {
       progress,
       completedMilestones: contract.milestone.length,
       totalMilestones: contract.milestone.length,
+      totalHoursWorked,
     };
   }
 

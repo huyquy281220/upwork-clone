@@ -6,14 +6,12 @@ import { ContractType } from "@/types/contract";
 interface WorkLogStatsProps {
   contractType: ContractType;
   stats: {
-    totalHoursWorked?: number;
-    totalEarnings: number;
-    thisWeekHours?: number;
-    thisWeekEarnings: number;
-    averageHoursPerDay?: number;
-    hourlyRate?: number;
-    completedMilestones?: number;
-    totalMilestones?: number;
+    totalHoursWorked: number;
+    totalEarning: number;
+    weekEarning: number;
+    progress: number;
+    completedMilestones: number;
+    totalMilestones: number;
   };
 }
 
@@ -60,7 +58,7 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
                 Total Earnings
               </p>
               <p className="text-2xl font-bold text-foreground">
-                ${stats.totalEarnings.toLocaleString()}
+                ${stats.totalEarning.toLocaleString()}
               </p>
             </div>
             <div className="p-3 bg-green-100 rounded-full">
@@ -80,8 +78,8 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
               </p>
               <p className="text-2xl font-bold text-foreground">
                 {contractType === ContractType.HOURLY
-                  ? `${stats.thisWeekHours?.toFixed(1) || 0}h`
-                  : `$${stats.thisWeekEarnings.toLocaleString()}`}
+                  ? `${stats.weekEarning?.toFixed(1) || 0}h`
+                  : `$${stats.weekEarning.toLocaleString()}`}
               </p>
             </div>
             <div className="p-3 bg-purple-100 rounded-full">
@@ -107,7 +105,7 @@ export function WorkLogStats({ contractType, stats }: WorkLogStatsProps) {
               </p>
               <p className="text-2xl font-bold text-foreground">
                 {contractType === ContractType.HOURLY
-                  ? `${stats.averageHoursPerDay?.toFixed(1) || 0}h`
+                  ? `${stats.totalHoursWorked?.toFixed(1) || 0}h`
                   : `${stats.completedMilestones || 0}/${
                       stats.totalMilestones || 0
                     }`}

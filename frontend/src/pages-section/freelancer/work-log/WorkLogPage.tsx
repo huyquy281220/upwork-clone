@@ -24,17 +24,6 @@ import {
 } from "@/services/work-submissions";
 import { ContractProps, ContractType } from "@/types/contract";
 
-const mockStats = {
-  totalHoursWorked: 127.5,
-  totalEarnings: 9562.5,
-  thisWeekHours: 32.5,
-  thisWeekEarnings: 2437.5,
-  averageHoursPerDay: 6.5,
-  hourlyRate: 75,
-  completedMilestones: 3,
-  totalMilestones: 5,
-};
-
 const mockMilestones = [
   { id: "milestone-1", name: "Project Setup & Planning", status: "completed" },
   { id: "milestone-2", name: "User Authentication", status: "completed" },
@@ -42,6 +31,16 @@ const mockMilestones = [
   { id: "milestone-4", name: "Shopping Cart", status: "pending" },
   { id: "milestone-5", name: "Payment Integration", status: "pending" },
 ];
+
+type ContractWithStats = {
+  data: ContractProps;
+  totalEarning: number;
+  weekEarning: number;
+  progress: number;
+  completedMilestones: number;
+  totalMilestones: number;
+  totalHoursWorked: number;
+};
 
 export function WorkLogPage() {
   const params = useParams();
@@ -51,14 +50,12 @@ export function WorkLogPage() {
   const [timeEntries, setTimeEntries] = useState<WorkLogProps[]>([]);
   const [submissions, setSubmissions] = useState<WorkSubmissionProps[]>([]);
 
-  const { data: contract, isLoading: isContractLoading } =
-    useQuery<ContractProps>({
+  const { data: contractWithStats, isLoading: isContractLoading } =
+    useQuery<ContractWithStats>({
       queryKey: ["contract", contractId],
       queryFn: () => getContractById(contractId as string),
       enabled: !!contractId,
     });
-
-  console.log(contract);
 
   const { data: worklogs, isLoading: isWorkLogsLoading } = useQuery<
     WorkLogProps[]
@@ -140,24 +137,26 @@ export function WorkLogPage() {
 
   if (isContractLoading || isWorkLogsLoading || isWorkSubmissionsLoading)
     return <InfiniteLoading />;
-  if (!contract) return;
+  if (!contractWithStats) return;
   if (!worklogs) return;
+
+  const { data: contract, ...rest } = contractWithStats;
+
+  const contractStats = rest;
+  console.log(contractStats);
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <WorkLogHeader
           contract={contract}
-          isTimerRunning={false}
-          currentSession={null}
-          onStartTimer={() => {}}
-          onPauseTimer={() => {}}
-          onStopTimer={() => {}}
+          // isTimerRunning={false}
+          // currentSession={null}
         />
 
         <WorkLogTabs
           contractType={contract.contractType as ContractType}
-          stats={mockStats}
+          stats={contractStats}
           timeEntries={timeEntries}
           submissions={submissions}
           milestones={mockMilestones}
