@@ -8,13 +8,14 @@ import {
   Delete,
 } from '@nestjs/common';
 import { WorkSubmissionsService } from './work-submissions.service';
+import { CreateWorkSubmissionDto } from './dto/create-work-submissions.dto';
 
 @Controller('work-submissions')
 export class WorkSubmissionsController {
   constructor(private readonly service: WorkSubmissionsService) {}
 
-  @Post()
-  create(@Body() body: any) {
+  @Post('create')
+  create(@Body() body: CreateWorkSubmissionDto) {
     return this.service.create(body);
   }
 
@@ -28,7 +29,7 @@ export class WorkSubmissionsController {
     return this.service.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('update/:id')
   update(@Param('id') id: string, @Body() body: any) {
     return this.service.update(id, body);
   }

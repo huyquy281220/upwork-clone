@@ -18,7 +18,11 @@ import { useParams } from "next/navigation";
 import { getContractById } from "@/services/contract";
 import { WorkLogProps } from "@/types/work-log";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
-import { getWorkSubmissionsByContractId } from "@/services/work-submissions";
+import {
+  createWorkSubmission,
+  getWorkSubmissionsByContractId,
+} from "@/services/work-submissions";
+import { ContractProps, ContractType } from "@/types/contract";
 
 // Mock data
 const mockContract = {
@@ -60,22 +64,25 @@ export function WorkLogPage() {
   console.log(contractId);
 
   const [timeEntries, setTimeEntries] = useState<WorkLogProps[]>([]);
-  const [submissions, setSubmissions] = useState<CreateWorkSubmissionProps>();
+  const [submissions, setSubmissions] = useState<WorkSubmissionProps[]>([]);
 
-  const { data: contract, isLoading: isContractLoading } = useQuery({
-    queryKey: ["contract", contractId],
-    queryFn: () => getContractById(contractId as string),
-    enabled: !!contractId,
-  });
+  const { data: contract, isLoading: isContractLoading } =
+    useQuery<ContractProps>({
+      queryKey: ["contract", contractId],
+      queryFn: () => getContractById(contractId as string),
+      enabled: !!contractId,
+    });
 
-  const { data: worklogs, isLoading: isWorkLogsLoading } = useQuery({
+  const { data: worklogs, isLoading: isWorkLogsLoading } = useQuery<
+    WorkLogProps[]
+  >({
     queryKey: ["worklogs", contractId],
     queryFn: () => getWorkLogsByContractId(contractId as string),
     enabled: !!contractId,
   });
 
   const { data: workSubmissions, isLoading: isWorkSubmissionsLoading } =
-    useQuery({
+    useQuery<WorkSubmissionProps[]>({
       queryKey: ["workSubmissions", contractId],
       queryFn: () => getWorkSubmissionsByContractId(contractId as string),
       enabled: !!contractId,
@@ -101,6 +108,11 @@ export function WorkLogPage() {
     },
   });
 
+  const createWorkSubmissionMutation = useMutation({
+    mutationFn: (submission: CreateWorkSubmissionProps) =>
+      createWorkSubmission(submission),
+  });
+
   const handleAddTimeEntry = (workLog: WorkLogProps) => {
     const newEntry = {
       ...workLog,
@@ -124,15 +136,7 @@ export function WorkLogPage() {
     setTimeEntries(timeEntries.filter((entry) => entry.id !== id));
   };
 
-  const handleAddSubmission = (submission: CreateWorkSubmissionProps) => {
-    const newSubmission = {
-      title: submission.title || "New Submission",
-      description: submission.description || "",
-      submittedDate: new Date().toISOString().split("T")[0],
-      files: [],
-    };
-    setSubmissions([newSubmission, ...submissions]);
-  };
+  const handleAddSubmission = (submission: CreateWorkSubmissionProps) => {};
 
   const handleUpdateSubmission = (
     id: string,
@@ -164,7 +168,7 @@ export function WorkLogPage() {
         />
 
         <WorkLogTabs
-          contractType={contract.contractType}
+          contractType={contract.contractType as ContractType}
           stats={mockStats}
           timeEntries={timeEntries}
           submissions={submissions}
