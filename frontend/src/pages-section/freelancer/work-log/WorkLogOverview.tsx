@@ -4,40 +4,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Target, CheckCircle } from "lucide-react";
-import { MilestoneProps, WorkLogProps } from "@/types/contract";
+import {
+  ContractType,
+  MilestoneProps,
+  MilestoneStatus,
+  WorkLogProps,
+} from "@/types/contract";
+import { WorkSubmissionProps } from "@/types/work-submissions";
 
-interface WorkOverviewProps {
-  contractType: "hourly" | "fixed";
+type WorkOverviewProps = {
+  contractType: ContractType;
   stats: {
-    totalHoursWorked?: number;
-    totalEarnings: number;
-    thisWeekHours?: number;
-    thisWeekEarnings: number;
-    averageHoursPerDay?: number;
+    totalHoursWorked: number;
+    totalEarning: number;
+    weekEarning: number;
+    progress: number;
     hourlyRate?: number;
     completedMilestones?: number;
     totalMilestones?: number;
   };
   timeEntries: WorkLogProps[];
-  submissions: any[];
+  submissions: WorkSubmissionProps[];
   milestones?: MilestoneProps[];
-}
+};
 
 export function WorkOverview({
   contractType,
   stats,
-  timeEntries,
-  submissions,
   milestones,
 }: WorkOverviewProps) {
-  // Calculate progress metrics
-  const weeklyGoal = contractType === "hourly" ? 40 : 100; // 40 hours or 100% progress
-  const currentProgress =
-    contractType === "hourly"
-      ? stats.thisWeekHours || 0
-      : ((stats.completedMilestones || 0) / (stats.totalMilestones || 1)) * 100;
-
-  const progressPercentage = (currentProgress / weeklyGoal) * 100;
+  const progressPercentage = (stats.progress / 100) * 100;
   const isOnTrack = progressPercentage >= 75;
 
   return (
@@ -56,7 +52,7 @@ export function WorkOverview({
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-medium text-gray-700">
-                  {contractType === "hourly"
+                  {contractType === ContractType.HOURLY
                     ? "Weekly Hours Goal"
                     : "Project Progress"}
                 </span>
@@ -71,13 +67,13 @@ export function WorkOverview({
               />
 
               <div className="flex justify-between text-sm text-gray-600">
-                <span>
-                  {contractType === "hourly"
+                {/* <span>
+                  {contractType === ContractType.HOURLY
                     ? `${
-                        stats.thisWeekHours?.toFixed(1) || 0
+                        stats.totalHoursWorked?.toFixed(1) || 0
                       }h of ${weeklyGoal}h this week`
                     : `${currentProgress.toFixed(0)}% complete`}
-                </span>
+                </span> */}
                 <span className="font-medium">
                   {Math.min(progressPercentage, 100).toFixed(0)}%
                 </span>
@@ -85,7 +81,7 @@ export function WorkOverview({
             </div>
 
             {/* Overall Progress */}
-            {contractType === "fixed" &&
+            {contractType === ContractType.FIXED &&
               milestones &&
               milestones.length > 0 && (
                 <div className="pt-4 border-t">
@@ -93,15 +89,16 @@ export function WorkOverview({
                     Milestone Progress
                   </h4>
                   <div className="space-y-3">
-                    {milestones.map((milestone, index) => (
+                    {milestones.map((milestone) => (
                       <div
                         key={milestone.id}
                         className="flex items-center gap-3"
                       >
                         <div className="flex-shrink-0">
-                          {milestone.status === "completed" ? (
+                          {milestone.status === MilestoneStatus.COMPLETED ? (
                             <CheckCircle className="w-5 h-5 text-green-500" />
-                          ) : milestone.status === "in_progress" ? (
+                          ) : milestone.status ===
+                            MilestoneStatus.IN_PROGRESS ? (
                             <Clock className="w-5 h-5 text-blue-500" />
                           ) : (
                             <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
@@ -114,9 +111,10 @@ export function WorkOverview({
                             </span>
                             <Badge
                               variant={
-                                milestone.status === "completed"
+                                milestone.status === MilestoneStatus.COMPLETED
                                   ? "default"
-                                  : milestone.status === "in_progress"
+                                  : milestone.status ===
+                                    MilestoneStatus.IN_PROGRESS
                                   ? "secondary"
                                   : "outline"
                               }
