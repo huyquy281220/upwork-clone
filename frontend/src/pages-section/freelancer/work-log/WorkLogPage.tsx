@@ -61,8 +61,6 @@ export function WorkLogPage() {
   const contractId = params.contractId;
   const queryClient = useQueryClient();
 
-  console.log(contractId);
-
   const [timeEntries, setTimeEntries] = useState<WorkLogProps[]>([]);
   const [submissions, setSubmissions] = useState<WorkSubmissionProps[]>([]);
 
@@ -72,6 +70,8 @@ export function WorkLogPage() {
       queryFn: () => getContractById(contractId as string),
       enabled: !!contractId,
     });
+
+  console.log(contract);
 
   const { data: worklogs, isLoading: isWorkLogsLoading } = useQuery<
     WorkLogProps[]
@@ -160,7 +160,7 @@ export function WorkLogPage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <WorkLogHeader
-          contract={mockContract}
+          contract={contract}
           isTimerRunning={false}
           currentSession={null}
           onStartTimer={() => {}}

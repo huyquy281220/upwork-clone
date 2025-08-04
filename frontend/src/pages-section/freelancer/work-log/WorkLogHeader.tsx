@@ -4,17 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Pause, Square, DollarSign, User } from "lucide-react";
+import { ContractProps, ContractType } from "@/types/contract";
 
 interface WorkLogHeaderProps {
-  contract: {
-    id: string;
-    title: string;
-    clientName: string;
-    type: "hourly" | "fixed";
-    hourlyRate?: number;
-    totalBudget?: number;
-    status: string;
-  };
+  contract: ContractProps;
   isTimerRunning: boolean;
   currentSession: {
     startTime: string;
@@ -42,6 +35,8 @@ export function WorkLogHeader({
       .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
+  // console.log(contract);
+
   return (
     <Card className="mb-8">
       <CardContent className="p-6">
@@ -53,24 +48,30 @@ export function WorkLogHeader({
                 {contract.title}
               </h1>
               <Badge
-                variant={contract.type === "hourly" ? "default" : "secondary"}
+                variant={
+                  contract.contractType === ContractType.HOURLY
+                    ? "default"
+                    : "secondary"
+                }
               >
-                {contract.type === "hourly" ? "Hourly" : "Fixed Price"}
+                {contract.contractType === ContractType.HOURLY
+                  ? "Hourly"
+                  : "Fixed Price"}
               </Badge>
             </div>
 
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4" />
-                <span>{contract.clientName}</span>
+                {/* <span>{contract.client.user.fullName}</span> */}
               </div>
 
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4" />
                 <span>
-                  {contract.type === "hourly"
+                  {contract.contractType === ContractType.HOURLY
                     ? `$${contract.hourlyRate}/hour`
-                    : `$${contract.totalBudget?.toLocaleString()} total`}
+                    : `$${contract.totalPrice?.toLocaleString()} total`}
                 </span>
               </div>
 
@@ -81,7 +82,7 @@ export function WorkLogHeader({
           </div>
 
           {/* Timer Section (Only for Hourly Contracts) */}
-          {contract.type === "hourly" && (
+          {contract.contractType === ContractType.HOURLY && (
             <div className="flex items-center gap-4">
               <div className="text-center">
                 <div className="text-2xl font-mono font-bold text-gray-900">
