@@ -353,6 +353,8 @@ export class ContractsService {
         freelancer: { select: { userId: true, title: true, user: true } },
         payments: true,
         reviews: true,
+        workLog: true,
+        workSubmission: true,
       },
     });
 
@@ -360,7 +362,39 @@ export class ContractsService {
       throw new NotFoundException(`Contract with ID ${id} not found`);
     }
 
-    return contract;
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const weekEarning =
+      contract.contractType === 'HOURLY'
+        ? contract.workLog
+            .filter((log) => log.loggedAt >= oneWeekAgo)
+            .reduce(
+              (sum, log) => sum + log.hours * (contract.hourlyRate || 0),
+              0,
+            )
+        : contract.payments
+            .filter((p) => p.createdAt >= oneWeekAgo)
+            .reduce((sum, p) => sum + (p.amount || 0), 0);
+
+    const totalEarning =
+      contract.contractType === ContractType.HOURLY
+        ? contract.workLog.reduce(
+            (sum, log) => sum + log.hours * (contract.hourlyRate || 0),
+            0,
+          )
+        : contract.payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+
+    const progress = contract.totalPrice
+      ? (totalEarning / contract.totalPrice) * 100
+      : 0;
+
+    return {
+      data: contract,
+      totalEarning,
+      weekEarning,
+      progress,
+    };
   }
 
   async updateContract(id: string, clientId: string, data: UpdateContractDto) {
