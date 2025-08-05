@@ -25,22 +25,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Plus,
-  Upload,
-  FileText,
-  Download,
-  Calendar,
-  MessageSquare,
-  X,
-} from "lucide-react";
+import { Plus, Upload, FileText, Download, Calendar, X } from "lucide-react";
 import { ContractType } from "@/types/contract";
 import {
   CreateWorkSubmissionProps,
   WorkSubmissionProps,
 } from "@/types/work-submissions";
 
-interface WorkSubmissionsProps {
+type WorkSubmissionsProps = {
+  canCreate: boolean;
   submissions: WorkSubmissionProps[];
   milestones?: Array<{ id: string; name: string; status: string }>;
   contractType: ContractType;
@@ -49,7 +42,7 @@ interface WorkSubmissionsProps {
     id: string,
     submission: Partial<WorkSubmissionProps>
   ) => void;
-}
+};
 
 // Validation schema
 const submissionSchema = z.object({
@@ -68,6 +61,7 @@ const submissionSchema = z.object({
 type SubmissionFormData = z.infer<typeof submissionSchema>;
 
 export function WorkSubmissions({
+  canCreate,
   submissions,
   milestones,
   contractType,
@@ -154,7 +148,10 @@ export function WorkSubmissions({
 
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="flex items-center gap-2 text-foreground">
+            <Button
+              className="flex items-center gap-2 text-foreground"
+              disabled={!canCreate}
+            >
               <Plus className="w-4 h-4" />
               New Submission
             </Button>
@@ -336,14 +333,14 @@ export function WorkSubmissions({
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {submission.submittedDate}
+                        {submission.contractId}
                       </div>
-                      {submission.milestoneName && (
+                      {/* {submission.milestoneName && (
                         <div className="flex items-center gap-1">
                           <FileText className="w-4 h-4" />
                           {submission.milestoneName}
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </div>
 
@@ -371,7 +368,7 @@ export function WorkSubmissions({
                 <p className="text-gray-700 mb-4">{submission.description}</p>
 
                 {/* Files */}
-                {submission.file && (
+                {submission.fileUrl && (
                   <div className="mb-4">
                     <h4 className="text-sm font-medium text-gray-700 mb-2">
                       Attached Files
@@ -381,10 +378,10 @@ export function WorkSubmissions({
                         <FileText className="w-5 h-5 text-gray-400" />
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {file.name}
+                            {submission.fileName}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {formatFileSize(file.size)}
+                            {formatFileSize(submission.fileSize)}
                           </div>
                         </div>
                       </div>
@@ -396,7 +393,7 @@ export function WorkSubmissions({
                 )}
 
                 {/* Feedback */}
-                {submission.feedback && (
+                {/* {submission.feedback && (
                   <div className="p-4 bg-blue-50 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <MessageSquare className="w-4 h-4 text-blue-600" />
@@ -408,7 +405,7 @@ export function WorkSubmissions({
                       {submission.feedback}
                     </p>
                   </div>
-                )}
+                )} */}
               </CardContent>
             </Card>
           ))

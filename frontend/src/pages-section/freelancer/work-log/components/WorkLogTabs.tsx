@@ -10,7 +10,8 @@ import { WorkSubmissions } from "../WorkLogSubmission";
 import { WorkSubmissionProps } from "@/types/work-submissions";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
 import { CreateWorkSubmissionProps } from "@/types/work-submissions";
-interface WorkLogTabsProps {
+
+type WorkLogTabsProps = {
   contractType: ContractType;
   hourlyRate: number;
   stats: {
@@ -32,7 +33,8 @@ interface WorkLogTabsProps {
     id: string,
     submission: Partial<WorkSubmissionProps>
   ) => void;
-}
+  canCreateSubmission: boolean;
+};
 
 export function WorkLogTabs({
   contractType,
@@ -46,6 +48,7 @@ export function WorkLogTabs({
   onDeleteTimeEntry,
   onAddSubmission,
   onUpdateSubmission,
+  canCreateSubmission,
 }: WorkLogTabsProps) {
   const tabsConfig = [
     { value: "overview", label: "Overview", icon: BarChart3 },
@@ -97,6 +100,7 @@ export function WorkLogTabs({
 
         <TabsContent value="submissions" className="mt-6">
           <WorkSubmissions
+            canCreate={canCreateSubmission}
             submissions={submissions}
             milestones={milestones}
             contractType={contractType}

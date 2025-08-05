@@ -46,7 +46,6 @@ export interface ContractProps {
   totalPrice?: number;
   projectDuration: string;
   milestones?: MilestoneProps[];
-  workLogs: WorkLogProps[];
 
   payment: PaymentMethodProps[];
   review: ReviewProps[];

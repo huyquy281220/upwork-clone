@@ -12,17 +12,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createWorkLog,
   deleteWorkLog,
-  getWorkLogsByContractId,
   updateWorkLog,
 } from "@/services/work-log";
 import { useParams } from "next/navigation";
 import { getContractById } from "@/services/contract";
 import { CreateWorkLogProps, WorkLogProps } from "@/types/work-log";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
-import {
-  createWorkSubmission,
-  getWorkSubmissionsByContractId,
-} from "@/services/work-submissions";
+import { createWorkSubmission } from "@/services/work-submissions";
 import { ContractProps, ContractType } from "@/types/contract";
 
 type ContractWithStats = {
@@ -128,7 +124,9 @@ export function WorkLogPage() {
   const { data: contract, ...rest } = contractWithStats;
 
   const contractStats = rest;
-  console.log(contractStats);
+  const canCreateSubmission =
+    contract.contractType === ContractType.HOURLY &&
+    (contract.workLog?.length ?? 0) > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -142,7 +140,7 @@ export function WorkLogPage() {
         <WorkLogTabs
           contractType={contract.contractType as ContractType}
           stats={contractStats}
-          timeEntries={contract.workLogs ?? []}
+          timeEntries={contract.workLog ?? []}
           submissions={contract.workSubmission ?? []}
           milestones={contract.milestones ?? []}
           hourlyRate={contract.hourlyRate ?? 0}
@@ -151,6 +149,7 @@ export function WorkLogPage() {
           onDeleteTimeEntry={handleDeleteTimeEntry}
           onAddSubmission={handleAddSubmission}
           onUpdateSubmission={handleUpdateSubmission}
+          canCreateSubmission={canCreateSubmission}
         />
       </div>
     </div>
