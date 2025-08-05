@@ -1,5 +1,6 @@
 import { PaymentMethodProps } from "./payments";
 import { ReviewProps } from "./review";
+import { WorkLogProps } from "./work-log";
 import { WorkSubmissionProps } from "./work-submissions";
 
 export enum MilestoneStatus {
@@ -28,14 +29,6 @@ export interface MilestoneProps {
   amount: string;
   dueDate: string;
   status: MilestoneStatus;
-}
-
-export interface WorkLogProps {
-  id: string;
-  contractId: string;
-  date: string;
-  hours: number;
-  description: string;
 }
 
 export interface ContractProps {

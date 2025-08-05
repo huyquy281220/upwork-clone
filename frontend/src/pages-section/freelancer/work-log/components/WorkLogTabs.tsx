@@ -2,27 +2,41 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Upload, BarChart3 } from "lucide-react";
-import { ContractType } from "@/types/contract";
+import { ContractType, MilestoneProps } from "@/types/contract";
 import { WorkLogStats } from "../WorkLogStats";
 import { WorkOverview } from "../WorkLogOverview";
 import { TimeEntriesList } from "../TimeEntriesList";
 import { WorkSubmissions } from "../WorkLogSubmission";
-
+import { WorkSubmissionProps } from "@/types/work-submissions";
+import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
+import { CreateWorkSubmissionProps } from "@/types/work-submissions";
 interface WorkLogTabsProps {
   contractType: ContractType;
-  stats: any;
-  timeEntries: any[];
-  submissions: any[];
-  milestones?: any[];
-  onAddTimeEntry: (entry: any) => void;
-  onEditTimeEntry: (id: string, entry: any) => void;
+  hourlyRate: number;
+  stats: {
+    totalEarning: number;
+    weekEarning: number;
+    progress: number;
+    completedMilestones: number;
+    totalMilestones: number;
+    totalHoursWorked: number;
+  };
+  timeEntries: WorkLogProps[];
+  submissions: WorkSubmissionProps[];
+  milestones?: MilestoneProps[];
+  onAddTimeEntry: (entry: CreateWorkLogProps) => void;
+  onEditTimeEntry: (id: string, entry: Partial<WorkLogProps>) => void;
   onDeleteTimeEntry: (id: string) => void;
-  onAddSubmission: (submission: any) => void;
-  onUpdateSubmission: (id: string, submission: any) => void;
+  onAddSubmission: (submission: CreateWorkSubmissionProps) => void;
+  onUpdateSubmission: (
+    id: string,
+    submission: Partial<WorkSubmissionProps>
+  ) => void;
 }
 
 export function WorkLogTabs({
   contractType,
+  hourlyRate,
   stats,
   timeEntries,
   submissions,
@@ -69,10 +83,11 @@ export function WorkLogTabs({
           />
         </TabsContent>
 
-        {contractType === "hourly" && (
+        {contractType === ContractType.HOURLY && (
           <TabsContent value="time-entries" className="mt-6">
             <TimeEntriesList
               timeEntries={timeEntries}
+              hourlyRate={hourlyRate}
               onAddTimeEntry={onAddTimeEntry}
               onEditTimeEntry={onEditTimeEntry}
               onDeleteTimeEntry={onDeleteTimeEntry}

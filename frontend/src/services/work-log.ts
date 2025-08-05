@@ -1,4 +1,4 @@
-import { CreateWorkLogProps } from "@/types/work-log";
+import { CreateWorkLogProps, WorkLogProps } from "@/types/work-log";
 import api from "./api";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
@@ -19,7 +19,7 @@ export const getWorkLogsByContractId = async (
 
 export const updateWorkLog = async (
   workLogId: string,
-  data: CreateWorkLogProps
+  data: Partial<WorkLogProps>
 ) => {
   const response = await api.patch(`${apiURL}/work-logs/${workLogId}`, data);
   return response.data;

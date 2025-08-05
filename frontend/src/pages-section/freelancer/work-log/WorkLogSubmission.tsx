@@ -1,8 +1,10 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +33,11 @@ import {
   Calendar,
   MessageSquare,
 } from "lucide-react";
+import { ContractType } from "@/types/contract";
+import {
+  CreateWorkSubmissionProps,
+  WorkSubmissionProps,
+} from "@/types/work-submissions";
 
 interface WorkSubmission {
   id: string;
@@ -53,10 +60,28 @@ interface WorkSubmission {
 interface WorkSubmissionsProps {
   submissions: WorkSubmission[];
   milestones?: Array<{ id: string; name: string; status: string }>;
-  contractType: "hourly" | "fixed";
-  onAddSubmission: (submission: Partial<WorkSubmission>) => void;
-  onUpdateSubmission: (id: string, submission: Partial<WorkSubmission>) => void;
+  contractType: ContractType;
+  onAddSubmission: (submission: CreateWorkSubmissionProps) => void;
+  onUpdateSubmission: (
+    id: string,
+    submission: Partial<WorkSubmissionProps>
+  ) => void;
 }
+
+// Validation schema
+const submissionSchema = z.object({
+  title: z
+    .string()
+    .min(3, "Title must be at least 3 characters")
+    .max(100, "Title must be less than 100 characters"),
+  description: z
+    .string()
+    .min(10, "Description must be at least 10 characters")
+    .max(1000, "Description must be less than 1000 characters"),
+  milestoneId: z.string().optional(),
+});
+
+type SubmissionFormData = z.infer<typeof submissionSchema>;
 
 export function WorkSubmissions({
   submissions,
@@ -66,24 +91,33 @@ export function WorkSubmissions({
   onUpdateSubmission,
 }: WorkSubmissionsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    milestoneId: "",
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+    setValue,
+    watch,
+  } = useForm<SubmissionFormData>({
+    resolver: zodResolver(submissionSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      milestoneId: "",
+    },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const milestone = milestones?.find((m) => m.id === formData.milestoneId);
+  const onSubmit = (data: SubmissionFormData) => {
+    // const milestone = milestones?.find((m) => m.id === data.milestoneId);
 
     onAddSubmission({
-      ...formData,
-      milestoneName: milestone?.name,
-      status: "draft",
-      files: [],
+      ...data,
+      // milestoneName: milestone?.name,
+      file: null,
     });
 
-    setFormData({ title: "", description: "", milestoneId: "" });
+    reset();
     setIsAddDialogOpen(false);
   };
 
@@ -134,30 +168,30 @@ export function WorkSubmissions({
             <DialogHeader>
               <DialogTitle>Create Work Submission</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <Label htmlFor="title">Title</Label>
                 <Input
                   id="title"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
+                  {...register("title")}
                   placeholder="Enter submission title..."
-                  required
+                  className={errors.title ? "border-red-500" : ""}
                 />
+                {errors.title && (
+                  <div className="text-red-500 text-sm mt-1">
+                    {errors.title.message}
+                  </div>
+                )}
               </div>
 
-              {contractType === "fixed" &&
+              {contractType === ContractType.FIXED_PRICE &&
                 milestones &&
                 milestones.length > 0 && (
                   <div>
-                    <Label htmlFor="milestone">Milestone (Optional)</Label>
+                    <Label htmlFor="milestoneId">Milestone (Optional)</Label>
                     <Select
-                      value={formData.milestoneId}
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, milestoneId: value })
-                      }
+                      value={watch("milestoneId")}
+                      onValueChange={(value) => setValue("milestoneId", value)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a milestone" />
@@ -177,26 +211,35 @@ export function WorkSubmissions({
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
+                  {...register("description")}
                   placeholder="Describe your work submission..."
                   rows={4}
-                  required
+                  className={errors.description ? "border-red-500" : ""}
                 />
+                {errors.description && (
+                  <div className="text-red-500 text-sm mt-1">
+                    {errors.description.message}
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end gap-2">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setIsAddDialogOpen(false)}
+                  onClick={() => {
+                    setIsAddDialogOpen(false);
+                    reset();
+                  }}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="text-foreground">
-                  Create Submission
+                <Button
+                  type="submit"
+                  className="text-foreground"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creating..." : "Create Submission"}
                 </Button>
               </div>
             </form>

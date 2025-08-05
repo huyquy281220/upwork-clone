@@ -8,13 +8,12 @@ import {
   ContractType,
   MilestoneProps,
   MilestoneStatus,
-  WorkLogProps,
 } from "@/types/contract";
 import { WorkSubmissionProps } from "@/types/work-submissions";
+import { WorkLogProps } from "@/types/work-log";
 
 type WorkOverviewProps = {
   contractType: ContractType;
-  totalHours: number;
   stats: {
     totalEarning: number;
     weekEarning: number;

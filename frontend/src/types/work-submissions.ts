@@ -13,7 +13,7 @@ export type WorkSubmissionProps = {
 export type CreateWorkSubmissionProps = {
   title: string;
   description: string;
-  fileUrl: string;
+  file: File;
   contractId: string;
 };
 

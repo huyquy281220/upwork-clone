@@ -11,26 +11,19 @@ import { CreateWorkSubmissionProps } from "@/types/work-submissions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createWorkLog,
+  deleteWorkLog,
   getWorkLogsByContractId,
   updateWorkLog,
 } from "@/services/work-log";
 import { useParams } from "next/navigation";
 import { getContractById } from "@/services/contract";
-import { WorkLogProps } from "@/types/work-log";
+import { CreateWorkLogProps, WorkLogProps } from "@/types/work-log";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import {
   createWorkSubmission,
   getWorkSubmissionsByContractId,
 } from "@/services/work-submissions";
 import { ContractProps, ContractType } from "@/types/contract";
-
-const mockMilestones = [
-  { id: "milestone-1", name: "Project Setup & Planning", status: "completed" },
-  { id: "milestone-2", name: "User Authentication", status: "completed" },
-  { id: "milestone-3", name: "Product Catalog", status: "in_progress" },
-  { id: "milestone-4", name: "Shopping Cart", status: "pending" },
-  { id: "milestone-5", name: "Payment Integration", status: "pending" },
-];
 
 type ContractWithStats = {
   data: ContractProps;
@@ -47,7 +40,6 @@ export function WorkLogPage() {
   const contractId = params.contractId;
   const queryClient = useQueryClient();
 
-  const [timeEntries, setTimeEntries] = useState<WorkLogProps[]>([]);
   const [submissions, setSubmissions] = useState<WorkSubmissionProps[]>([]);
 
   const { data: contractWithStats, isLoading: isContractLoading } =
@@ -57,23 +49,8 @@ export function WorkLogPage() {
       enabled: !!contractId,
     });
 
-  const { data: worklogs, isLoading: isWorkLogsLoading } = useQuery<
-    WorkLogProps[]
-  >({
-    queryKey: ["worklogs", contractId],
-    queryFn: () => getWorkLogsByContractId(contractId as string),
-    enabled: !!contractId,
-  });
-
-  const { data: workSubmissions, isLoading: isWorkSubmissionsLoading } =
-    useQuery<WorkSubmissionProps[]>({
-      queryKey: ["workSubmissions", contractId],
-      queryFn: () => getWorkSubmissionsByContractId(contractId as string),
-      enabled: !!contractId,
-    });
-
   const createWorkLogMutation = useMutation({
-    mutationFn: (workLog: WorkLogProps) => createWorkLog(workLog),
+    mutationFn: (workLog: CreateWorkLogProps) => createWorkLog(workLog),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
     },
@@ -83,7 +60,8 @@ export function WorkLogPage() {
   });
 
   const updateWorkLogMutation = useMutation({
-    mutationFn: (workLog: WorkLogProps) => updateWorkLog(workLog.id, workLog),
+    mutationFn: (workLog: Partial<WorkLogProps>) =>
+      updateWorkLog(workLog.id as string, workLog),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
     },
@@ -92,32 +70,41 @@ export function WorkLogPage() {
     },
   });
 
+  const deleteWorkLogMutation = useMutation({
+    mutationFn: (id: string) => deleteWorkLog(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+    },
+    onError: (error) => {
+      console.error("Error deleting work log:", error);
+    },
+  });
+
   const createWorkSubmissionMutation = useMutation({
     mutationFn: (submission: CreateWorkSubmissionProps) =>
       createWorkSubmission(submission),
   });
 
-  const handleAddTimeEntry = (workLog: WorkLogProps) => {
-    const newEntry = {
+  const handleAddTimeEntry = (workLog: CreateWorkLogProps) => {
+    createWorkLogMutation.mutate({
       ...workLog,
-      loggedAt: workLog.loggedAt || "09:00",
-      endTime: workLog.endTime || "17:00",
-      hours: workLog.hours || 28800,
-      description: workLog.description || "New work session",
-    };
-    setTimeEntries([newEntry, ...timeEntries]);
+      contractId: contractId as string,
+    });
   };
 
-  const handleEditTimeEntry = (id: string, updatedEntry: WorkLogProps) => {
-    setTimeEntries(
-      timeEntries.map((entry) =>
-        entry.id === id ? { ...entry, ...updatedEntry } : entry
-      )
-    );
+  const handleEditTimeEntry = (
+    id: string,
+    updatedEntry: Partial<WorkLogProps>
+  ) => {
+    updateWorkLogMutation.mutate({
+      ...updatedEntry,
+      id,
+      contractId: contractId as string,
+    });
   };
 
   const handleDeleteTimeEntry = (id: string) => {
-    setTimeEntries(timeEntries.filter((entry) => entry.id !== id));
+    deleteWorkLogMutation.mutate(id);
   };
 
   const handleAddSubmission = (submission: CreateWorkSubmissionProps) => {
@@ -135,10 +122,8 @@ export function WorkLogPage() {
     );
   };
 
-  if (isContractLoading || isWorkLogsLoading || isWorkSubmissionsLoading)
-    return <InfiniteLoading />;
+  if (isContractLoading) return <InfiniteLoading />;
   if (!contractWithStats) return;
-  if (!worklogs) return;
 
   const { data: contract, ...rest } = contractWithStats;
 
@@ -157,9 +142,10 @@ export function WorkLogPage() {
         <WorkLogTabs
           contractType={contract.contractType as ContractType}
           stats={contractStats}
-          timeEntries={timeEntries}
-          submissions={submissions}
-          milestones={mockMilestones}
+          timeEntries={contract.workLogs ?? []}
+          submissions={contract.workSubmission ?? []}
+          milestones={contract.milestones ?? []}
+          hourlyRate={contract.hourlyRate ?? 0}
           onAddTimeEntry={handleAddTimeEntry}
           onEditTimeEntry={handleEditTimeEntry}
           onDeleteTimeEntry={handleDeleteTimeEntry}

@@ -17,40 +17,43 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Clock, Edit, Trash2, Calendar } from "lucide-react";
+import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
 
-interface TimeEntry {
-  id: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  duration: number;
-  description: string;
-  hourlyRate: number;
-  earnings: number;
-  status: "draft" | "submitted" | "approved";
-}
+// interface TimeEntry {
+//   id: string;
+//   date: string;
+//   startTime: string;
+//   endTime: string;
+//   duration: number;
+//   description: string;
+//   hourlyRate: number;
+//   earnings: number;
+//   status: "draft" | "submitted" | "approved";
+// }
 
 interface TimeEntriesListProps {
-  timeEntries: TimeEntry[];
-  onAddTimeEntry: (entry: Partial<TimeEntry>) => void;
-  onEditTimeEntry: (id: string, entry: Partial<TimeEntry>) => void;
+  timeEntries: WorkLogProps[];
+  hourlyRate: number;
+  onAddTimeEntry: (entry: CreateWorkLogProps) => void;
+  onEditTimeEntry: (id: string, entry: Partial<WorkLogProps>) => void;
   onDeleteTimeEntry: (id: string) => void;
 }
 
 export function TimeEntriesList({
   timeEntries,
+  hourlyRate,
   onAddTimeEntry,
   onEditTimeEntry,
   onDeleteTimeEntry,
 }: TimeEntriesListProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
+  const [editingEntry, setEditingEntry] = useState<WorkLogProps | null>(null);
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
     startTime: "09:00",
     endTime: "17:00",
     description: "",
-    hourlyRate: 75,
+    hourlyRate,
   });
 
   const formatDuration = (seconds: number) => {
@@ -94,10 +97,9 @@ export function TimeEntriesList({
     });
   };
 
-  const handleEdit = (entry: TimeEntry) => {
+  const handleEdit = (entry: WorkLogProps) => {
     setEditingEntry(entry);
     setFormData({
-      date: entry.date,
       startTime: entry.startTime,
       endTime: entry.endTime,
       description: entry.description,
@@ -121,15 +123,17 @@ export function TimeEntriesList({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Time Entries</h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-xl font-semibold text-foreground">
+            Time Entries
+          </h2>
+          <p className="text-sm text-foreground opacity-75">
             Track your work hours and earnings
           </p>
         </div>
 
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
+            <Button className="flex items-center gap-2 text-white">
               <Plus className="w-4 h-4" />
               Add Time Entry
             </Button>
@@ -217,7 +221,9 @@ export function TimeEntriesList({
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Add Entry</Button>
+                <Button type="submit" className="text-white">
+                  Add Entry
+                </Button>
               </div>
             </form>
           </DialogContent>
@@ -230,19 +236,12 @@ export function TimeEntriesList({
           <Card>
             <CardContent className="p-12 text-center">
               <Clock className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 No time entries yet
               </h3>
               <p className="text-gray-500 mb-4">
                 Start tracking your work hours to monitor your progress
               </p>
-              <Button
-                onClick={() => setIsAddDialogOpen(true)}
-                className="flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Add First Entry
-              </Button>
             </CardContent>
           </Card>
         ) : (
@@ -384,7 +383,9 @@ export function TimeEntriesList({
               >
                 Cancel
               </Button>
-              <Button type="submit">Update Entry</Button>
+              <Button type="submit" className="text-white">
+                Update Entry
+              </Button>
             </div>
           </form>
         </DialogContent>
