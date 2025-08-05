@@ -3,6 +3,9 @@ export type WorkSubmissionProps = {
   title: string;
   description: string;
   fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileKey: string;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -20,6 +23,6 @@ export type CreateWorkSubmissionProps = {
 export type UpdateWorkSubmissionProps = {
   title?: string;
   description?: string;
-  fileUrl?: string;
+  file?: File;
   status?: string;
 };

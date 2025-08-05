@@ -32,6 +32,7 @@ import {
   Download,
   Calendar,
   MessageSquare,
+  X,
 } from "lucide-react";
 import { ContractType } from "@/types/contract";
 import {
@@ -39,26 +40,8 @@ import {
   WorkSubmissionProps,
 } from "@/types/work-submissions";
 
-interface WorkSubmission {
-  id: string;
-  title: string;
-  description: string;
-  submittedDate: string;
-  status: "draft" | "submitted" | "approved" | "revision_requested";
-  files: Array<{
-    id: string;
-    name: string;
-    size: number;
-    type: string;
-    url: string;
-  }>;
-  feedback?: string;
-  milestoneId?: string;
-  milestoneName?: string;
-}
-
 interface WorkSubmissionsProps {
-  submissions: WorkSubmission[];
+  submissions: WorkSubmissionProps[];
   milestones?: Array<{ id: string; name: string; status: string }>;
   contractType: ContractType;
   onAddSubmission: (submission: CreateWorkSubmissionProps) => void;
@@ -79,6 +62,7 @@ const submissionSchema = z.object({
     .min(10, "Description must be at least 10 characters")
     .max(1000, "Description must be less than 1000 characters"),
   milestoneId: z.string().optional(),
+  file: z.instanceof(File).optional(),
 });
 
 type SubmissionFormData = z.infer<typeof submissionSchema>;
@@ -91,6 +75,17 @@ export function WorkSubmissions({
   onUpdateSubmission,
 }: WorkSubmissionsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
+  const [selectedFiles, setSelectedFiles] = useState<File>();
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    setSelectedFiles(files[0]);
+  };
+
+  const removeFile = () => {
+    setSelectedFiles(undefined);
+  };
 
   const {
     register,
@@ -105,6 +100,7 @@ export function WorkSubmissions({
       title: "",
       description: "",
       milestoneId: "",
+      file: undefined,
     },
   });
 
@@ -113,9 +109,8 @@ export function WorkSubmissions({
 
     onAddSubmission({
       ...data,
-      // milestoneName: milestone?.name,
-      file: null,
-    });
+      file: selectedFiles || data.file,
+    } as CreateWorkSubmissionProps);
 
     reset();
     setIsAddDialogOpen(false);
@@ -223,6 +218,68 @@ export function WorkSubmissions({
                 )}
               </div>
 
+              <div>
+                <Label>Attachments</Label>
+                <div className="mt-2">
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                    <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600 mb-2">
+                      Drag and drop files here, or click to browse
+                    </p>
+                    <Input
+                      type="file"
+                      multiple
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      id="file-upload"
+                      accept=".zip,.7z,.rar"
+                    />
+                    <Button variant="outline" size="sm" asChild>
+                      <label htmlFor="file-upload" className="cursor-pointer">
+                        Choose Files
+                      </label>
+                    </Button>
+                  </div>
+
+                  {/* Selected Files List */}
+                  {selectedFiles && (
+                    <div className="mt-4 space-y-2">
+                      <p className="text-sm font-medium text-gray-700">
+                        Selected Files:
+                      </p>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <FileText className="w-5 h-5 text-gray-500" />
+                          <div>
+                            <p className="font-medium text-sm">
+                              {selectedFiles.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {formatFileSize(selectedFiles.size)} •{" "}
+                              {selectedFiles.type || "Unknown type"}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={removeFile}
+                          type="button"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* File Upload Guidelines */}
+                  <div className="mt-3 text-xs text-gray-500">
+                    <p>Supported formats: ZIP, 7Z, RAR</p>
+                    <p>Maximum file size: 10MB per file</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex justify-end gap-2">
                 <Button
                   type="button"
@@ -314,33 +371,26 @@ export function WorkSubmissions({
                 <p className="text-gray-700 mb-4">{submission.description}</p>
 
                 {/* Files */}
-                {submission.files.length > 0 && (
+                {submission.file && (
                   <div className="mb-4">
                     <h4 className="text-sm font-medium text-gray-700 mb-2">
                       Attached Files
                     </h4>
-                    <div className="space-y-2">
-                      {submission.files.map((file) => (
-                        <div
-                          key={file.id}
-                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <FileText className="w-5 h-5 text-gray-400" />
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">
-                                {file.name}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                {formatFileSize(file.size)}
-                              </div>
-                            </div>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {file.name}
                           </div>
-                          <Button variant="ghost" size="sm">
-                            <Download className="w-4 h-4" />
-                          </Button>
+                          <div className="text-xs text-gray-500">
+                            {formatFileSize(file.size)}
+                          </div>
                         </div>
-                      ))}
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <Download className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 )}
