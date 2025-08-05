@@ -44,11 +44,17 @@ export class WorkSubmissionsService {
   async create(data: CreateWorkSubmissionDto, file?: Express.Multer.File) {
     try {
       let fileUrl = null;
+      let fileName = null;
+      let fileSize = null;
+      let fileKey = null;
 
       // Upload file if provided
       if (file) {
         const uploadResult = await this.uploadFile(file);
         fileUrl = uploadResult.url;
+        fileName = uploadResult.originalName;
+        fileSize = uploadResult.size;
+        fileKey = uploadResult.key;
       }
 
       // Create work submission with file URL
@@ -56,6 +62,9 @@ export class WorkSubmissionsService {
         data: {
           ...data,
           fileUrl: fileUrl,
+          fileName: fileName,
+          fileSize: fileSize,
+          fileKey: fileKey,
         },
         include: { contract: true },
       });

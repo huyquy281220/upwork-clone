@@ -6,17 +6,23 @@ import {
   Param,
   Patch,
   Delete,
+  UploadedFile,
 } from '@nestjs/common';
 import { WorkSubmissionsService } from './work-submissions.service';
 import { CreateWorkSubmissionDto } from './dto/create-work-submissions.dto';
+import { Express } from 'express';
+import { UpdateWorkSubmissionDto } from './dto/update-work-submissions.dto';
 
 @Controller('work-submissions')
 export class WorkSubmissionsController {
   constructor(private readonly service: WorkSubmissionsService) {}
 
   @Post('create')
-  create(@Body() body: CreateWorkSubmissionDto) {
-    return this.service.create(body);
+  create(
+    @Body() body: CreateWorkSubmissionDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.service.create(body, file);
   }
 
   @Get('by-contract/:contractId')
@@ -30,8 +36,12 @@ export class WorkSubmissionsController {
   }
 
   @Patch('update/:id')
-  update(@Param('id') id: string, @Body() body: any) {
-    return this.service.update(id, body);
+  update(
+    @Param('id') id: string,
+    @Body() body: UpdateWorkSubmissionDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.service.update(id, body, file);
   }
 
   @Delete(':id')

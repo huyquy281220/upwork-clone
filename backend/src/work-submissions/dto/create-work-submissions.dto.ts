@@ -11,7 +11,4 @@ export class CreateWorkSubmissionDto {
 
   @IsString()
   description: string;
-
-  @IsString()
-  fileUrl: string;
 }

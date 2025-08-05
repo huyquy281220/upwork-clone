@@ -13,8 +13,4 @@ export class UpdateWorkSubmissionDto {
   @IsOptional()
   @IsString()
   description: string;
-
-  @IsOptional()
-  @IsString()
-  fileUrl: string;
 }
