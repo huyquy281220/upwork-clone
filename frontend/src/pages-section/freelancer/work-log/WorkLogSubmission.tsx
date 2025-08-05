@@ -31,6 +31,7 @@ import {
   CreateWorkSubmissionProps,
   WorkSubmissionProps,
 } from "@/types/work-submissions";
+import Link from "next/link";
 
 type WorkSubmissionsProps = {
   canCreate: boolean;
@@ -385,9 +386,13 @@ export function WorkSubmissions({
                           </div>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Link
+                        href={submission.fileUrl}
+                        target="_blank"
+                        download={submission.fileName}
+                      >
                         <Download className="w-4 h-4" />
-                      </Button>
+                      </Link>
                     </div>
                   </div>
                 )}
