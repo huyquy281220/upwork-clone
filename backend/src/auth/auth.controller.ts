@@ -46,14 +46,6 @@ export class AuthController {
       password,
     );
 
-    // res.cookie('refresh_token', refreshToken, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   secure: process.env.NODE_ENV === 'production',
-    //   sameSite: 'lax',
-    //   expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    // });
-
     return res.json({ accessToken, user, refreshToken });
   }
 
@@ -66,14 +58,6 @@ export class AuthController {
   ) {
     const { accessToken, refreshToken, user } =
       await this.authService.googleSignin(email, role, name);
-
-    // res.cookie('refresh_token', refreshToken, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === 'production',
-    //   secure: false,
-    //   sameSite: 'lax',
-    //   expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    // });
 
     return res.json({ accessToken, user, refreshToken });
   }

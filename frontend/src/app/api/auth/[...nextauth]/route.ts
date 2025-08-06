@@ -79,29 +79,25 @@ const handler = NextAuth({
         token.expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
       }
 
-      const isExpired = Date.now() > (token.expiresAt as number);
+      if (token.expiresAt && Date.now() > (token.expiresAt as number)) {
+        try {
+          const res = await fetch(`${API_URL}/auth/refresh-token`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken: token.refreshToken }),
+          });
 
-      if (!isExpired) return token;
-
-      // Refresh token
-      try {
-        const res = await fetch(`${API_URL}/auth/refresh-token`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refreshToken: token.refreshToken }),
-        });
-
-        const refreshed = await res.json();
-        console.log(refreshed);
-        token.accessToken = refreshed.accessToken;
-        token.refreshToken = refreshed.refreshToken ?? token.refreshToken;
-        token.expiresAt = Date.now() + refreshed.expiresIn * 1000;
-
-        return token;
-      } catch (err) {
-        console.error("Refresh token failed:", err);
-        return { ...token, error: "RefreshAccessTokenError" };
+          const refreshed = await res.json();
+          token.accessToken = refreshed.accessToken;
+          token.refreshToken = refreshed.refreshToken ?? token.refreshToken;
+          token.expiresAt = Date.now() + refreshed.expiresIn * 1000;
+        } catch (err) {
+          console.error("Refresh token failed:", err);
+          return { ...token, error: "RefreshAccessTokenError" };
+        }
       }
+
+      return token;
     },
 
     async signIn({ user, account }) {
