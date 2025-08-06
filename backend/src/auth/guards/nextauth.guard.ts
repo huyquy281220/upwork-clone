@@ -8,14 +8,22 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { Reflector } from '@nestjs/core';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class NextAuthGuard implements CanActivate {
+  private googleClient: OAuth2Client;
+
   constructor(
     private reflector: Reflector,
     private jwtService: JwtService,
     private userService: UserService,
-  ) {}
+  ) {
+    this.googleClient = new OAuth2Client(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+    );
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -35,18 +43,18 @@ export class NextAuthGuard implements CanActivate {
 
     const token = authHeader.replace('Bearer ', '');
 
-    // Check if it's a Google OAuth token (starts with ya29)
+    console.log('token', token);
+
     if (token.startsWith('ya29.')) {
-      // For OAuth tokens, get user from request body or skip verification
-      const { id } = request.body;
-      if (id) {
-        const user = await this.userService.findById(id);
-        if (user) {
-          request.user = user;
-          return true;
-        }
-      }
-      return true;
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      console.log('ticket', ticket);
+
+      const payload = ticket.getPayload();
+      return !!payload;
     }
 
     // Regular JWT verification for NextAuth tokens
@@ -74,3 +82,12 @@ export class NextAuthGuard implements CanActivate {
     }
   }
 }
+// const { id } = request.body;
+// if (id) {
+//   const user = await this.userService.findById(id);
+//   if (user) {
+//     request.user = user;
+//     return true;
+//   }
+// }
+// return true;

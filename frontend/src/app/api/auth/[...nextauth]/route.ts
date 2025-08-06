@@ -63,15 +63,14 @@ const handler = NextAuth({
         session.user.id = token.sub as string;
         session.user.role = token.role as string;
         session.user.accessToken = token.accessToken as string;
+        session.user.id_token = token.id_token as string;
       }
 
       return session;
     },
     async jwt({ token, user, account }) {
-      console.log("account", account);
-      console.log("user", user);
-      console.log("token", token);
       if (account && user) {
+        token.id_token = account.id_token;
         token.id = user.id;
         token.role = user.role;
         token.accessToken = account.access_token || user.accessToken;
