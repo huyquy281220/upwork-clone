@@ -56,7 +56,10 @@ const submissionSchema = z.object({
     .min(10, "Description must be at least 10 characters")
     .max(1000, "Description must be less than 1000 characters"),
   milestoneId: z.string().optional(),
-  file: z.instanceof(File).optional(),
+  file:
+    typeof window !== "undefined"
+      ? z.instanceof(File).optional()
+      : z.any().optional(),
 });
 
 type SubmissionFormData = z.infer<typeof submissionSchema>;
@@ -71,7 +74,7 @@ export function WorkSubmissions({
 }: WorkSubmissionsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  const [selectedFiles, setSelectedFiles] = useState<File>();
+  const [selectedFiles, setSelectedFiles] = useState<File | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -79,7 +82,7 @@ export function WorkSubmissions({
   };
 
   const removeFile = () => {
-    setSelectedFiles(undefined);
+    setSelectedFiles(null);
   };
 
   const {

@@ -92,7 +92,7 @@ const handler = NextAuth({
         });
 
         const refreshed = await res.json();
-
+        console.log(refreshed);
         token.accessToken = refreshed.accessToken;
         token.refreshToken = refreshed.refreshToken ?? token.refreshToken;
         token.expiresAt = Date.now() + refreshed.expiresIn * 1000;

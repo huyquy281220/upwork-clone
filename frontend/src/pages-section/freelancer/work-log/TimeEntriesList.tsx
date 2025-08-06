@@ -59,7 +59,7 @@ export function TimeEntriesList({
     return Math.max(0, (end.getTime() - start.getTime()) / 3600000);
   };
 
-  console.log(formatToISODate(formData.endTime));
+  // console.log(formatToISODate(formData.endTime));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
