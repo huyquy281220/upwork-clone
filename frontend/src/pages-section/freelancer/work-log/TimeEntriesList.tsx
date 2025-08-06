@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Clock, Edit, Trash2, Calendar } from "lucide-react";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
+import { formatToISODate } from "@/utils/formatToISODate";
 
 interface TimeEntriesListProps {
   timeEntries: WorkLogProps[];
@@ -44,7 +45,6 @@ export function TimeEntriesList({
     hourlyRate,
   });
 
-  console.log(new Date().toISOString().split("T")[0]);
   // const formatDuration = (seconds: number) => {
   //   const hours = Math.floor(seconds / 3600);
   //   const minutes = Math.floor((seconds % 3600) / 60);
@@ -54,8 +54,12 @@ export function TimeEntriesList({
   const calculateDuration = (startTime: string, endTime: string) => {
     const start = new Date(`2000-01-01T${startTime}:00`);
     const end = new Date(`2000-01-01T${endTime}:00`);
-    return Math.max(0, (end.getTime() - start.getTime()) / 1000);
+
+    console.log(end);
+    return Math.max(0, (end.getTime() - start.getTime()) / 3600000);
   };
+
+  console.log(formatToISODate(formData.endTime));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
