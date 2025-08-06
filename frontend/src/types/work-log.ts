@@ -12,7 +12,7 @@ export type WorkLogProps = {
 };
 
 export type CreateWorkLogProps = {
-  contractId: string;
+  contractId?: string;
   hours: number;
   loggedAt: string;
   endTime: string;

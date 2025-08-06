@@ -5,7 +5,7 @@ import type React from "react";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -18,18 +18,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Clock, Edit, Trash2, Calendar } from "lucide-react";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
-
-// interface TimeEntry {
-//   id: string;
-//   date: string;
-//   startTime: string;
-//   endTime: string;
-//   duration: number;
-//   description: string;
-//   hourlyRate: number;
-//   earnings: number;
-//   status: "draft" | "submitted" | "approved";
-// }
 
 interface TimeEntriesListProps {
   timeEntries: WorkLogProps[];
@@ -50,17 +38,18 @@ export function TimeEntriesList({
   const [editingEntry, setEditingEntry] = useState<WorkLogProps | null>(null);
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
-    startTime: "09:00",
-    endTime: "17:00",
+    startTime: "00:00",
+    endTime: "12:00",
     description: "",
     hourlyRate,
   });
 
-  const formatDuration = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    return `${hours}h ${minutes}m`;
-  };
+  console.log(new Date().toISOString().split("T")[0]);
+  // const formatDuration = (seconds: number) => {
+  //   const hours = Math.floor(seconds / 3600);
+  //   const minutes = Math.floor((seconds % 3600) / 60);
+  //   return `${hours}h ${minutes}m`;
+  // };
 
   const calculateDuration = (startTime: string, endTime: string) => {
     const start = new Date(`2000-01-01T${startTime}:00`);
@@ -71,13 +60,12 @@ export function TimeEntriesList({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const duration = calculateDuration(formData.startTime, formData.endTime);
-    const earnings = (duration / 3600) * formData.hourlyRate;
 
     const entryData = {
-      ...formData,
-      duration,
-      earnings,
-      status: "draft" as const,
+      loggedAt: formData.startTime,
+      endTime: formData.endTime,
+      description: formData.description,
+      hours: duration,
     };
 
     if (editingEntry) {
@@ -97,26 +85,26 @@ export function TimeEntriesList({
     });
   };
 
-  const handleEdit = (entry: WorkLogProps) => {
-    setEditingEntry(entry);
-    setFormData({
-      startTime: entry.startTime,
-      endTime: entry.endTime,
-      description: entry.description,
-      hourlyRate: entry.hourlyRate,
-    });
-  };
+  // const handleEdit = (entry: Partial<WorkLogProps>) => {
+  //   setEditingEntry(entry);
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     startTime: entry.,
+  //     endTime: entry.endTime,
+  //     description: entry.description,
+  //   }));
+  // };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "default";
-      case "submitted":
-        return "secondary";
-      default:
-        return "outline";
-    }
-  };
+  // const getStatusColor = (status: string) => {
+  //   switch (status) {
+  //     case "approved":
+  //       return "default";
+  //     case "submitted":
+  //       return "secondary";
+  //     default:
+  //       return "outline";
+  //   }
+  // };
 
   return (
     <div className="space-y-6">
@@ -253,36 +241,36 @@ export function TimeEntriesList({
                     <div className="flex items-center gap-3 mb-2">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Calendar className="w-4 h-4" />
-                        {entry.date}
+                        {/* {entry.date} */}
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Clock className="w-4 h-4" />
-                        {entry.startTime} - {entry.endTime}
+                        {entry.loggedAt} - {entry.endTime}
                       </div>
-                      <Badge variant={getStatusColor(entry.status)}>
+                      {/* <Badge variant={getStatusColor(entry.status)}>
                         {entry.status}
-                      </Badge>
+                      </Badge> */}
                     </div>
 
                     <p className="text-gray-900 mb-3">{entry.description}</p>
 
                     <div className="flex items-center gap-6 text-sm text-gray-600">
-                      <span>Duration: {formatDuration(entry.duration)}</span>
-                      <span>Rate: ${entry.hourlyRate}/hour</span>
+                      <span>Duration: {entry.hours} hours</span>
+                      <span>Rate: ${hourlyRate}/hour</span>
                       <span className="font-medium text-green-600">
-                        Earnings: ${entry.earnings.toFixed(2)}
+                        {/* Earnings: ${entry.earnings.toFixed(2)} */}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Button
+                    {/* <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleEdit(entry)}
                     >
                       <Edit className="w-4 h-4" />
-                    </Button>
+                    </Button> */}
                     <Button
                       variant="outline"
                       size="sm"
