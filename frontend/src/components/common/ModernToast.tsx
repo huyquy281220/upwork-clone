@@ -104,7 +104,7 @@ export function ModernToast({
   if (!isVisible) return null;
 
   return (
-    <div className={`fixed z-50 ${getPositionClasses()}`}>
+    <div className={`fixed z-[70] ${getPositionClasses()}`}>
       <div
         className={`
           relative overflow-hidden rounded-xl bg-gradient-to-r ${
