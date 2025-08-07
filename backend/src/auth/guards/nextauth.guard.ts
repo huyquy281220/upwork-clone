@@ -40,7 +40,7 @@ export class NextAuthGuard implements CanActivate {
     }
 
     const token = authHeader.replace('Bearer ', '');
-    const userId = request.headers['x-userId'];
+    const userId = request.headers['x-user-id'];
 
     if (userId) {
       const user = await this.userService.findById(userId);

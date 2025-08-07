@@ -17,7 +17,7 @@ api.interceptors.request.use(
     const session = await getSession();
     if (session?.user) {
       try {
-        config.headers["x-userId"] = session.user.id;
+        config.headers["x-user-id"] = session.user.id;
         config.headers.Authorization = `Bearer ${session.user.accessToken}`;
       } catch (error) {
         console.log(error);
@@ -43,7 +43,7 @@ api.interceptors.response.use(
       // Just redirect to login
       console.error("Authentication failed, redirecting to login");
       console.error(error);
-      window.location.href = "/sign-in";
+      // window.location.href = "/sign-in";
     }
 
     return Promise.reject(error);
