@@ -1,4 +1,4 @@
-import { IsString, IsDateString, IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsISO8601 } from 'class-validator';
 
 export class CreateWorkLogDto {
   @IsString()
@@ -7,11 +7,10 @@ export class CreateWorkLogDto {
   @IsNumber()
   hours: number;
 
-  @IsDateString()
+  @IsISO8601()
   loggedAt: string;
 
-  @IsOptional()
-  @IsDateString()
+  @IsISO8601()
   endTime?: string;
 
   @IsOptional()

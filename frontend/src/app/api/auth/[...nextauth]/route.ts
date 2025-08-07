@@ -63,14 +63,12 @@ const handler = NextAuth({
         session.user.id = token.sub as string;
         session.user.role = token.role as string;
         session.user.accessToken = token.accessToken as string;
-        session.user.id_token = token.id_token as string;
       }
 
       return session;
     },
     async jwt({ token, user, account }) {
       if (account && user) {
-        token.id_token = account.id_token;
         token.id = user.id;
         token.role = user.role;
         token.accessToken = account.access_token || user.accessToken;
@@ -89,7 +87,7 @@ const handler = NextAuth({
           const refreshed = await res.json();
           token.accessToken = refreshed.accessToken;
           token.refreshToken = refreshed.refreshToken ?? token.refreshToken;
-          token.expiresAt = Date.now() + refreshed.expiresIn * 1000;
+          token.expiresAt = Date.now() + (refreshed.expiresIn - 300) * 1000;
         } catch (err) {
           console.error("Refresh token failed:", err);
           return { ...token, error: "RefreshAccessTokenError" };

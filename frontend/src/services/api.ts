@@ -17,7 +17,7 @@ api.interceptors.request.use(
     const session = await getSession();
     if (session?.user) {
       try {
-        config.headers["x-nextauth-id-token"] = session.user.id_token;
+        config.headers["x-userId"] = session.user.id;
         config.headers.Authorization = `Bearer ${session.user.accessToken}`;
       } catch (error) {
         console.log(error);

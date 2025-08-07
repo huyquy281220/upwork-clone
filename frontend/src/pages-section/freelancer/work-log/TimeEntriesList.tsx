@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Clock, Edit, Trash2, Calendar } from "lucide-react";
+import { Plus, Clock, Trash2, Calendar } from "lucide-react";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
 import { formatToISODate } from "@/utils/formatToISODate";
 
@@ -55,11 +55,8 @@ export function TimeEntriesList({
     const start = new Date(`2000-01-01T${startTime}:00`);
     const end = new Date(`2000-01-01T${endTime}:00`);
 
-    console.log(end);
     return Math.max(0, (end.getTime() - start.getTime()) / 3600000);
   };
-
-  // console.log(formatToISODate(formData.endTime));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +68,8 @@ export function TimeEntriesList({
       description: formData.description,
       hours: duration,
     };
+
+    console.log(formatToISODate(typeof formData.endTime));
 
     if (editingEntry) {
       onEditTimeEntry(editingEntry.id, entryData);

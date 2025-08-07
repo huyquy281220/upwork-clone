@@ -40,16 +40,16 @@ export class NextAuthGuard implements CanActivate {
     }
 
     const token = authHeader.replace('Bearer ', '');
-    const idToken = request.headers['x-nextauth-id-token'];
+    const userId = request.headers['x-userId'];
 
-    if (idToken) {
-      const ticket = await this.googleClient.verifyIdToken({
-        idToken: idToken,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
+    if (userId) {
+      const user = await this.userService.findById(userId);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
 
-      const payload = ticket.getPayload();
-      return !!payload;
+      request.user = user;
+      return true;
     }
 
     // Regular JWT verification for NextAuth tokens
