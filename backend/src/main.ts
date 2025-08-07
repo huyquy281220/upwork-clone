@@ -17,7 +17,7 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Nextauth-Id-Token'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-userId'],
   });
 
   app.useGlobalPipes(new ValidationPipe());
