@@ -63,28 +63,28 @@ export function TimeEntriesList({
     const duration = calculateDuration(formData.startTime, formData.endTime);
 
     const entryData = {
-      loggedAt: formData.startTime,
-      endTime: formData.endTime,
+      loggedAt: formatToISODate(formData.startTime),
+      endTime: formatToISODate(formData.endTime),
       description: formData.description,
       hours: duration,
     };
-
-    console.log(formatToISODate(typeof formData.endTime));
 
     if (editingEntry) {
       onEditTimeEntry(editingEntry.id, entryData);
       setEditingEntry(null);
     } else {
       onAddTimeEntry(entryData);
-      setIsAddDialogOpen(false);
+      setTimeout(() => {
+        setIsAddDialogOpen(false);
+      }, 1800);
     }
 
     setFormData({
       date: new Date().toISOString().split("T")[0],
-      startTime: "09:00",
-      endTime: "17:00",
+      startTime: "00:00",
+      endTime: "12:00",
       description: "",
-      hourlyRate: 75,
+      hourlyRate,
     });
   };
 

@@ -20,6 +20,11 @@ import { CreateWorkLogProps, WorkLogProps } from "@/types/work-log";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { createWorkSubmission } from "@/services/work-submissions";
 import { ContractProps, ContractType } from "@/types/contract";
+import { useToast } from "@/hooks/useToast";
+import { ModernToast } from "@/components/common/ModernToast";
+import { useUser } from "@/hooks/useUserInfo";
+import { useSession } from "next-auth/react";
+import { FreelancerUser } from "@/types/user";
 
 type ContractWithStats = {
   data: ContractProps;
@@ -35,6 +40,13 @@ export function WorkLogPage() {
   const params = useParams();
   const contractId = params.contractId;
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
+
+  const { data: freelancer } = useUser<FreelancerUser>(
+    session?.user.id as string
+  );
+
+  const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
 
   const [submissions, setSubmissions] = useState<WorkSubmissionProps[]>([]);
 
@@ -49,9 +61,15 @@ export function WorkLogPage() {
     mutationFn: (workLog: CreateWorkLogProps) => createWorkLog(workLog),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+      showSuccessToast(
+        "Work log created",
+        "Your work log has been created",
+        1500
+      );
     },
     onError: (error) => {
       console.error("Error creating work log:", error);
+      showErrorToast("Failed to create work log", "Please try again", 1500);
     },
   });
 
@@ -60,9 +78,15 @@ export function WorkLogPage() {
       updateWorkLog(workLog.id as string, workLog),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+      showSuccessToast(
+        "Work log updated",
+        "Your work log has been updated",
+        1500
+      );
     },
     onError: (error) => {
       console.error("Error updating work log:", error);
+      showErrorToast("Failed to update work log", "Please try again", 1500);
     },
   });
 
@@ -70,21 +94,44 @@ export function WorkLogPage() {
     mutationFn: (id: string) => deleteWorkLog(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+      showSuccessToast(
+        "Work log deleted",
+        "Your work log has been deleted",
+        1500
+      );
     },
     onError: (error) => {
       console.error("Error deleting work log:", error);
+      showErrorToast("Failed to delete work log", "Please try again", 1500);
     },
   });
 
   const createWorkSubmissionMutation = useMutation({
     mutationFn: (submission: CreateWorkSubmissionProps) =>
       createWorkSubmission(submission),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+      showSuccessToast(
+        "Work submission created",
+        "Your work submission has been created",
+        1500
+      );
+    },
+    onError: (error) => {
+      console.error("Error creating work submission:", error);
+      showErrorToast(
+        "Failed to create work submission",
+        "Please try again",
+        1500
+      );
+    },
   });
 
   const handleAddTimeEntry = (workLog: CreateWorkLogProps) => {
     createWorkLogMutation.mutate({
       ...workLog,
       contractId: contractId as string,
+      freelancerId: freelancer?.id as string,
     });
   };
 
@@ -96,6 +143,7 @@ export function WorkLogPage() {
       ...updatedEntry,
       id,
       contractId: contractId as string,
+      freelancerId: freelancer?.id as string,
     });
   };
 
@@ -118,7 +166,7 @@ export function WorkLogPage() {
     );
   };
 
-  if (isContractLoading) return <InfiniteLoading />;
+  if (isContractLoading || !session) return <InfiniteLoading />;
   if (!contractWithStats) return;
 
   const { data: contract, ...rest } = contractWithStats;
@@ -151,6 +199,8 @@ export function WorkLogPage() {
           onUpdateSubmission={handleUpdateSubmission}
           canCreateSubmission={canCreateSubmission}
         />
+
+        {activeToasts && <ModernToast {...toast} />}
       </div>
     </div>
   );
