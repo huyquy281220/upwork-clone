@@ -35,23 +35,18 @@ export class NextAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
 
-    console.log('authHeader', authHeader);
-
     if (!authHeader) {
       throw new UnauthorizedException('No authorization header');
     }
 
     const token = authHeader.replace('Bearer ', '');
+    const idToken = request.headers['x-nextauth-id-token'];
 
-    console.log('token', token);
-
-    if (token.startsWith('ya29.')) {
+    if (idToken) {
       const ticket = await this.googleClient.verifyIdToken({
-        idToken: token,
+        idToken: idToken,
         audience: process.env.GOOGLE_CLIENT_ID,
       });
-
-      console.log('ticket', ticket);
 
       const payload = ticket.getPayload();
       return !!payload;

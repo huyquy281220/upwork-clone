@@ -17,9 +17,7 @@ api.interceptors.request.use(
     const session = await getSession();
     if (session?.user) {
       try {
-        config.headers["X-User-Id"] = session.user.id;
-        config.headers["X-User-Email"] = session.user.email;
-        config.headers["X-User-Role"] = session.user.role;
+        config.headers["x-nextauth-id-token"] = session.user.id_token;
         config.headers.Authorization = `Bearer ${session.user.accessToken}`;
       } catch (error) {
         console.log(error);
