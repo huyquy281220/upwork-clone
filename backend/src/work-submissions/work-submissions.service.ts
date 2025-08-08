@@ -60,13 +60,15 @@ export class WorkSubmissionsService {
       // Create work submission with file URL
       const workSubmission = await this.prisma.workSubmission.create({
         data: {
-          ...data,
+          title: data.title,
+          description: data.description,
+          contractId: data.contractId,
+          workLogId: data.workLogId,
           fileUrl: fileUrl,
           fileName: fileName,
           fileSize: fileSize,
           fileKey: fileKey,
         },
-        include: { contract: true },
       });
 
       return workSubmission;
@@ -77,10 +79,11 @@ export class WorkSubmissionsService {
     }
   }
 
-  async findAll() {
+  async findByWorkLogIdAndContractId(workLogId: string, contractId: string) {
     try {
       const workSubmissions = await this.prisma.workSubmission.findMany({
-        include: { contract: true },
+        where: { workLogId, contractId },
+        // include: { contract: true },
         orderBy: { createdAt: 'desc' },
       });
 

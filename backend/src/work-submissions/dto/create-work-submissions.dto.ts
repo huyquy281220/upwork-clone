@@ -7,6 +7,10 @@ export class CreateWorkSubmissionDto {
 
   @IsString()
   @IsNotEmpty()
+  workLogId: string;
+
+  @IsString()
+  @IsNotEmpty()
   title: string;
 
   @IsString()
