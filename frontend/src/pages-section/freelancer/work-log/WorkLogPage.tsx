@@ -66,12 +66,12 @@ export function WorkLogPage() {
       showSuccessToast(
         "Work log created",
         "Your work log has been created",
-        1500
+        1200
       );
     },
     onError: (error) => {
       console.error("Error creating work log:", error);
-      showErrorToast("Failed to create work log", "Please try again", 1500);
+      showErrorToast("Failed to create work log", "Please try again", 1200);
     },
   });
 
@@ -85,12 +85,12 @@ export function WorkLogPage() {
       showSuccessToast(
         "Work log updated",
         "Your work log has been updated",
-        1500
+        1200
       );
     },
     onError: (error) => {
       console.error("Error updating work log:", error);
-      showErrorToast("Failed to update work log", "Please try again", 1500);
+      showErrorToast("Failed to update work log", "Please try again", 1200);
     },
   });
 
@@ -103,12 +103,12 @@ export function WorkLogPage() {
       showSuccessToast(
         "Work log deleted",
         "Your work log has been deleted",
-        1500
+        1200
       );
     },
     onError: (error) => {
       console.error("Error deleting work log:", error);
-      showErrorToast("Failed to delete work log", "Please try again", 1500);
+      showErrorToast("Failed to delete work log", "Please try again", 1200);
     },
   });
 
@@ -122,7 +122,7 @@ export function WorkLogPage() {
       showSuccessToast(
         "Work submission created",
         "Your work submission has been created",
-        1500
+        1200
       );
     },
     onError: (error) => {
@@ -130,7 +130,7 @@ export function WorkLogPage() {
       showErrorToast(
         "Failed to create work submission",
         "Please try again",
-        1500
+        1200
       );
     },
   });
