@@ -19,6 +19,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, Clock, Trash2, Calendar } from "lucide-react";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
 import { formatTimeRangeVN, formatToISODate } from "@/utils/formatDate";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface TimeEntriesListProps {
   timeEntries: WorkLogProps[];
@@ -27,6 +30,17 @@ interface TimeEntriesListProps {
   onEditTimeEntry: (id: string, entry: Partial<WorkLogProps>) => void;
   onDeleteTimeEntry: (id: string) => void;
 }
+
+// Define the form schema
+const timeEntrySchema = z.object({
+  date: z.string().min(1, "Date is required"),
+  startTime: z.string().min(1, "Start time is required"),
+  endTime: z.string().min(1, "End time is required"),
+  description: z.string().min(1, "Description is required"),
+  hourlyRate: z.number().min(0, "Hourly rate must be positive"),
+});
+
+type TimeEntryFormData = z.infer<typeof timeEntrySchema>;
 
 export function TimeEntriesList({
   timeEntries,
@@ -37,35 +51,37 @@ export function TimeEntriesList({
 }: TimeEntriesListProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<WorkLogProps | null>(null);
-  const [formData, setFormData] = useState({
-    date: new Date().toISOString().split("T")[0],
-    startTime: "00:00",
-    endTime: "12:00",
-    description: "",
-    hourlyRate,
-  });
 
-  // const formatDuration = (seconds: number) => {
-  //   const hours = Math.floor(seconds / 3600);
-  //   const minutes = Math.floor((seconds % 3600) / 60);
-  //   return `${hours}h ${minutes}m`;
-  // };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+    // setValue,
+  } = useForm<TimeEntryFormData>({
+    resolver: zodResolver(timeEntrySchema),
+    defaultValues: {
+      date: new Date().toISOString().split("T")[0],
+      startTime: "00:00",
+      endTime: "12:00",
+      description: "",
+      hourlyRate: hourlyRate,
+    },
+  });
 
   const calculateDuration = (startTime: string, endTime: string) => {
     const start = new Date(`2000-01-01T${startTime}:00`);
     const end = new Date(`2000-01-01T${endTime}:00`);
-
     return Math.max(0, (end.getTime() - start.getTime()) / 3600000);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const duration = calculateDuration(formData.startTime, formData.endTime);
+  const onSubmit = (data: TimeEntryFormData) => {
+    const duration = calculateDuration(data.startTime, data.endTime);
 
     const entryData = {
-      loggedAt: formatToISODate(formData.startTime),
-      endTime: formatToISODate(formData.endTime),
-      description: formData.description,
+      loggedAt: data.startTime,
+      endTime: data.endTime,
+      description: data.description,
       hours: duration,
     };
 
@@ -74,19 +90,28 @@ export function TimeEntriesList({
       setEditingEntry(null);
     } else {
       onAddTimeEntry(entryData);
-      setTimeout(() => {
-        setIsAddDialogOpen(false);
-      }, 1800);
+      setIsAddDialogOpen(false);
     }
 
-    setFormData({
+    // Reset form
+    reset({
       date: new Date().toISOString().split("T")[0],
       startTime: "00:00",
       endTime: "12:00",
       description: "",
-      hourlyRate,
+      hourlyRate: hourlyRate,
     });
   };
+
+  // Update form when editing
+  // const handleEdit = (entry: WorkLogProps) => {
+  //   setEditingEntry(entry);
+  //   setValue("date", entry.loggedAt || new Date().toISOString().split("T")[0]);
+  //   setValue("startTime", entry.loggedAt || "00:00");
+  //   setValue("endTime", entry.endTime || "12:00");
+  //   setValue("description", entry.description || "");
+  //   setValue("hourlyRate", hourlyRate);
+  // };
 
   return (
     <div className="space-y-6">
@@ -112,34 +137,30 @@ export function TimeEntriesList({
             <DialogHeader>
               <DialogTitle>Add Time Entry</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="date">Date</Label>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) =>
-                      setFormData({ ...formData, date: e.target.value })
-                    }
-                    required
-                  />
+                  <Input id="date" type="date" {...register("date")} required />
+                  {errors.date && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.date.message}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="hourlyRate">Hourly Rate</Label>
                   <Input
                     id="hourlyRate"
                     type="number"
-                    value={formData.hourlyRate}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        hourlyRate: Number(e.target.value),
-                      })
-                    }
+                    {...register("hourlyRate", { valueAsNumber: true })}
                     disabled
                   />
+                  {errors.hourlyRate && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.hourlyRate.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -149,24 +170,28 @@ export function TimeEntriesList({
                   <Input
                     id="startTime"
                     type="time"
-                    value={formData.startTime}
-                    onChange={(e) =>
-                      setFormData({ ...formData, startTime: e.target.value })
-                    }
+                    {...register("startTime")}
                     required
                   />
+                  {errors.startTime && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.startTime.message}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="endTime">End Time</Label>
                   <Input
                     id="endTime"
                     type="time"
-                    value={formData.endTime}
-                    onChange={(e) =>
-                      setFormData({ ...formData, endTime: e.target.value })
-                    }
+                    {...register("endTime")}
                     required
                   />
+                  {errors.endTime && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.endTime.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -174,25 +199,34 @@ export function TimeEntriesList({
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
+                  {...register("description")}
                   placeholder="Describe what you worked on..."
                   required
                 />
+                {errors.description && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.description.message}
+                  </p>
+                )}
               </div>
 
               <div className="flex justify-end gap-2">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setIsAddDialogOpen(false)}
+                  onClick={() => {
+                    setIsAddDialogOpen(false);
+                    reset();
+                  }}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="text-white">
-                  Add Entry
+                <Button
+                  type="submit"
+                  className="text-white"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Adding..." : "Add Entry"}
                 </Button>
               </div>
             </form>
@@ -221,27 +255,20 @@ export function TimeEntriesList({
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="flex items-center gap-2 text-sm text-foreground">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Calendar className="w-4 h-4" />
-                        {/* {entry.date} */}
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-foreground">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Clock className="w-4 h-4" />
-                        {formatTimeRangeVN(entry.loggedAt, entry.endTime)}
+                        {entry.loggedAt} - {entry.endTime}
                       </div>
-                      {/* <Badge variant={getStatusColor(entry.status)}>
-                        {entry.status}
-                      </Badge> */}
                     </div>
 
-                    <p className="text-foreground mb-3">{entry.description}</p>
+                    <p className="text-gray-900 mb-3">{entry.description}</p>
 
-                    <div className="flex items-center gap-6 text-sm text-foreground">
+                    <div className="flex items-center gap-6 text-sm text-gray-600">
                       <span>Duration: {entry.hours} hours</span>
                       <span>Rate: ${hourlyRate}/hour</span>
-                      <span className="font-medium text-green-600">
-                        {/* Earnings: ${entry.earnings.toFixed(2)} */}
-                      </span>
                     </div>
                   </div>
 
@@ -268,40 +295,41 @@ export function TimeEntriesList({
         )}
       </div>
 
-      {/* Edit Entry Modal */}
+      {/* Edit Dialog */}
       <Dialog open={!!editingEntry} onOpenChange={() => setEditingEntry(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Time Entry</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="edit-date">Date</Label>
                 <Input
                   id="edit-date"
                   type="date"
-                  value={formData.date}
-                  onChange={(e) =>
-                    setFormData({ ...formData, date: e.target.value })
-                  }
+                  {...register("date")}
                   required
                 />
+                {errors.date && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.date.message}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="edit-hourlyRate">Hourly Rate</Label>
                 <Input
                   id="edit-hourlyRate"
                   type="number"
-                  value={formData.hourlyRate}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      hourlyRate: Number(e.target.value),
-                    })
-                  }
+                  {...register("hourlyRate", { valueAsNumber: true })}
                   required
                 />
+                {errors.hourlyRate && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.hourlyRate.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -311,24 +339,28 @@ export function TimeEntriesList({
                 <Input
                   id="edit-startTime"
                   type="time"
-                  value={formData.startTime}
-                  onChange={(e) =>
-                    setFormData({ ...formData, startTime: e.target.value })
-                  }
+                  {...register("startTime")}
                   required
                 />
+                {errors.startTime && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.startTime.message}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="edit-endTime">End Time</Label>
                 <Input
                   id="edit-endTime"
                   type="time"
-                  value={formData.endTime}
-                  onChange={(e) =>
-                    setFormData({ ...formData, endTime: e.target.value })
-                  }
+                  {...register("endTime")}
                   required
                 />
+                {errors.endTime && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.endTime.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -336,25 +368,34 @@ export function TimeEntriesList({
               <Label htmlFor="edit-description">Description</Label>
               <Textarea
                 id="edit-description"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
+                {...register("description")}
                 placeholder="Describe what you worked on..."
                 required
               />
+              {errors.description && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
 
             <div className="flex justify-end gap-2">
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setEditingEntry(null)}
+                onClick={() => {
+                  setEditingEntry(null);
+                  reset();
+                }}
               >
                 Cancel
               </Button>
-              <Button type="submit" className="text-white">
-                Update Entry
+              <Button
+                type="submit"
+                className="text-white"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Updating..." : "Update Entry"}
               </Button>
             </div>
           </form>
