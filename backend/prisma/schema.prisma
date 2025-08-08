@@ -244,11 +244,13 @@ model WorkLog {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   endTime     DateTime?
+  workSubmission WorkSubmission[] @relation("WorkSubmissionWorkLog")
 }
 
 model WorkSubmission {
   id          String   @id @default(uuid())
   contractId   String
+  workLogId    String
   title       String
   description String
   fileUrl     String
@@ -261,6 +263,7 @@ model WorkSubmission {
   updatedAt   DateTime @updatedAt
 
   contract Contract @relation("WorkSubmissionContract", fields: [contractId], references: [id])
+  workLog WorkLog @relation("WorkSubmissionWorkLog", fields: [workLogId], references: [id])
 }
 
 model Message {
