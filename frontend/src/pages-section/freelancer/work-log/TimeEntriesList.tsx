@@ -242,11 +242,11 @@ export function TimeEntriesList({
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm text-foreground">
                         <Calendar className="w-4 h-4" />
                         {/* {entry.date} */}
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm text-foreground">
                         <Clock className="w-4 h-4" />
                         {entry.loggedAt} - {entry.endTime}
                       </div>
@@ -255,9 +255,9 @@ export function TimeEntriesList({
                       </Badge> */}
                     </div>
 
-                    <p className="text-gray-900 mb-3">{entry.description}</p>
+                    <p className="text-foreground mb-3">{entry.description}</p>
 
-                    <div className="flex items-center gap-6 text-sm text-gray-600">
+                    <div className="flex items-center gap-6 text-sm text-foreground">
                       <span>Duration: {entry.hours} hours</span>
                       <span>Rate: ${hourlyRate}/hour</span>
                       <span className="font-medium text-green-600">

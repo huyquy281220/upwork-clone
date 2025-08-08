@@ -52,7 +52,7 @@ export function WorkLogPage() {
 
   const { data: contractWithStats, isLoading: isContractLoading } =
     useQuery<ContractWithStats>({
-      queryKey: ["contract", contractId],
+      queryKey: ["contract-with-stats", contractId],
       queryFn: () => getContractById(contractId as string),
       enabled: !!contractId,
     });
@@ -60,7 +60,9 @@ export function WorkLogPage() {
   const createWorkLogMutation = useMutation({
     mutationFn: (workLog: CreateWorkLogProps) => createWorkLog(workLog),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+      queryClient.invalidateQueries({
+        queryKey: ["contract-with-stats", contractId],
+      });
       showSuccessToast(
         "Work log created",
         "Your work log has been created",
@@ -77,7 +79,9 @@ export function WorkLogPage() {
     mutationFn: (workLog: Partial<WorkLogProps>) =>
       updateWorkLog(workLog.id as string, workLog),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+      queryClient.invalidateQueries({
+        queryKey: ["contract-with-stats", contractId],
+      });
       showSuccessToast(
         "Work log updated",
         "Your work log has been updated",
@@ -93,7 +97,9 @@ export function WorkLogPage() {
   const deleteWorkLogMutation = useMutation({
     mutationFn: (id: string) => deleteWorkLog(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+      queryClient.invalidateQueries({
+        queryKey: ["contract-with-stats", contractId],
+      });
       showSuccessToast(
         "Work log deleted",
         "Your work log has been deleted",
@@ -110,7 +116,9 @@ export function WorkLogPage() {
     mutationFn: (submission: CreateWorkSubmissionProps) =>
       createWorkSubmission(submission),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["worklogs", contractId] });
+      queryClient.invalidateQueries({
+        queryKey: ["contract-with-stats", contractId],
+      });
       showSuccessToast(
         "Work submission created",
         "Your work submission has been created",
