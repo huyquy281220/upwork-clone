@@ -6,19 +6,23 @@ import {
   Query,
   Req,
   UseGuards,
+  Patch,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { WorkLogService } from './work-log.service';
 import { CreateWorkLogDto } from './dto/create-work-log.dto';
 import { User } from '@prisma/client';
 import { CurrentUser } from 'src/auth/decorators/curent-user.decorator';
 import { NextAuthGuard } from 'src/auth/guards/nextauth.guard';
+import { UpdateWorkLogDto } from './dto/update-work-log.dto';
 
 @Controller('work-logs')
 @UseGuards(NextAuthGuard)
 export class WorkLogController {
   constructor(private readonly workLogService: WorkLogService) {}
 
-  @Post()
+  @Post('/create')
   create(@Body() dto: CreateWorkLogDto, @CurrentUser() user: User) {
     console.log(user);
     return this.workLogService.create({ ...dto, freelancerId: user.id });
@@ -32,5 +36,15 @@ export class WorkLogController {
   @Get('my-logs')
   getByFreelancer(@Req() req: Request & { user: { id: string } }) {
     return this.workLogService.findByFreelancer(req.user.id);
+  }
+
+  @Patch('/update/:id')
+  update(@Param('id') id: string, @Body() dto: UpdateWorkLogDto) {
+    return this.workLogService.update(id, dto);
+  }
+
+  @Delete('/delete/:id')
+  delete(@Param('id') id: string) {
+    return this.workLogService.delete(id);
   }
 }

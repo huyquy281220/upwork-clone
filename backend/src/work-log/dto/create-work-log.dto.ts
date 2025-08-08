@@ -11,11 +11,11 @@ export class CreateWorkLogDto {
   loggedAt: string;
 
   @IsISO8601()
-  endTime?: string;
+  endTime: string;
 
   @IsOptional()
   @IsString()
-  description?: string;
+  description: string;
 
   @IsString()
   freelancerId: string;
