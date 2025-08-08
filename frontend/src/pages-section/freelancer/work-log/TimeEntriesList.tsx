@@ -16,9 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Clock, Trash2, Calendar } from "lucide-react";
+import { Plus, Clock, Trash2 } from "lucide-react";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
-import { formatTimeRangeVN, formatToISODate } from "@/utils/formatDate";
+import { formatTimeRangeVN } from "@/utils/formatDate";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -255,18 +255,15 @@ export function TimeEntriesList({
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Calendar className="w-4 h-4" />
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm text-foreground">
                         <Clock className="w-4 h-4" />
-                        {entry.loggedAt} - {entry.endTime}
+                        {formatTimeRangeVN(entry.loggedAt, entry.endTime)}
                       </div>
                     </div>
 
-                    <p className="text-gray-900 mb-3">{entry.description}</p>
+                    <p className="text-foreground mb-3">{entry.description}</p>
 
-                    <div className="flex items-center gap-6 text-sm text-gray-600">
+                    <div className="flex items-center gap-6 text-sm text-foreground">
                       <span>Duration: {entry.hours} hours</span>
                       <span>Rate: ${hourlyRate}/hour</span>
                     </div>
