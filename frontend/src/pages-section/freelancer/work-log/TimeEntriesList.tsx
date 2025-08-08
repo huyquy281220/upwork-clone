@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Clock, Trash2, Calendar } from "lucide-react";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
-import { formatToISODate } from "@/utils/formatToISODate";
+import { formatTimeRangeVN, formatToISODate } from "@/utils/formatDate";
 
 interface TimeEntriesListProps {
   timeEntries: WorkLogProps[];
@@ -159,7 +159,7 @@ export function TimeEntriesList({
                         hourlyRate: Number(e.target.value),
                       })
                     }
-                    required
+                    disabled
                   />
                 </div>
               </div>
@@ -248,7 +248,7 @@ export function TimeEntriesList({
                       </div>
                       <div className="flex items-center gap-2 text-sm text-foreground">
                         <Clock className="w-4 h-4" />
-                        {entry.loggedAt} - {entry.endTime}
+                        {formatTimeRangeVN(entry.loggedAt, entry.endTime)}
                       </div>
                       {/* <Badge variant={getStatusColor(entry.status)}>
                         {entry.status}
