@@ -8,22 +8,13 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { Reflector } from '@nestjs/core';
-import { OAuth2Client } from 'google-auth-library';
-
 @Injectable()
 export class NextAuthGuard implements CanActivate {
-  private googleClient: OAuth2Client;
-
   constructor(
     private reflector: Reflector,
     private jwtService: JwtService,
     private userService: UserService,
-  ) {
-    this.googleClient = new OAuth2Client(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-    );
-  }
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
