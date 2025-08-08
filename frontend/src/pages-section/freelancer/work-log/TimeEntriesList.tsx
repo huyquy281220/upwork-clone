@@ -88,27 +88,6 @@ export function TimeEntriesList({
     });
   };
 
-  // const handleEdit = (entry: Partial<WorkLogProps>) => {
-  //   setEditingEntry(entry);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     startTime: entry.,
-  //     endTime: entry.endTime,
-  //     description: entry.description,
-  //   }));
-  // };
-
-  // const getStatusColor = (status: string) => {
-  //   switch (status) {
-  //     case "approved":
-  //       return "default";
-  //     case "submitted":
-  //       return "secondary";
-  //     default:
-  //       return "outline";
-  //   }
-  // };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -289,7 +268,7 @@ export function TimeEntriesList({
         )}
       </div>
 
-      {/* Edit Dialog */}
+      {/* Edit Entry Modal */}
       <Dialog open={!!editingEntry} onOpenChange={() => setEditingEntry(null)}>
         <DialogContent>
           <DialogHeader>
