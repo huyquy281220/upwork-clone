@@ -100,6 +100,7 @@ export function WorkLogTabs({
 
         <TabsContent value="submissions" className="mt-6">
           <WorkSubmissions
+            entries={timeEntries}
             canCreate={canCreateSubmission}
             submissions={submissions}
             milestones={milestones}

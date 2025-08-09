@@ -25,16 +25,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Upload, FileText, Download, Calendar, X } from "lucide-react";
+import {
+  Plus,
+  Upload,
+  FileText,
+  Download,
+  Calendar,
+  X,
+  Clock,
+  CheckCircle,
+  ArrowLeft,
+} from "lucide-react";
 import { ContractType } from "@/types/contract";
 import {
   CreateWorkSubmissionProps,
   WorkSubmissionProps,
 } from "@/types/work-submissions";
 import Link from "next/link";
+import { WorkLogProps } from "@/types/work-log";
+import {
+  formatDateFromISO,
+  formatTimeFromISO,
+  formatTimeRange,
+} from "@/utils/formatDate";
 
 type WorkSubmissionsProps = {
   canCreate: boolean;
+  entries: WorkLogProps[];
   submissions: WorkSubmissionProps[];
   milestones?: Array<{ id: string; name: string; status: string }>;
   contractType: ContractType;
@@ -69,11 +86,15 @@ export function WorkSubmissions({
   submissions,
   milestones,
   contractType,
+  entries,
   onAddSubmission,
   onUpdateSubmission,
 }: WorkSubmissionsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-
+  const [currentStep, setCurrentStep] = useState<"work-log" | "submission">(
+    "work-log"
+  );
+  const [selectedWorkLogId, setSelectedWorkLogId] = useState<string>("");
   const [selectedFiles, setSelectedFiles] = useState<File | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,11 +128,41 @@ export function WorkSubmissions({
 
     onAddSubmission({
       ...data,
+      workLogId: selectedWorkLogId,
       file: selectedFiles || data.file,
     } as CreateWorkSubmissionProps);
 
-    reset();
-    setIsAddDialogOpen(false);
+    setTimeout(() => {
+      reset();
+      setSelectedFiles(null);
+      setSelectedWorkLogId("");
+      setCurrentStep("work-log");
+      setIsAddDialogOpen(false);
+    }, 1500);
+  };
+
+  const handleWorkLogSelection = (workLogId: string) => {
+    setSelectedWorkLogId(workLogId);
+  };
+
+  const handleNextStep = () => {
+    if (selectedWorkLogId) {
+      setCurrentStep("submission");
+    }
+  };
+
+  const handleBackStep = () => {
+    setCurrentStep("work-log");
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    setIsAddDialogOpen(open);
+    if (!open) {
+      setCurrentStep("work-log");
+      setSelectedWorkLogId("");
+      reset();
+      setSelectedFiles(null);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -126,6 +177,10 @@ export function WorkSubmissions({
         return "outline";
     }
   };
+
+  const selectedWorkLog = entries.find(
+    (entry) => entry.id === selectedWorkLogId
+  );
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
@@ -160,147 +215,283 @@ export function WorkSubmissions({
               New Submission
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="sm:max-w-[40rem]">
             <DialogHeader>
-              <DialogTitle>Create Work Submission</DialogTitle>
+              <DialogTitle className="flex items-center gap-2">
+                {currentStep === "submission" && (
+                  <Button variant="ghost" size="sm" onClick={handleBackStep}>
+                    <ArrowLeft className="w-4 h-4" />
+                  </Button>
+                )}
+                {currentStep === "work-log"
+                  ? "Select Work Log"
+                  : "Create Work Submission"}
+              </DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <Label htmlFor="title">Title</Label>
-                <Input
-                  id="title"
-                  {...register("title")}
-                  placeholder="Enter submission title..."
-                  className={errors.title ? "border-red-500" : ""}
-                />
-                {errors.title && (
-                  <div className="text-red-500 text-sm mt-1">
-                    {errors.title.message}
+            {/* step 1 */}
+            {currentStep === "work-log" && (
+              <div className="space-y-6">
+                <div className="text-sm text-foreground opacity-75">
+                  Select one work log to include in this submission. This helps
+                  track which specific work is being delivered.
+                </div>
+
+                {/* Selected Summary */}
+                {selectedWorkLogId && selectedWorkLog && (
+                  <div className="p-4 bg-subBackground rounded-lg">
+                    <h4 className="font-medium mb-2">Selected Work Log</h4>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-foreground font-semibold">
+                          Date:
+                        </span>
+                        <div className="">
+                          {formatTimeRange(
+                            selectedWorkLog.loggedAt,
+                            selectedWorkLog.endTime
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-foreground font-semibold">
+                          Duration:
+                        </span>
+                        <div className="font-medium">
+                          {selectedWorkLog.hours} hours
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <span className="text-foreground text-sm font-semibold">
+                        Description:
+                      </span>
+                      <div className="text-sm">
+                        {selectedWorkLog.description}
+                      </div>
+                    </div>
                   </div>
                 )}
-              </div>
 
-              {contractType === ContractType.FIXED_PRICE &&
-                milestones &&
-                milestones.length > 0 && (
-                  <div>
-                    <Label htmlFor="milestoneId">Milestone (Optional)</Label>
-                    <Select
-                      value={watch("milestoneId")}
-                      onValueChange={(value) => setValue("milestoneId", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a milestone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {milestones.map((milestone) => (
-                          <SelectItem key={milestone.id} value={milestone.id}>
-                            {milestone.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  {...register("description")}
-                  placeholder="Describe your work submission..."
-                  rows={4}
-                  className={errors.description ? "border-red-500" : ""}
-                />
-                {errors.description && (
-                  <div className="text-red-500 text-sm mt-1">
-                    {errors.description.message}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <Label>Attachments</Label>
-                <div className="mt-2">
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                    <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600 mb-2">
-                      Drag and drop files here, or click to browse
-                    </p>
-                    <Input
-                      type="file"
-                      multiple
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      id="file-upload"
-                      accept=".zip,.7z,.rar"
-                    />
-                    <Button variant="outline" size="sm" asChild>
-                      <label htmlFor="file-upload" className="cursor-pointer">
-                        Choose Files
-                      </label>
-                    </Button>
-                  </div>
-
-                  {/* Selected Files List */}
-                  {selectedFiles && (
-                    <div className="mt-4 space-y-2">
-                      <p className="text-sm font-medium text-gray-700">
-                        Selected Files:
+                {/* Worklog List */}
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {entries.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <Clock className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                      <p>No work logs available</p>
+                      <p className="text-sm">
+                        Create some time entries first to include them in
+                        submissions
                       </p>
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <FileText className="w-5 h-5 text-gray-500" />
-                          <div>
-                            <p className="font-medium text-sm">
-                              {selectedFiles.name}
+                    </div>
+                  ) : (
+                    entries.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                          selectedWorkLogId === entry.id
+                            ? "border-green-500 bg-subBackground"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                        onClick={() => handleWorkLogSelection(entry.id)}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <div
+                                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                  selectedWorkLogId === entry.id
+                                    ? "border-green-500 bg-green-500"
+                                    : "border-gray-300"
+                                }`}
+                              >
+                                {selectedWorkLogId === entry.id && (
+                                  <CheckCircle className="w-3 h-3 text-white" />
+                                )}
+                              </div>
+                              <div className="font-medium">
+                                {formatDateFromISO(entry.loggedAt)}
+                              </div>
+                              {/* <Badge variant={getStatusColor(entry.status)}>
+                                {entry.status}
+                              </Badge> */}
+                            </div>
+                            <p className="text-sm text-foreground mb-2">
+                              {entry.description}
                             </p>
-                            <p className="text-xs text-gray-500">
-                              {formatFileSize(selectedFiles.size)} •{" "}
-                              {selectedFiles.type || "Unknown type"}
-                            </p>
+                            <div className="flex items-center gap-4 text-xs text-gray-500">
+                              <span>
+                                {formatTimeFromISO(
+                                  entry.loggedAt,
+                                  entry.endTime
+                                )}
+                              </span>
+                              <span>{entry.hours} hours</span>
+                              {/* <span>${entry.earnings.toFixed(2)}</span> */}
+                            </div>
                           </div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={removeFile}
-                          type="button"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
                       </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Continue Button */}
+                <div className="flex justify-end gap-2 pt-4 border-t">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleDialogClose(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleNextStep}
+                    disabled={!selectedWorkLogId}
+                  >
+                    Continue {selectedWorkLogId ? "(1 selected)" : ""}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* step 2 */}
+            {currentStep === "submission" && (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div>
+                  <Label htmlFor="title">Title</Label>
+                  <Input
+                    id="title"
+                    {...register("title")}
+                    placeholder="Enter submission title..."
+                    className={errors.title ? "border-red-500" : ""}
+                  />
+                  {errors.title && (
+                    <div className="text-red-500 text-sm mt-1">
+                      {errors.title.message}
+                    </div>
+                  )}
+                </div>
+
+                {contractType === ContractType.FIXED_PRICE &&
+                  milestones &&
+                  milestones.length > 0 && (
+                    <div>
+                      <Label htmlFor="milestoneId">Milestone (Optional)</Label>
+                      <Select
+                        value={watch("milestoneId")}
+                        onValueChange={(value) =>
+                          setValue("milestoneId", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a milestone" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {milestones.map((milestone) => (
+                            <SelectItem key={milestone.id} value={milestone.id}>
+                              {milestone.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
 
-                  {/* File Upload Guidelines */}
-                  <div className="mt-3 text-xs text-gray-500">
-                    <p>Supported formats: ZIP, 7Z, RAR</p>
-                    <p>Maximum file size: 10MB per file</p>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    {...register("description")}
+                    placeholder="Describe your work submission..."
+                    rows={4}
+                    className={errors.description ? "border-red-500" : ""}
+                  />
+                  {errors.description && (
+                    <div className="text-red-500 text-sm mt-1">
+                      {errors.description.message}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Label>Attachments</Label>
+                  <div className="mt-2">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                      <p className="text-sm text-gray-600 mb-2">
+                        Drag and drop files here, or click to browse
+                      </p>
+                      <Input
+                        type="file"
+                        multiple
+                        onChange={handleFileUpload}
+                        className="hidden"
+                        id="file-upload"
+                        accept=".zip,.7z,.rar"
+                      />
+                      <Button variant="outline" size="sm" asChild>
+                        <label htmlFor="file-upload" className="cursor-pointer">
+                          Choose Files
+                        </label>
+                      </Button>
+                    </div>
+
+                    {/* Selected Files List */}
+                    {selectedFiles && (
+                      <div className="mt-4 space-y-2">
+                        <p className="text-sm font-medium text-foreground">
+                          Selected Files:
+                        </p>
+                        <div className="flex items-center justify-between p-3 bg-subBackground rounded-lg border">
+                          <div className="flex items-center space-x-3">
+                            <FileText className="w-5 h-5 text-foreground" />
+                            <div>
+                              <p className="font-medium text-sm">
+                                {selectedFiles.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {formatFileSize(selectedFiles.size)} •{" "}
+                                {selectedFiles.type || ""}
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={removeFile}
+                            type="button"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* File Upload Guidelines */}
+                    <div className="mt-3 text-xs text-foreground">
+                      <p>Supported formats: ZIP, 7Z, RAR</p>
+                      <p>Maximum file size: 10MB per file</p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex justify-end gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setIsAddDialogOpen(false);
-                    reset();
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="text-foreground"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Creating..." : "Create Submission"}
-                </Button>
-              </div>
-            </form>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleDialogClose(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="text-foreground"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Creating..." : "Create Submission"}
+                  </Button>
+                </div>
+              </form>
+            )}
           </DialogContent>
         </Dialog>
       </div>
@@ -399,21 +590,6 @@ export function WorkSubmissions({
                     </div>
                   </div>
                 )}
-
-                {/* Feedback */}
-                {/* {submission.feedback && (
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <MessageSquare className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm font-medium text-blue-900">
-                        Client Feedback
-                      </span>
-                    </div>
-                    <p className="text-sm text-blue-800">
-                      {submission.feedback}
-                    </p>
-                  </div>
-                )} */}
               </CardContent>
             </Card>
           ))

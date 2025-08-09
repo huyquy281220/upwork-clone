@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Clock, Trash2 } from "lucide-react";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
-import { formatTimeRangeVN } from "@/utils/formatDate";
+import { formatTimeRange } from "@/utils/formatDate";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -90,7 +90,9 @@ export function TimeEntriesList({
       setEditingEntry(null);
     } else {
       onAddTimeEntry(entryData);
-      setIsAddDialogOpen(false);
+      setTimeout(() => {
+        setIsAddDialogOpen(false);
+      }, 1500);
     }
 
     // Reset form
@@ -257,7 +259,7 @@ export function TimeEntriesList({
                     <div className="flex items-center gap-3 mb-2">
                       <div className="flex items-center gap-2 text-sm text-foreground">
                         <Clock className="w-4 h-4" />
-                        {formatTimeRangeVN(entry.loggedAt, entry.endTime)}
+                        {formatTimeRange(entry.loggedAt, entry.endTime)}
                       </div>
                     </div>
 

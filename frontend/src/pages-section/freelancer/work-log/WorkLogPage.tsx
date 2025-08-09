@@ -160,7 +160,10 @@ export function WorkLogPage() {
   };
 
   const handleAddSubmission = (submission: CreateWorkSubmissionProps) => {
-    createWorkSubmissionMutation.mutate(submission);
+    createWorkSubmissionMutation.mutate({
+      ...submission,
+      contractId: contractId as string,
+    });
   };
 
   const handleUpdateSubmission = (

@@ -34,7 +34,7 @@ export function formatFromISOToLocalTime(isoString: string): string {
   return formatted;
 }
 
-export function formatTimeRangeVN(startStr: string, endStr: string) {
+export function formatTimeRange(startStr: string, endStr: string) {
   function formatTime(date: Date) {
     let hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, "0");
@@ -56,3 +56,24 @@ export function formatTimeRangeVN(startStr: string, endStr: string) {
 
   return `${formatTime(startDate)} - ${formatTime(endDate)} | ${datePart}`;
 }
+
+export function formatDateFromISO(isoString: string) {
+  const date = new Date(isoString);
+  const pad = (num: number) => String(num).padStart(2, "0");
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}`;
+}
+
+export const formatTimeFromISO = (startISO: string, endISO: string) => {
+  const pad = (num: number) => String(num).padStart(2, "0");
+
+  const start = new Date(startISO);
+  const end = new Date(endISO);
+
+  const startTime = `${pad(start.getHours())}:${pad(start.getMinutes())}`;
+  const endTime = `${pad(end.getHours())}:${pad(end.getMinutes())}`;
+
+  return `${startTime}-${endTime}`;
+};
