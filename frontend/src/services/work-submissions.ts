@@ -13,9 +13,16 @@ export const getWorkSubmissionsByContractId = async (contractId: string) => {
 export const createWorkSubmission = async (
   submission: CreateWorkSubmissionProps
 ) => {
+  const formData = new FormData();
+  formData.append("title", submission.title);
+  formData.append("description", submission.description);
+  formData.append("contractId", submission.contractId);
+  formData.append("workLogId", submission.workLogId);
+  formData.append("file", submission.file);
+
   const response = await api.post(
     `${apiURL}/work-submissions/create`,
-    submission
+    formData
   );
   return response.data;
 };

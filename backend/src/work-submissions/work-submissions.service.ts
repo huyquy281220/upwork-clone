@@ -4,7 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Client } from 'src/config/aws-s3.config';
 import { CreateWorkSubmissionDto } from './dto/create-work-submissions.dto';
 import { UpdateWorkSubmissionDto } from './dto/update-work-submissions.dto';
@@ -14,6 +15,15 @@ import { Express } from 'express';
 export class WorkSubmissionsService {
   constructor(private prisma: PrismaService) {}
 
+  async getDownloadUrl(fileKey: string) {
+    const command = new GetObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET_NAME!,
+      Key: fileKey,
+    });
+
+    return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+  }
+
   async uploadFile(file: Express.Multer.File) {
     try {
       const key = `${Date.now()}-${file.originalname}`;
@@ -22,7 +32,7 @@ export class WorkSubmissionsService {
         Bucket: process.env.AWS_S3_BUCKET_NAME!,
         Key: key,
         Body: file.buffer,
-        ACL: 'public-read',
+        // ACL: 'public-read',
         ContentType: file.mimetype,
       });
 
@@ -73,6 +83,7 @@ export class WorkSubmissionsService {
 
       return workSubmission;
     } catch (error) {
+      console.log(error);
       throw new BadRequestException(
         `Failed to create work submission: ${error.message}`,
       );

@@ -7,17 +7,20 @@ import {
   Patch,
   Delete,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { WorkSubmissionsService } from './work-submissions.service';
 import { CreateWorkSubmissionDto } from './dto/create-work-submissions.dto';
 import { Express } from 'express';
 import { UpdateWorkSubmissionDto } from './dto/update-work-submissions.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('work-submissions')
 export class WorkSubmissionsController {
   constructor(private readonly service: WorkSubmissionsService) {}
 
   @Post('create')
+  @UseInterceptors(FileInterceptor('file'))
   create(
     @Body() body: CreateWorkSubmissionDto,
     @UploadedFile() file: Express.Multer.File,
