@@ -218,7 +218,7 @@ export function WorkSubmissions({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
         <div>
           <h2 className="text-xl font-semibold text-foreground">
             Work Submissions

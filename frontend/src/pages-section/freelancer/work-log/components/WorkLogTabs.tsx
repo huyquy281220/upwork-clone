@@ -63,7 +63,9 @@ export function WorkLogTabs({
       <WorkLogStats contractType={contractType} stats={stats} />
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className={`grid w-full grid-cols-${tabsConfig.length}`}>
+        <TabsList
+          className={`grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 h-28`}
+        >
           {tabsConfig.map((tab) => (
             <TabsTrigger
               key={tab.value}
