@@ -3,7 +3,7 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
-import { getSession, signOut } from "next-auth/react";
+import { getSession } from "next-auth/react";
 
 // Create axios instance
 const api = axios.create({
@@ -43,7 +43,7 @@ api.interceptors.response.use(
       // Just redirect to login
       console.error("Authentication failed, redirecting to login");
       console.error(error);
-      // window.location.href = "/sign-in";
+      window.location.href = "/sign-in";
     }
 
     return Promise.reject(error);
