@@ -55,7 +55,7 @@ export function ContractProgressTabs({ contract }: ContractProgressTabsProps) {
         </TabsContent>
 
         <TabsContent value="activity" className="mt-6">
-          <WorkActivity contractId={contract.id} />
+          <WorkActivity />
         </TabsContent>
 
         <TabsContent value="payments" className="mt-6">
