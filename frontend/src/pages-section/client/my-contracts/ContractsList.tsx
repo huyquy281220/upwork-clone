@@ -12,8 +12,6 @@ export function ContractsList({
   contracts,
   onContractSelect,
 }: ContractsListProps) {
-  console.log(contracts);
-
   if (contracts.length === 0) {
     return (
       <div className="bg-background rounded-lg shadow-sm border p-12 text-center">
