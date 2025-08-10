@@ -48,6 +48,7 @@ import {
   formatTimeFromISO,
   formatTimeRange,
 } from "@/utils/formatDate";
+import { EditSubmissionModal } from "./components/EditSubmissionModal";
 
 type WorkSubmissionsProps = {
   canCreate: boolean;
@@ -62,7 +63,6 @@ type WorkSubmissionsProps = {
   ) => void;
 };
 
-// Validation schema
 const submissionSchema = z.object({
   title: z
     .string()
@@ -81,6 +81,21 @@ const submissionSchema = z.object({
 
 type SubmissionFormData = z.infer<typeof submissionSchema>;
 
+const defaultSubmission: WorkSubmissionProps = {
+  id: "",
+  title: "",
+  description: "",
+  status: "draft",
+  fileUrl: "",
+  fileName: "",
+  fileSize: 0,
+  fileKey: "",
+  createdAt: "",
+  updatedAt: "",
+  reviewedAt: "",
+  contractId: "",
+};
+
 export function WorkSubmissions({
   canCreate,
   submissions,
@@ -91,11 +106,14 @@ export function WorkSubmissions({
   onUpdateSubmission,
 }: WorkSubmissionsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<"work-log" | "submission">(
     "work-log"
   );
   const [selectedWorkLogId, setSelectedWorkLogId] = useState<string>("");
   const [selectedFiles, setSelectedFiles] = useState<File | null>(null);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<WorkSubmissionProps>(defaultSubmission);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -163,6 +181,11 @@ export function WorkSubmissions({
       reset();
       setSelectedFiles(null);
     }
+  };
+
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false);
+    setSelectedSubmission(defaultSubmission);
   };
 
   const getStatusColor = (status: string) => {
@@ -525,10 +548,10 @@ export function WorkSubmissions({
                       </Badge>
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-foreground">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {submission.contractId}
+                        {formatDateFromISO(submission.createdAt)}
                       </div>
                       {/* {submission.milestoneName && (
                         <div className="flex items-center gap-1">
@@ -540,7 +563,14 @@ export function WorkSubmissions({
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedSubmission(submission);
+                        setIsEditDialogOpen(true);
+                      }}
+                    >
                       Edit
                     </Button>
                     {submission.status === "draft" && (
@@ -560,22 +590,24 @@ export function WorkSubmissions({
               </CardHeader>
 
               <CardContent>
-                <p className="text-gray-700 mb-4">{submission.description}</p>
+                <p className="text-foreground opacity-75 mb-4 line-clamp-2">
+                  {submission.description}
+                </p>
 
                 {/* Files */}
                 {submission.fileUrl && (
                   <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">
+                    <h4 className="text-sm font-medium text-foreground mb-2">
                       Attached Files
                     </h4>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-subBackground rounded-lg">
                       <div className="flex items-center gap-3">
                         <FileText className="w-5 h-5 text-gray-400" />
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-foreground">
                             {submission.fileName}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-foreground opacity-75">
                             {formatFileSize(submission.fileSize)}
                           </div>
                         </div>
@@ -595,6 +627,14 @@ export function WorkSubmissions({
           ))
         )}
       </div>
+
+      <EditSubmissionModal
+        isOpen={isEditDialogOpen}
+        onClose={handleCloseEditDialog}
+        submission={selectedSubmission as WorkSubmissionProps}
+        contractType={contractType}
+        onUpdateSubmission={onUpdateSubmission}
+      />
     </div>
   );
 }

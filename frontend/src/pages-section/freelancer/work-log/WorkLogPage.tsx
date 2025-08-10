@@ -1,12 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { WorkLogTabs } from "./components/WorkLogTabs";
 import { WorkLogHeader } from "./WorkLogHeader";
-import {
-  UpdateWorkSubmissionProps,
-  WorkSubmissionProps,
-} from "@/types/work-submissions";
+import { UpdateWorkSubmissionProps } from "@/types/work-submissions";
 import { CreateWorkSubmissionProps } from "@/types/work-submissions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -18,7 +14,10 @@ import { useParams } from "next/navigation";
 import { getContractById } from "@/services/contract";
 import { CreateWorkLogProps, WorkLogProps } from "@/types/work-log";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
-import { createWorkSubmission } from "@/services/work-submissions";
+import {
+  createWorkSubmission,
+  updateWorkSubmission,
+} from "@/services/work-submissions";
 import { ContractProps, ContractType } from "@/types/contract";
 import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
@@ -47,8 +46,6 @@ export function WorkLogPage() {
   );
 
   const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
-
-  const [submissions, setSubmissions] = useState<WorkSubmissionProps[]>([]);
 
   const { data: contractWithStats, isLoading: isContractLoading } =
     useQuery<ContractWithStats>({
@@ -135,6 +132,34 @@ export function WorkLogPage() {
     },
   });
 
+  const updateWorkSubmissionMutation = useMutation({
+    mutationFn: ({
+      submissionId,
+      submission,
+    }: {
+      submissionId: string;
+      submission: UpdateWorkSubmissionProps;
+    }) => updateWorkSubmission(submissionId, contractId as string, submission),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["contract-with-stats", contractId],
+      });
+      showSuccessToast(
+        "Work submission updated",
+        "Your work submission has been updated",
+        1200
+      );
+    },
+    onError: (error) => {
+      console.error("Error updating work submission:", error);
+      showErrorToast(
+        "Failed to update work submission",
+        "Please try again",
+        1200
+      );
+    },
+  });
+
   const handleAddTimeEntry = (workLog: CreateWorkLogProps) => {
     createWorkLogMutation.mutate({
       ...workLog,
@@ -170,11 +195,10 @@ export function WorkLogPage() {
     id: string,
     updatedSubmission: UpdateWorkSubmissionProps
   ) => {
-    setSubmissions(
-      submissions.map((sub) =>
-        sub.id === id ? { ...sub, ...updatedSubmission } : sub
-      )
-    );
+    updateWorkSubmissionMutation.mutate({
+      submissionId: id,
+      submission: updatedSubmission,
+    });
   };
 
   if (isContractLoading || !session) return <InfiniteLoading />;

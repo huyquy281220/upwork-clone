@@ -1,4 +1,7 @@
-import { CreateWorkSubmissionProps } from "@/types/work-submissions";
+import {
+  CreateWorkSubmissionProps,
+  UpdateWorkSubmissionProps,
+} from "@/types/work-submissions";
 import api from "./api";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
@@ -23,6 +26,20 @@ export const createWorkSubmission = async (
   const response = await api.post(
     `${apiURL}/work-submissions/create`,
     formData
+  );
+  return response.data;
+};
+
+export const updateWorkSubmission = async (
+  id: string,
+  contractId: string,
+  submission: UpdateWorkSubmissionProps
+) => {
+  const data = { ...submission, contractId };
+
+  const response = await api.patch(
+    `${apiURL}/work-submissions/update/${id}`,
+    data
   );
   return response.data;
 };
