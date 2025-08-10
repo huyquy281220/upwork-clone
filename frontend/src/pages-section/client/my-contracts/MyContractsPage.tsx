@@ -14,7 +14,7 @@ import { getPaginatedContractsForClient } from "@/services/contract";
 import { Pagination } from "@/components/common/Pagination";
 
 type PaginatedContractsProps = {
-  contracts: ContractProps[];
+  data: ContractProps[];
   totalPage: number;
   totalContracts: number;
 };
@@ -68,7 +68,7 @@ export function MyContractsPage() {
   };
 
   if (selectedContract) {
-    const contract = paginatedContracts?.contracts.find(
+    const contract = paginatedContracts?.data.find(
       (c) => c.id === selectedContract
     );
     if (contract) {
@@ -81,7 +81,7 @@ export function MyContractsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ContractsHeader contracts={paginatedContracts.contracts ?? []} />
+        <ContractsHeader contracts={paginatedContracts.data ?? []} />
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-1">
             <ContractsFilters
@@ -95,11 +95,11 @@ export function MyContractsPage() {
           </div>
           <div className="lg:col-span-3">
             <ContractsList
-              contracts={paginatedContracts.contracts ?? []}
+              contracts={paginatedContracts.data ?? []}
               onContractSelect={handleContractSelect}
             />
 
-            {paginatedContracts.contracts?.length >= LIMIT && (
+            {paginatedContracts.data?.length >= LIMIT && (
               <Pagination
                 currentPage={currentPage}
                 totalPages={paginatedContracts.totalPage}
