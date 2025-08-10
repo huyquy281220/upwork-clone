@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2 } from "lucide-react";
-import { MilestoneProps } from "@/types/contract";
+import { MilestoneProps, MilestoneStatus } from "@/types/contract";
 import { JobType } from "@/types/jobs";
 
 interface MilestonesSectionProps {
@@ -27,6 +27,7 @@ export function MilestonesSection({
       description: "",
       amount: "",
       dueDate: "",
+      status: MilestoneStatus.PENDING,
     };
     setMilestones([...milestones, newMilestone]);
   };
