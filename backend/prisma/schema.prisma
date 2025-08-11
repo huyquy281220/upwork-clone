@@ -263,7 +263,7 @@ model WorkSubmission {
   updatedAt   DateTime @updatedAt
 
   contract Contract @relation("WorkSubmissionContract", fields: [contractId], references: [id])
-  workLog WorkLog @relation("WorkSubmissionWorkLog", fields: [workLogId], references: [id])
+  workLog WorkLog @relation("WorkSubmissionWorkLog", fields: [workLogId], references: [id],onDelete: Cascade)
 }
 
 model Message {
