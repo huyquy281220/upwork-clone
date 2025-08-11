@@ -156,21 +156,19 @@ export class EducationService {
       throw new NotFoundException('Some education records not found');
     }
 
-    return this.prismaService.$transaction(async (tx) => {
-      // Delete education records
-      await tx.education.deleteMany({
-        where: { id: { in: educationIds } },
-      });
+    // Delete education records
+    await this.prismaService.education.deleteMany({
+      where: { id: { in: educationIds } },
+    });
 
-      // Return updated user with education
-      return tx.user.findUnique({
-        where: { id: userId },
-        include: {
-          freelancerProfile: {
-            include: { education: true },
-          },
+    // Return updated user with education
+    return this.prismaService.user.findUnique({
+      where: { id: userId },
+      include: {
+        freelancerProfile: {
+          include: { education: true },
         },
-      });
+      },
     });
   }
 }

@@ -335,25 +335,26 @@ export class ProposalsService {
   }
 
   async deleteProposal(proposalId: string, freelancerId: string) {
-    return this.prismaService.$transaction(async (tx) => {
-      const proposal = await tx.proposal.findUnique({
-        where: { id: proposalId },
-      });
-      if (!proposal) {
-        throw new NotFoundException(`Proposal with ID ${proposalId} not found`);
-      }
-      if (proposal.freelancerId !== freelancerId) {
-        throw new BadRequestException('Freelancer does not own this proposal');
-      }
-      if (proposal.status === ProposalStatus.ACCEPTED) {
-        throw new BadRequestException('Cannot delete an accepted proposal');
-      }
-
-      // Delete proposal
-      await tx.proposal.delete({ where: { id: proposalId } });
-
-      return { message: `Proposal ${proposalId} deleted successfully` };
+    const proposal = await this.prismaService.proposal.findUnique({
+      where: { id: proposalId },
     });
+
+    if (!proposal) {
+      throw new NotFoundException(`Proposal with ID ${proposalId} not found`);
+    }
+
+    if (proposal.freelancerId !== freelancerId) {
+      throw new BadRequestException('Freelancer does not own this proposal');
+    }
+
+    if (proposal.status === ProposalStatus.ACCEPTED) {
+      throw new BadRequestException('Cannot delete an accepted proposal');
+    }
+
+    // Delete proposal
+    await this.prismaService.proposal.delete({ where: { id: proposalId } });
+
+    return { message: `Proposal ${proposalId} deleted successfully` };
   }
 
   async acceptProposal(proposalId: string, clientId: string) {
