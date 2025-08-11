@@ -1,8 +1,8 @@
 "use client";
 
+import { ProposalCardSkeleton } from "@/components/skeletons/ProposalCardSkeleton";
 import { ProposalProps } from "@/types/proposals";
 import { ProposalCard } from "./ProposalCard";
-import { ProposalCardSkeleton } from "../../../freelancer/proposals/my-proposals";
 
 interface ProposalsListProps {
   proposals: ProposalProps[];
