@@ -2,24 +2,24 @@
 
 import { useMemo, useState } from "react";
 
-import { createProposal } from "@/services/proposals";
-import { useParams, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useUser } from "@/hooks/useUserInfo";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
-import { FreelancerUser } from "@/types/user";
-import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
-import { formatSelectValue } from "@/utils/formatSelectValue";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/useToast";
+import { useUser } from "@/hooks/useUserInfo";
+import { createProposal } from "@/services/proposals";
 import { JobDetailProps } from "@/types/jobs";
 import { CreateProposalProps } from "@/types/proposals";
-import { ProposalSidebar } from "./SideBar";
+import { FreelancerUser } from "@/types/user";
+import { formatSelectValue } from "@/utils/formatSelectValue";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { useParams, useRouter } from "next/navigation";
+import { AttachmentsSection } from "./Attachment";
 import { CoverLetterSection } from "./CoverLetter";
 import { PricingSection } from "./Pricing";
-import { TimelineSection } from "./Timeline";
-import { AttachmentsSection } from "./Attachment";
+import { ProposalSidebar } from "./SideBar";
 import { SubmitSection } from "./Submit";
+import { TimelineSection } from "./Timeline";
 
 const initialProposal = {
   coverLetter: "",
