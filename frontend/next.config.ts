@@ -3,10 +3,16 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   webpack: (config) => {
-    config.resolve.alias["@/pages-section"] = path.join(
-      __dirname,
-      "src/pages-section"
-    );
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@": path.join(__dirname, "src"),
+      "@/pages-section": path.join(__dirname, "src/pages-section"),
+      "@/components": path.join(__dirname, "src/components"),
+      "@/types": path.join(__dirname, "src/types"),
+      "@/services": path.join(__dirname, "src/services"),
+      "@/hooks": path.join(__dirname, "src/hooks"),
+      "@/utils": path.join(__dirname, "src/utils"),
+    };
     return config;
   },
   reactStrictMode: true,
