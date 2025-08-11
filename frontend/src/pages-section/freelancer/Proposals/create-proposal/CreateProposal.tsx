@@ -1,14 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  AttachmentsSection,
-  CoverLetterSection,
-  PricingSection,
-  ProposalSidebar,
-  SubmitSection,
-  TimelineSection,
-} from "@/pages-section/freelancer/proposals/create-proposal";
+
 import { createProposal } from "@/services/proposals";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -21,6 +14,12 @@ import { formatSelectValue } from "@/utils/formatSelectValue";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { JobDetailProps } from "@/types/jobs";
 import { CreateProposalProps } from "@/types/proposals";
+import { ProposalSidebar } from "./SideBar";
+import { CoverLetterSection } from "./CoverLetter";
+import { PricingSection } from "./Pricing";
+import { TimelineSection } from "./Timeline";
+import { AttachmentsSection } from "./Attachment";
+import { SubmitSection } from "./Submit";
 
 const initialProposal = {
   coverLetter: "",

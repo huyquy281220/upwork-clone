@@ -3,17 +3,16 @@
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { Pagination } from "@/components/common/Pagination";
 import useFilter from "@/hooks/useFilter";
-import {
-  ProposalsEmptyState,
-  ProposalsFilters,
-  ProposalsHeader,
-  ProposalsList,
-  ProposalsSearchSort,
-} from "@/pages-section/freelancer/proposals/my-proposals";
+
 import { getPaginatedProposalsByFreelancer } from "@/services/proposals";
 import { ProposalProps } from "@/types/proposals";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { ProposalsHeader } from "./Header";
+import { ProposalsFilters } from "./Filter";
+import { ProposalsSearchSort } from "./Search";
+import { ProposalsList } from "./List";
+import { ProposalsEmptyState } from "./EmptyState";
 
 interface PaginatedProposalsProps {
   data: ProposalProps[];
