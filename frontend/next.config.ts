@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.resolve.alias["@/pages-section"] = path.join(
       __dirname,
-      "./src/pages-section"
+      "src/pages-section"
     );
     return config;
   },
