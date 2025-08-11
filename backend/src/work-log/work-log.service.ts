@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateWorkLogDto } from './dto/create-work-log.dto';
-import { UserService } from 'src/user/user.service';
 import { UpdateWorkLogDto } from './dto/update-work-log.dto';
 
 @Injectable()
 export class WorkLogService {
-  constructor(
-    private prisma: PrismaService,
-    private userService: UserService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(data: CreateWorkLogDto) {
     try {
