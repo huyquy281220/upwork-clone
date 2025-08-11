@@ -56,15 +56,11 @@ export class WorkLogService {
 
   async delete(id: string) {
     try {
-      return this.prisma.$transaction(async (prisma) => {
-        await prisma.workLog.delete({
-          where: { id },
-        });
+      await this.prisma.workLog.delete({ where: { id } });
 
-        await prisma.workSubmission.deleteMany({
-          where: { workLogId: id },
-        });
-      });
+      return {
+        message: 'Work log deleted successfully',
+      };
     } catch (error) {
       console.log(error);
       throw new Error('Failed to delete work log');
