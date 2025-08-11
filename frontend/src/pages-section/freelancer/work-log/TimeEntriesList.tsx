@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Clock, Trash2 } from "lucide-react";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
-import { formatTimeRange } from "@/utils/formatDate";
+import { formatTimeRange, formatToISODate } from "@/utils/formatDate";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -79,8 +79,8 @@ export function TimeEntriesList({
     const duration = calculateDuration(data.startTime, data.endTime);
 
     const entryData = {
-      loggedAt: data.startTime,
-      endTime: data.endTime,
+      loggedAt: formatToISODate(data.startTime),
+      endTime: formatToISODate(data.endTime),
       description: data.description,
       hours: duration,
     };
