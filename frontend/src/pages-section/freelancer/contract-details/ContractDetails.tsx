@@ -92,7 +92,7 @@ const contractDetails = {
   responseTime: "7 days",
 };
 
-export default function FreelancerContractPage() {
+export function ContractDetails() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [actionCompleted, setActionCompleted] = useState<
     "accepted" | "declined" | "changes-requested" | null

@@ -178,14 +178,18 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              router.push(`/freelancer/contract/${contract.id}`)
+                            }
+                          >
                             <Eye className="w-4 h-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() =>
                               router.push(
-                                `/freelancer/contracts/${contract.id}/work-log`
+                                `/freelancer/contract/${contract.id}/work-log`
                               )
                             }
                           >
