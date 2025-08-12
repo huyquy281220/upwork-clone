@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
     turbo: {
-      rules: {},
+      // rules: {},
     },
     externalDir: true,
   },
