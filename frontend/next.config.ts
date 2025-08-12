@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
     turbo: {
       rules: {},
     },
+    externalDir: true,
   },
   images: {
     remotePatterns: [
