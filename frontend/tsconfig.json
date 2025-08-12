@@ -23,7 +23,9 @@
       "@/*": ["src/*"],
       "@/components/*": ["src/components/*"],
       "@/pages-section/*": ["src/pages-section/*"],
-      "@/pages-section/freelancer/*": ["src/pages-section/freelancer/*"],
+      "@/pages-section/freelancer/proposals/*": [
+        "src/pages-section/freelancer/proposals/*"
+      ],
       "@/types/*": ["src/types/*"],
       "@/services/*": ["src/services/*"],
       "@/hooks/*": ["src/hooks/*"],
