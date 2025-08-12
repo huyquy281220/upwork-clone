@@ -125,8 +125,6 @@ export function ContractsPage() {
     placeholderData: keepPreviousData,
   });
 
-  console.log(paginatedContract);
-
   if (isLoading || !paginatedContract) return <InfiniteLoading />;
 
   return (
