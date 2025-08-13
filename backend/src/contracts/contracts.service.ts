@@ -89,7 +89,7 @@ export class ContractsService {
           paymentMethodId: paymentMethod.id,
           title: data.title,
           description: data.description,
-          status: ContractStatus.ACTIVE,
+          status: ContractStatus.PENDING,
           contractType: job.jobType,
           hourlyRate: data.hourlyRate ?? null,
           totalPrice: data.fixedPrice ?? null,
