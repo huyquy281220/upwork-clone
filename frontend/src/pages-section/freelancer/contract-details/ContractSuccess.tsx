@@ -10,6 +10,8 @@ import {
   DollarSign,
   X,
 } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface ContractSuccessProps {
   action: "accepted" | "declined" | "changes-requested";
@@ -21,9 +23,12 @@ interface ContractSuccessProps {
 export function ContractSuccess({
   action,
   clientName,
-  contractTitle,
+  // contractTitle,
   nextSteps,
 }: ContractSuccessProps) {
+  const params = useParams();
+  const contractId = params.contractId;
+
   const getActionDetails = () => {
     switch (action) {
       case "accepted":
@@ -80,7 +85,7 @@ export function ContractSuccess({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <Card className="max-w-lg w-full mx-4">
         <CardContent className="p-8 text-center">
           {actionDetails.icon}
@@ -110,20 +115,20 @@ export function ContractSuccess({
                   className="w-full bg-green-600 hover:bg-green-700"
                   asChild
                 >
-                  <a href="/contracts">
+                  <Link href={`/freelancer/contracts/${contractId}/work-log`}>
                     <FileText className="w-4 h-4 mr-2" />
-                    View My Contracts
-                  </a>
+                    Start Work
+                  </Link>
                 </Button>
                 <Button
                   variant="outline"
                   className="w-full bg-transparent"
                   asChild
                 >
-                  <a href="/best-matches">
+                  <Link href="/freelancer/find-work">
                     <Calendar className="w-4 h-4 mr-2" />
-                    Find More Work
-                  </a>
+                    Find More Job
+                  </Link>
                 </Button>
               </>
             )}
@@ -131,20 +136,20 @@ export function ContractSuccess({
             {action === "declined" && (
               <>
                 <Button className="w-full" asChild>
-                  <a href="/best-matches">
+                  <Link href="/freelancer/find-work">
                     <DollarSign className="w-4 h-4 mr-2" />
                     Find New Opportunities
-                  </a>
+                  </Link>
                 </Button>
                 <Button
                   variant="outline"
                   className="w-full bg-transparent"
                   asChild
                 >
-                  <a href="/contracts">
+                  <Link href="/freelancer/contracts">
                     <FileText className="w-4 h-4 mr-2" />
                     View All Contracts
-                  </a>
+                  </Link>
                 </Button>
               </>
             )}
@@ -160,10 +165,10 @@ export function ContractSuccess({
                   className="w-full bg-transparent"
                   asChild
                 >
-                  <a href="/contracts">
+                  <Link href="/freelancer/contracts">
                     <FileText className="w-4 h-4 mr-2" />
                     View All Contracts
-                  </a>
+                  </Link>
                 </Button>
               </>
             )}
