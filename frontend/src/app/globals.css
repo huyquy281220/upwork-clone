@@ -7,6 +7,7 @@
   --sub-background: #1e1e1e;
   --background-hover: #282828;
   --foreground: white;
+  --muted-foreground: #f1f1f1;
   --arrow-up-color: #181818;
 }
 [data-theme="light"] {
@@ -14,6 +15,7 @@
   --sub-background: #f9f9f9;
   --background-hover: #f1f1f1;
   --foreground: #181818;
+  --muted-foreground: #ccc;
   --arrow-up-color: white;
 }
 
