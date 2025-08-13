@@ -54,18 +54,18 @@ export function ClientInfo({ client, contractDetails }: ClientInfoProps) {
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-1">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-foreground">
                   {client.name}
                 </h3>
                 {client.verified && (
                   <Verified className="w-4 h-4 text-blue-500" />
                 )}
               </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
+              <div className="flex items-center space-x-2 text-sm !text-muted-foreground mb-2">
                 <Building className="w-3 h-3" />
                 <span>{client.company}</span>
               </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <MapPin className="w-3 h-3" />
                 <span>{client.location}</span>
               </div>
@@ -73,38 +73,38 @@ export function ClientInfo({ client, contractDetails }: ClientInfoProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="text-center p-3 bg-subBackground rounded-lg">
               <div className="flex items-center justify-center space-x-1 mb-1">
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 <span className="font-bold">{client.rating}</span>
               </div>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-foreground opacity-80">
                 {client.reviewsCount} reviews
               </p>
             </div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="text-center p-3 bg-subBackground rounded-lg">
               <div className="font-bold text-green-600 mb-1">
                 {client.hireRate}%
               </div>
-              <p className="text-xs text-gray-600">Hire rate</p>
+              <p className="text-xs text-foreground opacity-80">Hire rate</p>
             </div>
           </div>
 
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600">Total spent:</span>
+              <span className="text-foreground">Total spent:</span>
               <span className="font-medium">{client.totalSpent}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Jobs posted:</span>
+              <span className="text-foreground">Jobs posted:</span>
               <span className="font-medium">{client.jobsPosted}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Active hires:</span>
+              <span className="text-foreground">Active hires:</span>
               <span className="font-medium">{client.activeHires}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Member since:</span>
+              <span className="text-foreground">Member since:</span>
               <span className="font-medium">{client.memberSince}</span>
             </div>
           </div>
@@ -123,7 +123,7 @@ export function ClientInfo({ client, contractDetails }: ClientInfoProps) {
             </div>
             <div>
               <p className="font-medium text-sm">Contract Sent</p>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-foreground opacity-80">
                 {contractDetails.sentDate}
               </p>
             </div>
@@ -135,7 +135,7 @@ export function ClientInfo({ client, contractDetails }: ClientInfoProps) {
             </div>
             <div>
               <p className="font-medium text-sm">Response Required</p>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-foreground opacity-80">
                 By {contractDetails.expiresDate}
               </p>
             </div>

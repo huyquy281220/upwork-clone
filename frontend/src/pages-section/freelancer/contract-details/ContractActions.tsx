@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { CheckCircle, X, MessageSquare, AlertTriangle } from "lucide-react";
+import { CheckCircle, X, AlertTriangle } from "lucide-react";
 
 interface ContractActionsProps {
   contractStatus: string;
@@ -56,16 +56,16 @@ export function ContractActions({
       <Card>
         <CardContent className="p-6">
           <div className="text-center mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Ready to get started?
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Review the contract terms above and choose your response. You have
               7 days to respond.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-3">
             <Button
               className="bg-green-600 hover:bg-green-700"
               onClick={onAccept}
@@ -75,7 +75,7 @@ export function ContractActions({
               {isProcessing ? "Processing..." : "Accept Contract"}
             </Button>
 
-            <Button
+            {/* <Button
               variant="outline"
               onClick={() => setChangesModalOpen(true)}
               disabled={isProcessing}
@@ -83,7 +83,7 @@ export function ContractActions({
             >
               <MessageSquare className="w-4 h-4 mr-2" />
               Request Changes
-            </Button>
+            </Button> */}
 
             <Button
               variant="outline"

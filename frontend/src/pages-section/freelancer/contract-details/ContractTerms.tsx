@@ -1,5 +1,6 @@
 "use client";
 
+import { SkillBadge } from "@/components/common/SkillBadge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, DollarSign, FileText } from "lucide-react";
@@ -52,47 +53,53 @@ export function ContractTerms({ contract }: ContractTermsProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Payment Terms */}
           <div className="space-y-4">
-            <h4 className="font-medium text-[#ccc] flex items-center space-x-2">
+            <h4 className="font-medium text-muted-foreground flex items-center space-x-2">
               <DollarSign className="w-4 h-4" />
               <span>Payment Terms</span>
             </h4>
 
             {contract.type === "hourly" ? (
-              <div className="bg-green-50 rounded-lg p-4">
+              <div className="bg-subBackground rounded-lg p-4">
                 <div className="text-2xl font-bold text-green-600 mb-1">
                   ${contract.hourlyRate}/hr
                 </div>
-                <p className="text-sm text-gray-600">Hourly rate</p>
+                <p className="text-sm text-foreground opacity-80">
+                  Hourly rate
+                </p>
                 {contract.weeklyLimit && (
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-foreground opacity-80 mt-2">
                     Weekly limit: {contract.weeklyLimit} hours
                   </p>
                 )}
               </div>
             ) : (
-              <div className="bg-green-50 rounded-lg p-4">
+              <div className="bg-subBackground rounded-lg px-4 py-2">
                 <div className="text-2xl font-bold text-green-600 mb-1">
                   ${contract.fixedPrice?.toLocaleString()}
                 </div>
-                <p className="text-sm text-gray-600">Fixed price</p>
+                <p className="text-sm text-foreground opacity-80">
+                  Fixed price
+                </p>
               </div>
             )}
           </div>
 
           {/* Timeline */}
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-900 flex items-center space-x-2">
+            <h4 className="font-medium text-muted-foreground flex items-center space-x-2">
               <Clock className="w-4 h-4" />
               <span>Timeline</span>
             </h4>
 
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Duration:</span>
+                <span className="text-sm text-muted-foreground">Duration:</span>
                 <span className="text-sm font-medium">{contract.duration}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Start date:</span>
+                <span className="text-sm text-muted-foreground">
+                  Start date:
+                </span>
                 <span className="text-sm font-medium">
                   {formatDate(contract.startDate)}
                 </span>
@@ -103,11 +110,11 @@ export function ContractTerms({ contract }: ContractTermsProps) {
 
         {/* Project Description */}
         <div>
-          <h4 className="font-medium text-gray-900 mb-3">
+          <h4 className="font-medium text-foreground mb-3">
             Project Description
           </h4>
-          <div className="bg-gray-50 rounded-lg p-4">
-            <p className="text-sm text-gray-700 whitespace-pre-line">
+          <div className="bg-subBackground rounded-lg p-4">
+            <p className="text-sm text-foreground opacity-80 whitespace-pre-line">
               {contract.description}
             </p>
           </div>
@@ -115,12 +122,10 @@ export function ContractTerms({ contract }: ContractTermsProps) {
 
         {/* Required Skills */}
         <div>
-          <h4 className="font-medium text-gray-900 mb-3">Required Skills</h4>
+          <h4 className="font-medium text-foreground mb-3">Required Skills</h4>
           <div className="flex flex-wrap gap-2">
             {contract.skills.map((skill, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
-                {skill}
-              </Badge>
+              <SkillBadge key={index} skill={skill} />
             ))}
           </div>
         </div>
