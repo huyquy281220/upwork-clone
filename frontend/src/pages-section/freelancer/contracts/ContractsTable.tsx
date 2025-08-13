@@ -195,9 +195,6 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                           >
                             Start Work
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">
-                            Cancel Contract
-                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
