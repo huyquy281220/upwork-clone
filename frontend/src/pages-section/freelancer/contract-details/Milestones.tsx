@@ -110,16 +110,16 @@ export function MilestonesDisplay({
           ))}
 
           {/* Total Summary */}
-          <div className="bg-gray-50 rounded-lg p-4 mt-6">
+          <div className="bg-subBackground rounded-lg p-4 mt-6">
             <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-foreground">
                 Total Project Value:
               </span>
               <span className="text-xl font-bold text-green-600">
                 ${totalAmount.toLocaleString()}
               </span>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-foreground opacity-80 mt-1">
               Payments are protected and released upon milestone completion
             </p>
           </div>
