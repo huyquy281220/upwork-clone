@@ -43,8 +43,8 @@ export function ContractHeader({
   };
 
   return (
-    <div className="bg-background border-b">
-      <div className="max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-background">
+      <div className="max-w-[80rem] mx-auto border-b">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
             {/* <Button variant="ghost" size="sm" asChild>

@@ -14,6 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CheckCircle, X, AlertTriangle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ContractActionsProps {
   contractStatus: string;
@@ -30,6 +31,7 @@ export function ContractActions({
   onRequestChanges,
   isProcessing,
 }: ContractActionsProps) {
+  const router = useRouter();
   const [declineModalOpen, setDeclineModalOpen] = useState(false);
   const [changesModalOpen, setChangesModalOpen] = useState(false);
   const [declineReason, setDeclineReason] = useState("");
@@ -71,7 +73,7 @@ export function ContractActions({
               onClick={onAccept}
               disabled={isProcessing}
             >
-              <CheckCircle className="w-4 h-4 mr-2" />
+              <CheckCircle className="w-4 h-4" />
               {isProcessing ? "Processing..." : "Accept Contract"}
             </Button>
 
@@ -91,8 +93,16 @@ export function ContractActions({
               disabled={isProcessing}
               className="text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 bg-transparent"
             >
-              <X className="w-4 h-4 mr-2" />
+              <X className="w-4 h-4" />
               Decline
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => router.back()}
+              className="bg-transparent"
+            >
+              Back
             </Button>
           </div>
 
