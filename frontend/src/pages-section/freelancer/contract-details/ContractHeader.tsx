@@ -1,8 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock } from "lucide-react";
+import { Clock } from "lucide-react";
 
 interface ContractHeaderProps {
   contractTitle: string;
@@ -13,10 +12,8 @@ interface ContractHeaderProps {
 }
 
 export function ContractHeader({
-  contractTitle,
   clientName,
   status,
-  sentDate,
   expiresDate,
 }: ContractHeaderProps) {
   const getStatusColor = (status: string) => {
@@ -46,21 +43,21 @@ export function ContractHeader({
   };
 
   return (
-    <div className="bg-white border-b">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-background border-b">
+      <div className="max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild>
+            {/* <Button variant="ghost" size="sm" asChild>
               <a href="/contracts">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Contracts
               </a>
-            </Button>
+            </Button> */}
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">
+              <h1 className="text-xl font-semibold text-foreground">
                 Contract Offer
               </h1>
-              <p className="text-sm text-gray-600">From {clientName}</p>
+              <p className="text-sm text-foreground">From {clientName}</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">

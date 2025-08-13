@@ -38,7 +38,7 @@ export function ContractTerms({ contract }: ContractTermsProps) {
       <CardContent className="space-y-6">
         {/* Contract Title */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-foreground mb-2">
             {contract.title}
           </h3>
           <Badge variant="outline" className="text-xs">
@@ -52,7 +52,7 @@ export function ContractTerms({ contract }: ContractTermsProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Payment Terms */}
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-900 flex items-center space-x-2">
+            <h4 className="font-medium text-[#ccc] flex items-center space-x-2">
               <DollarSign className="w-4 h-4" />
               <span>Payment Terms</span>
             </h4>
