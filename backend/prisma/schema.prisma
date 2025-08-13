@@ -416,6 +416,7 @@ enum ProposalStatus {
 }
 
 enum ContractStatus {
+  PENDING
   ACTIVE
   COMPLETED
   CANCELLED
