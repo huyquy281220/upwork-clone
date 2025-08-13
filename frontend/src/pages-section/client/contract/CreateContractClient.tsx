@@ -14,7 +14,7 @@ import { ProposalProps } from "@/types/proposals";
 import { JobType } from "@/types/jobs";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { MilestonesSection } from "./Milestone";
-import { CreateContractDto, MilestoneProps } from "@/types/contract";
+import { CreateContractProps, MilestoneProps } from "@/types/contract";
 import { createContract } from "@/services/contract";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
@@ -67,7 +67,7 @@ export function CreateContractClient() {
   });
 
   const createContractMutation = useMutation({
-    mutationFn: (data: CreateContractDto) => createContract(data),
+    mutationFn: (data: CreateContractProps) => createContract(data),
     onSuccess: () => {
       router.push("/client/contracts");
     },

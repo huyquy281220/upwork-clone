@@ -1,9 +1,9 @@
-import { CreateContractDto } from "@/types/contract";
+import { CreateContractProps, UpdateContractProps } from "@/types/contract";
 import api from "./api";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const createContract = async (data: CreateContractDto) => {
+export const createContract = async (data: CreateContractProps) => {
   const response = await api.post(`${apiURL}/contracts/create`, data);
 
   return response.data;
@@ -43,5 +43,13 @@ export const getPaginatedContractsForFreelancer = async (
 
 export const getContractById = async (contractId: string) => {
   const response = await api.get(`${apiURL}/contracts/${contractId}`);
+  return response.data;
+};
+
+export const updateContract = async (
+  contractId: string,
+  data: UpdateContractProps
+) => {
+  const response = await api.put(`${apiURL}/contracts/${contractId}`, data);
   return response.data;
 };

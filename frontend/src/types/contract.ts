@@ -17,6 +17,7 @@ export enum ContractType {
 }
 
 export enum ContractStatus {
+  PENDING = "PENDING",
   ACTIVE = "ACTIVE",
   COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED",
@@ -91,7 +92,7 @@ export interface ContractProps {
   milestone?: MilestoneProps[];
 }
 
-export interface CreateContractDto {
+export interface CreateContractProps {
   jobId: string;
   freelancerId: string;
   clientId: string;
@@ -102,4 +103,15 @@ export interface CreateContractDto {
   hourlyRate?: number;
   fixedPrice?: number;
   startedAt: string;
+}
+
+export interface UpdateContractProps {
+  status?: string;
+  title?: string;
+  description?: string;
+  projectDuration?: string;
+  hourlyRate?: number;
+  fixedPrice?: number;
+  startedAt?: string;
+  completedAt?: string;
 }

@@ -7,6 +7,10 @@ import { ContractTerms } from "./ContractTerms";
 import { MilestonesDisplay } from "./Milestones";
 import { ContractActions } from "./ContractActions";
 import { ContractSuccess } from "./ContractSuccess";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getContractById, updateContract } from "@/services/contract";
+import { useParams } from "next/navigation";
+import { ContractProps, ContractStatus } from "@/types/contract";
 
 // Sample contract data
 const contractData = {
@@ -93,10 +97,32 @@ const contractDetails = {
 };
 
 export function ContractDetails() {
+  const params = useParams();
+  const contractId = params.contractId;
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [actionCompleted, setActionCompleted] = useState<
     "accepted" | "declined" | "changes-requested" | null
   >(null);
+
+  const { data: contract } = useQuery<ContractProps>({
+    queryKey: ["contract", contractId],
+    queryFn: () => getContractById(contractId as string),
+  });
+
+  const acceptContractMutation = useMutation({
+    mutationFn: () =>
+      updateContract(contractId as string, {
+        status: ContractStatus.ACTIVE,
+      }),
+  });
+
+  const declineContractMutation = useMutation({
+    mutationFn: () =>
+      updateContract(contractId as string, {
+        status: ContractStatus.CANCELLED,
+      }),
+  });
 
   const handleAccept = async () => {
     setIsProcessing(true);
