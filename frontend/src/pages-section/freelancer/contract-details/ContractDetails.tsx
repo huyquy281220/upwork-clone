@@ -7,10 +7,13 @@ import { ContractTerms } from "./ContractTerms";
 import { MilestonesDisplay } from "./Milestones";
 import { ContractActions } from "./ContractActions";
 import { ContractSuccess } from "./ContractSuccess";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getContractById, updateContract } from "@/services/contract";
 import { useParams } from "next/navigation";
 import { ContractProps, ContractStatus } from "@/types/contract";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { useToast } from "@/hooks/useToast";
+import { ModernToast } from "@/components/common/ModernToast";
 
 // Sample contract data
 const contractData = {
@@ -99,13 +102,16 @@ const contractDetails = {
 export function ContractDetails() {
   const params = useParams();
   const contractId = params.contractId;
+  const queryClient = useQueryClient();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [actionCompleted, setActionCompleted] = useState<
     "accepted" | "declined" | "changes-requested" | null
   >(null);
 
-  const { data: contract } = useQuery<ContractProps>({
+  const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
+
+  const { data: contract, isLoading } = useQuery<ContractProps>({
     queryKey: ["contract", contractId],
     queryFn: () => getContractById(contractId as string),
   });
@@ -115,6 +121,14 @@ export function ContractDetails() {
       updateContract(contractId as string, {
         status: ContractStatus.ACTIVE,
       }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contract", contractId] });
+      setIsProcessing(true);
+      showSuccessToast("Your accepted the contract", "", 1200);
+    },
+    onError: () => {
+      showErrorToast("Failed to accept contract", "", 1200);
+    },
   });
 
   const declineContractMutation = useMutation({
@@ -122,21 +136,24 @@ export function ContractDetails() {
       updateContract(contractId as string, {
         status: ContractStatus.CANCELLED,
       }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contract", contractId] });
+      setIsProcessing(true);
+      showSuccessToast("You declined the contract", "", 1200);
+    },
+    onError: () => {
+      showErrorToast("Failed to decline contract", "", 1200);
+    },
   });
 
   const handleAccept = async () => {
-    setIsProcessing(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    acceptContractMutation.mutate();
     setIsProcessing(false);
     setActionCompleted("accepted");
   };
 
-  const handleDecline = async (reason: string) => {
-    setIsProcessing(true);
-    // Simulate API call
-    console.log("Declining with reason:", reason);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+  const handleDecline = async () => {
+    declineContractMutation.mutate();
     setIsProcessing(false);
     setActionCompleted("declined");
   };
@@ -159,6 +176,8 @@ export function ContractDetails() {
       />
     );
   }
+
+  if (isLoading) return <InfiniteLoading />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -198,6 +217,8 @@ export function ContractDetails() {
           </div>
         </div>
       </div>
+
+      {activeToasts && <ModernToast {...toast} />}
     </div>
   );
 }

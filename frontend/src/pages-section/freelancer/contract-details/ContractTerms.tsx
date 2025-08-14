@@ -3,20 +3,11 @@
 import { SkillBadge } from "@/components/common/SkillBadge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ContractProps, ContractType } from "@/types/contract";
 import { Clock, DollarSign, FileText } from "lucide-react";
 
 interface ContractTermsProps {
-  contract: {
-    title: string;
-    description: string;
-    type: "hourly" | "fixed";
-    hourlyRate?: number;
-    weeklyLimit?: number;
-    fixedPrice?: number;
-    duration: string;
-    startDate: string;
-    skills: string[];
-  };
+  contract: ContractProps;
 }
 
 export function ContractTerms({ contract }: ContractTermsProps) {
@@ -43,7 +34,7 @@ export function ContractTerms({ contract }: ContractTermsProps) {
             {contract.title}
           </h3>
           <Badge variant="outline" className="text-xs">
-            {contract.type === "hourly"
+            {contract.contractType === ContractType.HOURLY
               ? "Hourly Contract"
               : "Fixed Price Contract"}
           </Badge>
@@ -58,7 +49,7 @@ export function ContractTerms({ contract }: ContractTermsProps) {
               <span>Payment Terms</span>
             </h4>
 
-            {contract.type === "hourly" ? (
+            {contract.contractType === ContractType.HOURLY ? (
               <div className="bg-subBackground rounded-lg p-4">
                 <div className="text-2xl font-bold text-green-600 mb-1">
                   ${contract.hourlyRate}/hr
@@ -66,16 +57,16 @@ export function ContractTerms({ contract }: ContractTermsProps) {
                 <p className="text-sm text-foreground opacity-80">
                   Hourly rate
                 </p>
-                {contract.weeklyLimit && (
+                {/* {contract.weeklyLimit && (
                   <p className="text-xs text-foreground opacity-80 mt-2">
                     Weekly limit: {contract.weeklyLimit} hours
                   </p>
-                )}
+                )} */}
               </div>
             ) : (
               <div className="bg-subBackground rounded-lg px-4 py-2">
                 <div className="text-2xl font-bold text-green-600 mb-1">
-                  ${contract.fixedPrice?.toLocaleString()}
+                  ${contract.totalPrice?.toLocaleString()}
                 </div>
                 <p className="text-sm text-foreground opacity-80">
                   Fixed price
@@ -94,14 +85,14 @@ export function ContractTerms({ contract }: ContractTermsProps) {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Duration:</span>
-                <span className="text-sm font-medium">{contract.duration}</span>
+                {/* <span className="text-sm font-medium">{contract.duration}</span> */}
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">
                   Start date:
                 </span>
                 <span className="text-sm font-medium">
-                  {formatDate(contract.startDate)}
+                  {formatDate(contract.startedAt)}
                 </span>
               </div>
             </div>
@@ -137,7 +128,7 @@ export function ContractTerms({ contract }: ContractTermsProps) {
             <li>• Payments are secured through our platform</li>
             <li>
               •{" "}
-              {contract.type === "hourly"
+              {contract.contractType === ContractType.HOURLY
                 ? "Weekly payments for logged hours"
                 : "Milestone-based payments"}
             </li>
