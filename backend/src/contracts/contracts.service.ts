@@ -346,7 +346,24 @@ export class ContractsService {
     const contract = await this.prisma.contract.findUnique({
       where: { id },
       include: {
-        job: { select: { id: true, title: true, description: true } },
+        job: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            jobDuration: true,
+            skills: {
+              include: {
+                skill: {
+                  select: {
+                    name: true,
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         client: { select: { userId: true, companyName: true, user: true } },
         freelancer: { select: { userId: true, title: true, user: true } },
         payments: true,
