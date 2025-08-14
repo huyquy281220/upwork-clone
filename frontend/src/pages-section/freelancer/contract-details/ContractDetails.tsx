@@ -15,67 +15,14 @@ import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
 
-// Sample contract data
-const contractData = {
-  id: 1,
-  title: "Full Stack Developer for SaaS Platform",
-  description: `We're looking for an experienced full-stack developer to help build our next-generation SaaS platform. You'll work with React, Node.js, and PostgreSQL to create scalable web applications.
-
-Key responsibilities:
-• Develop responsive frontend components using React and TypeScript
-• Build robust backend APIs with Node.js and Express
-• Design and optimize PostgreSQL database schemas
-• Implement user authentication and authorization
-• Deploy and maintain applications on AWS
-• Write comprehensive tests and documentation
-
-The ideal candidate should have 3+ years of experience and be comfortable working in an agile environment. We value clean code, attention to detail, and proactive communication.`,
-  type: "fixed" as const,
-  fixedPrice: 12000,
-  duration: "3-4 months",
-  startDate: "2024-03-01",
-  status: "pending" as const,
-  sentDate: "February 20, 2024",
-  expiresDate: "February 27, 2024",
-  skills: ["React", "Node.js", "PostgreSQL", "TypeScript", "AWS", "Express.js"],
-  milestones: [
-    {
-      id: "1",
-      name: "Project Setup & Architecture",
-      description:
-        "Set up development environment, project structure, and core architecture. Implement basic authentication and database setup.",
-      amount: 3000,
-      dueDate: "2024-03-15",
-      status: "pending" as const,
-    },
-    {
-      id: "2",
-      name: "Core Features Development",
-      description:
-        "Develop main application features including user dashboard, data management, and core business logic.",
-      amount: 5000,
-      dueDate: "2024-04-15",
-      status: "pending" as const,
-    },
-    {
-      id: "3",
-      name: "Advanced Features & Integration",
-      description:
-        "Implement advanced features, third-party integrations, and performance optimizations.",
-      amount: 3000,
-      dueDate: "2024-05-15",
-      status: "pending" as const,
-    },
-    {
-      id: "4",
-      name: "Testing, Deployment & Documentation",
-      description:
-        "Comprehensive testing, production deployment, and complete project documentation.",
-      amount: 1000,
-      dueDate: "2024-05-30",
-      status: "pending" as const,
-    },
-  ],
+type ContractData = {
+  data: ContractProps;
+  totalEarning: number;
+  weekEarning: number;
+  progress: number;
+  completedMilestones: number;
+  totalMilestones: number;
+  totalHoursWorked: number;
 };
 
 const clientData = {
@@ -111,7 +58,7 @@ export function ContractDetails() {
 
   const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
 
-  const { data: contract, isLoading } = useQuery<ContractProps>({
+  const { data: contractData, isLoading } = useQuery<ContractData>({
     queryKey: ["contract", contractId],
     queryFn: () => getContractById(contractId as string),
   });
@@ -167,26 +114,27 @@ export function ContractDetails() {
     setActionCompleted("changes-requested");
   };
 
+  if (isLoading || !contractData) return <InfiniteLoading />;
+  const contract = contractData.data;
+
   if (actionCompleted) {
     return (
       <ContractSuccess
         action={actionCompleted}
         clientName={clientData.name}
-        contractTitle={contractData.title}
+        contractTitle={contract.title}
       />
     );
   }
 
-  if (isLoading) return <InfiniteLoading />;
-
   return (
     <div className="min-h-screen bg-background">
       <ContractHeader
-        contractTitle={contractData.title}
+        contractTitle={contract.title}
         clientName={clientData.name}
-        status={contractData.status}
-        sentDate={contractData.sentDate}
-        expiresDate={contractData.expiresDate}
+        status={contract.status as ContractStatus}
+        sentDate={contract.createdAt}
+        // expiresDate={contract.expiresAt}
       />
 
       <div className="max-w-[80rem] mx-auto py-8">
@@ -194,15 +142,15 @@ export function ContractDetails() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <div className="space-y-8">
-              <ContractTerms contract={contractData} />
+              <ContractTerms contract={contract} />
 
               <MilestonesDisplay
-                milestones={contractData.milestones}
-                contractType={contractData.type}
+                milestones={contract.milestone || []}
+                contractType={contract.contractType}
               />
 
               <ContractActions
-                contractStatus={contractData.status}
+                contractStatus={contract.status}
                 onAccept={handleAccept}
                 onDecline={handleDecline}
                 onRequestChanges={handleRequestChanges}
