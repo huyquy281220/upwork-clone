@@ -420,7 +420,16 @@ export class ContractsService {
       : (totalHoursWorked / contract.totalHours) * 100;
 
     return {
-      data: contract,
+      data: {
+        ...contract,
+        job: {
+          ...contract.job,
+          skills: contract.job.skills.map((skillItem) => ({
+            id: skillItem.skill.id,
+            name: skillItem.skill.name,
+          })),
+        },
+      },
       totalEarning,
       weekEarning,
       progress,
