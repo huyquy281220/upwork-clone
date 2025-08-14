@@ -85,6 +85,10 @@ export interface ContractProps {
     title: string;
     description: string;
     category: string;
+    skills: {
+      id: string;
+      name: string;
+    }[];
   };
 
   workLog?: WorkLogProps[];

@@ -115,8 +115,8 @@ export function ContractTerms({ contract }: ContractTermsProps) {
         <div>
           <h4 className="font-medium text-foreground mb-3">Required Skills</h4>
           <div className="flex flex-wrap gap-2">
-            {contract.skills.map((skill, index) => (
-              <SkillBadge key={index} skill={skill} />
+            {contract.job.skills.map((skill, index) => (
+              <SkillBadge key={index} skill={skill.name} />
             ))}
           </div>
         </div>
