@@ -19,9 +19,14 @@ import {
 import { ContractProps, ContractStatus, ContractType } from "@/types/contract";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-interface ContractsTableProps {
-  contracts: ContractProps[];
-}
+
+type ContractWithProgress = ContractProps & {
+  progress: number;
+};
+
+type ContractsTableProps = {
+  contracts: ContractWithProgress[];
+};
 
 const titles = [
   "Contract Details",
@@ -145,12 +150,15 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                           {formatBudget(contract)}
                         </p>
                         <p className="text-sm text-foreground opacity-80">
-                          {/* {contract.progress}% complete */}
+                          {Number(contract.progress)
+                            .toFixed(2)
+                            .replace(/\.?0+$/, "")}
+                          % complete
                         </p>
                         <div className="w-full bg-foreground rounded-full h-2 mt-1">
                           <div
                             className="bg-green-600 h-2 rounded-full"
-                            // style={{ width: `${contract.progress}%` }}
+                            style={{ width: `${contract.progress}%` }}
                           ></div>
                         </div>
                       </div>
