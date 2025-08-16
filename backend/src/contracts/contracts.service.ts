@@ -329,14 +329,40 @@ export class ContractsService {
             },
             orderBy: { createdAt: 'asc' },
           },
+          workLog: true,
+          payments: true,
         },
         orderBy,
       }),
       this.prisma.contract.count({ where }),
     ]);
 
+    const contractsWithProgress = contracts.map((contract) => {
+      const totalEarning =
+        contract.contractType === ContractType.HOURLY
+          ? contract.workLog.reduce(
+              (sum, log) => sum + log.hours * (contract.hourlyRate || 0),
+              0,
+            )
+          : contract.payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+
+      const totalHoursWorked = contract.workLog.reduce(
+        (sum, log) => sum + log.hours,
+        0,
+      );
+
+      const progress = contract.totalPrice
+        ? (totalEarning / contract.totalPrice) * 100
+        : (totalHoursWorked / contract.totalHours) * 100;
+
+      return {
+        ...contract,
+        progress: Math.min(progress, 100),
+      };
+    });
+
     return {
-      data: contracts,
+      data: contractsWithProgress,
       totalPage: Math.ceil(totalCount / limit),
       totalContracts: totalCount,
     };

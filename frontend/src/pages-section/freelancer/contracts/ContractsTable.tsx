@@ -1,6 +1,12 @@
 "use client";
 
-import { Search, Calendar, Eye, MoreHorizontal } from "lucide-react";
+import {
+  Search,
+  Calendar,
+  Eye,
+  MoreHorizontal,
+  BriefcaseBusiness,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +37,10 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
+      [ContractStatus.PENDING]: {
+        color: "bg-yellow-100 text-yellow-800",
+        label: "Pending",
+      },
       [ContractStatus.ACTIVE]: {
         color: "bg-green-100 text-green-800",
         label: "Active",
@@ -113,8 +123,8 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                         <p className="text-sm font-medium text-foreground">
                           {contract.title}
                         </p>
-                        <p className="text-sm text-foreground opacity-80">
-                          ID: #{contract.id}
+                        <p className="text-sm text-foreground opacity-80 line-clamp-1">
+                          {contract.description}
                         </p>
                       </div>
                     </td>
@@ -172,7 +182,10 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                       )}
                     >
                       <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <DropdownMenuTrigger
+                          asChild
+                          className="flex justify-center"
+                        >
                           <Button variant="ghost" size="sm">
                             <MoreHorizontal className="w-4 h-4" />
                           </Button>
@@ -182,6 +195,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                             onClick={() =>
                               router.push(`/freelancer/contract/${contract.id}`)
                             }
+                            className="cursor-pointer"
                           >
                             <Eye className="w-4 h-4 mr-2" />
                             View Details
@@ -192,7 +206,9 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                                 `/freelancer/contract/${contract.id}/work-log`
                               )
                             }
+                            className="cursor-pointer"
                           >
+                            <BriefcaseBusiness className="w-4 h-4 mr-2" />
                             Start Work
                           </DropdownMenuItem>
                         </DropdownMenuContent>
