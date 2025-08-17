@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CheckCircle, X, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ContractStatus } from "@/types/contract";
 
 interface ContractActionsProps {
   contractStatus: string;
@@ -37,7 +38,7 @@ export function ContractActions({
   const [declineReason, setDeclineReason] = useState("");
   const [changesMessage, setChangesMessage] = useState("");
 
-  if (contractStatus !== "pending") {
+  if (contractStatus !== ContractStatus.ACTIVE) {
     return null;
   }
 

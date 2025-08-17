@@ -9,14 +9,14 @@ interface ContractHeaderProps {
   clientName: string;
   status: ContractStatus;
   sentDate: string;
-  expiresDate: string;
+  // expiresDate: string;
 }
 
 export function ContractHeader({
   clientName,
   status,
-  expiresDate,
-}: ContractHeaderProps) {
+}: // expiresDate,
+ContractHeaderProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case ContractStatus.PENDING:
@@ -32,16 +32,16 @@ export function ContractHeader({
     }
   };
 
-  const getTimeRemaining = (expiresDate: string) => {
-    const now = new Date();
-    const expires = new Date(expiresDate);
-    const diffTime = expires.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  // const getTimeRemaining = (expiresDate: string) => {
+  //   const now = new Date();
+  //   const expires = new Date(expiresDate);
+  //   const diffTime = expires.getTime() - now.getTime();
+  //   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays <= 0) return "Expired";
-    if (diffDays === 1) return "1 day remaining";
-    return `${diffDays} days remaining`;
-  };
+  //   if (diffDays <= 0) return "Expired";
+  //   if (diffDays === 1) return "1 day remaining";
+  //   return `${diffDays} days remaining`;
+  // };
 
   return (
     <div className="bg-background">
@@ -68,7 +68,7 @@ export function ContractHeader({
             {status === ContractStatus.PENDING && (
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <Clock className="w-4 h-4" />
-                <span>{getTimeRemaining(expiresDate)}</span>
+                {/* <span>{getTimeRemaining(expiresDate)}</span> */}
               </div>
             )}
           </div>

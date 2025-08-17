@@ -2,19 +2,11 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MilestoneProps } from "@/types/contract";
 import { CheckCircle, Clock, Calendar } from "lucide-react";
 
-interface Milestone {
-  id: string;
-  name: string;
-  description: string;
-  amount: number;
-  dueDate: string;
-  status: "pending" | "in-progress" | "completed";
-}
-
 interface MilestonesDisplayProps {
-  milestones: Milestone[];
+  milestones: MilestoneProps[];
   contractType: string;
 }
 

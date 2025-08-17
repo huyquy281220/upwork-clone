@@ -27,7 +27,7 @@ export interface MilestoneProps {
   id: string;
   name: string;
   description: string;
-  amount: string;
+  amount: number;
   dueDate: string;
   status: MilestoneStatus;
 }
