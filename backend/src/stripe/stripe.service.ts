@@ -120,6 +120,46 @@ export class StripeService {
     }
   }
 
+  async getCustomerInfoFromClientId(clientId: string) {
+    try {
+      // First get the client profile and user info
+      const client = await this.prismaService.clientProfile.findUnique({
+        where: { id: clientId },
+        include: {
+          user: {
+            select: {
+              stripeCustomerId: true,
+              email: true,
+              fullName: true,
+            },
+          },
+        },
+      });
+
+      if (!client) {
+        throw new Error(`Client with ID ${clientId} not found`);
+      }
+
+      if (!client.user.stripeCustomerId) {
+        throw new Error(`Client ${clientId} has no Stripe customer ID`);
+      }
+
+      // Get the Stripe customer details
+      const stripeCustomer = await this.stripe.customers.retrieve(
+        client.user.stripeCustomerId,
+      );
+
+      return {
+        clientProfile: client,
+        stripeCustomer,
+        customerId: client.user.stripeCustomerId,
+      };
+    } catch (error) {
+      throw new Error(`Failed to get customer info: ${error.message}`);
+    }
+  }
+
+  //    payment method
   async createPaymentMethod(data: CreatePaymentMethodDto) {
     try {
       const billingAddress = data.billing_details.address;
@@ -231,10 +271,34 @@ export class StripeService {
         amount: data.amount,
         currency: data.currency,
         capture_method: 'manual',
+        payment_method: data.paymentMethodId,
         metadata: {
           contractId: data.contractId,
           freelancerId: data.freelancerId,
           clientId: data.clientId,
+        },
+      });
+    } catch (error) {
+      throw new Error(
+        `Failed to create Stripe payment intent: ${error.message}`,
+      );
+    }
+  }
+
+  async createPaymentIntentForHourlyJob(data: CreatePaymentIntentDto) {
+    try {
+      return await this.stripe.paymentIntents.create({
+        amount: data.amount,
+        currency: 'usd',
+        customer: data.clientId,
+        payment_method: data.paymentMethodId,
+        off_session: true,
+        confirm: true,
+        metadata: {
+          contractId: data.contractId,
+          freelancerId: data.freelancerId,
+          // weekStart: data.weekStart,
+          // weekEnd: data.weekEnd,
         },
       });
     } catch (error) {

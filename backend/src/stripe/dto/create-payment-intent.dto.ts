@@ -5,4 +5,5 @@ export class CreatePaymentIntentDto {
   contractId: string;
   freelancerId: string;
   clientId: string;
+  paymentMethodId: string;
 }
