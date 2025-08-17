@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Param, Get, Query } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { AddCardDto } from './dto/add-card.dto';
-import { CreatePaymentMethodDto } from './dto/create-payment-method';
+import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 
 @Controller('stripe')
 export class StripeController {

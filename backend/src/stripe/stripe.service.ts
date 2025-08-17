@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
-import { CreatePaymentMethodDto } from './dto/create-payment-method';
+import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Role } from '@prisma/client';
+import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto';
+import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
 
 @Injectable()
 export class StripeService {
@@ -223,11 +225,17 @@ export class StripeService {
   }
 
   //   create payment intent
-  async createPaymentIntent(amount: number, currency: string) {
+  async createPaymentIntentForFixedPriceJob(data: CreatePaymentIntentDto) {
     try {
       return await this.stripe.paymentIntents.create({
-        amount,
-        currency,
+        amount: data.amount,
+        currency: data.currency,
+        capture_method: 'manual',
+        metadata: {
+          contractId: data.contractId,
+          freelancerId: data.freelancerId,
+          clientId: data.clientId,
+        },
       });
     } catch (error) {
       throw new Error(
@@ -348,18 +356,32 @@ export class StripeService {
 
   /* Checkout */
 
-  async createCheckoutSession(data: {
-    customerEmail: string;
-    lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
-    successUrl: string;
-    cancelUrl: string;
-  }) {
+  async createCheckoutSession(data: CreateCheckoutSessionDto) {
     try {
+      let amountData;
+
+      if (Number.isInteger(data.totalAmount * 100)) {
+        amountData = { unit_amount: Math.round(data.totalAmount * 100) };
+      } else {
+        amountData = { unit_amount_decimal: data.totalAmount.toString() };
+      }
+
       const checkout = await this.stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         mode: 'payment',
         customer_email: data.customerEmail,
-        line_items: data.lineItems,
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: data.contractName,
+              },
+              ...amountData,
+            },
+            quantity: 1,
+          },
+        ],
         success_url: data.successUrl,
         cancel_url: data.cancelUrl,
       });
