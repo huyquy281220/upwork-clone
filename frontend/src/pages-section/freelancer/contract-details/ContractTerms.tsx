@@ -85,7 +85,9 @@ export function ContractTerms({ contract }: ContractTermsProps) {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Duration:</span>
-                {/* <span className="text-sm font-medium">{contract.duration}</span> */}
+                <span className="text-sm font-medium">
+                  {contract.job.jobDuration}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">
