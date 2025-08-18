@@ -267,17 +267,24 @@ export class StripeService {
   //   create payment intent
   async createPaymentIntentForFixedPriceJob(data: CreatePaymentIntentDto) {
     try {
-      return await this.stripe.paymentIntents.create({
-        amount: data.amount,
-        currency: data.currency,
-        capture_method: 'manual',
-        payment_method: data.paymentMethodId,
-        metadata: {
-          contractId: data.contractId,
-          freelancerId: data.freelancerId,
-          clientId: data.clientId,
+      return await this.stripe.paymentIntents.create(
+        {
+          amount: data.amount,
+          currency: data.currency || 'USD',
+          capture_method: 'manual',
+          payment_method: data.paymentMethodId,
+          payment_method_types: ['card'],
+          // confirm: true,
+          metadata: {
+            contractId: data.contractId,
+            freelancerId: data.freelancerId,
+            clientId: data.clientId,
+          },
         },
-      });
+        {
+          idempotencyKey: data.contractId,
+        },
+      );
     } catch (error) {
       throw new Error(
         `Failed to create Stripe payment intent: ${error.message}`,
@@ -289,20 +296,26 @@ export class StripeService {
     const customer = await this.getCustomerInfoFromClientId(data.clientId);
 
     try {
-      return await this.stripe.paymentIntents.create({
-        amount: data.amount,
-        currency: 'usd',
-        customer: customer.customerId,
-        payment_method: data.paymentMethodId,
-        off_session: true,
-        confirm: true,
-        metadata: {
-          contractId: data.contractId,
-          freelancerId: data.freelancerId,
-          // weekStart: data.weekStart,
-          // weekEnd: data.weekEnd,
+      return await this.stripe.paymentIntents.create(
+        {
+          amount: data.amount,
+          currency: 'USD',
+          customer: customer.customerId,
+          payment_method: data.paymentMethodId,
+          payment_method_types: ['card'],
+          off_session: true,
+          confirm: true,
+          metadata: {
+            contractId: data.contractId,
+            freelancerId: data.freelancerId,
+            // weekStart: data.weekStart,
+            // weekEnd: data.weekEnd,
+          },
         },
-      });
+        {
+          idempotencyKey: data.contractId,
+        },
+      );
     } catch (error) {
       throw new Error(
         `Failed to create Stripe payment intent: ${error.message}`,
