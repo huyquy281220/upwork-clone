@@ -70,4 +70,16 @@ export class PaymentsService {
       throw new BadRequestException('Failed to update payment');
     }
   }
+
+  async deletePayment(paymentId: string) {
+    try {
+      const payment = await this.prisma.payment.delete({
+        where: { id: paymentId },
+      });
+
+      return payment;
+    } catch (error) {
+      throw new BadRequestException('Failed to delete payment');
+    }
+  }
 }
