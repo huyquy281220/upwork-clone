@@ -12,7 +12,7 @@ async function bootstrap() {
 
   // Enable cookie parsing
   app.use(cookieParser());
-  app.use('/stripe/hook', bodyParser.raw({ type: 'application/json' }));
+  app.use('/stripe/webhook', bodyParser.raw({ type: 'application/json' }));
 
   // Enable CORS with credentials
   app.enableCors({

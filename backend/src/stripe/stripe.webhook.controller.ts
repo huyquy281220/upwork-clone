@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 import { StripeService } from './stripe.service';
 import { PaymentsService } from 'src/payments/payments.service';
 
-@Controller('webhook')
+@Controller('/stripe/webhook')
 export class WebhookController {
   constructor(
     private readonly stripeService: StripeService,
