@@ -286,11 +286,13 @@ export class StripeService {
   }
 
   async createPaymentIntentForHourlyJob(data: CreatePaymentIntentDto) {
+    const customer = await this.getCustomerInfoFromClientId(data.clientId);
+
     try {
       return await this.stripe.paymentIntents.create({
         amount: data.amount,
         currency: 'usd',
-        customer: data.clientId,
+        customer: customer.customerId,
         payment_method: data.paymentMethodId,
         off_session: true,
         confirm: true,
