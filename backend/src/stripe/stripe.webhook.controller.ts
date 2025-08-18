@@ -2,10 +2,14 @@ import { Controller, Post, Req, Headers } from '@nestjs/common';
 import { Request } from 'express';
 import Stripe from 'stripe';
 import { StripeService } from './stripe.service';
+import { PaymentsService } from 'src/payments/payments.service';
 
 @Controller('webhook')
 export class WebhookController {
-  constructor(private readonly stripeService: StripeService) {}
+  constructor(
+    private readonly stripeService: StripeService,
+    private readonly paymentsService: PaymentsService,
+  ) {}
 
   @Post()
   async handleWebhook(
@@ -30,16 +34,27 @@ export class WebhookController {
 
     // Handle events
     switch (event.type) {
-      case 'payment_intent.succeeded': {
+      case 'payment_intent.succeeded':
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log('PaymentIntent was successful!', paymentIntent.id);
+        await this.paymentsService.handlePaymentSuccess(paymentIntent);
         break;
-      }
-      case 'invoice.paid':
-        console.log('Invoice paid');
+
+      case 'payment_intent.payment_failed':
+        const failedPaymentIntent = event.data.object as Stripe.PaymentIntent;
+        await this.paymentsService.handlePaymentFailure(failedPaymentIntent);
         break;
-      default:
-        console.log(`Unhandled event type ${event.type}`);
+
+      case 'payment_intent.canceled':
+        const canceledPaymentIntent = event.data.object as Stripe.PaymentIntent;
+        await this.paymentsService.handlePaymentCanceled(canceledPaymentIntent);
+        break;
+
+      case 'charge.captured':
+        const charge = event.data.object as Stripe.Charge;
+        await this.paymentsService.handleChargeCaptured(charge);
+        break;
     }
+
+    return { received: true };
   }
 }

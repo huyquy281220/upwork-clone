@@ -4,10 +4,11 @@ import { UserModule } from 'src/user/user.module';
 import Stripe from 'stripe';
 import { StripeService } from './stripe.service';
 import { StripeController } from './stripe.controller';
+import { PaymentsModule } from 'src/payments/payments.module';
 
 @Global()
 @Module({
-  imports: [PrismaModule, forwardRef(() => UserModule)],
+  imports: [PrismaModule, forwardRef(() => UserModule), PaymentsModule],
   controllers: [StripeController],
   providers: [
     {
