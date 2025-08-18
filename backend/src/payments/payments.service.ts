@@ -5,9 +5,10 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { PaymentMethodType } from '@prisma/client';
+import { ContractStatus, PaymentMethodType } from '@prisma/client';
 import { PaymentStatus } from '@prisma/client';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import Stripe from 'stripe';
 
 @Injectable()
 export class PaymentsService {
@@ -81,5 +82,49 @@ export class PaymentsService {
     } catch (error) {
       throw new BadRequestException('Failed to delete payment');
     }
+  }
+
+  async handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
+    await this.prisma.payment.update({
+      where: { paymentIntentId: paymentIntent.id },
+      data: {
+        status: PaymentStatus.PAID,
+        paidAt: new Date(),
+      },
+    });
+
+    const contractId = paymentIntent.metadata.contractId;
+    if (contractId) {
+      await this.prisma.contract.update({
+        where: { id: contractId },
+        data: { status: ContractStatus.COMPLETED },
+      });
+    }
+  }
+
+  async handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
+    await this.prisma.payment.update({
+      where: { paymentIntentId: paymentIntent.id },
+      data: { status: PaymentStatus.FAILED },
+    });
+  }
+
+  async handlePaymentCanceled(paymentIntent: Stripe.PaymentIntent) {
+    await this.prisma.payment.update({
+      where: { paymentIntentId: paymentIntent.id },
+      data: { status: PaymentStatus.CANCELED },
+    });
+  }
+
+  async handleChargeCaptured(charge: Stripe.Charge) {
+    // Handle when escrow payment is captured
+    const paymentIntentId = charge.payment_intent as string;
+    await this.prisma.payment.update({
+      where: { paymentIntentId },
+      data: {
+        status: PaymentStatus.PAID,
+        paidAt: new Date(),
+      },
+    });
   }
 }
