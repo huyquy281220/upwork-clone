@@ -5,6 +5,9 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
+import { PaymentMethodType } from '@prisma/client';
+import { PaymentStatus } from '@prisma/client';
+import { UpdatePaymentDto } from './dto/update-payment.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -33,8 +36,8 @@ export class PaymentsService {
           contractId,
           amount,
           currency: 'USD',
-          status: 'PENDING',
-          method: 'CARD',
+          status: PaymentStatus.PENDING,
+          method: PaymentMethodType.CARD,
           paymentIntentId,
           captureMethod,
           applicationFeeAmount,
@@ -44,6 +47,27 @@ export class PaymentsService {
       return payment;
     } catch (error) {
       throw new BadRequestException('Failed to create payment');
+    }
+  }
+
+  async updatePayment(data: UpdatePaymentDto) {
+    const {
+      paymentId,
+      status,
+      paymentIntentId,
+      captureMethod,
+      applicationFeeAmount,
+    } = data;
+
+    try {
+      const payment = await this.prisma.payment.update({
+        where: { id: paymentId },
+        data: { status, paymentIntentId, captureMethod, applicationFeeAmount },
+      });
+
+      return payment;
+    } catch (error) {
+      throw new BadRequestException('Failed to update payment');
     }
   }
 }
