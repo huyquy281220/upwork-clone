@@ -9,10 +9,14 @@ import { ContractStatus, PaymentMethodType } from '@prisma/client';
 import { PaymentStatus } from '@prisma/client';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import Stripe from 'stripe';
+import { StripeService } from 'src/stripe/stripe.service';
 
 @Injectable()
 export class PaymentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private stripeService: StripeService,
+  ) {}
 
   async createPayment(data: CreatePaymentDto) {
     const {
@@ -111,11 +115,17 @@ export class PaymentsService {
 
   async handlePaymentCanceled(paymentIntent: Stripe.PaymentIntent) {
     const contractId = paymentIntent.metadata.contractId;
-
-    await this.prisma.payment.update({
-      where: { paymentIntentId: paymentIntent.id },
-      data: { status: PaymentStatus.CANCELED },
+    const payment = await this.prisma.payment.findFirst({
+      where: { contractId, status: PaymentStatus.SUCCEEDED },
     });
+
+    if (payment) {
+      await this.stripeService.createRefund(payment.paymentIntentId);
+      await this.prisma.payment.update({
+        where: { paymentIntentId: paymentIntent.id },
+        data: { status: PaymentStatus.CANCELED },
+      });
+    }
   }
 
   async handleChargeCaptured(charge: Stripe.Charge) {
