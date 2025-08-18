@@ -324,7 +324,7 @@ model Payment {
   status              PaymentStatus
   method              PaymentMethodType
   paymentIntentId     String?       @unique
-  captureMethod       String?       
+  captureMethod       String?       @default("automatic")
   applicationFeeAmount Float?
   paidAt              DateTime?
   createdAt           DateTime      @default(now())
