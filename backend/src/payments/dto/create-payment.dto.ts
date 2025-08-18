@@ -9,7 +9,7 @@ export class CreatePaymentDto {
 
   @IsOptional()
   @IsString()
-  applicationFeeAmount?: string;
+  applicationFeeAmount?: number;
 
   @IsOptional()
   @IsString()
