@@ -34,25 +34,29 @@ export class WebhookController {
 
     // Handle events
     switch (event.type) {
-      case 'payment_intent.succeeded':
+      case 'payment_intent.succeeded': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         await this.paymentsService.handlePaymentSuccess(paymentIntent);
         break;
+      }
 
-      case 'payment_intent.payment_failed':
+      case 'payment_intent.payment_failed': {
         const failedPaymentIntent = event.data.object as Stripe.PaymentIntent;
         await this.paymentsService.handlePaymentFailure(failedPaymentIntent);
         break;
+      }
 
-      case 'payment_intent.canceled':
+      case 'payment_intent.canceled': {
         const canceledPaymentIntent = event.data.object as Stripe.PaymentIntent;
         await this.paymentsService.handlePaymentCanceled(canceledPaymentIntent);
         break;
+      }
 
-      case 'charge.captured':
+      case 'charge.captured': {
         const charge = event.data.object as Stripe.Charge;
         await this.paymentsService.handleChargeCaptured(charge);
         break;
+      }
     }
 
     return { received: true };

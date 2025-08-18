@@ -123,7 +123,7 @@ export class PaymentsService {
       await this.stripeService.createRefund(payment.paymentIntentId);
       await this.prisma.payment.update({
         where: { paymentIntentId: paymentIntent.id },
-        data: { status: PaymentStatus.CANCELED },
+        data: { status: PaymentStatus.REFUNDED },
       });
     }
   }
