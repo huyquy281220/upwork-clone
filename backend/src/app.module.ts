@@ -20,6 +20,7 @@ import { SocketModule } from './socket/socket.module';
 import { StripeModule } from './stripe/stripe.module';
 import { WorkSubmissionsModule } from './work-submissions/work-submissions.module';
 import { WorkLogModule } from './work-log/work-log.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { WorkLogModule } from './work-log/work-log.module';
     StripeModule,
     WorkSubmissionsModule,
     WorkLogModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
