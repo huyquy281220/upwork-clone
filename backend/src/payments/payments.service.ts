@@ -110,6 +110,8 @@ export class PaymentsService {
   }
 
   async handlePaymentCanceled(paymentIntent: Stripe.PaymentIntent) {
+    const contractId = paymentIntent.metadata.contractId;
+
     await this.prisma.payment.update({
       where: { paymentIntentId: paymentIntent.id },
       data: { status: PaymentStatus.CANCELED },
