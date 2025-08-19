@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Role } from '@prisma/client';
+import { ContractType, Role } from '@prisma/client';
 import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto';
 import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
 
@@ -265,63 +265,99 @@ export class StripeService {
   }
 
   //   create payment intent
-  async createPaymentIntentForFixedPriceJob(data: CreatePaymentIntentDto) {
+
+  async createPaymentIntent(data: CreatePaymentIntentDto) {
     try {
-      return await this.stripe.paymentIntents.create(
+      const customer = await this.getCustomerInfoFromClientId(data.clientId);
+
+      const isHourly = data.contractType === ContractType.HOURLY;
+      const isFirstTime = data.firstTime ?? false;
+
+      const paymentIntent = await this.stripe.paymentIntents.create(
         {
           amount: data.amount,
           currency: data.currency || 'USD',
-          capture_method: 'manual',
+          customer: customer.customerId,
           payment_method: data.paymentMethodId,
           payment_method_types: ['card'],
-          // confirm: true,
+          confirm: true,
+          capture_method: isHourly ? 'automatic' : 'manual',
+          off_session: isHourly && !isFirstTime,
+          setup_future_usage: isFirstTime ? 'off_session' : undefined,
           metadata: {
             contractId: data.contractId,
             freelancerId: data.freelancerId,
             clientId: data.clientId,
+            contractType: data.contractType,
           },
         },
         {
-          idempotencyKey: data.contractId,
+          idempotencyKey: `${data.contractId}-${data.contractType}`,
         },
       );
+
+      return paymentIntent;
     } catch (error) {
       throw new Error(
         `Failed to create Stripe payment intent: ${error.message}`,
       );
     }
   }
+  // async createPaymentIntentForFixedPriceJob(data: CreatePaymentIntentDto) {
+  //   try {
+  //     return await this.stripe.paymentIntents.create(
+  //       {
+  //         amount: data.amount,
+  //         currency: data.currency || 'USD',
+  //         capture_method: 'manual',
+  //         payment_method: data.paymentMethodId,
+  //         payment_method_types: ['card'],
+  //         confirm: true,
+  //         metadata: {
+  //           contractId: data.contractId,
+  //           freelancerId: data.freelancerId,
+  //           clientId: data.clientId,
+  //         },
+  //       },
+  //       {
+  //         idempotencyKey: data.contractId,
+  //       },
+  //     );
+  //   } catch (error) {
+  //     throw new Error(
+  //       `Failed to create Stripe payment intent: ${error.message}`,
+  //     );
+  //   }
+  // }
 
-  async createPaymentIntentForHourlyJob(data: CreatePaymentIntentDto) {
-    const customer = await this.getCustomerInfoFromClientId(data.clientId);
+  // async createPaymentIntentForHourlyJob(data: CreatePaymentIntentDto) {
+  //   const customer = await this.getCustomerInfoFromClientId(data.clientId);
 
-    try {
-      return await this.stripe.paymentIntents.create(
-        {
-          amount: data.amount,
-          currency: 'USD',
-          customer: customer.customerId,
-          payment_method: data.paymentMethodId,
-          payment_method_types: ['card'],
-          off_session: true,
-          confirm: true,
-          metadata: {
-            contractId: data.contractId,
-            freelancerId: data.freelancerId,
-            // weekStart: data.weekStart,
-            // weekEnd: data.weekEnd,
-          },
-        },
-        {
-          idempotencyKey: data.contractId,
-        },
-      );
-    } catch (error) {
-      throw new Error(
-        `Failed to create Stripe payment intent: ${error.message}`,
-      );
-    }
-  }
+  //   try {
+  //     return await this.stripe.paymentIntents.create(
+  //       {
+  //         amount: data.amount,
+  //         currency: 'USD',
+  //         customer: customer.customerId,
+  //         payment_method: data.paymentMethodId,
+  //         payment_method_types: ['card'],
+  //         off_session: true,
+  //         confirm: true,
+  //         metadata: {
+  //           contractId: data.contractId,
+  //           freelancerId: data.freelancerId,
+  //         },
+  //       },
+  //       {
+  //         idempotencyKey: data.contractId,
+  //       },
+  //     );
+  //   } catch (error) {
+  //     throw new Error(
+  //       `Failed to create Stripe payment intent: ${error.message}`,
+  //     );
+  //   }
+  // }
 
   async createSetupIntent(customerId: string) {
     return await this.stripe.setupIntents.create({
