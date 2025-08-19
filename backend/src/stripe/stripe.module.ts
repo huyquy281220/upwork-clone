@@ -8,7 +8,11 @@ import { PaymentsModule } from 'src/payments/payments.module';
 
 @Global()
 @Module({
-  imports: [PrismaModule, forwardRef(() => UserModule), PaymentsModule],
+  imports: [
+    PrismaModule,
+    forwardRef(() => UserModule),
+    forwardRef(() => PaymentsModule),
+  ],
   controllers: [StripeController],
   providers: [
     {
