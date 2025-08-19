@@ -68,7 +68,7 @@ export function ContractProgressHeader({
   };
 
   return (
-    <div className="bg-white border-b">
+    <div className="bg-background border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex items-center space-x-4 mb-6">
           <Button variant="ghost" onClick={() => router.back()} className="p-2">
