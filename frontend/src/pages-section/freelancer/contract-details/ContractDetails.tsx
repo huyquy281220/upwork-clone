@@ -70,7 +70,8 @@ export function ContractDetails() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contract", contractId] });
-      setIsProcessing(true);
+      setIsProcessing(false);
+      setActionCompleted("accepted");
       showSuccessToast("Your accepted the contract", "", 1200);
     },
     onError: () => {
@@ -85,7 +86,8 @@ export function ContractDetails() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contract", contractId] });
-      setIsProcessing(true);
+      setIsProcessing(false);
+      setActionCompleted("declined");
       showSuccessToast("You declined the contract", "", 1200);
     },
     onError: () => {
@@ -94,15 +96,13 @@ export function ContractDetails() {
   });
 
   const handleAccept = async () => {
+    setIsProcessing(true);
     acceptContractMutation.mutate();
-    setIsProcessing(false);
-    setActionCompleted("accepted");
   };
 
   const handleDecline = async () => {
+    setIsProcessing(true);
     declineContractMutation.mutate();
-    setIsProcessing(false);
-    setActionCompleted("declined");
   };
 
   const handleRequestChanges = async (message: string) => {
