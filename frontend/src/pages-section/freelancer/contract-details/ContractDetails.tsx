@@ -66,6 +66,7 @@ export function ContractDetails() {
   const acceptContractMutation = useMutation({
     mutationFn: () =>
       updateContract(contractId as string, {
+        clientId: contractData?.data.clientId as string,
         status: ContractStatus.ACTIVE,
       }),
     onSuccess: () => {
@@ -82,6 +83,7 @@ export function ContractDetails() {
   const declineContractMutation = useMutation({
     mutationFn: () =>
       updateContract(contractId as string, {
+        clientId: contractData?.data.clientId as string,
         status: ContractStatus.CANCELLED,
       }),
     onSuccess: () => {

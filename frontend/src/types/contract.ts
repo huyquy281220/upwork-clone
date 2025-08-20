@@ -111,6 +111,7 @@ export interface CreateContractProps {
 }
 
 export interface UpdateContractProps {
+  clientId: string;
   status?: string;
   title?: string;
   description?: string;
