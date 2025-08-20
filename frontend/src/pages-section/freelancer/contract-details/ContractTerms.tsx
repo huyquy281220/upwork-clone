@@ -30,7 +30,7 @@ export function ContractTerms({ contract }: ContractTermsProps) {
       <CardContent className="space-y-6">
         {/* Contract Title */}
         <div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">
+          <h3 className="text-3xl font-semibold text-foreground mb-2">
             {contract.title}
           </h3>
           <Badge variant="outline" className="text-xs">
