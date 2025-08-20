@@ -2,27 +2,24 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Body,
   Param,
   Query,
   UsePipes,
   ValidationPipe,
   Patch,
-  Headers,
-  UnauthorizedException,
   UseGuards,
   Req,
 } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
-import { ContractStatus, Role as PrismaRole } from '@prisma/client';
+import { ContractStatus } from '@prisma/client';
 import { UpdateContractDto } from './dto/update-contract.dto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { AuthenticatedUser, Role } from 'src/types';
+import { AuthenticatedUser } from 'src/types';
 import { NextAuthGuard } from 'src/auth/guards/nextauth.guard';
 
 @Controller('contracts')
+@UseGuards(NextAuthGuard)
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
 
@@ -82,36 +79,33 @@ export class ContractsController {
     return this.contractsService.findOneContract(contractId);
   }
 
-  @Put(':id')
-  @Roles(PrismaRole.CLIENT)
+  @Patch(':contractId')
   @UsePipes(new ValidationPipe())
   update(
-    @Param('id') id: string,
+    @Param('contractId') contractId: string,
     @Body() updateContractDto: UpdateContractDto,
     @Req() req: Request & { user: AuthenticatedUser },
   ) {
     return this.contractsService.updateContract(
-      id,
+      contractId,
       req.user.id,
       updateContractDto,
     );
   }
 
-  @Put(':id/complete')
-  @Roles(PrismaRole.CLIENT)
+  @Patch(':contractId/complete')
   complete(
-    @Param('id') id: string,
-    @Req() req: Request & { user: AuthenticatedUser },
+    @Param('contractId') contractId: string,
+    @Req() req: Request & { user: { id: string } },
   ) {
-    return this.contractsService.completeContract(id, req.user.id);
+    return this.contractsService.completeContract(contractId, req.user.id);
   }
 
-  @Put(':id/cancel')
-  @Roles(PrismaRole.CLIENT)
+  @Patch(':contractId/cancel')
   cancel(
-    @Param('id') id: string,
+    @Param('contractId') contractId: string,
     @Req() req: Request & { user: AuthenticatedUser },
   ) {
-    return this.contractsService.cancelContract(id, req.user.id);
+    return this.contractsService.cancelContract(contractId, req.user.id);
   }
 }
