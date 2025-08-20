@@ -1,5 +1,20 @@
 import { StripeElement } from "@stripe/stripe-js";
 
+export enum PaymentMethodType {
+  CARD = "CARD",
+  BANK_TRANSFER = "BANK_TRANSFER",
+}
+
+export enum PaymentStatus {
+  PENDING = "PENDING",
+  AUTHORIZED = "AUTHORIZED",
+  PAID = "PAID",
+  FAILED = "FAILED",
+  CANCELED = "CANCELED",
+  REFUNDED = "REFUNDED",
+  SUCCEEDED = "SUCCEEDED",
+}
+
 export interface CreatePaymentMethodProps {
   email: string;
   card: StripeElement;
