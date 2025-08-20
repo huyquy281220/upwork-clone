@@ -50,6 +50,9 @@ export const updateContract = async (
   contractId: string,
   data: UpdateContractProps
 ) => {
-  const response = await api.patch(`${apiURL}/contracts/${contractId}`, data);
+  const response = await api.patch(
+    `${apiURL}/contracts/update/${contractId}`,
+    data
+  );
   return response.data;
 };

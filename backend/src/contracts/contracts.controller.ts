@@ -74,12 +74,11 @@ export class ContractsController {
   }
 
   @Get(':contractId')
-  @UseGuards(NextAuthGuard)
   findOne(@Param('contractId') contractId: string) {
     return this.contractsService.findOneContract(contractId);
   }
 
-  @Patch(':contractId')
+  @Patch('/update/:contractId')
   @UsePipes(new ValidationPipe())
   update(
     @Param('contractId') contractId: string,
@@ -93,7 +92,7 @@ export class ContractsController {
     );
   }
 
-  @Patch(':contractId/complete')
+  @Patch('/complete/:contractId')
   complete(
     @Param('contractId') contractId: string,
     @Req() req: Request & { user: { id: string } },
@@ -101,7 +100,7 @@ export class ContractsController {
     return this.contractsService.completeContract(contractId, req.user.id);
   }
 
-  @Patch(':contractId/cancel')
+  @Patch('/cancel/:contractId')
   cancel(
     @Param('contractId') contractId: string,
     @Req() req: Request & { user: AuthenticatedUser },
