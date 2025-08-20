@@ -465,7 +465,7 @@ export class ContractsService {
     };
   }
 
-  async updateContract(id: string, clientId: string, data: UpdateContractDto) {
+  async updateContract(id: string, data: UpdateContractDto) {
     return this.prisma.$transaction(async (tx) => {
       const contract = await tx.contract.findUnique({
         where: { id },
@@ -474,7 +474,7 @@ export class ContractsService {
       if (!contract) {
         throw new NotFoundException(`Contract with ID ${id} not found`);
       }
-      if (contract.clientId !== clientId) {
+      if (contract.clientId !== data.clientId) {
         throw new BadRequestException('Client does not own this contract');
       }
       if (contract.status === ContractStatus.COMPLETED) {
@@ -509,7 +509,7 @@ export class ContractsService {
     });
   }
 
-  async completeContract(id: string, clientId: string) {
+  async completeContract(id: string, data: UpdateContractDto) {
     return this.prisma.$transaction(async (tx) => {
       const contract = await tx.contract.findUnique({
         where: { id },
@@ -518,7 +518,7 @@ export class ContractsService {
       if (!contract) {
         throw new NotFoundException(`Contract with ID ${id} not found`);
       }
-      if (contract.clientId !== clientId) {
+      if (contract.clientId !== data.clientId) {
         throw new BadRequestException('Client does not own this contract');
       }
       if (contract.status !== ContractStatus.ACTIVE) {
@@ -552,7 +552,7 @@ export class ContractsService {
     });
   }
 
-  async cancelContract(id: string, clientId: string) {
+  async cancelContract(id: string, data: UpdateContractDto) {
     return this.prisma.$transaction(async (tx) => {
       const contract = await tx.contract.findUnique({
         where: { id },
@@ -561,7 +561,7 @@ export class ContractsService {
       if (!contract) {
         throw new NotFoundException(`Contract with ID ${id} not found`);
       }
-      if (contract.clientId !== clientId) {
+      if (contract.clientId !== data.clientId) {
         throw new BadRequestException('Client does not own this contract');
       }
       if (contract.status !== ContractStatus.ACTIVE) {

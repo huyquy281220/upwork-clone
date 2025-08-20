@@ -83,28 +83,26 @@ export class ContractsController {
   update(
     @Param('contractId') contractId: string,
     @Body() updateContractDto: UpdateContractDto,
-    @Req() req: Request & { user: AuthenticatedUser },
   ) {
-    return this.contractsService.updateContract(
-      contractId,
-      req.user.id,
-      updateContractDto,
-    );
+    return this.contractsService.updateContract(contractId, updateContractDto);
   }
 
   @Patch('/complete/:contractId')
   complete(
     @Param('contractId') contractId: string,
-    @Req() req: Request & { user: { id: string } },
+    @Body() updateContractDto: UpdateContractDto,
   ) {
-    return this.contractsService.completeContract(contractId, req.user.id);
+    return this.contractsService.completeContract(
+      contractId,
+      updateContractDto,
+    );
   }
 
   @Patch('/cancel/:contractId')
   cancel(
     @Param('contractId') contractId: string,
-    @Req() req: Request & { user: AuthenticatedUser },
+    @Body() updateContractDto: UpdateContractDto,
   ) {
-    return this.contractsService.cancelContract(contractId, req.user.id);
+    return this.contractsService.cancelContract(contractId, updateContractDto);
   }
 }
