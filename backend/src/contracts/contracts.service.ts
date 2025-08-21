@@ -509,6 +509,29 @@ export class ContractsService {
     });
   }
 
+  // async acceptContract(id: string, data: UpdateContractDto) {
+  //   return this.prisma.$transaction(async (tx) => {
+  //     const contract = await tx.contract.findUnique({
+  //       where: { id },
+  //     });
+  //     if (!contract) {
+  //       throw new NotFoundException(`Contract with ID ${id} not found`);
+  //     }
+  //     if (contract.status !== ContractStatus.PENDING) {
+  //       throw new BadRequestException('Contract is not pending');
+  //     }
+
+  //     await tx.contract.update({
+  //       where: { id },
+  //       data: {
+  //         status: ContractStatus.ACTIVE,
+  //       },
+  //     });
+
+  //     await this.stripeService.capturePaymentIntent;
+  //   });
+  // }
+
   async completeContract(id: string, data: UpdateContractDto) {
     return this.prisma.$transaction(async (tx) => {
       const contract = await tx.contract.findUnique({
