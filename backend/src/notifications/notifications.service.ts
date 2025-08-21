@@ -181,33 +181,28 @@ export class NotificationsService {
   }
 
   async markAsRead(id: string, userId: string) {
-    try {
-      // Check if notification and ownership
-      const notification = await this.prisma.notification.findUnique({
-        where: { id },
-      });
-      if (!notification) {
-        throw new NotFoundException(`Notification with ID ${id} not found`);
-      }
-      if (notification.userId !== userId) {
-        throw new BadRequestException('User does not own this notification');
-      }
-      if (notification.isRead) {
-        return notification;
-      }
-
-      // Update status
-      return await this.prisma.notification.update({
-        where: { id },
-        data: { isRead: true },
-        include: {
-          user: { select: { id: true, email: true } },
-        },
-      });
-    } catch (error) {
-      // Optionally log or handle error
-      throw error;
+    // Check if notification and ownership
+    const notification = await this.prisma.notification.findUnique({
+      where: { id },
+    });
+    if (!notification) {
+      throw new NotFoundException(`Notification with ID ${id} not found`);
     }
+    if (notification.userId !== userId) {
+      throw new BadRequestException('User does not own this notification');
+    }
+    if (notification.isRead) {
+      return notification;
+    }
+
+    // Update status
+    return await this.prisma.notification.update({
+      where: { id },
+      data: { isRead: true },
+      include: {
+        user: { select: { id: true, email: true } },
+      },
+    });
   }
 
   async markAllAsRead(userId: string) {
