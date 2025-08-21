@@ -509,28 +509,42 @@ export class ContractsService {
     });
   }
 
-  // async acceptContract(id: string, data: UpdateContractDto) {
-  //   return this.prisma.$transaction(async (tx) => {
-  //     const contract = await tx.contract.findUnique({
-  //       where: { id },
-  //     });
-  //     if (!contract) {
-  //       throw new NotFoundException(`Contract with ID ${id} not found`);
-  //     }
-  //     if (contract.status !== ContractStatus.PENDING) {
-  //       throw new BadRequestException('Contract is not pending');
-  //     }
+  async acceptContract(id: string, data: UpdateContractDto) {
+    return this.prisma.$transaction(async (tx) => {
+      const contract = await tx.contract.findUnique({
+        where: { id },
+        include: {
+          client: { select: { user: { select: { stripeCustomerId: true } } } },
+        },
+      });
+      if (!contract) {
+        throw new NotFoundException(`Contract with ID ${id} not found`);
+      }
+      if (contract.status !== ContractStatus.PENDING) {
+        throw new BadRequestException('Contract is not pending');
+      }
 
-  //     await tx.contract.update({
-  //       where: { id },
-  //       data: {
-  //         status: ContractStatus.ACTIVE,
-  //       },
-  //     });
+      await tx.contract.update({
+        where: { id },
+        data: {
+          status: ContractStatus.ACTIVE,
+        },
+      });
 
-  //     await this.stripeService.capturePaymentIntent;
-  //   });
-  // }
+      const paymentIntent =
+        await this.stripeService.getPaymentIntentByCustomerIdAndContractId(
+          contract.client.user.stripeCustomerId,
+          contract.id,
+        );
+
+      await this.stripeService.capturePaymentIntent(paymentIntent.id);
+
+      return tx.contract.findUnique({
+        where: { id },
+        include: { job: { select: { id: true, title: true } } },
+      });
+    });
+  }
 
   async completeContract(id: string, data: UpdateContractDto) {
     return this.prisma.$transaction(async (tx) => {
