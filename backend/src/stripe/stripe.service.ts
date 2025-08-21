@@ -318,6 +318,30 @@ export class StripeService {
     }
   }
 
+  async getPaymentIntentByCustomerIdAndContractId(
+    customerId: string,
+    contractId: string,
+  ) {
+    try {
+      const paymentIntents = await this.stripe.paymentIntents.list({
+        customer: customerId,
+        limit: 100,
+      });
+
+      const paymentIntent = paymentIntents.data.find(
+        (pi) => pi.metadata.contractId === contractId,
+      );
+
+      if (!paymentIntent) {
+        throw new Error(`No payment intent found for contract ${contractId}`);
+      }
+
+      return paymentIntent;
+    } catch (error) {
+      throw new Error(`Failed to get payment intent: ${error.message}`);
+    }
+  }
+
   /* PaymentMethod */
   async attachPaymentMethod(paymentMethodId: string, email: string) {
     try {
