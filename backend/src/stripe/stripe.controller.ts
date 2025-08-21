@@ -71,18 +71,6 @@ export class StripeController {
     return this.stripeService.createAccountLink(body.accountId, body.email);
   }
 
-  @Post('payment/escrow')
-  async createEscrowPayment(
-    @Body() body: { customerId: string; amount: number; currency: string },
-  ) {
-    const paymentIntent = await this.stripeService.createEscrowPaymentIntent(
-      body.customerId,
-      body.amount,
-      body.currency,
-    );
-    return paymentIntent;
-  }
-
   //   Release escrow payment (capture)
   @Post('payment/escrow/:paymentIntentId/capture')
   async capturePayment(@Param('paymentIntentId') paymentIntentId: string) {
