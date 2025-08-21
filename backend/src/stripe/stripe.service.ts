@@ -281,9 +281,12 @@ export class StripeService {
           payment_method: data.paymentMethodId,
           payment_method_types: ['card'],
           confirm: true,
-          capture_method: isHourly ? 'automatic' : 'manual',
+          capture_method: 'manual',
           off_session: isHourly && !isFirstTime,
           setup_future_usage: isFirstTime ? 'off_session' : undefined,
+          description: isHourly
+            ? `Hourly contract funding - contractId: ${data.contractId}`
+            : `Fixed-price milestone funding - contractId: ${data.contractId}`,
           metadata: {
             contractId: data.contractId,
             freelancerId: data.freelancerId,
