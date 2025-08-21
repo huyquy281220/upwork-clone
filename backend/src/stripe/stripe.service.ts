@@ -306,87 +306,8 @@ export class StripeService {
       );
     }
   }
-  // async createPaymentIntentForFixedPriceJob(data: CreatePaymentIntentDto) {
-  //   try {
-  //     return await this.stripe.paymentIntents.create(
-  //       {
-  //         amount: data.amount,
-  //         currency: data.currency || 'USD',
-  //         capture_method: 'manual',
-  //         payment_method: data.paymentMethodId,
-  //         payment_method_types: ['card'],
-  //         confirm: true,
-  //         metadata: {
-  //           contractId: data.contractId,
-  //           freelancerId: data.freelancerId,
-  //           clientId: data.clientId,
-  //         },
-  //       },
-  //       {
-  //         idempotencyKey: data.contractId,
-  //       },
-  //     );
-  //   } catch (error) {
-  //     throw new Error(
-  //       `Failed to create Stripe payment intent: ${error.message}`,
-  //     );
-  //   }
-  // }
 
-  // async createPaymentIntentForHourlyJob(data: CreatePaymentIntentDto) {
-  //   const customer = await this.getCustomerInfoFromClientId(data.clientId);
-
-  //   try {
-  //     return await this.stripe.paymentIntents.create(
-  //       {
-  //         amount: data.amount,
-  //         currency: 'USD',
-  //         customer: customer.customerId,
-  //         payment_method: data.paymentMethodId,
-  //         payment_method_types: ['card'],
-  //         off_session: true,
-  //         confirm: true,
-  //         metadata: {
-  //           contractId: data.contractId,
-  //           freelancerId: data.freelancerId,
-  //         },
-  //       },
-  //       {
-  //         idempotencyKey: data.contractId,
-  //       },
-  //     );
-  //   } catch (error) {
-  //     throw new Error(
-  //       `Failed to create Stripe payment intent: ${error.message}`,
-  //     );
-  //   }
-  // }
-
-  async createSetupIntent(customerId: string) {
-    return await this.stripe.setupIntents.create({
-      customer: customerId,
-      payment_method_types: ['card'],
-    });
-  }
-
-  //   create escrow payment intent
-  async createEscrowPaymentIntent(
-    customerId: string,
-    amount: number,
-    currency: string,
-  ) {
-    const paymentIntent = await this.stripe.paymentIntents.create({
-      customer: customerId,
-      amount,
-      currency,
-      payment_method_types: ['card'],
-      capture_method: 'manual', // authorize only
-    });
-
-    return paymentIntent;
-  }
-
-  // Release escrow payment (capture)
+  //   capture payment intent
   async capturePaymentIntent(paymentIntentId: string) {
     try {
       const paymentIntent =
