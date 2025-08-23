@@ -9,13 +9,11 @@ import {
   ValidationPipe,
   Patch,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { ContractStatus } from '@prisma/client';
 import { UpdateContractDto } from './dto/update-contract.dto';
-import { AuthenticatedUser } from 'src/types';
 import { NextAuthGuard } from 'src/auth/guards/nextauth.guard';
 
 @Controller('contracts')
@@ -85,6 +83,11 @@ export class ContractsController {
     @Body() updateContractDto: UpdateContractDto,
   ) {
     return this.contractsService.updateContract(contractId, updateContractDto);
+  }
+
+  @Patch('/accept/:contractId')
+  accept(@Param('contractId') contractId: string) {
+    return this.contractsService.acceptContract(contractId);
   }
 
   @Patch('/complete/:contractId')

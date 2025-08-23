@@ -509,7 +509,7 @@ export class ContractsService {
     });
   }
 
-  async acceptContract(id: string, data: UpdateContractDto) {
+  async acceptContract(id: string) {
     return this.prisma.$transaction(async (tx) => {
       const contract = await tx.contract.findUnique({
         where: { id },
