@@ -4,7 +4,7 @@ export const freelancerNavHeader = [
     menu: [
       {
         label: "Find work",
-        link: "",
+        link: "/freelancer/find-work",
       },
       {
         label: "Saved jobs",
