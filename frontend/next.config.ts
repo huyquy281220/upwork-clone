@@ -10,12 +10,22 @@ const nextConfig: NextConfig = {
     return config;
   },
   reactStrictMode: true,
-  /* config options here */
   experimental: {
     turbo: {
-      rules: {},
+      resolveAlias: {
+        "@": path.join(__dirname, "src"),
+      },
     },
     externalDir: true,
+    optimizePackageImports: [
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-select",
+      "@radix-ui/react-tabs",
+      "lucide-react",
+      "sonner",
+    ],
   },
   images: {
     remotePatterns: [
@@ -25,6 +35,11 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+  },
+  // Performance optimizations
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
   },
 };
 
