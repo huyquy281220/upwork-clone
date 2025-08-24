@@ -158,6 +158,21 @@ export class JobsService {
     const hireRate =
       totalJobs > 0 ? Math.round((hiredJobs / totalJobs) * 100) : 0;
 
+    // Calculate total spent by the client
+    const totalSpent = await this.prisma.payment.aggregate({
+      where: {
+        contract: {
+          clientId: job.clientId,
+        },
+        status: {
+          in: ['PAID', 'SUCCEEDED'],
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
     return {
       job: {
         ...restOfJob,
@@ -166,6 +181,7 @@ export class JobsService {
       totalJobs,
       openJobs,
       hireRate,
+      totalSpent: totalSpent._sum.amount || 0,
     };
   }
 

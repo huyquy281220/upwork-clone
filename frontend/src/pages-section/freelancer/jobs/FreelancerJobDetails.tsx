@@ -40,6 +40,7 @@ export function FreelancerJobDetails() {
   const jobDetail = jobWithStats?.job;
   const openJobs = jobWithStats?.openJobs ?? 0;
   const hireRate = jobWithStats?.hireRate ?? 0;
+  const totalSpent = jobWithStats?.totalSpent ?? 0;
 
   const isApplied = useMemo(() => {
     return (
@@ -70,6 +71,7 @@ export function FreelancerJobDetails() {
               totalJobs={clientInfo.totalJobs}
               openJobs={openJobs}
               hireRate={hireRate}
+              totalSpent={totalSpent}
             />
           </div>
         </div>

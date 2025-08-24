@@ -8,11 +8,13 @@ export function ClientInfo({
   totalJobs,
   openJobs,
   hireRate,
+  totalSpent,
 }: {
   client: ClientUser & { user: { fullName: string; address: string } };
   totalJobs: number;
   openJobs: number;
   hireRate: number;
+  totalSpent: number;
 }) {
   const clientLocalTime = useUserLocationTime(client.timezone);
 
@@ -26,7 +28,7 @@ export function ClientInfo({
       label: `${totalJobs} jobs posted`,
       value: `${hireRate}% hire rate, ${openJobs} open jobs`,
     },
-    { label: "$340K total spent", value: "" },
+    { label: `${totalSpent} total spent`, value: "" },
     { label: "Member since Jul 16, 2024" },
   ];
 

@@ -56,6 +56,7 @@ export interface JobDetailProps extends JobProps {
 export interface JobWithStatsProps {
   job: JobDetailProps;
   totalJobs: number;
+  totalSpent: number;
   openJobs: number;
   hireRate: number;
 }

@@ -14,6 +14,7 @@ export function JobSidebar({
   totalJobs,
   openJobs,
   hireRate,
+  totalSpent,
 }: {
   jobId: string;
   client: ClientUser & { user: { fullName: string; address: string } };
@@ -21,6 +22,7 @@ export function JobSidebar({
   totalJobs: number;
   openJobs: number;
   hireRate: number;
+  totalSpent: number;
 }) {
   const router = useRouter();
 
@@ -45,6 +47,7 @@ export function JobSidebar({
         totalJobs={totalJobs}
         openJobs={openJobs}
         hireRate={hireRate}
+        totalSpent={totalSpent}
       />
     </div>
   );
