@@ -8,7 +8,7 @@ import {
 } from "@/pages-section/freelancer/jobs";
 import { getJobById } from "@/services/jobs";
 import { getClientByJobId } from "@/services/userService";
-import { JobDetailProps } from "@/types/jobs";
+import { JobWithStatsProps } from "@/types/jobs";
 import { ClientUser } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -18,12 +18,6 @@ import { useMemo } from "react";
 type ClientInfoProps = {
   client: ClientUser & { user: { fullName: string; address: string } };
   totalJobs: number;
-};
-
-type JobWithStatsProps = {
-  job: JobDetailProps;
-  openJobs: number;
-  hireRate: number;
 };
 
 export function FreelancerJobDetails() {

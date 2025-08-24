@@ -53,6 +53,13 @@ export interface JobDetailProps extends JobProps {
   proposals: Omit<ProposalProps, "job">[];
 }
 
+export interface JobWithStatsProps {
+  job: JobDetailProps;
+  totalJobs: number;
+  openJobs: number;
+  hireRate: number;
+}
+
 export enum ExperienceLevel {
   DEFAULT = "",
   ENTRY = "Entry Level",

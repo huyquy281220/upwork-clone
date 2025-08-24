@@ -9,16 +9,21 @@ import { ClientHistory } from "./ClientHistory";
 import { OtherJobs } from "./OtherJobs";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { JobProps } from "@/types/jobs";
+import { JobWithStatsProps } from "@/types/jobs";
 
 export function JobContent() {
   const queryClient = useQueryClient();
   const params = useParams();
   const jobId = params.jobId as string;
 
-  const jobDetail = queryClient.getQueryData<JobProps>(["job-detail", jobId]);
+  const jobWithStats = queryClient.getQueryData<JobWithStatsProps>([
+    "job-detail",
+    jobId,
+  ]);
 
-  if (!jobDetail) return;
+  const jobDetail = jobWithStats?.job;
+
+  if (!jobDetail || !jobWithStats) return;
 
   return (
     <div className="space-y-8">
