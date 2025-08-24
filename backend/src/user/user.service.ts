@@ -32,7 +32,7 @@ export class UserService {
       const client = await this.prismaService.clientProfile.findFirst({
         where: { jobs: { some: { id: jobId } } },
         include: {
-          user: { select: { address: true, fullName: true } },
+          user: { select: { address: true, fullName: true, createdAt: true } },
         },
       });
 
