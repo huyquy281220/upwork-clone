@@ -44,6 +44,7 @@ export interface JobDetailProps extends JobProps {
   client: {
     id: string;
     user: {
+      id: string;
       fullName: string;
       avatarUrl: string;
       address: string;
