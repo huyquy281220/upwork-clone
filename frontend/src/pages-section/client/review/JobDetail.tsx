@@ -15,7 +15,7 @@ import {
 } from "@/components/modals/client";
 import { useJobPostingContext } from "@/store/JobPostingContext";
 import { useModalManager } from "@/hooks/useModalManager";
-import { CreateJobProps, JobProps } from "@/types/jobs";
+import { CreateJobProps, JobWithStatsProps } from "@/types/jobs";
 import { useCallback, useEffect } from "react";
 import { getJobById, updateJobById } from "@/services/jobs";
 import { useParams, useRouter } from "next/navigation";
@@ -46,13 +46,14 @@ export default function JobDetail() {
     enabled: !!jobId,
   });
 
-  const { data: jobDetail, isLoading: isJobDetailLoading } = useQuery<JobProps>(
-    {
+  const { data: jobWithStats, isLoading: isJobDetailLoading } =
+    useQuery<JobWithStatsProps>({
       queryKey: ["job-detail", jobId],
       queryFn: () => getJobById(jobId),
       enabled: !!jobId,
-    }
-  );
+    });
+
+  const jobDetail = jobWithStats?.job;
 
   const clientInfo = queryClient.getQueryData<ClientUser>([
     "user",
@@ -60,10 +61,10 @@ export default function JobDetail() {
   ]);
 
   useEffect(() => {
-    if (jobDetail) {
-      updateJobData(jobDetail);
+    if (jobWithStats) {
+      updateJobData(jobWithStats.job);
     }
-  }, [jobDetail, updateJobData]);
+  }, [jobWithStats, updateJobData]);
 
   const handleUpdate = useCallback(
     <K extends keyof CreateJobProps>(field: K, value: CreateJobProps[K]) => {

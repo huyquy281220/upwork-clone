@@ -13,6 +13,7 @@ import {
 } from "@/pages-section/client/job-details";
 import { getJobById } from "@/services/jobs";
 import { getPaginatedProposalsByJob } from "@/services/proposals";
+import { JobWithStatsProps } from "@/types/jobs";
 import { ProposalProps } from "@/types/proposals";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
@@ -45,7 +46,7 @@ export function ClientJobDetails() {
   const filterBy = getFilter("filter");
   const currentPage = parseInt(getFilter("page"));
 
-  const { data: jobDetail } = useQuery({
+  const { data: jobWithStats } = useQuery<JobWithStatsProps>({
     queryKey: ["job-detail", jobId],
     queryFn: () => getJobById(jobId),
     enabled: !!jobId,
@@ -73,7 +74,11 @@ export function ClientJobDetails() {
     setSelectedProposal(proposal);
   };
 
-  if (!paginatedProposals || !jobDetail) return <InfiniteLoading />;
+  const jobDetail = jobWithStats?.job;
+
+  if (!paginatedProposals || !jobWithStats) return <InfiniteLoading />;
+
+  if (!jobDetail) return;
 
   return (
     <div className="min-h-screen">
