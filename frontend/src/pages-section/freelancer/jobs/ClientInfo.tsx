@@ -1,6 +1,7 @@
 import { StarRating } from "@/components/common/StarRating";
 import { useUserLocationTime } from "@/hooks/useUserLocalTime";
 import { ClientUser } from "@/types/user";
+import { formatFromISOToLocalTime } from "@/utils/formatDate";
 import { MapPin, Clock } from "lucide-react";
 
 export function ClientInfo({
@@ -31,7 +32,9 @@ export function ClientInfo({
       value: `${hireRate}% hire rate, ${openJobs} open jobs`,
     },
     { label: `$${totalSpent} total spent`, value: "" },
-    { label: `Member since ${client.user.createdAt}` },
+    {
+      label: `Member since ${formatFromISOToLocalTime(client.user.createdAt)}`,
+    },
   ];
 
   return (
