@@ -44,7 +44,7 @@ export function JobContent() {
         unansweredInvites={0}
       />
       <ClientHistory />
-      <OtherJobs />
+      <OtherJobs clientId={jobDetail.client.id} />
     </div>
   );
 }

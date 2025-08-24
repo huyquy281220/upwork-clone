@@ -107,6 +107,7 @@ export class JobsService {
           include: {
             user: {
               select: {
+                id: true,
                 fullName: true,
                 avatarUrl: true,
                 address: true,

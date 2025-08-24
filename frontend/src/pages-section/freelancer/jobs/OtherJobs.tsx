@@ -1,4 +1,18 @@
-export function OtherJobs() {
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { getPaginatedJobs } from "@/services/jobs";
+import { useQuery } from "@tanstack/react-query";
+
+const LIMIT = 5;
+const PAGE = 1;
+
+export function OtherJobs({ clientId }: { clientId: string }) {
+  const { data: paginatedJobs, isLoading } = useQuery({
+    queryKey: ["jobs-with-pagination", clientId],
+    queryFn: () => getPaginatedJobs(clientId, LIMIT, PAGE),
+  });
+
+  console.log(paginatedJobs);
+
   const jobs = [
     "Easy Job Evaluation Needed for Big Button Mobile Phone/Cell for Elderly People",
     "Easy Job Evaluation Needed for Big Button Mobile Phone/Cell for Elderly People",
@@ -6,6 +20,8 @@ export function OtherJobs() {
     "Product Test and Evaluation for Kids Camera",
     "Need Interview and Evaluation for Kids Camera",
   ];
+
+  if (isLoading) return <InfiniteLoading />;
 
   return (
     <div className="space-y-4">
