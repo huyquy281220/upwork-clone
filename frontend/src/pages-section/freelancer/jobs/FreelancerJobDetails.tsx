@@ -20,12 +20,18 @@ type ClientInfoProps = {
   totalJobs: number;
 };
 
+type JobWithStatsProps = {
+  job: JobDetailProps;
+  openJobs: number;
+  hireRate: number;
+};
+
 export function FreelancerJobDetails() {
   const { data: session } = useSession();
   const params = useParams();
   const jobId = params.jobId as string;
 
-  const { data: jobDetail } = useQuery<JobDetailProps>({
+  const { data: jobWithStats } = useQuery<JobWithStatsProps>({
     queryKey: ["job-detail", jobId],
     queryFn: () => getJobById(jobId),
     enabled: !!jobId,
@@ -36,6 +42,10 @@ export function FreelancerJobDetails() {
     queryFn: () => getClientByJobId(jobId),
     enabled: !!jobId,
   });
+
+  const jobDetail = jobWithStats?.job;
+  const openJobs = jobWithStats?.openJobs ?? 0;
+  const hireRate = jobWithStats?.hireRate ?? 0;
 
   const isApplied = useMemo(() => {
     return (
@@ -64,6 +74,8 @@ export function FreelancerJobDetails() {
               isApplied={isApplied}
               client={clientInfo.client}
               totalJobs={clientInfo.totalJobs}
+              openJobs={openJobs}
+              hireRate={hireRate}
             />
           </div>
         </div>

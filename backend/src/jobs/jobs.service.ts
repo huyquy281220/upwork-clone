@@ -111,6 +111,7 @@ export class JobsService {
                 avatarUrl: true,
                 address: true,
                 verified: true,
+                createdAt: true,
               },
             },
           },
@@ -122,12 +123,49 @@ export class JobsService {
     if (!job) {
       throw new NotFoundException(`Job with ID ${id} not found`);
     }
-
     const { skills, ...restOfJob } = job;
 
+    const totalJobs = await this.prisma.job.count({
+      where: { clientId: job.clientId },
+    });
+
+    const hiredJobs = await this.prisma.job.count({
+      where: {
+        clientId: job.clientId,
+        contracts: {
+          some: {
+            status: {
+              in: ['ACTIVE', 'COMPLETED'],
+            },
+          },
+        },
+      },
+    });
+
+    const openJobs = await this.prisma.job.count({
+      where: {
+        clientId: job.clientId,
+        contracts: {
+          none: {
+            status: {
+              in: ['ACTIVE', 'COMPLETED'],
+            },
+          },
+        },
+      },
+    });
+
+    const hireRate =
+      totalJobs > 0 ? Math.round((hiredJobs / totalJobs) * 100) : 0;
+
     return {
-      ...restOfJob,
-      skills: skills.map((s) => s.skill),
+      job: {
+        ...restOfJob,
+        skills: skills.map((s) => s.skill),
+      },
+      totalJobs,
+      openJobs,
+      hireRate,
     };
   }
 

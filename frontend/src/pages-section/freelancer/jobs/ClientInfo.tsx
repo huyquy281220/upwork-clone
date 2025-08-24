@@ -6,9 +6,13 @@ import { MapPin, Clock } from "lucide-react";
 export function ClientInfo({
   client,
   totalJobs,
+  openJobs,
+  hireRate,
 }: {
   client: ClientUser & { user: { fullName: string; address: string } };
   totalJobs: number;
+  openJobs: number;
+  hireRate: number;
 }) {
   const clientLocalTime = useUserLocationTime(client.timezone);
 
@@ -18,8 +22,11 @@ export function ClientInfo({
       label: `${clientLocalTime?.city} ${clientLocalTime?.localTime}`,
       icon: Clock,
     },
-    { label: `${totalJobs} jobs posted`, value: "86% hire rate, 0 open jobs" },
-    { label: "$340K total spent", value: "$7 /hr avg. hourly rate" },
+    {
+      label: `${totalJobs} jobs posted`,
+      value: `${hireRate}% hire rate, ${openJobs} open jobs`,
+    },
+    { label: "$340K total spent", value: "" },
     { label: "Member since Jul 16, 2024" },
   ];
 
