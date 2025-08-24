@@ -20,8 +20,6 @@ export function ClientInfo({
 }) {
   const clientLocalTime = useUserLocationTime(client.timezone);
 
-  console.log(client);
-
   const clientStats = [
     { label: client.user.address ?? "", icon: MapPin },
     {
