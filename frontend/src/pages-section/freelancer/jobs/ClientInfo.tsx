@@ -10,13 +10,17 @@ export function ClientInfo({
   hireRate,
   totalSpent,
 }: {
-  client: ClientUser & { user: { fullName: string; address: string } };
+  client: ClientUser & {
+    user: { fullName: string; address: string; createdAt: string };
+  };
   totalJobs: number;
   openJobs: number;
   hireRate: number;
   totalSpent: number;
 }) {
   const clientLocalTime = useUserLocationTime(client.timezone);
+
+  console.log(client);
 
   const clientStats = [
     { label: client.user.address ?? "", icon: MapPin },
@@ -28,8 +32,8 @@ export function ClientInfo({
       label: `${totalJobs} jobs posted`,
       value: `${hireRate}% hire rate, ${openJobs} open jobs`,
     },
-    { label: `${totalSpent} total spent`, value: "" },
-    { label: "Member since Jul 16, 2024" },
+    { label: `$${totalSpent} total spent`, value: "" },
+    { label: `Member since ${client.user.createdAt}` },
   ];
 
   return (

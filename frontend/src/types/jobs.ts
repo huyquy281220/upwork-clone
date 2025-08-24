@@ -48,6 +48,7 @@ export interface JobDetailProps extends JobProps {
       avatarUrl: string;
       address: string;
       verified: boolean;
+      createdAt: string;
     };
   };
   proposals: Omit<ProposalProps, "job">[];
