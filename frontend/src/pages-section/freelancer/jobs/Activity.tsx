@@ -1,9 +1,24 @@
-export function ActivitySection() {
+type ActivitySectionProps = {
+  proposals: number;
+  interviewing: number;
+  invitesSent: number;
+  unansweredInvites: number;
+};
+
+export function ActivitySection({
+  proposals,
+  interviewing,
+  invitesSent,
+  unansweredInvites,
+}: ActivitySectionProps) {
   const activities = [
-    { label: "Proposals", value: "Less than 5" },
-    { label: "Interviewing", value: "0" },
-    { label: "Invites sent", value: "0" },
-    { label: "Unanswered invites", value: "0" },
+    {
+      label: "Proposals",
+      value: `${proposals < 5 ? "Less than 5" : proposals}`,
+    },
+    { label: "Interviewing", value: `${interviewing || 0}` },
+    { label: "Invites sent", value: `${invitesSent || 0}` },
+    { label: "Unanswered invites", value: `${unansweredInvites || 0}` },
   ];
 
   return (

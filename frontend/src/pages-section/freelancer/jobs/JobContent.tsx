@@ -37,7 +37,12 @@ export function JobContent() {
       <JobDescription description={jobDetail.description} />
       <SkillsSection skills={jobDetail.skills} />
       <QualificationsSection />
-      <ActivitySection />
+      <ActivitySection
+        proposals={jobDetail.proposals.length}
+        interviewing={0}
+        invitesSent={0}
+        unansweredInvites={0}
+      />
       <ClientHistory />
       <OtherJobs />
     </div>
