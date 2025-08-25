@@ -22,11 +22,8 @@ import { StripeService } from 'src/stripe/stripe.service';
       storage: diskStorage({
         destination: './uploads',
         filename: (_, file, cb) => {
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          cb(null, `${randomName}${extname(file.originalname)}`);
+          const originalName = file.originalname.replace(/\s+/g, '_'); // replace space = "_"
+          cb(null, originalName);
         },
       }),
       fileFilter: (req, file, cb) => {
