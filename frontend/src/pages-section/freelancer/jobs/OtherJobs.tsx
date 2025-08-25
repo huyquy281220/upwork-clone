@@ -40,7 +40,7 @@ export function OtherJobs({
   if (isLoading) return <InfiniteLoading />;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 border-t border-gray-200 pt-4">
       <h3 className="text-lg font-semibold text-foreground">
         Other open jobs by this Client{` (${totalCount})`}
       </h3>
