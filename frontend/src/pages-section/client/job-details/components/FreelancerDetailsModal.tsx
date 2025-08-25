@@ -35,7 +35,7 @@ export function FreelancerDetailsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full lg:max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-3">
             <Avatar className="w-12 h-12">
@@ -105,7 +105,7 @@ export function FreelancerDetailsModal({
           <div>
             <h3 className="font-semibold mb-3">Cover Letter</h3>
             <div className="bg-subBackground rounded-lg p-4">
-              <p className="text-sm text-gray-700 whitespace-pre-line">
+              <p className="text-sm text-foreground opacity-80 whitespace-pre-line">
                 {proposal.coverLetter}
               </p>
             </div>

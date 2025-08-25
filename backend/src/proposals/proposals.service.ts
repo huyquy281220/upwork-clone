@@ -444,6 +444,9 @@ export class ProposalsService {
       const result = await cloudinary.uploader.upload(file.path, {
         folder: 'cv',
         resource_type: 'raw',
+        public_id: file.originalname.split('.')[0],
+        use_filename: true,
+        unique_filename: false,
       });
 
       if (!result || !result.secure_url || !result.public_id) {
