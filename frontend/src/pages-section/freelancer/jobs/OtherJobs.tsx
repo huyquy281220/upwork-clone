@@ -1,44 +1,71 @@
+"use client";
+
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { getPaginatedJobs } from "@/services/jobs";
+import { JobProps } from "@/types/jobs";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
-const LIMIT = 5;
+const INITIAL_LIMIT = 5;
 const PAGE = 1;
 
-export function OtherJobs({ clientId }: { clientId: string }) {
-  const { data: paginatedJobs, isLoading } = useQuery({
-    queryKey: ["jobs-with-pagination", clientId],
-    queryFn: () => getPaginatedJobs(clientId, LIMIT, PAGE),
+type PaginatedJobsProps = {
+  data: JobProps[];
+  totalPages: number;
+};
+
+export function OtherJobs({
+  clientId,
+  selectedJobId,
+}: {
+  clientId: string;
+  selectedJobId: string;
+}) {
+  const [limit, setLimit] = useState<number>(INITIAL_LIMIT);
+  const [expanded, setExpanded] = useState<boolean>(false);
+
+  const { data: paginatedJobs, isLoading } = useQuery<PaginatedJobsProps>({
+    queryKey: ["jobs-with-pagination", clientId, limit],
+    queryFn: () => getPaginatedJobs(clientId, PAGE, limit),
   });
 
-  console.log(paginatedJobs);
+  const otherJobs = paginatedJobs?.data.filter(
+    (job) => job.id !== selectedJobId
+  );
 
-  const jobs = [
-    "Easy Job Evaluation Needed for Big Button Mobile Phone/Cell for Elderly People",
-    "Easy Job Evaluation Needed for Big Button Mobile Phone/Cell for Elderly People",
-    "Product Research for Big Button Mobile Phone - No Experience Needed",
-    "Product Test and Evaluation for Kids Camera",
-    "Need Interview and Evaluation for Kids Camera",
-  ];
+  const totalCount = otherJobs?.length || 0;
 
   if (isLoading) return <InfiniteLoading />;
 
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-foreground">
-        Other open jobs by this Client (5)
+        Other open jobs by this Client{` (${totalCount})`}
       </h3>
       <div className="space-y-2">
-        {jobs.map((job, index) => (
+        {otherJobs?.slice(0, 5).map((job, index) => (
           <div
             key={index}
             className="text-green-500 hover:underline cursor-pointer"
           >
-            {job} <span className="text-muted-foreground">Fixed-price</span>
+            {job.title}{" "}
+            <span className="text-muted-foreground">Fixed-price</span>
           </div>
         ))}
       </div>
-      <button className="text-green-500 text-sm">View more (4)</button>
+      {!expanded && (
+        <div>
+          <button
+            className="text-green-500 hover:underline cursor-pointer"
+            onClick={() => {
+              setLimit(INITIAL_LIMIT + (totalCount - INITIAL_LIMIT));
+              setExpanded(true);
+            }}
+          >
+            {`View more ( ${totalCount - INITIAL_LIMIT} )`}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

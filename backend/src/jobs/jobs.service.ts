@@ -280,6 +280,7 @@ export class JobsService {
   }
 
   async getPaginatedJobs(clientId: string, limit: number, page: number) {
+    console.log('clientId', clientId);
     try {
       const [jobs, totalJobs] = await Promise.all([
         this.prisma.job.findMany({

@@ -44,7 +44,10 @@ export function JobContent() {
         unansweredInvites={0}
       />
       {/* <ClientHistory /> */}
-      <OtherJobs clientId={jobDetail.client.user.id} />
+      <OtherJobs
+        clientId={jobDetail.client.user.id}
+        selectedJobId={jobDetail.id}
+      />
     </div>
   );
 }
