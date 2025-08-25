@@ -5,7 +5,7 @@ import { JobDescription } from "./JobDescription";
 import { SkillsSection } from "./SkillsSection";
 import { QualificationsSection } from "./Qualifications";
 import { ActivitySection } from "./Activity";
-import { ClientHistory } from "./ClientHistory";
+// import { ClientHistory } from "./ClientHistory";
 import { OtherJobs } from "./OtherJobs";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -43,7 +43,7 @@ export function JobContent() {
         invitesSent={0}
         unansweredInvites={0}
       />
-      <ClientHistory />
+      {/* <ClientHistory /> */}
       <OtherJobs clientId={jobDetail.client.user.id} />
     </div>
   );
