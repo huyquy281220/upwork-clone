@@ -19,7 +19,9 @@ export function PricingSection({
     <Card>
       <CardHeader>
         <CardTitle>Pricing</CardTitle>
-        <p className="text-sm text-gray-600">Set your rate for this project.</p>
+        <p className="text-sm text-foreground opacity-80">
+          Set your rate for this project.
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         {jobType === JobType.HOURLY ? (

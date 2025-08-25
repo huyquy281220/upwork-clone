@@ -89,7 +89,7 @@ export function AttachmentsSection({
     <Card>
       <CardHeader>
         <CardTitle>Attachments</CardTitle>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-text-foreground opacity-80">
           Add work samples or documents that showcase your expertise.
         </p>
       </CardHeader>
@@ -106,7 +106,7 @@ export function AttachmentsSection({
             onDrop={handleDrop}
           >
             <ImageIcon className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-sm text-gray-600 mb-2">
+            <p className="text-sm text-text-foreground opacity-80 mb-2">
               Drag and drop your pdf file here, or click to browse
             </p>
             <Button
@@ -122,6 +122,8 @@ export function AttachmentsSection({
               accept=".pdf"
               onChange={handleFileInputChange}
               className="hidden"
+              title="Upload a PDF file"
+              placeholder="Upload a PDF file"
             />
           </div>
         ) : (

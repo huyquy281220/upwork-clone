@@ -6,7 +6,7 @@ import { ModernToast } from "@/components/common/ModernToast";
 import { useToast } from "@/hooks/useToast";
 import { useUser } from "@/hooks/useUserInfo";
 import { createProposal } from "@/services/proposals";
-import { JobDetailProps } from "@/types/jobs";
+import { JobWithStatsProps } from "@/types/jobs";
 import { CreateProposalProps } from "@/types/proposals";
 import { FreelancerUser } from "@/types/user";
 import { formatSelectValue } from "@/utils/formatSelectValue";
@@ -35,10 +35,11 @@ export function CreateProposal() {
 
   const params = useParams();
   const jobId = params.jobId as string;
-  const jobData = queryClient.getQueryData<JobDetailProps>([
+  const jobData = queryClient.getQueryData<JobWithStatsProps>([
     "job-detail",
     jobId,
   ]);
+  const jobDetail = jobData?.job;
 
   const [proposal, setProposal] = useState<{
     coverLetter: string;
@@ -89,6 +90,7 @@ export function CreateProposal() {
     },
   });
   if (!session || !user || !jobData) return <InfiniteLoading />;
+  if (!jobDetail) return;
 
   const handleSubmit = async () => {
     createProposalMutation.mutate({
@@ -130,7 +132,7 @@ export function CreateProposal() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Job Details Sidebar */}
           <div className="lg:col-span-1">
-            <ProposalSidebar jobData={jobData} />
+            <ProposalSidebar jobData={jobDetail} />
           </div>
 
           {/* Proposal Form */}
@@ -144,7 +146,7 @@ export function CreateProposal() {
               <PricingSection
                 pricing={proposal.pricing}
                 setPricing={handleSetPricing}
-                jobType={jobData.jobType}
+                jobType={jobDetail.jobType}
               />
 
               <TimelineSection

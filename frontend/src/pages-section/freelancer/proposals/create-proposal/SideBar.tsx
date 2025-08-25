@@ -9,6 +9,8 @@ interface ProposalSidebarProps {
 }
 
 export function ProposalSidebar({ jobData }: ProposalSidebarProps) {
+  console.log(jobData);
+  console.log(jobData.proposals);
   const formatBudget = (jobType: JobType) => {
     if (jobType === JobType.HOURLY) {
       return `$${jobData.hourlyRateMin}-$${jobData.hourlyRateMax}/hr`;
