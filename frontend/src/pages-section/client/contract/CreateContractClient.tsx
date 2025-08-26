@@ -19,6 +19,8 @@ import { createContract } from "@/services/contract";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
 import { ClientUser } from "@/types/user";
+import { useToast } from "@/hooks/useToast";
+import { ModernToast } from "@/components/common/ModernToast";
 
 type PartialProposalProps = {
   id: string;
@@ -56,6 +58,7 @@ export function CreateContractClient() {
   const [contractTitle, setContractTitle] = useState("");
   const [description, setDescription] = useState("");
   const [milestones, setMilestones] = useState<MilestoneProps[]>([]);
+  const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
 
   const { data: session } = useSession();
   const { data: user } = useUser<ClientUser>(session?.user.id as string);
@@ -69,9 +72,14 @@ export function CreateContractClient() {
   const createContractMutation = useMutation({
     mutationFn: (data: CreateContractProps) => createContract(data),
     onSuccess: () => {
-      router.push("/client/contracts");
+      showSuccessToast("Create contract successfully.", "", 1200);
+      setTimeout(() => {
+        router.push("/client/contracts");
+      }, 1500);
     },
-    onError: () => {},
+    onError: () => {
+      showErrorToast("Failed to create contract. Please try again.", "", 1200);
+    },
   });
 
   useEffect(() => {
@@ -90,7 +98,7 @@ export function CreateContractClient() {
     router.back();
   };
 
-  const handleSendContract = async () => {
+  const handleCreateContract = async () => {
     try {
       createContractMutation.mutate({
         jobId: proposal.job.id,
@@ -156,7 +164,7 @@ export function CreateContractClient() {
 
               <ContractActions
                 onSaveDraft={handleBackToProposal}
-                onSendContract={handleSendContract}
+                onSendContract={handleCreateContract}
                 isValid={!!isValid}
                 isSending={createContractMutation.isPending}
               />
@@ -178,6 +186,8 @@ export function CreateContractClient() {
           </div>
         </div>
       </div>
+
+      {activeToasts && <ModernToast {...toast} />}
     </div>
   );
 }
