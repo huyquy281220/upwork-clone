@@ -30,8 +30,8 @@ interface ContractTermsProps {
   setContractTitle: (title: string) => void;
   description: string;
   setDescription: (description: string) => void;
-  clientBudget: number;
-  setClientBudget: (budget: number) => void;
+  // clientBudget: number;
+  // setClientBudget: (budget: number) => void;
 }
 
 export function ContractTerms({
@@ -51,9 +51,9 @@ export function ContractTerms({
   setContractTitle,
   description,
   setDescription,
-  clientBudget,
-  setClientBudget,
-}: ContractTermsProps) {
+}: // clientBudget,
+// setClientBudget,
+ContractTermsProps) {
   return (
     <Card>
       <CardHeader>
@@ -102,7 +102,7 @@ export function ContractTerms({
         </div>
 
         {/* Budget */}
-        <div>
+        {/* <div>
           <Label htmlFor="client-budget">Your Budget</Label>
           <div className="relative mt-1">
             <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
@@ -117,12 +117,12 @@ export function ContractTerms({
               className="pl-8"
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-foreground opacity-80 mt-1">
             {contractType === "HOURLY"
               ? "Your maximum budget for this project"
               : "Your budget for this fixed-price project"}
           </p>
-        </div>
+        </div> */}
 
         {/* Hourly Contract Fields */}
         {contractType === JobType.HOURLY && (
@@ -130,7 +130,7 @@ export function ContractTerms({
             <div>
               <Label htmlFor="hourly-rate">Hourly Rate</Label>
               <div className="relative mt-1">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground opacity-80">
                   $
                 </span>
                 <Input
@@ -141,12 +141,12 @@ export function ContractTerms({
                   placeholder={hourlyRate ? hourlyRate.toString() : "0.00"}
                   className="pl-8"
                 />
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-foreground opacity-80">
                   /hr
                 </span>
               </div>
 
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-foreground opacity-80 mt-1">
                 Freelancer proposed: ${hourlyRate}/hr
               </p>
             </div>
@@ -161,7 +161,7 @@ export function ContractTerms({
                 placeholder="40"
                 className="mt-1"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-foreground opacity-80 mt-1">
                 Maximum hours per week
               </p>
             </div>
@@ -173,7 +173,7 @@ export function ContractTerms({
           <div>
             <Label htmlFor="fixed-price">Fixed Price</Label>
             <div className="relative mt-1">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground opacity-80">
                 $
               </span>
               <Input
@@ -185,7 +185,7 @@ export function ContractTerms({
                 className="pl-8"
               />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-foreground opacity-80 mt-1">
               Freelancer proposed: ${fixedPrice.toLocaleString()}
             </p>
           </div>

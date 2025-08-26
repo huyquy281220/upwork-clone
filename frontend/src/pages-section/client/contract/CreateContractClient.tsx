@@ -50,7 +50,7 @@ export function CreateContractClient() {
   const [hourlyRate, setHourlyRate] = useState(0);
   const [weeklyLimit, setWeeklyLimit] = useState("");
   const [fixedPrice, setFixedPrice] = useState(0);
-  const [budget, setBudget] = useState(0);
+  // const [budget, setBudget] = useState(0);
   const [projectDuration, setProjectDuration] = useState("");
   const [startDate, setStartDate] = useState("");
   const [contractTitle, setContractTitle] = useState("");
@@ -142,8 +142,8 @@ export function CreateContractClient() {
                 setContractTitle={setContractTitle}
                 description={description}
                 setDescription={setDescription}
-                clientBudget={budget}
-                setClientBudget={setBudget}
+                // clientBudget={budget}
+                // setClientBudget={setBudget}
                 // proposalType={jobData.proposalType}
                 // proposalRate={jobData.proposalRate}
               />
