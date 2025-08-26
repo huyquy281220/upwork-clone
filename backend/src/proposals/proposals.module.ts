@@ -4,7 +4,6 @@ import { ProposalsController } from './proposals.controller';
 import { ProposalsService } from './proposals.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { SocketModule } from 'src/socket/socket.module';
 
 @Module({
