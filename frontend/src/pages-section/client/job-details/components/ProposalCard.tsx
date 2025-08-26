@@ -96,10 +96,10 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
                   </Badge>
                 )} */}
               </div>
-              <p className="text-sm text-gray-400 mb-2">
+              <p className="text-sm text-foreground opacity-80 mb-2">
                 {proposal.freelancer.title}
               </p>
-              <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
+              <div className="flex items-center space-x-4 text-sm text-foreground opacity-80 mb-2">
                 <div className="flex items-center space-x-1">
                   <MapPin className="w-3 h-3" />
                   <span>{proposal.freelancer.user.address}</span>
@@ -111,7 +111,7 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
                 </div>
                 {/* <span>{proposal.freelancer.totalEarned} earned</span> */}
               </div>
-              <div className="flex items-center space-x-4 text-xs text-gray-400">
+              <div className="flex items-center space-x-4 text-xs text-foreground opacity-80">
                 {/* <span>{proposal.freelancer.successRate}% success rate</span>
                 <span>Responds in {proposal.freelancer.responseTime}</span> */}
                 <span>
@@ -159,11 +159,11 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
         {/* Project Details */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div className="bg-subBackground border rounded-lg p-3">
-            <p className="text-xs text-gray-500 mb-1">Timeline</p>
+            <p className="text-xl text-foreground mb-1">Timeline</p>
             <p className="font-medium text-sm">{proposal.timeline}</p>
           </div>
           <div className="bg-subBackground border rounded-lg p-3">
-            <p className="text-xs text-gray-500 mb-1">Level</p>
+            <p className="text-xl text-foreground mb-1">Level</p>
             <p className="font-medium text-sm">
               {proposal.job.experienceLevel}
             </p>
