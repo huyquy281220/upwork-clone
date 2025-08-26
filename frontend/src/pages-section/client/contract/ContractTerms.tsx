@@ -77,7 +77,7 @@ export function ContractTerms({
           <Label className="text-sm font-medium">Contract Type</Label>
           <div className="flex space-x-4 mt-2">
             <div className="flex items-center space-x-2">
-              <input
+              <Input
                 type="radio"
                 id="hourly"
                 name="contract-type"
@@ -88,7 +88,7 @@ export function ContractTerms({
               <Label htmlFor="hourly">Hourly</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <input
+              <Input
                 type="radio"
                 id="fixed"
                 name="contract-type"
