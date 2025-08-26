@@ -25,7 +25,7 @@ export function MilestonesSection({
       id: Date.now().toString(),
       name: "",
       description: "",
-      amount: "",
+      amount: 0,
       dueDate: "",
       status: MilestoneStatus.PENDING,
     };
@@ -42,12 +42,19 @@ export function MilestonesSection({
     value: string
   ) => {
     setMilestones(
-      milestones.map((m) => (m.id === id ? { ...m, [field]: value } : m))
+      milestones.map((m) =>
+        m.id === id
+          ? {
+              ...m,
+              [field]: field === "amount" ? Number(value) || 0 : value,
+            }
+          : m
+      )
     );
   };
 
   const totalAmount = milestones.reduce(
-    (sum, milestone) => sum + (Number.parseFloat(milestone.amount) || 0),
+    (sum, milestone) => sum + (Number(milestone.amount) || 0),
     0
   );
 
@@ -63,13 +70,13 @@ export function MilestonesSection({
             Add Milestone
           </Button>
         </div>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-foreground opacity-80">
           Break down the project into smaller deliverables with payments.
         </p>
       </CardHeader>
       <CardContent>
         {milestones.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-foreground opacity-80">
             <p className="mb-4">No milestones added yet.</p>
             <Button variant="outline" onClick={addMilestone}>
               <Plus className="w-4 h-4 mr-2" />
@@ -112,7 +119,7 @@ export function MilestonesSection({
                       Amount
                     </Label>
                     <div className="relative mt-1">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground opacity-80">
                         $
                       </span>
                       <Input
@@ -170,7 +177,7 @@ export function MilestonesSection({
             ))}
 
             {milestones.length > 0 && (
-              <div className="bg-gray-50 rounded-lg p-4">
+              <div className="bg-subBackground rounded-lg p-4">
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Total Milestone Amount:</span>
                   <span className="text-lg font-bold text-green-600">
