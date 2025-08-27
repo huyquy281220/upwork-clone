@@ -136,6 +136,8 @@ export class ContractsService {
               category: true,
             },
           },
+          payments: true,
+          reviews: true,
         },
       });
 
