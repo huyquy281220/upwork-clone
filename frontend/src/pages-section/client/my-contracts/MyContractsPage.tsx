@@ -40,7 +40,15 @@ export function MyContractsPage() {
 
   const { data: paginatedContracts, isLoading } =
     useQuery<PaginatedContractsProps>({
-      queryKey: ["contracts", session?.user?.id],
+      queryKey: [
+        "contracts",
+        session?.user?.id,
+        currentPage,
+        searchQuery,
+        type,
+        date,
+        status,
+      ],
       queryFn: () =>
         getPaginatedContractsForClient(
           session?.user?.id ?? "",
