@@ -1,4 +1,4 @@
-import { PaymentMethodProps } from "./payments";
+import { PaymentMethodProps, PaymentsProps } from "./payments";
 import { ReviewProps } from "./review";
 import { WorkLogProps } from "./work-log";
 import { WorkSubmissionProps } from "./work-submissions";
@@ -95,6 +95,8 @@ export interface ContractProps {
   workLog?: WorkLogProps[];
   workSubmission?: WorkSubmissionProps[];
   milestone?: MilestoneProps[];
+  payments?: PaymentsProps[];
+  reviews?: ReviewProps[];
 }
 
 export interface CreateContractProps {

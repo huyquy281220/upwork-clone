@@ -46,3 +46,16 @@ export interface PaymentMethodProps {
     exp_year: number;
   };
 }
+
+export interface PaymentsProps {
+  id: string;
+  contractId: string;
+  amount: number;
+  status: PaymentStatus;
+  method: PaymentMethodType;
+  paymentIntentId?: string;
+  captureMethod?: "automatic" | "manual";
+  applicationFeeAmount?: number;
+  paidAt?: string;
+  createdAt: string;
+}
