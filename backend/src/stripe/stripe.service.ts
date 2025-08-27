@@ -268,6 +268,8 @@ export class StripeService {
 
   async createPaymentIntent(data: CreatePaymentIntentDto) {
     try {
+      const amountInCents = data.amount * 100;
+
       const customer = await this.getCustomerInfoFromClientId(data.clientId);
 
       const isHourly = data.contractType === ContractType.HOURLY;
@@ -275,7 +277,7 @@ export class StripeService {
 
       const paymentIntent = await this.stripe.paymentIntents.create(
         {
-          amount: data.amount,
+          amount: amountInCents,
           currency: data.currency || 'USD',
           customer: customer.customerId,
           payment_method: data.paymentMethodId,
