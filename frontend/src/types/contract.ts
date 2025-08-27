@@ -1,4 +1,4 @@
-import { PaymentMethodProps, PaymentsProps } from "./payments";
+import { PaymentsProps } from "./payments";
 import { ReviewProps } from "./review";
 import { WorkLogProps } from "./work-log";
 import { WorkSubmissionProps } from "./work-submissions";
@@ -48,8 +48,6 @@ export interface ContractProps {
   projectDuration: string;
   milestones?: MilestoneProps[];
 
-  payment: PaymentMethodProps[];
-  review: ReviewProps[];
   createdAt: string;
   updatedAt: string;
   startedAt: string;
