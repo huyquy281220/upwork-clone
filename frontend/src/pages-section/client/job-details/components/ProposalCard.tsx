@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { rejectProposal } from "@/services/proposals";
 import { HoursPerWeek } from "@/types/jobs";
 import { ProposalProps } from "@/types/proposals";
+import { ProposalStatus } from "@/types/user";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Eye,
@@ -62,6 +63,8 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
       }, 500);
     }
   };
+
+  console.log(proposal.status);
 
   if (!session) return <InfiniteLoading />;
 
@@ -175,7 +178,7 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
           <div className="flex items-center space-x-2">
             <Button
               size="sm"
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 text-white"
               onClick={() => onViewDetails(proposal)}
             >
               <Eye className="w-4 h-4 mr-1" />
@@ -194,30 +197,34 @@ export function ProposalCard({ proposal, onViewDetails }: ProposalCardProps) {
               {proposal.shortlisted ? "Shortlisted" : "Shortlist"}
             </Button> */}
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-green-600 hover:text-green-700 border-green-200 hover:bg-green-50 bg-transparent"
-              onClick={() =>
-                router.push(
-                  `/client/contracts/create?proposalId=${proposal.id}`
-                )
-              }
-            >
-              <ThumbsUp className="w-4 h-4 mr-1" />
-              Accept
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 bg-transparent"
-              onClick={() => handleRejectProposal(proposal.id, session.user.id)}
-            >
-              <ThumbsDown className="w-4 h-4 mr-1" />
-              {status === "loading" ? "Rejecting..." : "Reject"}
-            </Button>
-          </div>
+          {proposal.status === ProposalStatus.PENDING && (
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-green-600 hover:text-green-700 border-green-200"
+                onClick={() =>
+                  router.push(
+                    `/client/contracts/create?proposalId=${proposal.id}`
+                  )
+                }
+              >
+                <ThumbsUp className="w-4 h-4 mr-1" />
+                Accept
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-red-600 hover:text-red-700 border-red-200"
+                onClick={() =>
+                  handleRejectProposal(proposal.id, session.user.id)
+                }
+              >
+                <ThumbsDown className="w-4 h-4 mr-1" />
+                {status === "loading" ? "Rejecting..." : "Reject"}
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

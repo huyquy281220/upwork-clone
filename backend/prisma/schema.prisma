@@ -228,7 +228,7 @@ model Milestone {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  contract     Contract @relation("MilestoneContract",fields: [contractId], references: [id])
+  contract     Contract @relation("MilestoneContract",fields: [contractId], references: [id],onDelete: Cascade)
 }
 
 model WorkLog {
@@ -238,7 +238,7 @@ model WorkLog {
   hours       Float
   description String?
 
-  contract    Contract?  @relation("WorkLogContract",fields: [contractId], references: [id])
+  contract    Contract?  @relation("WorkLogContract",fields: [contractId], references: [id],onDelete: Cascade)
   freelancer  FreelancerProfile @relation("WorkLogFreelancer",fields: [freelancerId], references: [userId])
   loggedAt    DateTime @default(now())
   createdAt   DateTime @default(now())
