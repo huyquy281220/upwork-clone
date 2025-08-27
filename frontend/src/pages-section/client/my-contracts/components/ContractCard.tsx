@@ -14,6 +14,7 @@ import {
   Shield,
 } from "lucide-react";
 import { ContractProps, ContractType, MilestoneStatus } from "@/types/contract";
+import { PaymentStatus } from "@/types/payments";
 
 interface ContractCardProps {
   contract: ContractProps;
@@ -48,6 +49,18 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
     (m) => m.status === MilestoneStatus.COMPLETED
   ).length;
   const totalMilestones = contract.milestones?.length;
+
+  const getTotalPaid = (contract: ContractProps) => {
+    if (!contract.payments || contract.payments.length === 0) return 0;
+    return contract.payments
+      .filter(
+        (p) =>
+          p.status === PaymentStatus.PAID ||
+          p.status === PaymentStatus.SUCCEEDED
+      )
+      .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+  };
+  const totalPaid = getTotalPaid(contract);
 
   return (
     <div
@@ -165,7 +178,9 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
               <DollarSign className="w-4 h-4" />
               <span>Paid</span>
             </div>
-            {/* <p className="font-medium text-green-600">{contract.totalPaid}</p> */}
+            <p className="font-medium text-foreground">
+              ${totalPaid.toFixed(2)}
+            </p>
           </div>
 
           <div>
