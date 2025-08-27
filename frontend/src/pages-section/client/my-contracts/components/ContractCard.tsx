@@ -78,7 +78,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
               <Badge className={getStatusColor(contract.status)}>
                 {contract.status}
               </Badge>
-              {/* <Badge variant="outline">{contract.contractType}</Badge> */}
+              <Badge variant="outline">{contract.contractType}</Badge>
             </div>
             <p className="text-foreground opacity-85 text-sm line-clamp-2">
               {contract.description}
@@ -101,7 +101,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
                   .join("")}
               </AvatarFallback>
             </Avatar>
-            <div>
+            <div className="space-y-1">
               <div className="flex items-center space-x-2">
                 <p className="font-medium text-foreground">
                   {contract.freelancer.user.fullName}
