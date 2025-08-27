@@ -204,8 +204,8 @@ model Contract {
   milestone    Milestone[]       @relation("MilestoneContract")
   workLog      WorkLog[]           @relation("WorkLogContract")
   workSubmission WorkSubmission[] @relation("WorkSubmissionContract")
-  payments     Payment[]
-  reviews      Review[]
+  payments     Payment[]  @relation("PaymentContract")
+  reviews      Review[]   @relation("ReviewContract")
 
   startedAt    DateTime
   completedAt  DateTime?
@@ -328,7 +328,7 @@ model Payment {
   applicationFeeAmount Float?
   paidAt              DateTime?
   createdAt           DateTime      @default(now())
-  contract            Contract      @relation(fields: [contractId], references: [id])
+  contract            Contract      @relation(name: "PaymentContract", fields: [contractId], references: [id])
 }
 
 model PaymentMethod {
@@ -355,7 +355,7 @@ model Review {
   contractId    String
   reviewerId    String
   revieweeId    String
-  contract      Contract  @relation(fields: [contractId], references: [id])
+  contract      Contract  @relation(name:"ReviewContract",fields: [contractId], references: [id])
   reviewer      User      @relation(fields: [reviewerId], references: [id], name: "Reviewer")
   reviewee      User      @relation(fields: [revieweeId], references: [id], name: "Reviewee")
 }
