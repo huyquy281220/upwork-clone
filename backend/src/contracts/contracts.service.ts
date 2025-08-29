@@ -143,16 +143,16 @@ export class ContractsService {
 
       if (
         contract.contractType === ContractType.FIXED_PRICE &&
-        data.milestone
+        data.milestones
       ) {
-        for (const m of data.milestone) {
+        for (const m of data.milestones) {
           await tx.milestone.create({
             data: {
               contractId: contract.id,
               title: m.title,
               description: m.description,
               amount: m.amount ?? 0,
-              dueDate: m.dueDate,
+              dueDate: new Date(m.dueDate),
               status: MilestoneStatus.PENDING,
             },
           });

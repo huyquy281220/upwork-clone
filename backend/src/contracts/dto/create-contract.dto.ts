@@ -37,7 +37,7 @@ export class CreateContractDto {
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => CreateMilestoneDto)
-  milestone: CreateMilestoneDto[];
+  milestones: CreateMilestoneDto[];
 
   @IsOptional()
   @IsDateString()
