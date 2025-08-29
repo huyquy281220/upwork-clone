@@ -35,7 +35,7 @@ export function ContractActions({
             {isSending ? "Sending..." : "Send Contract"}
           </Button>
         </div>
-        <p className="text-xs text-gray-500 mt-2 text-center">
+        <p className="text-xs text-foreground opacity-80 mt-2 text-center">
           The freelancer will receive an email notification and can accept or
           negotiate the terms.
         </p>
