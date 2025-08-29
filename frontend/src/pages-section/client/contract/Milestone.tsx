@@ -23,7 +23,7 @@ export function MilestonesSection({
   const addMilestone = () => {
     const newMilestone: MilestoneProps = {
       id: Date.now().toString(),
-      name: "",
+      title: "",
       description: "",
       amount: 0,
       dueDate: "",
@@ -105,9 +105,9 @@ export function MilestonesSection({
                     </Label>
                     <Input
                       id={`milestone-name-${milestone.id}`}
-                      value={milestone.name}
+                      value={milestone.title}
                       onChange={(e) =>
-                        updateMilestone(milestone.id, "name", e.target.value)
+                        updateMilestone(milestone.id, "title", e.target.value)
                       }
                       placeholder="e.g., Initial Design Mockups"
                       className="mt-1"

@@ -25,7 +25,7 @@ export enum ContractStatus {
 
 export interface MilestoneProps {
   id: string;
-  name: string;
+  title: string;
   description: string;
   amount: number;
   dueDate: string;
