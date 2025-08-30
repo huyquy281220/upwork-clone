@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ContractStatus } from "@/types/contract";
+import { getContractStatusColor } from "@/utils/getStatusColor";
 import { ArrowLeft } from "lucide-react";
 
 interface ContractHeaderProps {
@@ -16,21 +17,6 @@ export function ContractHeader({
   status,
 }: // expiresDate,
 ContractHeaderProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case ContractStatus.PENDING:
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case ContractStatus.ACTIVE:
-        return "bg-green-100 text-green-800 border-green-200";
-      case ContractStatus.CANCELLED:
-        return "bg-red-100 text-red-800 border-red-200";
-      // case "expired":
-      //   return "bg-gray-100 text-gray-800 border-gray-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
   // const getTimeRemaining = (expiresDate: string) => {
   //   const now = new Date();
   //   const expires = new Date(expiresDate);
@@ -58,7 +44,7 @@ ContractHeaderProps) {
               <p className="text-sm text-foreground">From {clientName}</p>
             </div>
           </div>
-          <Badge className={getStatusColor(status)}>
+          <Badge className={getContractStatusColor(status)}>
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </Badge>
         </div>
