@@ -201,7 +201,7 @@ model Contract {
   client       ClientProfile     @relation("ClientContracts", fields: [clientId], references: [userId])
   freelancer   FreelancerProfile @relation("FreelancerContracts", fields: [freelancerId], references: [userId])
   job          Job               @relation(fields: [jobId], references: [id])
-  milestone    Milestone[]       @relation("MilestoneContract")
+  milestones    Milestone[]       @relation("MilestoneContract")
   workLog      WorkLog[]           @relation("WorkLogContract")
   workSubmission WorkSubmission[] @relation("WorkSubmissionContract")
   payments     Payment[]  @relation("PaymentContract")
