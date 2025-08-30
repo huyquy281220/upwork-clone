@@ -231,7 +231,7 @@ export class ContractsService {
                 },
               },
             },
-            milestone: {
+            milestones: {
               select: {
                 id: true,
                 title: true,
@@ -320,7 +320,7 @@ export class ContractsService {
               },
             },
           },
-          milestone: {
+          milestones: {
             select: {
               id: true,
               title: true,
@@ -398,7 +398,7 @@ export class ContractsService {
         reviews: true,
         workLog: true,
         workSubmission: true,
-        milestone: {
+        milestones: {
           where: { status: MilestoneStatus.COMPLETED },
           select: {
             id: true,
@@ -461,8 +461,8 @@ export class ContractsService {
       totalEarning,
       weekEarning,
       progress,
-      completedMilestones: contract.milestone.length,
-      totalMilestones: contract.milestone.length,
+      completedMilestones: contract.milestones.length,
+      totalMilestones: contract.milestones.length,
       totalHoursWorked,
     };
   }
