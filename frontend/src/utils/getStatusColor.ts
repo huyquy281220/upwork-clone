@@ -14,7 +14,7 @@ export const getMilestoneStatusColor = (status: MilestoneStatus) => {
 export const getContractStatusColor = (status: string) => {
   switch (status) {
     case ContractStatus.PENDING:
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      return "bg-gray-100 text-gray-800";
     case ContractStatus.ACTIVE:
       return "bg-green-100 text-green-800 border-green-200";
     case ContractStatus.CANCELLED:
