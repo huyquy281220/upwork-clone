@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MilestoneProps } from "@/types/contract";
+import { ContractType, MilestoneProps } from "@/types/contract";
 import { CheckCircle, Clock, Calendar } from "lucide-react";
 
 interface MilestonesDisplayProps {
@@ -14,12 +14,8 @@ export function MilestonesDisplay({
   milestones,
   contractType,
 }: MilestonesDisplayProps) {
-  if (contractType !== "fixed" || milestones.length === 0) return null;
-
-  const totalAmount = milestones.reduce(
-    (sum, milestone) => sum + milestone.amount,
-    0
-  );
+  if (contractType !== ContractType.FIXED_PRICE || milestones.length === 0)
+    return null;
 
   const getMilestoneStatusColor = (status: string) => {
     switch (status) {
@@ -100,21 +96,6 @@ export function MilestonesDisplay({
               </div>
             </div>
           ))}
-
-          {/* Total Summary */}
-          <div className="bg-subBackground rounded-lg p-4 mt-6">
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-foreground">
-                Total Project Value:
-              </span>
-              <span className="text-xl font-bold text-green-600">
-                ${totalAmount.toLocaleString()}
-              </span>
-            </div>
-            <p className="text-xs text-foreground opacity-80 mt-1">
-              Payments are protected and released upon milestone completion
-            </p>
-          </div>
         </div>
       </CardContent>
     </Card>
