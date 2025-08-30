@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContractType, MilestoneProps } from "@/types/contract";
+import { getMilestoneStatusColor } from "@/utils/getStatusColor";
 import { CheckCircle, Clock, Calendar } from "lucide-react";
 
 interface MilestonesDisplayProps {
@@ -16,17 +17,6 @@ export function MilestonesDisplay({
 }: MilestonesDisplayProps) {
   if (contractType !== ContractType.FIXED_PRICE || milestones.length === 0)
     return null;
-
-  const getMilestoneStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "in-progress":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
 
   const getMilestoneIcon = (status: string) => {
     switch (status) {
