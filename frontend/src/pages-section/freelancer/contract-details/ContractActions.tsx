@@ -38,7 +38,7 @@ export function ContractActions({
   const [declineReason, setDeclineReason] = useState("");
   const [changesMessage, setChangesMessage] = useState("");
 
-  if (contractStatus !== ContractStatus.ACTIVE) {
+  if (contractStatus !== ContractStatus.PENDING) {
     return null;
   }
 

@@ -129,8 +129,6 @@ export function ContractDetails() {
     );
   }
 
-  console.log(contract.milestones);
-
   return (
     <div className="min-h-screen bg-background">
       <ContractHeader
