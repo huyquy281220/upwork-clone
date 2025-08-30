@@ -40,6 +40,8 @@ const titles = [
 export function ContractsTable({ contracts }: ContractsTableProps) {
   const router = useRouter();
 
+  console.log(contracts);
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       [ContractStatus.PENDING]: {

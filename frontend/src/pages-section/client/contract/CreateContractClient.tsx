@@ -100,17 +100,24 @@ export function CreateContractClient() {
 
   const handleCreateContract = async () => {
     try {
-      createContractMutation.mutate({
+      const contractData: CreateContractProps = {
         jobId: proposal.job.id,
         freelancerId: proposal.freelancer.id,
         clientId: user?.clientProfile.id,
         title: contractTitle,
         description: description,
-        hourlyRate: hourlyRate,
         projectDuration: projectDuration,
         startedAt: new Date(startDate).toISOString(),
         milestones: milestones,
-      });
+      };
+
+      if (contractType === JobType.HOURLY) {
+        contractData.hourlyRate = hourlyRate;
+      } else if (contractType === JobType.FIXED_PRICE) {
+        contractData.fixedPrice = fixedPrice;
+      }
+
+      createContractMutation.mutate(contractData);
     } catch (error) {
       console.error("Contract creation failed:", error);
     }
