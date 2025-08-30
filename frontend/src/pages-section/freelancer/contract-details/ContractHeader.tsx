@@ -1,9 +1,7 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ContractStatus } from "@/types/contract";
-import { ArrowLeft, Clock } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 interface ContractHeaderProps {
   contractTitle: string;
@@ -60,17 +58,9 @@ ContractHeaderProps) {
               <p className="text-sm text-foreground">From {clientName}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Badge className={getStatusColor(status)}>
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </Badge>
-            {status === ContractStatus.PENDING && (
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Clock className="w-4 h-4" />
-                {/* <span>{getTimeRemaining(expiresDate)}</span> */}
-              </div>
-            )}
-          </div>
+          <Badge className={getStatusColor(status)}>
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </Badge>
         </div>
       </div>
     </div>
