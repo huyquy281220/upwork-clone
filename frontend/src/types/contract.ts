@@ -92,7 +92,6 @@ export interface ContractProps {
 
   workLog?: WorkLogProps[];
   workSubmission?: WorkSubmissionProps[];
-  milestone?: MilestoneProps[];
   payments?: PaymentsProps[];
   reviews?: ReviewProps[];
 }

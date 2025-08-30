@@ -73,7 +73,7 @@ export function MilestonesDisplay({
                   {getMilestoneIcon(milestone.status)}
                   <div className="flex-1">
                     <h4 className="font-medium text-foreground mb-1">
-                      Milestone {index + 1}: {milestone.name}
+                      Milestone {index + 1}: {milestone.title}
                     </h4>
                     <p className="text-sm text-foreground opacity-80 mb-2">
                       {milestone.description}

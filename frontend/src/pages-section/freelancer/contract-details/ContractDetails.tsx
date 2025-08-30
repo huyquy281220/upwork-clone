@@ -129,6 +129,8 @@ export function ContractDetails() {
     );
   }
 
+  console.log(contract.milestones);
+
   return (
     <div className="min-h-screen bg-background">
       <ContractHeader
@@ -147,7 +149,7 @@ export function ContractDetails() {
               <ContractTerms contract={contract} />
 
               <MilestonesDisplay
-                milestones={contract.milestone || []}
+                milestones={contract.milestones || []}
                 contractType={contract.contractType}
               />
 
