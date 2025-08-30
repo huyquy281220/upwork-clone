@@ -217,6 +217,7 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                               )
                             }
                             className="cursor-pointer"
+                            disabled={contract.status !== ContractStatus.ACTIVE}
                           >
                             <BriefcaseBusiness className="w-4 h-4 mr-2" />
                             Start Work
