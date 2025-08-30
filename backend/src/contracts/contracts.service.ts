@@ -399,7 +399,6 @@ export class ContractsService {
         workLog: true,
         workSubmission: true,
         milestones: {
-          where: { status: MilestoneStatus.COMPLETED },
           select: {
             id: true,
             title: true,
@@ -408,6 +407,7 @@ export class ContractsService {
             dueDate: true,
             status: true,
           },
+          orderBy: { createdAt: 'asc' },
         },
       },
     });
