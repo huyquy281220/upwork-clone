@@ -2,21 +2,12 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  MapPin,
-  Star,
-  Verified,
-  Building,
-  Calendar,
-  DollarSign,
-} from "lucide-react";
+import { MapPin, Star, Verified, Building, Calendar } from "lucide-react";
 import { ClientDataProps } from "./ContractDetails";
 import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
-const contractDetails = {
-  sentDate: "February 20, 2024",
-  expiresDate: "February 27, 2024",
-  responseTime: "7 days",
+type ClientInfoProps = ClientDataProps & {
+  sentDate: string;
 };
 
 export function ClientInfo({
@@ -27,7 +18,8 @@ export function ClientInfo({
   rating,
   reviewCount,
   totalSpent,
-}: ClientDataProps) {
+  sentDate,
+}: ClientInfoProps) {
   const clientUser = client.user;
 
   return (
@@ -120,12 +112,12 @@ export function ClientInfo({
             <div>
               <p className="font-medium text-sm">Contract Sent</p>
               <p className="text-xs text-foreground opacity-80">
-                {contractDetails.sentDate}
+                {formatDateToMonthDayYear(sentDate)}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          {/* <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
               <DollarSign className="w-4 h-4 text-yellow-600" />
             </div>
@@ -135,7 +127,7 @@ export function ClientInfo({
                 By {contractDetails.expiresDate}
               </p>
             </div>
-          </div>
+          </div> */}
 
           <div className="bg-blue-50 rounded-lg p-3">
             <h4 className="font-medium text-blue-900 mb-1">Need Help?</h4>

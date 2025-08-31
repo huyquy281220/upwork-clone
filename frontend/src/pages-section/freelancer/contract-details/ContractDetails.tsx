@@ -175,7 +175,7 @@ export function ContractDetails() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <ClientInfo {...clientData} />
+            <ClientInfo {...clientData} sentDate={contract.createdAt} />
           </div>
         </div>
       </div>
