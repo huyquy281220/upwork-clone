@@ -165,7 +165,7 @@ export function ContractsFilters({
 
         {/* Results Summary */}
         <div className="mt-4 pt-4 border-t">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-foreground opacity-80">
             Showing <span className="font-medium">{filteredCount}</span> of{" "}
             <span className="font-medium">{totalContracts}</span> contracts
           </p>
