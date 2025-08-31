@@ -46,6 +46,12 @@ export const getContractById = async (contractId: string) => {
   return response.data;
 };
 
+export const getClientByContract = async (contractId: string) => {
+  const response = await api.get(`${apiURL}/contracts/${contractId}/client`);
+
+  return response.data;
+};
+
 export const updateContract = async (
   contractId: string,
   data: UpdateContractProps

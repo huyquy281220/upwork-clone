@@ -71,6 +71,11 @@ export class ContractsController {
     );
   }
 
+  @Get(':contractId/client')
+  findClientByContract(@Param('contractId') contractId: string) {
+    return this.findClientByContract(contractId);
+  }
+
   @Get(':contractId')
   findOne(@Param('contractId') contractId: string) {
     return this.contractsService.findOneContract(contractId);
