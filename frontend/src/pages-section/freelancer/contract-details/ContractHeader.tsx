@@ -1,8 +1,11 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ContractStatus } from "@/types/contract";
 import { getContractStatusColor } from "@/utils/getStatusColor";
 import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ContractHeaderProps {
   contractTitle: string;
@@ -12,28 +15,18 @@ interface ContractHeaderProps {
   // expiresDate: string;
 }
 
-export function ContractHeader({
-  clientName,
-  status,
-}: // expiresDate,
-ContractHeaderProps) {
-  // const getTimeRemaining = (expiresDate: string) => {
-  //   const now = new Date();
-  //   const expires = new Date(expiresDate);
-  //   const diffTime = expires.getTime() - now.getTime();
-  //   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  //   if (diffDays <= 0) return "Expired";
-  //   if (diffDays === 1) return "1 day remaining";
-  //   return `${diffDays} days remaining`;
-  // };
+export function ContractHeader({ clientName, status }: ContractHeaderProps) {
+  const router = useRouter();
 
   return (
     <div className="bg-background">
       <div className="w-full max-w-[80rem] mx-auto border-b">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
-            <Button className="relative text-white">
+            <Button
+              className="relative text-white"
+              onClick={() => router.back()}
+            >
               <ArrowLeft className="w-4 h-4" />
               Back
             </Button>
