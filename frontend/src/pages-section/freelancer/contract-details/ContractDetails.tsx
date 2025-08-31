@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ContractHeader } from "./ContractHeader";
 import { ClientInfo } from "./ClientInfo";
 import { ContractTerms } from "./ContractTerms";
@@ -8,14 +8,19 @@ import { MilestonesDisplay } from "./Milestones";
 import { ContractActions } from "./ContractActions";
 import { ContractSuccess } from "./ContractSuccess";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getContractById, updateContract } from "@/services/contract";
+import {
+  getClientByContract,
+  getContractById,
+  updateContract,
+} from "@/services/contract";
 import { useParams } from "next/navigation";
 import { ContractProps, ContractStatus } from "@/types/contract";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
+import { BaseUser } from "@/types/user";
 
-type ContractData = {
+type ContractDataProps = {
   data: ContractProps;
   totalEarning: number;
   weekEarning: number;
@@ -25,25 +30,20 @@ type ContractData = {
   totalHoursWorked: number;
 };
 
-const clientData = {
-  name: "Sarah Johnson",
-  avatar: "/placeholder.svg?height=60&width=60",
-  company: "TechCorp Solutions",
-  location: "San Francisco, CA",
-  rating: 4.9,
-  reviewsCount: 127,
-  totalSpent: "$85K+",
-  hireRate: 92,
-  verified: true,
-  memberSince: "January 2020",
-  jobsPosted: 45,
-  activeHires: 8,
-};
-
-const contractDetails = {
-  sentDate: "February 20, 2024",
-  expiresDate: "February 27, 2024",
-  responseTime: "7 days",
+export type ClientDataProps = {
+  client: {
+    companyName: string;
+    website: string;
+    user: BaseUser;
+  };
+  contractId: string;
+  contractTitle: string;
+  rating: number;
+  reviewCount: number;
+  activeHires: number;
+  hireRate: number;
+  jobPosted: number;
+  totalSpent: number;
 };
 
 export function ContractDetails() {
@@ -58,10 +58,19 @@ export function ContractDetails() {
 
   const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
 
-  const { data: contractData, isLoading } = useQuery<ContractData>({
-    queryKey: ["contract", contractId],
-    queryFn: () => getContractById(contractId as string),
-  });
+  const { data: contractData, isLoading: isContractDataLoading } =
+    useQuery<ContractDataProps>({
+      queryKey: ["contract", contractId],
+      queryFn: () => getContractById(contractId as string),
+      enabled: !!contractId,
+    });
+
+  const { data: clientData, isLoading: isClientDataLoading } =
+    useQuery<ClientDataProps>({
+      queryKey: ["client-by-contract", contractId],
+      queryFn: () => getClientByContract(contractId as string),
+      enabled: !!contractId,
+    });
 
   const acceptContractMutation = useMutation({
     mutationFn: () =>
@@ -97,33 +106,36 @@ export function ContractDetails() {
     },
   });
 
-  const handleAccept = async () => {
+  const handleAccept = useCallback(async () => {
     setIsProcessing(true);
     acceptContractMutation.mutate();
-  };
+  }, [acceptContractMutation]);
 
-  const handleDecline = async () => {
+  const handleDecline = useCallback(async () => {
     setIsProcessing(true);
     declineContractMutation.mutate();
-  };
+  }, [declineContractMutation]);
 
-  const handleRequestChanges = async (message: string) => {
+  const handleRequestChanges = useCallback(async (message: string) => {
     setIsProcessing(true);
     // Simulate API call
     console.log("Requesting changes:", message);
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsProcessing(false);
     setActionCompleted("changes-requested");
-  };
+  }, []);
 
-  if (isLoading || !contractData) return <InfiniteLoading />;
+  if (isContractDataLoading || isClientDataLoading) return <InfiniteLoading />;
+
+  if (!contractData || !clientData) return;
+
   const contract = contractData.data;
 
   if (actionCompleted) {
     return (
       <ContractSuccess
         action={actionCompleted}
-        clientName={clientData.name}
+        clientName={clientData.client.user.fullName as string}
         contractTitle={contract.title}
       />
     );
@@ -133,7 +145,7 @@ export function ContractDetails() {
     <div className="min-h-screen bg-background">
       <ContractHeader
         contractTitle={contract.title}
-        clientName={clientData.name}
+        clientName={clientData.client.user.fullName as string}
         status={contract.status as ContractStatus}
         sentDate={contract.createdAt}
         // expiresDate={contract.expiresAt}
@@ -163,7 +175,7 @@ export function ContractDetails() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <ClientInfo client={clientData} contractDetails={contractDetails} />
+            <ClientInfo {...clientData} />
           </div>
         </div>
       </div>

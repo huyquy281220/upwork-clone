@@ -10,30 +10,26 @@ import {
   Calendar,
   DollarSign,
 } from "lucide-react";
+import { ClientDataProps } from "./ContractDetails";
+import { formatDateFromISO } from "@/utils/formatDate";
 
-interface ClientInfoProps {
-  client: {
-    name: string;
-    avatar: string;
-    company: string;
-    location: string;
-    rating: number;
-    reviewsCount: number;
-    totalSpent: string;
-    hireRate: number;
-    verified: boolean;
-    memberSince: string;
-    jobsPosted: number;
-    activeHires: number;
-  };
-  contractDetails: {
-    sentDate: string;
-    expiresDate: string;
-    responseTime: string;
-  };
-}
+const contractDetails = {
+  sentDate: "February 20, 2024",
+  expiresDate: "February 27, 2024",
+  responseTime: "7 days",
+};
 
-export function ClientInfo({ client, contractDetails }: ClientInfoProps) {
+export function ClientInfo({
+  client,
+  activeHires,
+  hireRate,
+  jobPosted,
+  rating,
+  reviewCount,
+  totalSpent,
+}: ClientDataProps) {
+  const clientUser = client.user;
+
   return (
     <div className="space-y-6">
       {/* Client Information */}
@@ -44,9 +40,9 @@ export function ClientInfo({ client, contractDetails }: ClientInfoProps) {
         <CardContent>
           <div className="flex items-start space-x-4 mb-4">
             <Avatar className="w-16 h-16">
-              <AvatarImage src={client.avatar || "/placeholder.svg"} />
+              <AvatarImage src={clientUser?.avatarUrl || "/placeholder.svg"} />
               <AvatarFallback>
-                {client.name
+                {(clientUser?.fullName ?? "")
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
@@ -55,19 +51,19 @@ export function ClientInfo({ client, contractDetails }: ClientInfoProps) {
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-1">
                 <h3 className="text-lg font-semibold text-foreground">
-                  {client.name}
+                  {clientUser.fullName}
                 </h3>
-                {client.verified && (
+                {clientUser.verified && (
                   <Verified className="w-4 h-4 text-blue-500" />
                 )}
               </div>
               <div className="flex items-center space-x-2 text-sm !text-muted-foreground mb-2">
                 <Building className="w-3 h-3" />
-                <span>{client.company}</span>
+                <span>{client.companyName}</span>
               </div>
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <MapPin className="w-3 h-3" />
-                <span>{client.location}</span>
+                <span>{clientUser.address}</span>
               </div>
             </div>
           </div>
@@ -76,16 +72,14 @@ export function ClientInfo({ client, contractDetails }: ClientInfoProps) {
             <div className="text-center p-3 bg-subBackground rounded-lg">
               <div className="flex items-center justify-center space-x-1 mb-1">
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="font-bold">{client.rating}</span>
+                <span className="font-bold">{rating}</span>
               </div>
               <p className="text-xs text-foreground opacity-80">
-                {client.reviewsCount} reviews
+                {reviewCount} reviews
               </p>
             </div>
             <div className="text-center p-3 bg-subBackground rounded-lg">
-              <div className="font-bold text-green-600 mb-1">
-                {client.hireRate}%
-              </div>
+              <div className="font-bold text-green-600 mb-1">{hireRate}%</div>
               <p className="text-xs text-foreground opacity-80">Hire rate</p>
             </div>
           </div>
@@ -93,19 +87,21 @@ export function ClientInfo({ client, contractDetails }: ClientInfoProps) {
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-foreground">Total spent:</span>
-              <span className="font-medium">{client.totalSpent}</span>
+              <span className="font-medium">{totalSpent}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-foreground">Jobs posted:</span>
-              <span className="font-medium">{client.jobsPosted}</span>
+              <span className="font-medium">{jobPosted}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-foreground">Active hires:</span>
-              <span className="font-medium">{client.activeHires}</span>
+              <span className="font-medium">{activeHires}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-foreground">Member since:</span>
-              <span className="font-medium">{client.memberSince}</span>
+              <span className="font-medium">
+                {formatDateFromISO(clientUser.createdAt)}
+              </span>
             </div>
           </div>
         </CardContent>
