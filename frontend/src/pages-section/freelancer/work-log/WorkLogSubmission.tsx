@@ -528,7 +528,7 @@ export function WorkSubmissions({
               <h3 className="text-lg font-medium text-foreground mb-2">
                 No submissions yet
               </h3>
-              <p className="text-gray-500 mb-4">
+              <p className="text-foreground opacity-80 mb-4">
                 Create your first work submission to share your progress
               </p>
             </CardContent>
