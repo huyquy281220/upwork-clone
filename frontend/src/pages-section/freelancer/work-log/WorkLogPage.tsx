@@ -208,8 +208,9 @@ export function WorkLogPage() {
 
   const contractStats = rest;
   const canCreateSubmission =
-    contract.contractType === ContractType.HOURLY &&
-    (contract.workLog?.length ?? 0) > 0;
+    contract.contractType === ContractType.HOURLY
+      ? (contract.workLog?.length ?? 0) > 0
+      : true;
 
   return (
     <div className="min-h-screen bg-background">
