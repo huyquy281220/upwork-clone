@@ -86,7 +86,7 @@ export function WorkOverview({
               milestones &&
               milestones.length > 0 && (
                 <div className="pt-4 border-t">
-                  <h4 className="font-medium text-sm text-gray-700 mb-3">
+                  <h4 className="font-medium text-sm text-foreground mb-3">
                     Milestone Progress
                   </h4>
                   <div className="space-y-3">
@@ -108,7 +108,7 @@ export function WorkOverview({
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">
-                              {milestone.name}
+                              {milestone.title}
                             </span>
                             <Badge
                               variant={
