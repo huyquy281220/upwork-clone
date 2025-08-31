@@ -14,8 +14,6 @@ export function formatToISODate(time: string): string {
 
   // Build ISO string with fixed +07:00 timezone
   const localTimeString = `${year}-${month}-${day}T${paddedHours}:${paddedMinutes}:00+07:00`;
-  console.log(localTimeString);
-  console.log(new Date(localTimeString).toISOString());
 
   // Convert to ISO 8601 (UTC time with Z)
   return new Date(localTimeString).toISOString();
@@ -77,3 +75,12 @@ export const formatTimeFromISO = (startISO: string, endISO: string) => {
 
   return `${startTime}-${endTime}`;
 };
+
+export function formatDateToMonthDayYear(isoString: string): string {
+  const date = new Date(isoString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}

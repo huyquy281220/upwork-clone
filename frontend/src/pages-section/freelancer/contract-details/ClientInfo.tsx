@@ -11,7 +11,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { ClientDataProps } from "./ContractDetails";
-import { formatDateFromISO } from "@/utils/formatDate";
+import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
 const contractDetails = {
   sentDate: "February 20, 2024",
@@ -100,7 +100,7 @@ export function ClientInfo({
             <div className="flex justify-between">
               <span className="text-foreground">Member since:</span>
               <span className="font-medium">
-                {formatDateFromISO(clientUser.createdAt)}
+                {formatDateToMonthDayYear(clientUser.createdAt)}
               </span>
             </div>
           </div>
