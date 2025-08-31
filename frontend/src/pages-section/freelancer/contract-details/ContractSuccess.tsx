@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 
 interface ContractSuccessProps {
   action: "accepted" | "declined" | "changes-requested";
@@ -28,6 +29,10 @@ export function ContractSuccess({
 }: ContractSuccessProps) {
   const params = useParams();
   const contractId = params.contractId;
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const getActionDetails = () => {
     switch (action) {
