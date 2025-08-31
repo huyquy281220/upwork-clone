@@ -15,6 +15,7 @@ import {
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { StripeService } from 'src/stripe/stripe.service';
 import { buildContractsFilter } from 'src/helpers/buildContractsFilter';
+import { getClientMetricsByContract } from 'src/helpers/contractHelper';
 @Injectable()
 export class ContractsService {
   constructor(
@@ -476,21 +477,8 @@ export class ContractsService {
             select: {
               userId: true,
               companyName: true,
-              user: {
-                select: {
-                  id: true,
-                  fullName: true,
-                  email: true,
-                  avatarUrl: true,
-                  phoneNumber: true,
-                  address: true,
-                  timezone: true,
-                  verified: true,
-                  stripeCustomerId: true,
-                  createdAt: true,
-                  updatedAt: true,
-                },
-              },
+              website: true,
+              user: true,
             },
           },
         },
@@ -500,10 +488,18 @@ export class ContractsService {
         throw new NotFoundException(`Contract with ID ${contractId} not found`);
       }
 
+      const metrics = await getClientMetricsByContract(this.prisma, contractId);
+
       return {
         client: contract.client,
         contractId: contract.id,
         contractTitle: contract.title,
+        rating: metrics.rating,
+        reviewCount: metrics.reviewCount,
+        totalSpent: metrics.totalSpent,
+        hireRate: metrics.hireRate,
+        jobPosted: metrics.jobPosted,
+        activeHires: metrics.activeHires,
       };
     } catch (error) {
       if (error instanceof NotFoundException) {
