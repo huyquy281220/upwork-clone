@@ -16,15 +16,6 @@ interface WorkLogHeaderProps {
 }
 
 export function WorkLogHeader({ contract }: WorkLogHeaderProps) {
-  // const formatTime = (seconds: number) => {
-  //   const hours = Math.floor(seconds / 3600);
-  //   const minutes = Math.floor((seconds % 3600) / 60);
-  //   const secs = seconds % 60;
-  //   return `${hours.toString().padStart(2, "0")}:${minutes
-  //     .toString()
-  //     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  // };
-
   return (
     <Card className="mb-8">
       <CardContent className="p-6">
@@ -41,7 +32,7 @@ export function WorkLogHeader({ contract }: WorkLogHeaderProps) {
                     ? "default"
                     : "secondary"
                 }
-                className="text-white"
+                className="text-green-600"
               >
                 {contract.contractType === ContractType.HOURLY
                   ? "Hourly"
