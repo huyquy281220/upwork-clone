@@ -7,14 +7,14 @@ export const getMilestoneStatusColor = (status: MilestoneStatus) => {
     case MilestoneStatus.IN_PROGRESS:
       return "bg-blue-100 text-blue-800";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-yellow-100 text-yellow-800";
   }
 };
 
 export const getContractStatusColor = (status: string) => {
   switch (status) {
     case ContractStatus.PENDING:
-      return "bg-gray-100 text-gray-800";
+      return "bg-yellow-100 text-yellow-800";
     case ContractStatus.ACTIVE:
       return "bg-green-100 text-green-800 border-green-200";
     case ContractStatus.CANCELLED:

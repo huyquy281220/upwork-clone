@@ -467,6 +467,52 @@ export class ContractsService {
     };
   }
 
+  async findClientByContract(contractId: string) {
+    try {
+      const contract = await this.prisma.contract.findUnique({
+        where: { id: contractId },
+        include: {
+          client: {
+            select: {
+              userId: true,
+              companyName: true,
+              user: {
+                select: {
+                  id: true,
+                  fullName: true,
+                  email: true,
+                  avatarUrl: true,
+                  phoneNumber: true,
+                  address: true,
+                  timezone: true,
+                  verified: true,
+                  stripeCustomerId: true,
+                  createdAt: true,
+                  updatedAt: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!contract) {
+        throw new NotFoundException(`Contract with ID ${contractId} not found`);
+      }
+
+      return {
+        client: contract.client,
+        contractId: contract.id,
+        contractTitle: contract.title,
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(`Failed to fetch client: ${error.message}`);
+    }
+  }
+
   async updateContract(id: string, data: UpdateContractDto) {
     return this.prisma.$transaction(async (tx) => {
       const contract = await tx.contract.findUnique({
