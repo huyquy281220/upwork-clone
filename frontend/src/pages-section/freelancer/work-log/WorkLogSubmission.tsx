@@ -54,7 +54,7 @@ type WorkSubmissionsProps = {
   canCreate: boolean;
   entries: WorkLogProps[];
   submissions: WorkSubmissionProps[];
-  milestones?: Array<{ id: string; name: string; status: string }>;
+  milestones?: Array<{ id: string; title: string; status: string }>;
   contractType: ContractType;
   onAddSubmission: (submission: CreateWorkSubmissionProps) => void;
   onUpdateSubmission: (
@@ -411,7 +411,7 @@ export function WorkSubmissions({
                         <SelectContent>
                           {milestones.map((milestone) => (
                             <SelectItem key={milestone.id} value={milestone.id}>
-                              {milestone.name}
+                              {milestone.title}
                             </SelectItem>
                           ))}
                         </SelectContent>
