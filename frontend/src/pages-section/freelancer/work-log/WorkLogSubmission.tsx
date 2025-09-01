@@ -19,13 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Plus,
   Upload,
   FileText,
@@ -35,6 +28,7 @@ import {
   Clock,
   CheckCircle,
   ArrowLeft,
+  Target,
 } from "lucide-react";
 import { ContractType } from "@/types/contract";
 import {
@@ -72,6 +66,7 @@ const submissionSchema = z.object({
     .string()
     .min(10, "Description must be at least 10 characters")
     .max(1000, "Description must be less than 1000 characters"),
+  workLogId: z.string().optional(),
   milestoneId: z.string().optional(),
   file:
     typeof window !== "undefined"
@@ -107,10 +102,11 @@ export function WorkSubmissions({
 }: WorkSubmissionsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState<"work-log" | "submission">(
-    "work-log"
+  const [currentStep, setCurrentStep] = useState<"selection" | "submission">(
+    "selection"
   );
   const [selectedWorkLogId, setSelectedWorkLogId] = useState<string>("");
+  const [selectedMilestoneId, setSelectedMilestoneId] = useState<string>("");
   const [selectedFiles, setSelectedFiles] = useState<File | null>(null);
   const [selectedSubmission, setSelectedSubmission] =
     useState<WorkSubmissionProps>(defaultSubmission);
@@ -129,24 +125,25 @@ export function WorkSubmissions({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-    setValue,
-    watch,
+    // setValue,
+    // watch,
   } = useForm<SubmissionFormData>({
     resolver: zodResolver(submissionSchema),
     defaultValues: {
       title: "",
       description: "",
+      workLogId: "",
       milestoneId: "",
       file: undefined,
     },
   });
 
   const onSubmit = (data: SubmissionFormData) => {
-    // const milestone = milestones?.find((m) => m.id === data.milestoneId);
-
     onAddSubmission({
       ...data,
-      workLogId: selectedWorkLogId,
+      contractId: selectedSubmission.contractId,
+      workLogId: selectedWorkLogId || undefined,
+      milestoneId: selectedMilestoneId || undefined,
       file: selectedFiles || data.file,
     } as CreateWorkSubmissionProps);
 
@@ -154,7 +151,8 @@ export function WorkSubmissions({
       reset();
       setSelectedFiles(null);
       setSelectedWorkLogId("");
-      setCurrentStep("work-log");
+      setSelectedMilestoneId("");
+      setCurrentStep("selection");
       setIsAddDialogOpen(false);
     }, 1500);
   };
@@ -163,21 +161,26 @@ export function WorkSubmissions({
     setSelectedWorkLogId(workLogId);
   };
 
+  const handleMilestoneSelection = (milestoneId: string) => {
+    setSelectedMilestoneId(milestoneId);
+  };
+
   const handleNextStep = () => {
-    if (selectedWorkLogId) {
+    if (selectedWorkLogId || selectedMilestoneId) {
       setCurrentStep("submission");
     }
   };
 
   const handleBackStep = () => {
-    setCurrentStep("work-log");
+    setCurrentStep("selection");
   };
 
   const handleDialogClose = (open: boolean) => {
     setIsAddDialogOpen(open);
     if (!open) {
-      setCurrentStep("work-log");
+      setCurrentStep("selection");
       setSelectedWorkLogId("");
+      setSelectedMilestoneId("");
       reset();
       setSelectedFiles(null);
     }
@@ -204,6 +207,9 @@ export function WorkSubmissions({
   const selectedWorkLog = entries.find(
     (entry) => entry.id === selectedWorkLogId
   );
+  const selectedMilestone = milestones?.find(
+    (milestone) => milestone.id === selectedMilestoneId
+  );
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
@@ -214,6 +220,12 @@ export function WorkSubmissions({
       Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
     );
   };
+
+  // Determine what to show based on contract type
+  const isHourlyContract = contractType === ContractType.HOURLY;
+  const showWorkLogs = isHourlyContract && entries.length > 0;
+  const showMilestones =
+    !isHourlyContract && milestones && milestones.length > 0;
 
   return (
     <div className="space-y-6">
@@ -246,68 +258,101 @@ export function WorkSubmissions({
                     <ArrowLeft className="w-4 h-4" />
                   </Button>
                 )}
-                {currentStep === "work-log"
-                  ? "Select Work Log"
+                {currentStep === "selection"
+                  ? isHourlyContract
+                    ? "Select Work Log"
+                    : "Select Milestone"
                   : "Create Work Submission"}
               </DialogTitle>
             </DialogHeader>
-            {/* step 1 */}
-            {currentStep === "work-log" && (
+
+            {/* Step 1: Selection */}
+            {currentStep === "selection" && (
               <div className="space-y-6">
                 <div className="text-sm text-foreground opacity-75">
-                  Select one work log to include in this submission. This helps
-                  track which specific work is being delivered.
+                  {isHourlyContract
+                    ? "Select a work log to include in this submission. This helps track which specific work is being delivered."
+                    : "Select a milestone to include in this submission. This helps track which milestone deliverables are being submitted."}
                 </div>
 
                 {/* Selected Summary */}
-                {selectedWorkLogId && selectedWorkLog && (
+                {(selectedWorkLogId && selectedWorkLog) ||
+                (selectedMilestoneId && selectedMilestone) ? (
                   <div className="p-4 bg-subBackground rounded-lg">
-                    <h4 className="font-medium mb-2">Selected Work Log</h4>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="text-foreground font-semibold">
-                          Date:
-                        </span>
-                        <div className="">
-                          {formatTimeRange(
-                            selectedWorkLog.loggedAt,
-                            selectedWorkLog.endTime
-                          )}
+                    <h4 className="font-medium mb-2">Selected Item</h4>
+                    {selectedWorkLog && (
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-foreground font-semibold">
+                            Type:
+                          </span>
+                          <div className="">Work Log</div>
+                        </div>
+                        <div>
+                          <span className="text-foreground font-semibold">
+                            Date:
+                          </span>
+                          <div className="">
+                            {formatTimeRange(
+                              selectedWorkLog.loggedAt,
+                              selectedWorkLog.endTime
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-foreground font-semibold">
+                            Duration:
+                          </span>
+                          <div className="font-medium">
+                            {selectedWorkLog.hours} hours
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-foreground font-semibold">
+                            Description:
+                          </span>
+                          <div className="text-sm">
+                            {selectedWorkLog.description}
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <span className="text-foreground font-semibold">
-                          Duration:
-                        </span>
-                        <div className="font-medium">
-                          {selectedWorkLog.hours} hours
+                    )}
+                    {selectedMilestone && (
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-foreground font-semibold">
+                            Type:
+                          </span>
+                          <div className="">Milestone</div>
+                        </div>
+                        <div>
+                          <span className="text-foreground font-semibold">
+                            Title:
+                          </span>
+                          <div className="font-medium">
+                            {selectedMilestone.title}
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-foreground font-semibold">
+                            Status:
+                          </span>
+                          <div className="font-medium">
+                            {selectedMilestone.status}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="mt-2">
-                      <span className="text-foreground text-sm font-semibold">
-                        Description:
-                      </span>
-                      <div className="text-sm">
-                        {selectedWorkLog.description}
-                      </div>
-                    </div>
+                    )}
                   </div>
-                )}
+                ) : null}
 
-                {/* Worklog List */}
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {entries.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <Clock className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <p>No work logs available</p>
-                      <p className="text-sm">
-                        Create some time entries first to include them in
-                        submissions
-                      </p>
-                    </div>
-                  ) : (
-                    entries.map((entry) => (
+                {/* Work Logs List - Only for Hourly Contracts */}
+                {showWorkLogs && (
+                  <div className="space-y-3 max-h-48 overflow-y-auto">
+                    <h4 className="font-medium text-sm text-foreground">
+                      Work Logs
+                    </h4>
+                    {entries.map((entry) => (
                       <div
                         key={entry.id}
                         className={`p-4 border rounded-lg cursor-pointer transition-all ${
@@ -334,9 +379,6 @@ export function WorkSubmissions({
                               <div className="font-medium">
                                 {formatDateFromISO(entry.loggedAt)}
                               </div>
-                              {/* <Badge variant={getStatusColor(entry.status)}>
-                                {entry.status}
-                              </Badge> */}
                             </div>
                             <p className="text-sm text-foreground mb-2">
                               {entry.description}
@@ -349,14 +391,81 @@ export function WorkSubmissions({
                                 )}
                               </span>
                               <span>{entry.hours} hours</span>
-                              {/* <span>${entry.earnings.toFixed(2)}</span> */}
                             </div>
                           </div>
                         </div>
                       </div>
-                    ))
-                  )}
-                </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Milestones List - Only for Fixed-Price Contracts */}
+                {showMilestones && (
+                  <div className="space-y-3 max-h-48 overflow-y-auto">
+                    <h4 className="font-medium text-sm text-foreground">
+                      Milestones
+                    </h4>
+                    {milestones.map((milestone) => (
+                      <div
+                        key={milestone.id}
+                        className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                          selectedMilestoneId === milestone.id
+                            ? "border-green-500 bg-subBackground"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                        onClick={() => handleMilestoneSelection(milestone.id)}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <div
+                                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                  selectedMilestoneId === milestone.id
+                                    ? "border-green-500 bg-green-500"
+                                    : "border-gray-300"
+                                }`}
+                              >
+                                {selectedMilestoneId === milestone.id && (
+                                  <CheckCircle className="w-3 h-3 text-white" />
+                                )}
+                              </div>
+                              <div className="font-medium">
+                                {milestone.title}
+                              </div>
+                              <Badge variant="outline" className="text-xs">
+                                {milestone.status}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Empty States */}
+                {!showWorkLogs && !showMilestones && (
+                  <div className="text-center py-8 text-gray-500">
+                    {isHourlyContract ? (
+                      <>
+                        <Clock className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                        <p>No work logs available</p>
+                        <p className="text-sm">
+                          Create some time entries first to include them in
+                          submissions
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <Target className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                        <p>No milestones available</p>
+                        <p className="text-sm">
+                          Wait for milestones to be created by the client
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )}
 
                 {/* Continue Button */}
                 <div className="flex justify-end gap-2 pt-4 border-t">
@@ -368,15 +477,18 @@ export function WorkSubmissions({
                   </Button>
                   <Button
                     onClick={handleNextStep}
-                    disabled={!selectedWorkLogId}
+                    disabled={!selectedWorkLogId && !selectedMilestoneId}
                   >
-                    Continue {selectedWorkLogId ? "(1 selected)" : ""}
+                    Continue{" "}
+                    {selectedWorkLogId || selectedMilestoneId
+                      ? "(1 selected)"
+                      : ""}
                   </Button>
                 </div>
               </div>
             )}
 
-            {/* step 2 */}
+            {/* Step 2: Submission Details */}
             {currentStep === "submission" && (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
@@ -393,31 +505,6 @@ export function WorkSubmissions({
                     </div>
                   )}
                 </div>
-
-                {contractType === ContractType.FIXED_PRICE &&
-                  milestones &&
-                  milestones.length > 0 && (
-                    <div>
-                      <Label htmlFor="milestoneId">Milestone (Optional)</Label>
-                      <Select
-                        value={watch("milestoneId")}
-                        onValueChange={(value) =>
-                          setValue("milestoneId", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a milestone" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {milestones.map((milestone) => (
-                            <SelectItem key={milestone.id} value={milestone.id}>
-                              {milestone.title}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
 
                 <div>
                   <Label htmlFor="description">Description</Label>
@@ -528,7 +615,7 @@ export function WorkSubmissions({
               <h3 className="text-lg font-medium text-foreground mb-2">
                 No submissions yet
               </h3>
-              <p className="text-foreground opacity-80 mb-4">
+              <p className="text-gray-500 mb-4">
                 Create your first work submission to share your progress
               </p>
             </CardContent>
