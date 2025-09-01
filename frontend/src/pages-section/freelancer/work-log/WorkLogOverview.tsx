@@ -11,6 +11,7 @@ import {
 } from "@/types/contract";
 import { WorkSubmissionProps } from "@/types/work-submissions";
 import { WorkLogProps } from "@/types/work-log";
+import { cn } from "@/lib/utils";
 
 type WorkOverviewProps = {
   contractType: ContractType;
@@ -95,14 +96,20 @@ export function WorkOverview({
                         key={milestone.id}
                         className="flex items-center gap-3"
                       >
-                        <div className="flex-shrink-0">
+                        <div
+                          className={cn(
+                            "w-5 h-5 rounded-full flex items-center justify-center",
+                            milestone.status === MilestoneStatus.COMPLETED
+                              ? "bg-green-100 text-green-600"
+                              : milestone.status === MilestoneStatus.IN_PROGRESS
+                              ? "bg-blue-100 text-blue-600"
+                              : "bg-gray-100 text-gray-400"
+                          )}
+                        >
                           {milestone.status === MilestoneStatus.COMPLETED ? (
-                            <CheckCircle className="w-5 h-5 text-green-500" />
-                          ) : milestone.status ===
-                            MilestoneStatus.IN_PROGRESS ? (
-                            <Clock className="w-5 h-5 text-blue-500" />
+                            <CheckCircle className="w-3 h-3" />
                           ) : (
-                            <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
+                            <Clock className="w-3 h-3" />
                           )}
                         </div>
                         <div className="flex-1">
