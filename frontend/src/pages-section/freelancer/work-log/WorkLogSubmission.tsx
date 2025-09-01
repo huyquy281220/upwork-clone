@@ -478,6 +478,7 @@ export function WorkSubmissions({
                   <Button
                     onClick={handleNextStep}
                     disabled={!selectedWorkLogId && !selectedMilestoneId}
+                    className="text-white"
                   >
                     Continue{" "}
                     {selectedWorkLogId || selectedMilestoneId
