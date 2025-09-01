@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, Upload, BarChart3 } from "lucide-react";
+import { Clock, Upload, BarChart3, Target } from "lucide-react";
 import { ContractType, MilestoneProps } from "@/types/contract";
 import { WorkLogStats } from "../WorkLogStats";
 import { WorkOverview } from "../WorkLogOverview";
@@ -10,6 +10,7 @@ import { WorkSubmissions } from "../WorkLogSubmission";
 import { WorkSubmissionProps } from "@/types/work-submissions";
 import { WorkLogProps, CreateWorkLogProps } from "@/types/work-log";
 import { CreateWorkSubmissionProps } from "@/types/work-submissions";
+import { MilestonesList } from "../MilestonesList";
 
 type WorkLogTabsProps = {
   contractType: ContractType;
@@ -54,7 +55,7 @@ export function WorkLogTabs({
     { value: "overview", label: "Overview", icon: BarChart3 },
     ...(contractType === ContractType.HOURLY
       ? [{ value: "time-entries", label: "Time Entries", icon: Clock }]
-      : []),
+      : [{ value: "milestones", label: "Milestones", icon: Target }]),
     { value: "submissions", label: "Work Submissions", icon: Upload },
   ];
 
@@ -88,7 +89,7 @@ export function WorkLogTabs({
           />
         </TabsContent>
 
-        {contractType === ContractType.HOURLY && (
+        {contractType === ContractType.HOURLY ? (
           <TabsContent value="time-entries" className="mt-6">
             <TimeEntriesList
               timeEntries={timeEntries}
@@ -97,6 +98,10 @@ export function WorkLogTabs({
               onEditTimeEntry={onEditTimeEntry}
               onDeleteTimeEntry={onDeleteTimeEntry}
             />
+          </TabsContent>
+        ) : (
+          <TabsContent value="milestones" className="mt-6">
+            <MilestonesList milestones={milestones ?? []} />
           </TabsContent>
         )}
 
