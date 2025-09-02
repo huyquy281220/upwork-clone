@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { ContractProps, ContractType, MilestoneStatus } from "@/types/contract";
 import { PaymentStatus } from "@/types/payments";
+import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
 interface ContractCardProps {
   contract: ContractProps;
@@ -35,14 +36,6 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
   };
 
   const completedMilestones = contract.milestones?.filter(
@@ -156,7 +149,7 @@ export function ContractCard({ contract, onClick }: ContractCardProps) {
               <span>Started</span>
             </div>
             <p className="font-medium text-foreground">
-              {formatDate(contract.startedAt)}
+              {formatDateToMonthDayYear(contract.startedAt)}
             </p>
           </div>
 
