@@ -5,11 +5,13 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { NotificationsModule } from 'src/notifications/notifications.module';
+import { SocketModule } from 'src/socket/socket.module';
 
 @Module({
   imports: [
     PrismaModule,
     NotificationsModule,
+    SocketModule,
     MulterModule.register({
       storage: memoryStorage(), // Store file in memory instead of S3
       limits: {
