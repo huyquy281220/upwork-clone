@@ -4,10 +4,12 @@ import { WorkSubmissionsController } from './work-submissions.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
   imports: [
     PrismaModule,
+    NotificationsModule,
     MulterModule.register({
       storage: memoryStorage(), // Store file in memory instead of S3
       limits: {

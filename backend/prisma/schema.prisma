@@ -433,6 +433,7 @@ enum NotificationType {
   CONTRACT_COMPLETED
   CONTRACT_CANCELLED
   REJECT_PROPOSAL
+  WORK_SUBMISSION
 }
 
 enum SubmissionStatus {

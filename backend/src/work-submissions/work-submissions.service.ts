@@ -10,10 +10,15 @@ import { s3Client } from 'src/config/aws-s3.config';
 import { CreateWorkSubmissionDto } from './dto/create-work-submissions.dto';
 import { UpdateWorkSubmissionDto } from './dto/update-work-submissions.dto';
 import { Express } from 'express';
+import { NotificationType } from '@prisma/client';
+import { NotificationsGateway } from 'src/socket/socket.gateway';
 
 @Injectable()
 export class WorkSubmissionsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly notificationGateway: NotificationsGateway,
+  ) {}
 
   async getDownloadUrl(fileKey: string) {
     const command = new GetObjectCommand({
@@ -52,23 +57,50 @@ export class WorkSubmissionsService {
   }
 
   async create(data: CreateWorkSubmissionDto, file?: Express.Multer.File) {
-    try {
-      let fileUrl = null;
-      let fileName = null;
-      let fileSize = null;
-      let fileKey = null;
+    let fileUrl = null;
+    let fileName = null;
+    let fileSize = null;
+    let fileKey = null;
+    // Upload file if provided
+    if (file) {
+      const uploadResult = await this.uploadFile(file);
+      fileUrl = uploadResult.url;
+      fileName = uploadResult.originalName;
+      fileSize = uploadResult.size;
+      fileKey = uploadResult.key;
+    }
 
-      // Upload file if provided
-      if (file) {
-        const uploadResult = await this.uploadFile(file);
-        fileUrl = uploadResult.url;
-        fileName = uploadResult.originalName;
-        fileSize = uploadResult.size;
-        fileKey = uploadResult.key;
+    if (!!data.workLogId === !!data.milestoneId) {
+      throw new BadRequestException(
+        'Provide either workLogId or milestoneId, not both.',
+      );
+    }
+
+    const contract = await this.prisma.contract.findUnique({
+      where: { id: data.contractId },
+      include: { client: true },
+    });
+
+    if (!contract) {
+      throw new NotFoundException(
+        `Contract with ID ${data.contractId} not found`,
+      );
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      if (data.workLogId) {
+        const wl = await tx.workLog.findUnique({
+          where: { id: data.workLogId },
+        });
+        if (!wl) throw new BadRequestException('Invalid workLogId');
+      } else {
+        const ms = await tx.milestone.findUnique({
+          where: { id: data.milestoneId! },
+        });
+        if (!ms) throw new BadRequestException('Invalid milestoneId');
       }
 
-      // Create work submission with file URL
-      const workSubmission = await this.prisma.workSubmission.create({
+      const workSubmission = await tx.workSubmission.create({
         data: {
           title: data.title,
           description: data.description,
@@ -82,13 +114,75 @@ export class WorkSubmissionsService {
         },
       });
 
-      return workSubmission;
-    } catch (error) {
-      console.log(error);
-      throw new BadRequestException(
-        `Failed to create work submission: ${error.message}`,
+      const notification = await tx.notification.create({
+        data: {
+          userId: contract.client.userId,
+          content: `A freelancer has submitted a work submission to your job "${data.title}"`,
+          type: NotificationType.WORK_SUBMISSION,
+          itemId: workSubmission.id,
+        },
+      });
+
+      this.notificationGateway.sendNotificationToUser(
+        contract.client.userId,
+        notification,
       );
-    }
+
+      return workSubmission;
+    });
+
+    // try {
+    //   let fileUrl = null;
+    //   let fileName = null;
+    //   let fileSize = null;
+    //   let fileKey = null;
+    //   // Upload file if provided
+    //   if (file) {
+    //     const uploadResult = await this.uploadFile(file);
+    //     fileUrl = uploadResult.url;
+    //     fileName = uploadResult.originalName;
+    //     fileSize = uploadResult.size;
+    //     fileKey = uploadResult.key;
+    //   }
+    //   // Create work submission with file URL
+    //   const workSubmission = await this.prisma.workSubmission.create({
+    //     data: {
+    //       title: data.title,
+    //       description: data.description,
+    //       contractId: data.contractId,
+    //       workLogId: data.workLogId || null,
+    //       milestoneId: data.milestoneId || null,
+    //       fileUrl: fileUrl,
+    //       fileName: fileName,
+    //       fileSize: fileSize,
+    //       fileKey: fileKey,
+    //     },
+    //   });
+    //   const contract = await this.prisma.contract.findUnique({
+    //     where: { id: data.contractId },
+    //     include: {
+    //       client: true,
+    //     },
+    //   });
+    //   const notification = await this.prisma.notification.create({
+    //     data: {
+    //       userId: contract.client.userId,
+    //       content: `A freelancer has submitted a work submission to your job "${data.title}"`,
+    //       type: NotificationType.WORK_SUBMISSION,
+    //       itemId: workSubmission.id,
+    //     },
+    //   });
+    //   this.notificationGateway.sendNotificationToUser(
+    //     contract.client.userId,
+    //     notification,
+    //   );
+    //   return workSubmission;
+    // } catch (error) {
+    //   console.log(error);
+    //   throw new BadRequestException(
+    //     `Failed to create work submission: ${error.message}`,
+    //   );
+    // }
   }
 
   async findByWorkLogIdAndContractId(workLogId: string, contractId: string) {
