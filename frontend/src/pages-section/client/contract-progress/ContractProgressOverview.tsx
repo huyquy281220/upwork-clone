@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Clock, CheckCircle, Calendar, TrendingUp } from "lucide-react";
+import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
 interface Contract {
   id: number;
@@ -49,14 +50,6 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
   };
 
   const calculateDaysRemaining = (dueDate: string) => {
@@ -177,7 +170,9 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
                       <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
-                          <span>Due: {formatDate(milestone.dueDate)}</span>
+                          <span>
+                            Due: {formatDateToMonthDayYear(milestone.dueDate)}
+                          </span>
                         </div>
                         {!isCompleted && (
                           <div className="flex items-center space-x-1">

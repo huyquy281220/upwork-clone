@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContractType, MilestoneProps } from "@/types/contract";
+import { formatDateToMonthDayYear } from "@/utils/formatDate";
 import { getMilestoneStatusColor } from "@/utils/getStatusColor";
 import { CheckCircle, Clock, Calendar } from "lucide-react";
 
@@ -27,14 +28,6 @@ export function MilestonesDisplay({
       default:
         return <Clock className="w-5 h-5 text-gray-400" />;
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
   };
 
   return (
@@ -67,7 +60,9 @@ export function MilestonesDisplay({
                     <div className="flex items-center space-x-4 text-xs text-gray-500">
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-3 h-3" />
-                        <span>Due: {formatDate(milestone.dueDate)}</span>
+                        <span>
+                          Due: {formatDateToMonthDayYear(milestone.dueDate)}
+                        </span>
                       </div>
                     </div>
                   </div>

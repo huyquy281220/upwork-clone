@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Target, Calendar, DollarSign } from "lucide-react";
 import { MilestoneProps, MilestoneStatus } from "@/types/contract";
+import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
 interface MilestonesListProps {
   milestones: MilestoneProps[];
@@ -24,14 +25,6 @@ export function MilestonesList({ milestones }: MilestonesListProps) {
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
   };
 
   return (
@@ -86,7 +79,9 @@ export function MilestonesList({ milestones }: MilestonesListProps) {
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4" />
-                        <span>Due: {formatDate(milestone.dueDate)}</span>
+                        <span>
+                          Due: {formatDateToMonthDayYear(milestone.dueDate)}
+                        </span>
                       </div>
                     </div>
                   </div>

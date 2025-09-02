@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Calendar, CreditCard, Download, Eye } from "lucide-react";
+import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
 interface Contract {
   id: number;
@@ -115,14 +116,6 @@ export function PaymentTracking({ contract }: PaymentTrackingProps) {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
   const totalPaidAmount = payments
     .filter((p) => p.status === "paid")
     .reduce(
@@ -212,7 +205,7 @@ export function PaymentTracking({ contract }: PaymentTrackingProps) {
                   <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
                     <div className="flex items-center space-x-1">
                       <Calendar className="w-4 h-4" />
-                      <span>{formatDate(payment.date)}</span>
+                      <span>{formatDateToMonthDayYear(payment.date)}</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <CreditCard className="w-4 h-4" />
