@@ -74,6 +74,7 @@ export class WorkSubmissionsService {
           description: data.description,
           contractId: data.contractId,
           workLogId: data.workLogId,
+          milestoneId: data.milestoneId,
           fileUrl: fileUrl,
           fileName: fileName,
           fileSize: fileSize,
