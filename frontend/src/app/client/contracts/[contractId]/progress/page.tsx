@@ -56,7 +56,7 @@ const mockContract = {
 
 export default function ContractProgressPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <ContractProgressHeader contract={mockContract} />
       <ContractProgressTabs contract={mockContract} />
     </div>
