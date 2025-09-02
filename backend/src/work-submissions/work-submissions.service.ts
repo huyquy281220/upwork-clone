@@ -130,59 +130,6 @@ export class WorkSubmissionsService {
 
       return workSubmission;
     });
-
-    // try {
-    //   let fileUrl = null;
-    //   let fileName = null;
-    //   let fileSize = null;
-    //   let fileKey = null;
-    //   // Upload file if provided
-    //   if (file) {
-    //     const uploadResult = await this.uploadFile(file);
-    //     fileUrl = uploadResult.url;
-    //     fileName = uploadResult.originalName;
-    //     fileSize = uploadResult.size;
-    //     fileKey = uploadResult.key;
-    //   }
-    //   // Create work submission with file URL
-    //   const workSubmission = await this.prisma.workSubmission.create({
-    //     data: {
-    //       title: data.title,
-    //       description: data.description,
-    //       contractId: data.contractId,
-    //       workLogId: data.workLogId || null,
-    //       milestoneId: data.milestoneId || null,
-    //       fileUrl: fileUrl,
-    //       fileName: fileName,
-    //       fileSize: fileSize,
-    //       fileKey: fileKey,
-    //     },
-    //   });
-    //   const contract = await this.prisma.contract.findUnique({
-    //     where: { id: data.contractId },
-    //     include: {
-    //       client: true,
-    //     },
-    //   });
-    //   const notification = await this.prisma.notification.create({
-    //     data: {
-    //       userId: contract.client.userId,
-    //       content: `A freelancer has submitted a work submission to your job "${data.title}"`,
-    //       type: NotificationType.WORK_SUBMISSION,
-    //       itemId: workSubmission.id,
-    //     },
-    //   });
-    //   this.notificationGateway.sendNotificationToUser(
-    //     contract.client.userId,
-    //     notification,
-    //   );
-    //   return workSubmission;
-    // } catch (error) {
-    //   console.log(error);
-    //   throw new BadRequestException(
-    //     `Failed to create work submission: ${error.message}`,
-    //   );
-    // }
   }
 
   async findByWorkLogIdAndContractId(workLogId: string, contractId: string) {
