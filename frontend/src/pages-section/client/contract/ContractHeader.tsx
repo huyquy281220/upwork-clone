@@ -9,7 +9,7 @@ export function ContractHeader({
 }: ContractHeaderProps) {
   return (
     <div className="border-b">
-      <div className="max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="pb-2">
           <h1 className="text-3xl font-semibold text-foreground">
             Create Contract

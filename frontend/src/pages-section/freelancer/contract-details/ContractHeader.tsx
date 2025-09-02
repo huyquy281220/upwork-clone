@@ -20,7 +20,7 @@ export function ContractHeader({ clientName, status }: ContractHeaderProps) {
 
   return (
     <div className="bg-background">
-      <div className="w-full max-w-[80rem] mx-auto border-b">
+      <div className="w-full max-w-7xl mx-auto border-b">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
             <Button

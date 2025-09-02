@@ -38,7 +38,7 @@ export function AllJobsClient() {
   if (!session || isLoading || !jobsPosted) return <InfiniteLoading />;
 
   return (
-    <div className="max-w-[80rem] mx-auto">
+    <div className="max-w-7xl mx-auto">
       <JobPostsHeader />
       <JobPostsList
         jobPosts={jobsPosted?.data ?? []}

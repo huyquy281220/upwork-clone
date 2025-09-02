@@ -11,7 +11,7 @@ export default function GuestLayout({
   return (
     <div>
       <Header />
-      <div className="md:max-w-[80rem] mx-auto">
+      <div className="md:max-w-7xl mx-auto">
         <Suspense fallback={<Loading />}>{children}</Suspense>
       </div>
       <Footer />

@@ -135,7 +135,7 @@ export function CreateContractClient() {
     <div className="min-h-screen bg-background">
       <ContractHeader freelancerName={""} jobTitle={proposal.job.title} />
 
-      <div className="max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="order-2 md:order-1 lg:col-span-2">

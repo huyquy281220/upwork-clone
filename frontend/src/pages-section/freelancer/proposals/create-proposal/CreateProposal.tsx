@@ -120,7 +120,7 @@ export function CreateProposal() {
     <div className="min-h-screen bg-background">
       {activeToasts && <ModernToast {...toast} />}
       {/* Header */}
-      <div className="max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           <h1 className="text-xl font-semibold text-foreground">
             Submit a Proposal
@@ -128,7 +128,7 @@ export function CreateProposal() {
         </div>
       </div>
 
-      <div className="max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Job Details Sidebar */}
           <div className="lg:col-span-1">
