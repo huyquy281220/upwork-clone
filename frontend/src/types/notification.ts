@@ -1,6 +1,7 @@
 enum NotificationType {
   APPLY_JOB = "APPLY_JOB",
   CREATE_CONTRACT = "CREATE_CONTRACT",
+  WORK_SUBMISSION = "WORK_SUBMISSION",
 }
 
 export interface NotificationProps {
