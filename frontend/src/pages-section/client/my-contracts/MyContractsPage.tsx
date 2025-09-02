@@ -4,7 +4,6 @@ import { useState } from "react";
 import { ContractsHeader } from "./ContractsHeader";
 import { ContractsFilters } from "./ContractsFilter";
 import { ContractsList } from "./ContractsList";
-import { ContractDetails } from "./ContractDetails";
 import { useSession } from "next-auth/react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import useFilter from "@/hooks/useFilter";
@@ -12,6 +11,7 @@ import { ContractProps } from "@/types/contract";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { getPaginatedContractsForClient } from "@/services/contract";
 import { Pagination } from "@/components/common/Pagination";
+import { useRouter } from "next/navigation";
 
 type PaginatedContractsProps = {
   data: ContractProps[];
@@ -28,8 +28,9 @@ const defaultFilters = {
 const LIMIT = 6;
 
 export function MyContractsPage() {
+  const router = useRouter();
+
   const { data: session } = useSession();
-  const [selectedContract, setSelectedContract] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const { getFilter, setFilter, resetFilters } = useFilter(defaultFilters);
 
@@ -68,21 +69,8 @@ export function MyContractsPage() {
   };
 
   const handleContractSelect = (contractId: string) => {
-    setSelectedContract(contractId);
+    router.push(`/client/contracts/${contractId}/progress`);
   };
-
-  const handleBackToList = () => {
-    setSelectedContract(null);
-  };
-
-  if (selectedContract) {
-    const contract = paginatedContracts?.data.find(
-      (c) => c.id === selectedContract
-    );
-    if (contract) {
-      return <ContractDetails contract={contract} onBack={handleBackToList} />;
-    }
-  }
 
   if (isLoading || !paginatedContracts) return <InfiniteLoading />;
 
