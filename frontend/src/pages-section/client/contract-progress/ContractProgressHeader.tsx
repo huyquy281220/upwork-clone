@@ -14,6 +14,8 @@ import {
   Phone,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getContractStatusColor } from "@/utils/getStatusColor";
+import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
 interface Contract {
   id: number;
@@ -44,29 +46,6 @@ export function ContractProgressHeader({
 }: ContractProgressHeaderProps) {
   const router = useRouter();
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "active":
-        return "bg-green-100 text-green-800";
-      case "completed":
-        return "bg-blue-100 text-blue-800";
-      case "paused":
-        return "bg-yellow-100 text-yellow-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   return (
     <div className="bg-background border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -80,7 +59,7 @@ export function ContractProgressHeader({
                 {contract.title}
               </h1>
               <div className="flex items-center space-x-2">
-                <Badge className={getStatusColor(contract.status)}>
+                <Badge className={getContractStatusColor(contract.status)}>
                   {contract.status}
                 </Badge>
                 <Badge variant="outline">{contract.budgetType}</Badge>
@@ -145,7 +124,7 @@ export function ContractProgressHeader({
                   <span>Started</span>
                 </div>
                 <p className="font-medium text-gray-900">
-                  {formatDate(contract.startDate)}
+                  {formatDateToMonthDayYear(contract.startDate)}
                 </p>
               </div>
               <div className="text-center">
