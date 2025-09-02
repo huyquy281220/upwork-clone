@@ -18,7 +18,8 @@ export type CreateWorkSubmissionProps = {
   description: string;
   file: File;
   contractId: string;
-  workLogId: string;
+  workLogId?: string;
+  milestoneId?: string;
 };
 
 export type UpdateWorkSubmissionProps = {

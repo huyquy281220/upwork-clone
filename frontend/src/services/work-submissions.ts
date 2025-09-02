@@ -20,7 +20,8 @@ export const createWorkSubmission = async (
   formData.append("title", submission.title);
   formData.append("description", submission.description);
   formData.append("contractId", submission.contractId);
-  formData.append("workLogId", submission.workLogId);
+  formData.append("workLogId", submission.workLogId || "");
+  formData.append("milestoneId", submission.milestoneId || "");
   formData.append("file", submission.file);
 
   const response = await api.post(
