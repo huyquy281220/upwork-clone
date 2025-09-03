@@ -15,33 +15,18 @@ import {
 import { useRouter } from "next/navigation";
 import { getContractStatusColor } from "@/utils/getStatusColor";
 import { formatDateToMonthDayYear } from "@/utils/formatDate";
-
-interface Contract {
-  id: number;
-  title: string;
-  freelancer: {
-    name: string;
-    avatar: string;
-    rating: number;
-    location: string;
-    verified: boolean;
-  };
-  status: string;
-  startDate: string;
-  budget: string;
-  budgetType: string;
-  hourlyRate: string | null;
-  totalPaid: string;
-  progress: number;
-  category: string;
-}
+import { ContractProps, ContractType } from "@/types/contract";
 
 interface ContractProgressHeaderProps {
-  contract: Contract;
+  contract: ContractProps;
+  rating: number;
+  totalPaid: number;
 }
 
 export function ContractProgressHeader({
   contract,
+  rating,
+  totalPaid,
 }: ContractProgressHeaderProps) {
   const router = useRouter();
 
@@ -61,7 +46,7 @@ export function ContractProgressHeader({
                 <Badge className={getContractStatusColor(contract.status)}>
                   {contract.status}
                 </Badge>
-                <Badge variant="outline">{contract.budgetType}</Badge>
+                <Badge variant="outline">{contract.contractType}</Badge>
               </div>
             </div>
           </div>
@@ -72,11 +57,11 @@ export function ContractProgressHeader({
           <div className="flex items-center space-x-4">
             <Avatar className="w-16 h-16">
               <AvatarImage
-                src={contract.freelancer.avatar || "/placeholder.svg"}
-                alt={contract.freelancer.name}
+                src={contract.freelancer.user.avatarUrl || "/placeholder.svg"}
+                alt={contract.freelancer.user.fullName}
               />
               <AvatarFallback>
-                {contract.freelancer.name
+                {contract.freelancer.user.fullName
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
@@ -85,20 +70,20 @@ export function ContractProgressHeader({
             <div>
               <div className="flex items-center space-x-2">
                 <h2 className="text-xl font-semibold text-foreground">
-                  {contract.freelancer.name}
+                  {contract.freelancer.user.fullName}
                 </h2>
-                {contract.freelancer.verified && (
+                {contract.freelancer.user.verified && (
                   <Shield className="w-5 h-5 text-green-600" />
                 )}
               </div>
               <div className="flex items-center space-x-4 text-sm text-foreground opacity-80 mt-1">
                 <div className="flex items-center space-x-1">
                   <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                  <span>{contract.freelancer.rating}</span>
+                  <span>{rating}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <MapPin className="w-4 h-4" />
-                  <span>{contract.freelancer.location}</span>
+                  <span>{contract.freelancer.user.address}</span>
                 </div>
               </div>
             </div>
@@ -117,25 +102,27 @@ export function ContractProgressHeader({
                   <span>Started</span>
                 </div>
                 <p className="font-medium text-foreground opacity-80">
-                  {formatDateToMonthDayYear(contract.startDate)}
+                  {formatDateToMonthDayYear(contract.startedAt)}
                 </p>
               </div>
-              <div className="text-center">
-                <div className="flex items-center space-x-1 text-foreground mb-1">
-                  <DollarSign className="w-4 h-4" />
-                  <span>Budget</span>
+              {contract.contractType === ContractType.FIXED_PRICE && (
+                <div className="text-center">
+                  <div className="flex items-center space-x-1 text-foreground mb-1">
+                    <DollarSign className="w-4 h-4" />
+                    <span>Budget</span>
+                  </div>
+                  <p className="font-medium text-foreground opacity-80">
+                    {contract.totalPrice}
+                  </p>
                 </div>
-                <p className="font-medium text-foreground opacity-80">
-                  {contract.budget}
-                </p>
-              </div>
+              )}
               <div className="text-center">
                 <div className="flex items-center space-x-1 text-foreground mb-1">
                   <DollarSign className="w-4 h-4" />
                   <span>Paid</span>
                 </div>
                 <p className="font-medium text-foreground opacity-80">
-                  {contract.totalPaid}
+                  {totalPaid}
                 </p>
               </div>
             </div>

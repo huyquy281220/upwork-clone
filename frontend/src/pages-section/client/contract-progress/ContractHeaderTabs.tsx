@@ -5,40 +5,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProgressOverview } from "./ContractProgressOverview";
 import { WorkActivity } from "./WorkActivity";
 import { PaymentTracking } from "./PaymentTracking";
+import { ClientByContractProps } from "@/types/contract";
 
-interface Contract {
-  id: number;
-  title: string;
-  freelancer: {
-    name: string;
-    avatar: string;
-    rating: number;
-    location: string;
-    verified: boolean;
-  };
-  status: string;
-  startDate: string;
-  budget: string;
-  budgetType: string;
-  hourlyRate: string | null;
-  totalPaid: string;
-  progress: number;
-  category: string;
-  description: string;
-  milestones?: Array<{
-    id: number;
-    title: string;
-    amount: string;
-    status: string;
-    dueDate: string;
-  }>;
-}
+type TabsProps = { contract: ClientByContractProps["contract"] } & Omit<
+  ClientByContractProps,
+  "contract"
+>;
 
-interface ContractProgressTabsProps {
-  contract: Contract;
-}
-
-export function ContractProgressTabs({ contract }: ContractProgressTabsProps) {
+export function ContractProgressTabs({ contract, ...clientData }: TabsProps) {
   const [activeTab, setActiveTab] = useState("overview");
 
   return (
@@ -51,7 +25,7 @@ export function ContractProgressTabs({ contract }: ContractProgressTabsProps) {
         </TabsList>
 
         <TabsContent value="overview" className="mt-6">
-          <ProgressOverview contract={contract} />
+          <ProgressOverview contract={contract} progress={0} />
         </TabsContent>
 
         <TabsContent value="activity" className="mt-6">

@@ -1,34 +1,58 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Clock, CheckCircle, Calendar, TrendingUp } from "lucide-react";
-import { formatDateToMonthDayYear } from "@/utils/formatDate";
+import { Button } from "@/components/ui/button";
+import {
+  Clock,
+  CheckCircle,
+  Calendar,
+  TrendingUp,
+  Eye,
+  X,
+  AlertTriangle,
+} from "lucide-react";
+import { MilestoneDetailModal } from "./components/MilestoneDetailModal";
+import { ApproveModal } from "./components/ApproveModal";
+import { DeclineModal } from "./components/DeclineModal";
+import {
+  ContractProps,
+  ContractType,
+  MilestoneProps,
+  MilestoneStatus,
+} from "@/types/contract";
 
-interface Contract {
-  id: number;
-  title: string;
-  budgetType: string;
-  progress: number;
-  totalPaid: string;
-  budget: string;
-  startDate: string;
-  milestones?: Array<{
-    id: number;
-    title: string;
-    status: string;
-    dueDate: string;
-    amount: string;
-  }>;
-}
+const defaultMilestone = {
+  id: "1",
+  title: "",
+  description: "",
+  amount: 0,
+  dueDate: "",
+  status: MilestoneStatus.PENDING,
+};
 
 interface ProgressOverviewProps {
-  contract: Contract;
+  contract: ContractProps;
+  progress: number;
+  totalPaid: number;
 }
 
-export function ProgressOverview({ contract }: ProgressOverviewProps) {
-  const isHourly = contract.budgetType === "Hourly";
+export function ProgressOverview({
+  contract,
+  totalPaid,
+  progress,
+}: ProgressOverviewProps) {
+  const [selectedMilestone, setSelectedMilestone] =
+    useState<MilestoneProps>(defaultMilestone);
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [declineReason, setDeclineReason] = useState("");
+  const [approvalNote, setApprovalNote] = useState("");
+
+  const isHourly = contract.contractType === ContractType.HOURLY;
 
   const getProgressColor = (progress: number) => {
     if (progress >= 80) return "text-green-600";
@@ -41,15 +65,25 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
     switch (status.toLowerCase()) {
       case "completed":
         return "bg-green-100 text-green-800";
-      case "in progress":
+      case "submitted":
         return "bg-blue-100 text-blue-800";
+      case "in progress":
+        return "bg-yellow-100 text-yellow-800";
       case "pending":
         return "bg-gray-100 text-gray-800";
-      case "overdue":
+      case "declined":
         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
   const calculateDaysRemaining = (dueDate: string) => {
@@ -58,6 +92,56 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
     const diffTime = due.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+  };
+
+  const handleApprove = (milestone: MilestoneProps) => {
+    setSelectedMilestone(milestone);
+    setShowApprovalModal(true);
+  };
+
+  const handleDecline = (milestone: MilestoneProps) => {
+    setSelectedMilestone(milestone);
+    setShowDeclineModal(true);
+  };
+
+  const handleViewDetail = (milestone: MilestoneProps) => {
+    setSelectedMilestone(milestone);
+    setShowDetailModal(true);
+  };
+
+  const confirmApproval = () => {
+    console.log(
+      "Approving milestone:",
+      selectedMilestone?.id,
+      "with note:",
+      approvalNote
+    );
+    setShowApprovalModal(false);
+    setApprovalNote("");
+    setSelectedMilestone(defaultMilestone);
+  };
+
+  const confirmDecline = () => {
+    console.log(
+      "Declining milestone:",
+      selectedMilestone?.id,
+      "with reason:",
+      declineReason
+    );
+    setShowDeclineModal(false);
+    setDeclineReason("");
+    setSelectedMilestone(defaultMilestone);
+  };
+
+  // Function to determine if milestone should show action buttons
+  const shouldShowActionButtons = (status: string) => {
+    const statusLower = status.toLowerCase();
+    return (
+      statusLower === "submitted" ||
+      statusLower === "in progress" ||
+      statusLower === "pending" ||
+      statusLower === "declined"
+    );
   };
 
   return (
@@ -78,24 +162,24 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
               </span>
               <span
                 className={`text-sm font-semibold ${getProgressColor(
-                  contract.progress
+                  progress
                 )}`}
               >
-                {contract.progress}%
+                {progress}%
               </span>
             </div>
-            <Progress value={contract.progress} className="h-3" />
+            <Progress value={progress} className="h-3" />
 
             <div className="grid grid-cols-3 gap-4 mt-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
-                  {contract.progress}%
+                  {progress}%
                 </div>
                 <div className="text-sm text-gray-600">Completed</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
-                  {contract.totalPaid}
+                  {totalPaid}
                 </div>
                 <div className="text-sm text-gray-600">Total Paid</div>
               </div>
@@ -103,7 +187,7 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
                 <div className="text-2xl font-bold text-gray-900">
                   {Math.ceil(
                     (new Date().getTime() -
-                      new Date(contract.startDate).getTime()) /
+                      new Date(contract.startedAt).getTime()) /
                       (1000 * 60 * 60 * 24)
                   )}
                 </div>
@@ -127,9 +211,12 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
             <div className="space-y-4">
               {contract.milestones.map((milestone, index) => {
                 const daysRemaining = calculateDaysRemaining(milestone.dueDate);
-                const isOverdue = daysRemaining < 0;
+                const isOverdue =
+                  daysRemaining < 0 &&
+                  milestone.status.toLowerCase() !== "completed";
                 const isCompleted =
                   milestone.status.toLowerCase() === "completed";
+                const showActions = shouldShowActionButtons(milestone.status);
 
                 return (
                   <div
@@ -161,6 +248,15 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
                           >
                             {milestone.status}
                           </Badge>
+                          {isOverdue && (
+                            <Badge
+                              variant="destructive"
+                              className="flex items-center gap-1"
+                            >
+                              <AlertTriangle className="w-3 h-3" />
+                              Overdue
+                            </Badge>
+                          )}
                           <span className="text-sm font-medium text-gray-900">
                             {milestone.amount}
                           </span>
@@ -170,9 +266,7 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
                       <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
-                          <span>
-                            Due: {formatDateToMonthDayYear(milestone.dueDate)}
-                          </span>
+                          <span>Due: {formatDate(milestone.dueDate)}</span>
                         </div>
                         {!isCompleted && (
                           <div className="flex items-center space-x-1">
@@ -185,6 +279,57 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
                           </div>
                         )}
                       </div>
+
+                      {/* Milestone Actions - Show for non-completed milestones */}
+                      {showActions && !isCompleted && (
+                        <div className="flex items-center space-x-2 mt-3 pt-3 border-t">
+                          <Button
+                            size="sm"
+                            onClick={() => handleApprove(milestone)}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Approve & Release Payment
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDecline(milestone)}
+                          >
+                            <X className="w-4 h-4 mr-1" />
+                            Decline
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewDetail(milestone)}
+                          >
+                            <Eye className="w-4 h-4 mr-1" />
+                            View Detail
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Completed milestone actions */}
+                      {isCompleted && (
+                        <div className="flex items-center justify-between mt-3 pt-3 border-t">
+                          <div className="flex items-center space-x-2 text-sm text-green-600">
+                            <CheckCircle className="w-4 h-4" />
+                            <span>
+                              Payment released on{" "}
+                              {formatDate(milestone.dueDate)}
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewDetail(milestone)}
+                          >
+                            <Eye className="w-4 h-4 mr-1" />
+                            View Detail
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -239,6 +384,33 @@ export function ProgressOverview({ contract }: ProgressOverviewProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Approval Modal */}
+      <ApproveModal
+        open={showApprovalModal}
+        onOpenChange={setShowApprovalModal}
+        selectedMilestone={selectedMilestone}
+        approvalNote={approvalNote}
+        setApprovalNote={setApprovalNote}
+        onConfirm={confirmApproval}
+      />
+
+      {/* Decline Modal */}
+      <DeclineModal
+        open={showDeclineModal}
+        onOpenChange={setShowDeclineModal}
+        selectedMilestone={selectedMilestone}
+        declineReason={declineReason}
+        setDeclineReason={setDeclineReason}
+        onConfirm={confirmDecline}
+      />
+
+      {/* Milestone Detail Modal */}
+      <MilestoneDetailModal
+        milestone={selectedMilestone}
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+      />
     </div>
   );
 }

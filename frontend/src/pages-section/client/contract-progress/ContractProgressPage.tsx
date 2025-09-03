@@ -80,8 +80,12 @@ export function ContractProgressPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <ContractProgressHeader contract={mockContract} />
-      <ContractProgressTabs contract={mockContract} />
+      <ContractProgressHeader
+        contract={contract}
+        rating={clientData.rating}
+        totalPaid={0}
+      />
+      <ContractProgressTabs contract={contract} />
     </div>
   );
 }
