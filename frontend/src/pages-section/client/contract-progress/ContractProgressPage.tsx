@@ -6,6 +6,7 @@ import { ContractProgressHeader } from "./ContractProgressHeader";
 import { getClientByContract } from "@/services/contract";
 import { useParams } from "next/navigation";
 import { ClientByContractProps } from "@/types/contract";
+import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 
 // Mock contract data
 const mockContract = {
@@ -64,13 +65,18 @@ export function ContractProgressPage() {
   const params = useParams();
   const contractId = params.contractId;
 
-  const { data: clientData } = useQuery<ClientByContractProps>({
-    queryKey: ["client-by-contract", contractId],
-    queryFn: () => getClientByContract(contractId as string),
-    enabled: !!contractId,
-  });
+  const { data: clientByContract, isLoading } = useQuery<ClientByContractProps>(
+    {
+      queryKey: ["client-by-contract", contractId],
+      queryFn: () => getClientByContract(contractId as string),
+      enabled: !!contractId,
+    }
+  );
 
-  console.log(clientData);
+  if (isLoading) return <InfiniteLoading />;
+  if (!clientByContract) return;
+
+  const { contract, ...clientData } = clientByContract;
 
   return (
     <div className="min-h-screen bg-background">

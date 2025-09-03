@@ -123,6 +123,7 @@ export interface UpdateContractProps {
 }
 
 export interface ClientByContractProps {
+  contract: ContractProps;
   client: {
     companyName: string;
     website: string;
