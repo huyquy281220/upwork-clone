@@ -1,4 +1,6 @@
+import { ContractProps } from 'src/types';
 import { PrismaService } from '../prisma/prisma.service';
+import { PaymentStatus } from '@prisma/client';
 
 // Types for contract metrics
 export type ContractMetrics = {
@@ -8,11 +10,12 @@ export type ContractMetrics = {
   hireRate: number;
   jobPosted: number;
   activeHires: number;
+  hoursWorked: number;
 };
 
 export type ContractProgressProps = {
   totalPrice: number;
-  totalEarning: number;
+  totalPaid: number;
   totalHoursWorked: number;
   totalHours: number;
 };
@@ -20,18 +23,43 @@ export type ContractProgressProps = {
 // Calculate contract progress percentage
 export const calculateContractProgress = ({
   totalPrice,
-  totalEarning,
+  totalPaid,
   totalHoursWorked,
   totalHours,
 }: ContractProgressProps): number => {
   if (totalPrice > 0) {
-    return Math.min((totalEarning / totalPrice) * 100, 100);
+    return Math.min((totalPaid / totalPrice) * 100, 100);
   }
   if (totalHours > 0) {
     return Math.min((totalHoursWorked / totalHours) * 100, 100);
   }
   return 0;
 };
+
+// Calculate total hour worked
+export function calcTotalHoursWorked(
+  contract: ContractProps,
+  from?: Date,
+  to?: Date,
+): number {
+  return (contract.workLog ?? [])
+    .filter((log) => {
+      const t = new Date(log.loggedAt).getTime();
+      return (
+        (from ? t >= from.getTime() : true) && (to ? t <= to.getTime() : true)
+      );
+    })
+    .reduce((sum, log) => sum + (Number(log.hours) || 0), 0);
+}
+
+export function calcTotalPaid(contract: ContractProps) {
+  return (contract.payments ?? [])
+    .filter(
+      (p) =>
+        p.status === PaymentStatus.PAID || p.status === PaymentStatus.SUCCEEDED,
+    )
+    .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+}
 
 // Get client metrics
 export const getClientMetricsByContract = async (
@@ -51,6 +79,15 @@ export const getClientMetricsByContract = async (
         },
       },
     },
+  });
+
+  const hoursWorked = await prisma.workLog.aggregate({
+    where: {
+      endTime: {
+        gte: new Date(),
+      },
+    },
+    _sum: { hours: true },
   });
 
   // Calculate total spent
@@ -113,5 +150,6 @@ export const getClientMetricsByContract = async (
     hireRate,
     jobPosted,
     activeHires,
+    hoursWorked: hoursWorked._sum.hours ?? 0,
   };
 };
