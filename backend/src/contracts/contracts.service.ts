@@ -485,6 +485,7 @@ export class ContractsService {
               user: true,
             },
           },
+          freelancer: true,
           milestones: true,
           workSubmission: true,
           payments: true,
