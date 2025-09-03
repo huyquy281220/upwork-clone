@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ContractProgressTabs } from "./ContractHeaderTabs";
+import { ContractProgressTabs } from "./ContractProgressTabs";
 import { ContractProgressHeader } from "./ContractProgressHeader";
 import { getClientByContract } from "@/services/contract";
 import { useParams } from "next/navigation";
@@ -30,7 +30,7 @@ export function ContractProgressPage() {
       <ContractProgressHeader
         contract={contract}
         rating={clientData.rating}
-        totalPaid={0}
+        totalPaid={clientData.totalPaid}
       />
       <ContractProgressTabs contract={contract} />
     </div>
