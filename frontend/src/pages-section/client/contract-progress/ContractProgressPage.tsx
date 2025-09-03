@@ -5,6 +5,7 @@ import { ContractProgressTabs } from "./ContractHeaderTabs";
 import { ContractProgressHeader } from "./ContractProgressHeader";
 import { getClientByContract } from "@/services/contract";
 import { useParams } from "next/navigation";
+import { ClientByContractProps } from "@/types/contract";
 
 // Mock contract data
 const mockContract = {
@@ -63,7 +64,7 @@ export function ContractProgressPage() {
   const params = useParams();
   const contractId = params.contractId;
 
-  const { data: clientData } = useQuery({
+  const { data: clientData } = useQuery<ClientByContractProps>({
     queryKey: ["client-by-contract", contractId],
     queryFn: () => getClientByContract(contractId as string),
     enabled: !!contractId,
