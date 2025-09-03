@@ -32,7 +32,7 @@ export function ContractProgressPage() {
         rating={clientData.rating}
         totalPaid={clientData.totalPaid}
       />
-      <ContractProgressTabs contract={contract} />
+      <ContractProgressTabs contract={contract} {...clientData} />
     </div>
   );
 }
