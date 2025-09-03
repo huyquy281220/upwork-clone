@@ -481,6 +481,11 @@ export class ContractsService {
               user: true,
             },
           },
+          milestones: true,
+          workSubmission: true,
+          payments: true,
+          workLog: true,
+          reviews: true,
         },
       });
 
@@ -491,6 +496,7 @@ export class ContractsService {
       const metrics = await getClientMetricsByContract(this.prisma, contractId);
 
       return {
+        contract,
         client: contract.client,
         contractId: contract.id,
         contractTitle: contract.title,
