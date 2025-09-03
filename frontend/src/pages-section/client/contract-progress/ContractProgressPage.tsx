@@ -1,7 +1,10 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { ContractProgressTabs } from "./ContractHeaderTabs";
 import { ContractProgressHeader } from "./ContractProgressHeader";
+import { getClientByContract } from "@/services/contract";
+import { useParams } from "next/navigation";
 
 // Mock contract data
 const mockContract = {
@@ -57,6 +60,17 @@ const mockContract = {
 };
 
 export function ContractProgressPage() {
+  const params = useParams();
+  const contractId = params.contractId;
+
+  const { data: clientData } = useQuery({
+    queryKey: ["client-by-contract", contractId],
+    queryFn: () => getClientByContract(contractId as string),
+    enabled: !!contractId,
+  });
+
+  console.log(clientData);
+
   return (
     <div className="min-h-screen bg-background">
       <ContractProgressHeader contract={mockContract} />
