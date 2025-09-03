@@ -1,5 +1,7 @@
-import { ContractProgressTabs } from "@/pages-section/client/contract-progress";
-import { ContractProgressHeader } from "@/pages-section/client/contract-progress";
+"use client";
+
+import { ContractProgressTabs } from "./ContractHeaderTabs";
+import { ContractProgressHeader } from "./ContractProgressHeader";
 
 // Mock contract data
 const mockContract = {
