@@ -519,6 +519,7 @@ export class ContractsService {
         jobPosted: metrics.jobPosted,
         activeHires: metrics.activeHires,
         progress: contractProgress,
+        totalPaid,
       };
     } catch (error) {
       if (error instanceof NotFoundException) {
