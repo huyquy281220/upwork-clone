@@ -1,5 +1,6 @@
 import { PaymentsProps } from "./payments";
 import { ReviewProps } from "./review";
+import { BaseUser } from "./user";
 import { WorkLogProps } from "./work-log";
 import { WorkSubmissionProps } from "./work-submissions";
 
@@ -119,4 +120,20 @@ export interface UpdateContractProps {
   fixedPrice?: number;
   startedAt?: string;
   completedAt?: string;
+}
+
+export interface ClientByContractProps {
+  client: {
+    companyName: string;
+    website: string;
+    user: BaseUser;
+  };
+  contractId: string;
+  contractTitle: string;
+  rating: number;
+  reviewCount: number;
+  activeHires: number;
+  hireRate: number;
+  jobPosted: number;
+  totalSpent: number;
 }

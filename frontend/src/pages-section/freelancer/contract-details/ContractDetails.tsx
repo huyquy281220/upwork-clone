@@ -14,11 +14,14 @@ import {
   updateContract,
 } from "@/services/contract";
 import { useParams } from "next/navigation";
-import { ContractProps, ContractStatus } from "@/types/contract";
+import {
+  ClientByContractProps,
+  ContractProps,
+  ContractStatus,
+} from "@/types/contract";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { useToast } from "@/hooks/useToast";
 import { ModernToast } from "@/components/common/ModernToast";
-import { BaseUser } from "@/types/user";
 
 type ContractDataProps = {
   data: ContractProps;
@@ -28,22 +31,6 @@ type ContractDataProps = {
   completedMilestones: number;
   totalMilestones: number;
   totalHoursWorked: number;
-};
-
-export type ClientDataProps = {
-  client: {
-    companyName: string;
-    website: string;
-    user: BaseUser;
-  };
-  contractId: string;
-  contractTitle: string;
-  rating: number;
-  reviewCount: number;
-  activeHires: number;
-  hireRate: number;
-  jobPosted: number;
-  totalSpent: number;
 };
 
 export function ContractDetails() {
@@ -66,7 +53,7 @@ export function ContractDetails() {
     });
 
   const { data: clientData, isLoading: isClientDataLoading } =
-    useQuery<ClientDataProps>({
+    useQuery<ClientByContractProps>({
       queryKey: ["client-by-contract", contractId],
       queryFn: () => getClientByContract(contractId as string),
       enabled: !!contractId,
