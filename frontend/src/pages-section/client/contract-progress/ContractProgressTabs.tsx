@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProgressOverview } from "./ContractProgressOverview";
-import { WorkActivity } from "./WorkActivity";
+import { WorkSubmissionsTab } from "./WorkSubmissionTab";
 import { PaymentTracking } from "./PaymentTracking";
 import { ClientByContractProps } from "@/types/contract";
 
@@ -33,7 +33,7 @@ export function ContractProgressTabs({ contract, ...clientData }: TabsProps) {
         </TabsContent>
 
         <TabsContent value="activity" className="mt-6">
-          <WorkActivity />
+          <WorkSubmissionsTab />
         </TabsContent>
 
         <TabsContent value="payments" className="mt-6">
