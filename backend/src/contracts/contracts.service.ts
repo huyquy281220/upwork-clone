@@ -486,7 +486,7 @@ export class ContractsService {
             },
           },
           freelancer: {
-            include: { user: true },
+            select: { title: true, user: true },
           },
           milestones: true,
           workSubmission: true,
@@ -512,6 +512,7 @@ export class ContractsService {
 
       return {
         contract,
+        freelancer: contract.freelancer,
         client: contract.client,
         contractId: contract.id,
         contractTitle: contract.title,
