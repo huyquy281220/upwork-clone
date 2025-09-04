@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -11,30 +10,9 @@ import {
   TrendingUp,
   AlertTriangle,
 } from "lucide-react";
-import { MilestoneDetailModal } from "./components/MilestoneDetailModal";
-import { ApproveModal } from "./components/ApproveModal";
-import { DeclineModal } from "./components/DeclineModal";
-import {
-  ContractProps,
-  ContractType,
-  MilestoneProps,
-  MilestoneStatus,
-} from "@/types/contract";
+import { ContractProps, ContractType, MilestoneStatus } from "@/types/contract";
 import { getMilestoneStatusColor } from "@/utils/getStatusColor";
 import { formatDateToMonthDayYear } from "@/utils/formatDate";
-
-const defaultMilestone = {
-  id: "1",
-  title: "",
-  description: "",
-  amount: 0,
-  dueDate: "",
-  status: MilestoneStatus.PENDING,
-  fileUrl: "",
-  fileName: "",
-  fileSize: 0,
-  fileKey: "",
-};
 
 interface ProgressOverviewProps {
   contract: ContractProps;
@@ -47,14 +25,6 @@ export function ProgressOverview({
   totalPaid,
   progress,
 }: ProgressOverviewProps) {
-  const [selectedMilestone, setSelectedMilestone] =
-    useState<MilestoneProps>(defaultMilestone);
-  const [showApprovalModal, setShowApprovalModal] = useState(false);
-  const [showDeclineModal, setShowDeclineModal] = useState(false);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [declineReason, setDeclineReason] = useState("");
-  const [approvalNote, setApprovalNote] = useState("");
-
   const isHourly = contract.contractType === ContractType.HOURLY;
 
   const calculateDaysRemaining = (dueDate: string) => {
@@ -63,30 +33,6 @@ export function ProgressOverview({
     const diffTime = due.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
-  };
-
-  const confirmApproval = () => {
-    console.log(
-      "Approving milestone:",
-      selectedMilestone?.id,
-      "with note:",
-      approvalNote
-    );
-    setShowApprovalModal(false);
-    setApprovalNote("");
-    setSelectedMilestone(defaultMilestone);
-  };
-
-  const confirmDecline = () => {
-    console.log(
-      "Declining milestone:",
-      selectedMilestone?.id,
-      "with reason:",
-      declineReason
-    );
-    setShowDeclineModal(false);
-    setDeclineReason("");
-    setSelectedMilestone(defaultMilestone);
   };
 
   return (
@@ -272,33 +218,6 @@ export function ProgressOverview({
           </CardContent>
         </Card>
       )}
-
-      {/* Approval Modal */}
-      <ApproveModal
-        open={showApprovalModal}
-        onOpenChange={setShowApprovalModal}
-        selectedMilestone={selectedMilestone}
-        approvalNote={approvalNote}
-        setApprovalNote={setApprovalNote}
-        onConfirm={confirmApproval}
-      />
-
-      {/* Decline Modal */}
-      <DeclineModal
-        open={showDeclineModal}
-        onOpenChange={setShowDeclineModal}
-        selectedMilestone={selectedMilestone}
-        declineReason={declineReason}
-        setDeclineReason={setDeclineReason}
-        onConfirm={confirmDecline}
-      />
-
-      {/* Milestone Detail Modal */}
-      <MilestoneDetailModal
-        milestone={selectedMilestone}
-        isOpen={showDetailModal}
-        onClose={() => setShowDetailModal(false)}
-      />
     </div>
   );
 }
