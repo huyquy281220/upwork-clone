@@ -116,46 +116,48 @@ export function MilestoneDetailModal({
               </h4>
             </div>
 
-            {/* {milestone.deliverables && milestone.deliverables.length > 0 ? (
+            {milestone.fileUrl ? (
               <div className="space-y-3">
-                {milestone.deliverables.map((file) => (
-                  <div
-                    key={file.id}
-                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <span className="text-2xl">{getFileIcon(file.type)}</span>
-                      <div>
-                        <p className="font-medium text-gray-900">{file.name}</p>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <span>Type: {file.type.toUpperCase()}</span>
-                          {file.size && <span>Size: {file.size}</span>}
-                          <div className="flex items-center space-x-1">
-                            <Clock className="w-3 h-3" />
-                            <span>
-                              Submitted: {formatDate(file.submittedDate)}
-                            </span>
-                          </div>
+                <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-2xl">
+                      {getFileIcon(milestone.fileName.split(".").pop() || "")}
+                    </span>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {milestone.fileName}
+                      </p>
+                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <span>
+                          Type:{" "}
+                          {(
+                            milestone.fileName.split(".").pop() || ""
+                          ).toUpperCase()}
+                        </span>
+                        <span>Size: {milestone.fileSize}</span>
+                        <div className="flex items-center space-x-1">
+                          <Clock className="w-3 h-3" />
+                          <span>Due: {formatDate(milestone.dueDate)}</span>
                         </div>
                       </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDownload(file)}
-                    >
-                      <Download className="w-4 h-4 mr-1" />
-                      Download
-                    </Button>
                   </div>
-                ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDownload(milestone.fileUrl)}
+                  >
+                    <Download className="w-4 h-4 mr-1" />
+                    Download
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <FileText className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                <p>No deliverables submitted yet</p>
+                <p>No file attached to this milestone</p>
               </div>
-            )} */}
+            )}
           </div>
 
           {/* Submission Notes */}
