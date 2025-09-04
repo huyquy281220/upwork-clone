@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Clock, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { ContractProps, ContractType } from "@/types/contract";
 import { WorkLogList } from "./components/WorkLogList";
 import { MilestoneList } from "./components/MilestoneList";
@@ -11,12 +11,14 @@ interface ProgressOverviewProps {
   contract: ContractProps;
   progress: number;
   totalPaid: number;
+  hoursWorked: number;
 }
 
 export function ProgressOverview({
   contract,
   totalPaid,
   progress,
+  hoursWorked,
 }: ProgressOverviewProps) {
   const isHourly = contract.contractType === ContractType.HOURLY;
 
@@ -77,100 +79,11 @@ export function ProgressOverview({
 
       {/* Work Summary for Hourly Contracts */}
       {isHourly && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Clock className="w-5 h-5" />
-              <span>Work Summary</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-6 mb-6">
-              <div className="space-y-4">
-                <div>
-                  <div className="text-sm text-gray-600">
-                    Total Hours Worked
-                  </div>
-                  <div className="text-2xl font-bold text-foreground">
-                    {contract.workLog
-                      ?.reduce((total, log) => {
-                        const startTime = new Date(log.loggedAt);
-                        const endTime = new Date(log.endTime);
-                        const hours =
-                          (endTime.getTime() - startTime.getTime()) /
-                          (1000 * 60 * 60);
-                        return total + hours;
-                      }, 0)
-                      .toFixed(1) || 0}{" "}
-                    hrs
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">This Week</div>
-                  <div className="text-lg font-semibold text-foreground">
-                    {contract.workLog
-                      ?.filter((log) => {
-                        const logDate = new Date(log.loggedAt);
-                        const weekAgo = new Date();
-                        weekAgo.setDate(weekAgo.getDate() - 7);
-                        return logDate >= weekAgo;
-                      })
-                      .reduce((total, log) => {
-                        const startTime = new Date(log.loggedAt);
-                        const endTime = new Date(log.endTime);
-                        const hours =
-                          (endTime.getTime() - startTime.getTime()) /
-                          (1000 * 60 * 60);
-                        return total + hours;
-                      }, 0)
-                      .toFixed(1) || 0}{" "}
-                    hrs
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <div className="text-sm text-gray-600">Average per Week</div>
-                  <div className="text-2xl font-bold text-foreground">
-                    {(() => {
-                      const totalHours =
-                        contract.workLog?.reduce((total, log) => {
-                          const startTime = new Date(log.loggedAt);
-                          const endTime = new Date(log.endTime);
-                          const hours =
-                            (endTime.getTime() - startTime.getTime()) /
-                            (1000 * 60 * 60);
-                          return total + hours;
-                        }, 0) || 0;
-                      const weeks = contract.workLog?.length
-                        ? Math.max(
-                            1,
-                            Math.ceil(
-                              (new Date().getTime() -
-                                new Date(
-                                  contract.workLog[0].loggedAt
-                                ).getTime()) /
-                                (1000 * 60 * 60 * 24 * 7)
-                            )
-                          )
-                        : 1;
-                      return (totalHours / weeks).toFixed(1);
-                    })()}{" "}
-                    hrs
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Hourly Rate</div>
-                  <div className="text-lg font-semibold text-foreground">
-                    ${contract.hourlyRate}/hr
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <WorkLogList workLogs={contract.workLog ?? []} />
-          </CardContent>
-        </Card>
+        <WorkLogList
+          workLogs={contract.workLog ?? []}
+          hourlyRate={contract.hourlyRate ?? 0}
+          hoursWorked={hoursWorked}
+        />
       )}
     </div>
   );

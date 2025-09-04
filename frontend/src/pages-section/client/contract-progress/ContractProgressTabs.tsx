@@ -28,7 +28,8 @@ export function ContractProgressTabs({ contract, ...clientData }: TabsProps) {
           <ProgressOverview
             contract={contract}
             progress={clientData.progress}
-            totalPaid={0}
+            totalPaid={clientData.totalPaid}
+            hoursWorked={clientData.hoursWorked}
           />
         </TabsContent>
 

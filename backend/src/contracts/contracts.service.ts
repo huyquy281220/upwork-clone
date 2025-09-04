@@ -524,6 +524,7 @@ export class ContractsService {
         activeHires: metrics.activeHires,
         progress: contractProgress,
         totalPaid,
+        hoursWorked: metrics.hoursWorked,
       };
     } catch (error) {
       if (error instanceof NotFoundException) {

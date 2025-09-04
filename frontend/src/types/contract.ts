@@ -151,4 +151,5 @@ export interface ClientByContractProps {
   totalSpent: number;
   progress: number;
   totalPaid: number;
+  hoursWorked: number;
 }
