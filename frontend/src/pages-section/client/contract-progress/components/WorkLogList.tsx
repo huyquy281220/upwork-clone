@@ -43,7 +43,7 @@ export function WorkLogList({ workLogs }: WorkLogListProps) {
                   <h4 className="font-medium text-foreground">
                     {log.description}
                   </h4>
-                  <Badge className="bg-blue-100 text-blue-800">
+                  <Badge className="bg-blue-100 text-green-800">
                     {hours.toFixed(1)}h
                   </Badge>
                 </div>
