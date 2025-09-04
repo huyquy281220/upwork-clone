@@ -24,6 +24,7 @@ import {
   MilestoneStatus,
 } from "@/types/contract";
 import { getMilestoneStatusColor } from "@/utils/getStatusColor";
+import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
 const defaultMilestone = {
   id: "1",
@@ -58,21 +59,6 @@ export function ProgressOverview({
   const [approvalNote, setApprovalNote] = useState("");
 
   const isHourly = contract.contractType === ContractType.HOURLY;
-
-  const getProgressColor = (progress: number) => {
-    if (progress >= 80) return "text-green-600";
-    if (progress >= 50) return "text-blue-600";
-    if (progress >= 25) return "text-yellow-600";
-    return "text-red-600";
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
 
   const calculateDaysRemaining = (dueDate: string) => {
     const today = new Date();
@@ -145,14 +131,10 @@ export function ProgressOverview({
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-foreground">
                 {isHourly ? "Work Completion" : "Project Progress"}
               </span>
-              <span
-                className={`text-sm font-semibold ${getProgressColor(
-                  progress
-                )}`}
-              >
+              <span className="text-sm font-semibold text-green-600">
                 {progress}%
               </span>
             </div>
@@ -160,26 +142,26 @@ export function ProgressOverview({
 
             <div className="grid grid-cols-3 gap-4 mt-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-green-600">
                   {progress}%
                 </div>
-                <div className="text-sm text-gray-600">Completed</div>
+                <div className="text-sm text-foreground">Completed</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-green-600">
                   {totalPaid}
                 </div>
-                <div className="text-sm text-gray-600">Total Paid</div>
+                <div className="text-sm text-foreground">Total Paid</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-green-600">
                   {Math.ceil(
                     (new Date().getTime() -
                       new Date(contract.startedAt).getTime()) /
                       (1000 * 60 * 60 * 24)
                   )}
                 </div>
-                <div className="text-sm text-gray-600">Days Active</div>
+                <div className="text-sm text-foreground">Days Active</div>
               </div>
             </div>
           </div>
@@ -225,7 +207,7 @@ export function ProgressOverview({
 
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-medium text-gray-900">
+                        <h4 className="font-medium text-foreground">
                           {milestone.title}
                         </h4>
                         <div className="flex items-center space-x-2">
@@ -245,16 +227,15 @@ export function ProgressOverview({
                               Overdue
                             </Badge>
                           )}
-                          <span className="text-sm font-medium text-gray-900">
-                            {milestone.amount}
-                          </span>
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                      <div className="flex items-center space-x-4 mt-2 text-sm text-foreground opacity-80">
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
-                          <span>Due: {formatDate(milestone.dueDate)}</span>
+                          <span>
+                            Due: {formatDateToMonthDayYear(milestone.dueDate)}
+                          </span>
                         </div>
                         {!isCompleted && (
                           <div className="flex items-center space-x-1">
@@ -305,7 +286,7 @@ export function ProgressOverview({
                             <CheckCircle className="w-4 h-4" />
                             <span>
                               Payment released on{" "}
-                              {formatDate(milestone.dueDate)}
+                              {formatDateToMonthDayYear(milestone.dueDate)}
                             </span>
                           </div>
                           <Button
@@ -343,13 +324,13 @@ export function ProgressOverview({
                   <div className="text-sm text-gray-600">
                     Total Hours Worked
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-2xl font-bold text-foreground">
                     127.5 hrs
                   </div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-600">This Week</div>
-                  <div className="text-lg font-semibold text-gray-900">
+                  <div className="text-lg font-semibold text-foreground">
                     32.5 hrs
                   </div>
                 </div>
@@ -357,13 +338,13 @@ export function ProgressOverview({
               <div className="space-y-4">
                 <div>
                   <div className="text-sm text-gray-600">Average per Week</div>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-2xl font-bold text-foreground">
                     28.3 hrs
                   </div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-600">Hourly Rate</div>
-                  <div className="text-lg font-semibold text-gray-900">
+                  <div className="text-lg font-semibold text-foreground">
                     $75/hr
                   </div>
                 </div>
