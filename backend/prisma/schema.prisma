@@ -224,6 +224,10 @@ model Milestone {
   description  String?
   amount       Float
   dueDate      DateTime?
+  fileUrl     String @default("")
+  fileName    String @default("")
+  fileSize    Int @default(0)
+  fileKey     String @default("")
   status       MilestoneStatus @default(PENDING)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Milestone" ADD COLUMN     "fileKey" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "fileName" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "fileSize" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "fileUrl" TEXT NOT NULL DEFAULT '';
