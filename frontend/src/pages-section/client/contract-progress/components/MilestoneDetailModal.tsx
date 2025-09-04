@@ -62,9 +62,12 @@ export function MilestoneDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogContent
+        className="max-w-3xl max-h-[80vh] overflow-y-auto"
+        showCloseButton={false}
+      >
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
+          <DialogTitle className="flex items-center justify-start gap-4">
             <span>Milestone Details</span>
             <Badge className={getMilestoneStatusColor(milestone.status)}>
               {milestone.status}
@@ -76,30 +79,32 @@ export function MilestoneDetailModal({
           {/* Milestone Info */}
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-md font-semibold text-foreground">
                 {milestone.title}
               </h3>
               {milestone.description && (
-                <p className="text-gray-600 mt-1">{milestone.description}</p>
+                <p className="text-foreground text-sm opacity-80 mt-1">
+                  {milestone.description}
+                </p>
               )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center space-x-2">
-                <DollarSign className="w-5 h-5 text-gray-400" />
+                <DollarSign className="w-5 h-5 text-foreground" />
                 <div>
-                  <p className="text-sm text-gray-600">Amount</p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="text-sm text-foreground">Amount</p>
+                  <p className="font-semibold text-foreground text-sm opacity-80">
                     {milestone.amount}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center space-x-2">
-                <Calendar className="w-5 h-5 text-gray-400" />
+                <Calendar className="w-5 h-5 text-foreground" />
                 <div>
-                  <p className="text-sm text-gray-600">Due Date</p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="text-sm text-foreground">Due Date</p>
+                  <p className="font-semibold text-foreground text-xs opacity-80">
                     {formatDate(milestone.dueDate)}
                   </p>
                 </div>
@@ -110,8 +115,8 @@ export function MilestoneDetailModal({
           {/* File Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <FileText className="w-5 h-5 text-gray-600" />
-              <h4 className="font-semibold text-gray-900">Submitted File</h4>
+              <FileText className="w-5 h-5 text-foreground" />
+              <h4 className="font-semibold text-foreground">Submitted File</h4>
             </div>
 
             {milestone.fileUrl ? (
