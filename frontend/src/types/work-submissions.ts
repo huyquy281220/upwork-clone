@@ -1,3 +1,9 @@
+export enum WorkSubmissionStatus {
+  PENDING = "PENDING",
+  SUBMITTED = "SUBMITTED",
+  REJECTED = "REJECTED",
+}
+
 export type WorkSubmissionProps = {
   id: string;
   title: string;
