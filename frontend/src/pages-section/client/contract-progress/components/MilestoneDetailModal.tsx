@@ -156,7 +156,7 @@ export function MilestoneDetailModal({
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-foreground opacity-80">
                 <FileText className="w-12 h-12 text-gray-300 mx-auto mb-2" />
                 <p>No file attached to this milestone</p>
               </div>
