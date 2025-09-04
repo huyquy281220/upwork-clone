@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CheckCircle, Star } from "lucide-react";
 
-interface SubmissionApproveModalProps {
+interface ApproveSubmissionModalProps {
   submission: {
     id: number;
     title: string;
@@ -23,12 +23,12 @@ interface SubmissionApproveModalProps {
   onConfirm: (submissionId: number, feedback?: string, rating?: number) => void;
 }
 
-export function SubmissionApproveModal({
+export function ApproveSubmissionModal({
   submission,
   isOpen,
   onClose,
   onConfirm,
-}: SubmissionApproveModalProps) {
+}: ApproveSubmissionModalProps) {
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);

@@ -18,8 +18,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import {
   FileText,
   Download,
@@ -30,9 +28,10 @@ import {
   Search,
   Filter,
   Eye,
-  Star,
   AlertTriangle,
 } from "lucide-react";
+import { ApproveSubmissionModal } from "./components/ApproveSubmissionModal";
+import { DeclineSubmissionModal } from "./components/DeclineSubmissionModal";
 
 interface WorkSubmission {
   id: number;
@@ -148,7 +147,6 @@ export function WorkSubmissionsTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [rating, setRating] = useState(0);
-  const [hoveredRating, setHoveredRating] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [declineReason, setDeclineReason] = useState("");
 
@@ -245,23 +243,6 @@ export function WorkSubmissionsTab() {
     setIsDeclineModalOpen(false);
     setDeclineReason("");
     setSelectedSubmission(null);
-  };
-
-  const getRatingText = (rating: number) => {
-    switch (rating) {
-      case 1:
-        return "Poor - Work needs significant improvement";
-      case 2:
-        return "Below Average - Work needs improvement";
-      case 3:
-        return "Average - Work meets basic requirements";
-      case 4:
-        return "Good - Work exceeds expectations";
-      case 5:
-        return "Excellent - Outstanding work quality";
-      default:
-        return "Click to rate the freelancer's work";
-    }
   };
 
   // Stats calculation
@@ -541,152 +522,20 @@ export function WorkSubmissionsTab() {
       </Dialog>
 
       {/* Approve Modal with Rating */}
-      <Dialog open={isApproveModalOpen} onOpenChange={setIsApproveModalOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              Approve Submission
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            <p className="text-gray-700">
-              Are you sure you want to approve this submission and release the
-              payment?
-            </p>
-
-            {selectedSubmission && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="font-medium">{selectedSubmission.title}</div>
-                <div className="text-sm text-gray-600 mt-1">
-                  {selectedSubmission.amount}
-                </div>
-              </div>
-            )}
-
-            {/* Rating Section */}
-            <div className="space-y-3">
-              <Label className="text-base font-medium">
-                Rate the freelancer&#39;s work
-              </Label>
-              <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Button
-                    key={star}
-                    type="button"
-                    className="p-1 hover:scale-110 transition-transform"
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHoveredRating(star)}
-                    onMouseLeave={() => setHoveredRating(0)}
-                  >
-                    <Star
-                      className={`w-8 h-8 transition-colors ${
-                        star <= (hoveredRating || rating)
-                          ? "fill-yellow-400 text-yellow-400"
-                          : "text-gray-300 hover:text-yellow-300"
-                      }`}
-                    />
-                  </Button>
-                ))}
-              </div>
-              <p className="text-sm text-gray-600 min-h-[20px]">
-                {getRatingText(hoveredRating || rating)}
-              </p>
-            </div>
-
-            {/* Feedback Section */}
-            <div>
-              <Label htmlFor="approval-feedback">
-                Feedback for freelancer (optional)
-              </Label>
-              <Textarea
-                id="approval-feedback"
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Great work! The deliverables meet all requirements..."
-                rows={3}
-                className="mt-1"
-              />
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setIsApproveModalOpen(false);
-                  setRating(0);
-                  setFeedback("");
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={confirmApproval}
-                className="bg-green-600 hover:bg-green-700"
-                disabled={rating === 0}
-              >
-                Approve & Release Payment
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ApproveSubmissionModal
+        submission={selectedSubmission}
+        isOpen={isApproveModalOpen}
+        onClose={() => setIsApproveModalOpen(false)}
+        onConfirm={confirmApproval}
+      />
 
       {/* Decline Modal */}
-      <Dialog open={isDeclineModalOpen} onOpenChange={setIsDeclineModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-red-600" />
-              Decline Submission
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <p className="text-gray-700">
-              Please provide a reason for declining this submission.
-            </p>
-
-            {selectedSubmission && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="font-medium">{selectedSubmission.title}</div>
-                <div className="text-sm text-gray-600 mt-1">
-                  {selectedSubmission.amount}
-                </div>
-              </div>
-            )}
-
-            <div>
-              <Label htmlFor="decline-reason">Reason for declining *</Label>
-              <Textarea
-                id="decline-reason"
-                value={declineReason}
-                onChange={(e) => setDeclineReason(e.target.value)}
-                placeholder="Please explain what needs to be changed or improved..."
-                rows={4}
-                required
-              />
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setIsDeclineModalOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={confirmDecline}
-                disabled={!declineReason.trim()}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                Decline Submission
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DeclineSubmissionModal
+        submission={selectedSubmission}
+        isOpen={isDeclineModalOpen}
+        onClose={() => setIsDeclineModalOpen(false)}
+        onConfirm={confirmDecline}
+      />
     </div>
   );
 }

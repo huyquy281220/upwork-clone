@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { XCircle } from "lucide-react";
 
-interface SubmissionDeclineModalProps {
+interface DeclineSubmissionModalProps {
   submission: {
     id: number;
     title: string;
@@ -23,12 +23,12 @@ interface SubmissionDeclineModalProps {
   onConfirm: (submissionId: number, reason: string) => void;
 }
 
-export function SubmissionDeclineModal({
+export function DeclineSubmissionModal({
   submission,
   isOpen,
   onClose,
   onConfirm,
-}: SubmissionDeclineModalProps) {
+}: DeclineSubmissionModalProps) {
   const [declineReason, setDeclineReason] = useState("");
 
   if (!submission) return null;
