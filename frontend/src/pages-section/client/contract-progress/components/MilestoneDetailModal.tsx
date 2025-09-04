@@ -56,11 +56,8 @@ export function MilestoneDetailModal({
     }
   };
 
-  const handleDownload = (file: any) => {
-    // Handle file download logic
-    console.log("Downloading file:", file.name);
-    // In a real app, this would trigger the actual download
-    window.open(file.url, "_blank");
+  const handleDownload = (fileUrl: string) => {
+    window.open(fileUrl, "_blank");
   };
 
   return (

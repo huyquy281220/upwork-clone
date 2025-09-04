@@ -14,7 +14,7 @@ import { ProposalProps } from "@/types/proposals";
 import { JobType } from "@/types/jobs";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
 import { MilestonesSection } from "./Milestone";
-import { CreateContractProps, MilestoneProps } from "@/types/contract";
+import { CreateContractProps, CreateMilestoneProps } from "@/types/contract";
 import { createContract } from "@/services/contract";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/hooks/useUserInfo";
@@ -57,7 +57,7 @@ export function CreateContractClient() {
   const [startDate, setStartDate] = useState("");
   const [contractTitle, setContractTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [milestones, setMilestones] = useState<MilestoneProps[]>([]);
+  const [milestones, setMilestones] = useState<CreateMilestoneProps[]>([]);
   const { toast, showSuccessToast, showErrorToast, activeToasts } = useToast();
 
   const { data: session } = useSession();

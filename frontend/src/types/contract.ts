@@ -31,6 +31,18 @@ export interface MilestoneProps {
   amount: number;
   dueDate: string;
   status: MilestoneStatus;
+  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileKey: string;
+}
+
+export interface CreateMilestoneProps {
+  title: string;
+  description: string;
+  amount: number;
+  dueDate: string;
+  file: File;
 }
 
 export interface ContractProps {
@@ -101,7 +113,7 @@ export interface CreateContractProps {
   jobId: string;
   freelancerId: string;
   clientId: string;
-  milestones?: MilestoneProps[];
+  milestones?: CreateMilestoneProps[];
   title: string;
   description: string;
   projectDuration: string;

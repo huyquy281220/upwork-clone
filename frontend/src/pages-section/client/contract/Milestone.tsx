@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2 } from "lucide-react";
-import { MilestoneProps, MilestoneStatus } from "@/types/contract";
+import { CreateMilestoneProps } from "@/types/contract";
 import { JobType } from "@/types/jobs";
 
 interface MilestonesSectionProps {
-  milestones: MilestoneProps[];
-  setMilestones: (milestones: MilestoneProps[]) => void;
+  milestones: CreateMilestoneProps[];
+  setMilestones: (milestones: CreateMilestoneProps[]) => void;
   contractType: string;
 }
 
@@ -21,29 +21,28 @@ export function MilestonesSection({
   contractType,
 }: MilestonesSectionProps) {
   const addMilestone = () => {
-    const newMilestone: MilestoneProps = {
-      id: Date.now().toString(),
+    const newMilestone: CreateMilestoneProps = {
       title: "",
       description: "",
       amount: 0,
       dueDate: "",
-      status: MilestoneStatus.PENDING,
+      file: new File([], ""),
     };
     setMilestones([...milestones, newMilestone]);
   };
 
-  const removeMilestone = (id: string) => {
-    setMilestones(milestones.filter((m) => m.id !== id));
+  const removeMilestone = (title: string) => {
+    setMilestones(milestones.filter((m) => m.title !== title));
   };
 
   const updateMilestone = (
-    id: string,
-    field: keyof MilestoneProps,
+    title: string,
+    field: keyof CreateMilestoneProps,
     value: string
   ) => {
     setMilestones(
       milestones.map((m) =>
-        m.id === id
+        m.title === title
           ? {
               ...m,
               [field]: field === "amount" ? Number(value) || 0 : value,
@@ -86,13 +85,13 @@ export function MilestonesSection({
         ) : (
           <div className="space-y-6">
             {milestones.map((milestone, index) => (
-              <div key={milestone.id} className="border rounded-lg p-4">
+              <div key={milestone.title} className="border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-medium">Milestone {index + 1}</h4>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeMilestone(milestone.id)}
+                    onClick={() => removeMilestone(milestone.title)}
                   >
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </Button>
@@ -100,14 +99,18 @@ export function MilestonesSection({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor={`milestone-name-${milestone.id}`}>
+                    <Label htmlFor={`milestone-name-${milestone.title}`}>
                       Milestone Name
                     </Label>
                     <Input
-                      id={`milestone-name-${milestone.id}`}
+                      id={`milestone-name-${milestone.title}`}
                       value={milestone.title}
                       onChange={(e) =>
-                        updateMilestone(milestone.id, "title", e.target.value)
+                        updateMilestone(
+                          milestone.title,
+                          "title",
+                          e.target.value
+                        )
                       }
                       placeholder="e.g., Initial Design Mockups"
                       className="mt-1"
@@ -115,7 +118,7 @@ export function MilestonesSection({
                   </div>
 
                   <div>
-                    <Label htmlFor={`milestone-amount-${milestone.id}`}>
+                    <Label htmlFor={`milestone-amount-${milestone.title}`}>
                       Amount
                     </Label>
                     <div className="relative mt-1">
@@ -123,12 +126,12 @@ export function MilestonesSection({
                         $
                       </span>
                       <Input
-                        id={`milestone-amount-${milestone.id}`}
+                        id={`milestone-amount-${milestone.title}`}
                         type="number"
                         value={milestone.amount}
                         onChange={(e) =>
                           updateMilestone(
-                            milestone.id,
+                            milestone.title,
                             "amount",
                             e.target.value
                           )
@@ -140,30 +143,34 @@ export function MilestonesSection({
                   </div>
 
                   <div>
-                    <Label htmlFor={`milestone-due-${milestone.id}`}>
+                    <Label htmlFor={`milestone-due-${milestone.title}`}>
                       Due Date
                     </Label>
                     <Input
-                      id={`milestone-due-${milestone.id}`}
+                      id={`milestone-due-${milestone.title}`}
                       type="date"
                       value={milestone.dueDate}
                       onChange={(e) =>
-                        updateMilestone(milestone.id, "dueDate", e.target.value)
+                        updateMilestone(
+                          milestone.title,
+                          "dueDate",
+                          e.target.value
+                        )
                       }
                       className="mt-1"
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <Label htmlFor={`milestone-description-${milestone.id}`}>
+                    <Label htmlFor={`milestone-description-${milestone.title}`}>
                       Description
                     </Label>
                     <Textarea
-                      id={`milestone-description-${milestone.id}`}
+                      id={`milestone-description-${milestone.title}`}
                       value={milestone.description}
                       onChange={(e) =>
                         updateMilestone(
-                          milestone.id,
+                          milestone.title,
                           "description",
                           e.target.value
                         )
