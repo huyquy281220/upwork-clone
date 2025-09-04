@@ -20,7 +20,7 @@ export function ContractProgressTabs({ contract, ...clientData }: TabsProps) {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">Progress Overview</TabsTrigger>
-          <TabsTrigger value="activity">Work Activity</TabsTrigger>
+          <TabsTrigger value="submissions">Work Submissions</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
         </TabsList>
 
@@ -33,7 +33,7 @@ export function ContractProgressTabs({ contract, ...clientData }: TabsProps) {
           />
         </TabsContent>
 
-        <TabsContent value="activity" className="mt-6">
+        <TabsContent value="submissions" className="mt-6">
           <WorkSubmissionsTab />
         </TabsContent>
 
