@@ -18,6 +18,7 @@ import { imageUpload } from "@/services/userService";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { Input } from "@/components/ui/input";
 
 interface ImageUploadModalProps {
   open: boolean;
@@ -161,7 +162,7 @@ export default function ImageUploadModal({
               >
                 Browse Files
               </Button>
-              <input
+              <Input
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"

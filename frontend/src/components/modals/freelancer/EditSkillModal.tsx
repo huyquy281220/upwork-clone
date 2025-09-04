@@ -108,12 +108,12 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
       >
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Edit skills</DialogTitle>
-          <button
+          <Button
             onClick={handleCloseModal}
             className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
           >
             <X className="h-6 w-6" />
-          </button>
+          </Button>
         </DialogHeader>
 
         <div>
@@ -129,12 +129,12 @@ export function SkillsModal({ open, onOpenChange }: SkillsModalProps) {
                   className="bg-background text-foreground flex items-center gap-1 py-1.5 border border-gray-700"
                 >
                   {skill.name}
-                  <button
+                  <Button
                     onClick={() => handleRemoveSkill(skill)}
                     className="ml-1 rounded-full"
                   >
                     <X className="h-3 w-3" />
-                  </button>
+                  </Button>
                 </Badge>
               ))}
             </div>

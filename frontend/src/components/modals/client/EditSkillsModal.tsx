@@ -133,12 +133,12 @@ export function EditSkillsModal({
                     className="bg-gray-800 border border-gray-600 rounded-full px-3 py-1 flex items-center gap-2"
                   >
                     <span className="text-sm">{skill.name}</span>
-                    <button
+                    <Button
                       onClick={() => handleRemoveSkill(skill.id)}
                       className="text-gray-400 hover:text-white"
                     >
                       <X className="w-3 h-3" />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>

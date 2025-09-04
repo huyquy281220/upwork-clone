@@ -21,6 +21,7 @@ import { useUserLanguages } from "@/hooks/useUserInfo";
 import api from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { InfiniteLoading } from "@/components/common/InfiniteLoading";
+import { Input } from "@/components/ui/input";
 
 interface EditLanguagesModalProps {
   open: boolean;
@@ -121,7 +122,7 @@ export function EditLanguagesModal({
               <div className="space-y-2">
                 <p>Language</p>
                 <div className="relative">
-                  <input
+                  <Input
                     id={`language-${index}`}
                     value={name}
                     className="bg-background w-[217px] h-[38px] px-2 rounded-md cursor-not-allowed"
