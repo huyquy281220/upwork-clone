@@ -34,7 +34,10 @@ export function ContractProgressTabs({ contract, ...clientData }: TabsProps) {
         </TabsContent>
 
         <TabsContent value="submissions" className="mt-6">
-          <WorkSubmissionsTab />
+          <WorkSubmissionsTab
+            submissions={contract.workSubmission ?? []}
+            milestones={contract.milestones ?? []}
+          />
         </TabsContent>
 
         <TabsContent value="payments" className="mt-6">

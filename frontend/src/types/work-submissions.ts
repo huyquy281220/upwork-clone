@@ -6,6 +6,8 @@ export enum WorkSubmissionStatus {
 
 export type WorkSubmissionProps = {
   id: string;
+  milestoneId?: string;
+  workLogId?: string;
   title: string;
   description: string;
   fileUrl: string;
@@ -17,7 +19,6 @@ export type WorkSubmissionProps = {
   updatedAt: string;
   reviewedAt?: string;
   contractId: string;
-  amount?: number;
 };
 
 export type CreateWorkSubmissionProps = {

@@ -15,6 +15,7 @@ import { WorkSubmissionProps } from "@/types/work-submissions";
 
 interface DeclineSubmissionModalProps {
   submission: WorkSubmissionProps;
+  amount: number;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (submissionId: string, reason: string) => void;
@@ -22,6 +23,7 @@ interface DeclineSubmissionModalProps {
 
 export function DeclineSubmissionModal({
   submission,
+  amount,
   isOpen,
   onClose,
   onConfirm,
@@ -60,9 +62,7 @@ export function DeclineSubmissionModal({
 
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="font-medium">{submission.title}</div>
-            <div className="text-sm text-gray-600 mt-1">
-              {submission.amount}
-            </div>
+            <div className="text-sm text-gray-600 mt-1">{amount}</div>
           </div>
 
           <div>

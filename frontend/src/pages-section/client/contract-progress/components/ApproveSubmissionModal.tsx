@@ -16,6 +16,7 @@ import { WorkSubmissionProps } from "@/types/work-submissions";
 interface ApproveSubmissionModalProps {
   submission: WorkSubmissionProps;
   isOpen: boolean;
+  amount: number;
   onClose: () => void;
   onConfirm: (submissionId: string, feedback?: string, rating?: number) => void;
 }
@@ -23,6 +24,7 @@ interface ApproveSubmissionModalProps {
 export function ApproveSubmissionModal({
   submission,
   isOpen,
+  amount,
   onClose,
   onConfirm,
 }: ApproveSubmissionModalProps) {
@@ -80,9 +82,7 @@ export function ApproveSubmissionModal({
 
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="font-medium">{submission.title}</div>
-            <div className="text-sm text-gray-600 mt-1">
-              {submission.amount}
-            </div>
+            <div className="text-sm text-gray-600 mt-1">{amount}</div>
           </div>
 
           {/* Rating Section */}

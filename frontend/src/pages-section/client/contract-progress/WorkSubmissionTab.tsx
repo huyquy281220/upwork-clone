@@ -19,9 +19,11 @@ import { ViewSubmissionModal } from "./components/ViewSubmissionModal";
 import { WorkSubmissionProps } from "@/types/work-submissions";
 import { formatDateToMonthDayYear } from "@/utils/formatDate";
 import { getWorkSubmissionStatusColor } from "@/utils/getStatusColor";
+import { MilestoneProps } from "@/types/contract";
 
 type WorkSubmissionsTabProps = {
   submissions: WorkSubmissionProps[];
+  milestones: MilestoneProps[];
 };
 
 const defaultSubmission: WorkSubmissionProps = {
@@ -37,10 +39,12 @@ const defaultSubmission: WorkSubmissionProps = {
   updatedAt: "",
   reviewedAt: "",
   contractId: "",
-  amount: 0,
 };
 
-export function WorkSubmissionsTab({ submissions }: WorkSubmissionsTabProps) {
+export function WorkSubmissionsTab({
+  submissions,
+  milestones,
+}: WorkSubmissionsTabProps) {
   const [selectedSubmission, setSelectedSubmission] =
     useState<WorkSubmissionProps>(defaultSubmission);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -111,6 +115,12 @@ export function WorkSubmissionsTab({ submissions }: WorkSubmissionsTabProps) {
     setIsDeclineModalOpen(false);
     setDeclineReason("");
     setSelectedSubmission(defaultSubmission);
+  };
+
+  const getMilestoneAmount = (workSubmission: WorkSubmissionProps) => {
+    const milestoneId = workSubmission.milestoneId;
+    const milestone = milestones.find((m) => m.id === milestoneId);
+    return milestone?.amount;
   };
 
   // Stats calculation
@@ -278,6 +288,7 @@ export function WorkSubmissionsTab({ submissions }: WorkSubmissionsTabProps) {
       {/* Approve Modal with Rating */}
       <ApproveSubmissionModal
         submission={selectedSubmission}
+        amount={getMilestoneAmount(selectedSubmission) ?? 0}
         isOpen={isApproveModalOpen}
         onClose={() => setIsApproveModalOpen(false)}
         onConfirm={confirmApproval}
@@ -286,6 +297,7 @@ export function WorkSubmissionsTab({ submissions }: WorkSubmissionsTabProps) {
       {/* Decline Modal */}
       <DeclineSubmissionModal
         submission={selectedSubmission}
+        amount={getMilestoneAmount(selectedSubmission) ?? 0}
         isOpen={isDeclineModalOpen}
         onClose={() => setIsDeclineModalOpen(false)}
         onConfirm={confirmDecline}
