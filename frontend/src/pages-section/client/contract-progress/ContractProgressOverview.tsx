@@ -23,6 +23,7 @@ import {
   MilestoneProps,
   MilestoneStatus,
 } from "@/types/contract";
+import { getMilestoneStatusColor } from "@/utils/getStatusColor";
 
 const defaultMilestone = {
   id: "1",
@@ -31,6 +32,10 @@ const defaultMilestone = {
   amount: 0,
   dueDate: "",
   status: MilestoneStatus.PENDING,
+  fileUrl: "",
+  fileName: "",
+  fileSize: 0,
+  fileKey: "",
 };
 
 interface ProgressOverviewProps {
@@ -59,23 +64,6 @@ export function ProgressOverview({
     if (progress >= 50) return "text-blue-600";
     if (progress >= 25) return "text-yellow-600";
     return "text-red-600";
-  };
-
-  const getMilestoneStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "submitted":
-        return "bg-blue-100 text-blue-800";
-      case "in progress":
-        return "bg-yellow-100 text-yellow-800";
-      case "pending":
-        return "bg-gray-100 text-gray-800";
-      case "declined":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
   };
 
   const formatDate = (dateString: string) => {
@@ -213,9 +201,9 @@ export function ProgressOverview({
                 const daysRemaining = calculateDaysRemaining(milestone.dueDate);
                 const isOverdue =
                   daysRemaining < 0 &&
-                  milestone.status.toLowerCase() !== "completed";
+                  milestone.status.toLowerCase() !== MilestoneStatus.COMPLETED;
                 const isCompleted =
-                  milestone.status.toLowerCase() === "completed";
+                  milestone.status.toLowerCase() === MilestoneStatus.COMPLETED;
                 const showActions = shouldShowActionButtons(milestone.status);
 
                 return (
