@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { WorkSubmissionProps } from "@/types/work-submissions";
 import { formatDateToMonthDayYear } from "@/utils/formatDate";
+import { getWorkSubmissionStatusColor } from "@/utils/getStatusColor";
 
 interface ViewSubmissionModalProps {
   submission: WorkSubmissionProps;
@@ -31,21 +32,6 @@ export function ViewSubmissionModal({
   onClose,
 }: ViewSubmissionModalProps) {
   if (!submission) return null;
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "bg-green-100 text-green-800";
-      case "submitted":
-        return "bg-blue-100 text-blue-800";
-      case "needs_revision":
-        return "bg-yellow-100 text-yellow-800";
-      case "declined":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -77,11 +63,13 @@ export function ViewSubmissionModal({
         </DialogHeader>
 
         <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-4 p-4 bg-red-500 rounded-lg">
+          <div className="grid grid-cols-2 gap-4 p-4 bg-subBackground rounded-lg">
             <div>
-              <span className="text-sm text-gray-600">Status:</span>
+              <span className="text-sm text-foreground">Status:</span>
               <div className="flex items-center gap-2 mt-1">
-                <Badge className={getStatusColor(submission.status)}>
+                <Badge
+                  className={getWorkSubmissionStatusColor(submission.status)}
+                >
                   <div className="flex items-center gap-1">
                     {getStatusIcon(submission.status)}
                     {submission.status.replace("_", " ").toUpperCase()}
@@ -90,20 +78,20 @@ export function ViewSubmissionModal({
               </div>
             </div>
             <div>
-              <span className="text-sm text-gray-600">Submitted:</span>
+              <span className="text-sm text-foreground">Submitted:</span>
               <div className="font-medium mt-1">
                 {formatDateToMonthDayYear(submission.createdAt)}
               </div>
             </div>
             <div>
-              <span className="text-sm text-gray-600">Last Updated:</span>
+              <span className="text-sm text-foreground">Last Updated:</span>
               <div className="font-medium mt-1">
                 {formatDateToMonthDayYear(submission.updatedAt)}
               </div>
             </div>
             {submission.reviewedAt && (
               <div>
-                <span className="text-sm text-gray-600">Reviewed:</span>
+                <span className="text-sm text-foreground">Reviewed:</span>
                 <div className="font-medium mt-1">
                   {formatDateToMonthDayYear(submission.reviewedAt)}
                 </div>
@@ -113,17 +101,19 @@ export function ViewSubmissionModal({
 
           <div>
             <h4 className="font-medium mb-2">Description</h4>
-            <p className="text-gray-700">{submission.description}</p>
+            <p className="text-foreground opacity-80">
+              {submission.description}
+            </p>
           </div>
 
           <div>
             <h4 className="font-medium mb-3">Submitted File</h4>
-            <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+            <div className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center gap-3">
-                <FileText className="w-8 h-8 text-gray-400" />
+                <FileText className="w-8 h-8 text-foreground opacity-80" />
                 <div>
                   <div className="font-medium">{submission.fileName}</div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-foreground opacity-80">
                     {getFileType(submission.fileName)} • {submission.fileSize}
                   </div>
                 </div>
