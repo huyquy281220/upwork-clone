@@ -100,9 +100,9 @@ export function ProgressOverview({
                 const daysRemaining = calculateDaysRemaining(milestone.dueDate);
                 const isOverdue =
                   daysRemaining < 0 &&
-                  milestone.status.toLowerCase() !== MilestoneStatus.COMPLETED;
+                  milestone.status !== MilestoneStatus.COMPLETED;
                 const isCompleted =
-                  milestone.status.toLowerCase() === MilestoneStatus.COMPLETED;
+                  milestone.status === MilestoneStatus.COMPLETED;
 
                 return (
                   <div
@@ -122,7 +122,7 @@ export function ProgressOverview({
                     </div>
 
                     <div className="flex-1">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-start gap-4">
                         <h4 className="font-medium text-foreground">
                           {milestone.title}
                         </h4>
