@@ -4,14 +4,11 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Clock,
   CheckCircle,
   Calendar,
   TrendingUp,
-  Eye,
-  X,
   AlertTriangle,
 } from "lucide-react";
 import { MilestoneDetailModal } from "./components/MilestoneDetailModal";
@@ -68,21 +65,6 @@ export function ProgressOverview({
     return diffDays;
   };
 
-  const handleApprove = (milestone: MilestoneProps) => {
-    setSelectedMilestone(milestone);
-    setShowApprovalModal(true);
-  };
-
-  const handleDecline = (milestone: MilestoneProps) => {
-    setSelectedMilestone(milestone);
-    setShowDeclineModal(true);
-  };
-
-  const handleViewDetail = (milestone: MilestoneProps) => {
-    setSelectedMilestone(milestone);
-    setShowDetailModal(true);
-  };
-
   const confirmApproval = () => {
     console.log(
       "Approving milestone:",
@@ -105,17 +87,6 @@ export function ProgressOverview({
     setShowDeclineModal(false);
     setDeclineReason("");
     setSelectedMilestone(defaultMilestone);
-  };
-
-  // Function to determine if milestone should show action buttons
-  const shouldShowActionButtons = (status: string) => {
-    const statusLower = status.toLowerCase();
-    return (
-      statusLower === "submitted" ||
-      statusLower === "in progress" ||
-      statusLower === "pending" ||
-      statusLower === "declined"
-    );
   };
 
   return (
@@ -186,7 +157,6 @@ export function ProgressOverview({
                   milestone.status.toLowerCase() !== MilestoneStatus.COMPLETED;
                 const isCompleted =
                   milestone.status.toLowerCase() === MilestoneStatus.COMPLETED;
-                const showActions = shouldShowActionButtons(milestone.status);
 
                 return (
                   <div
@@ -248,57 +218,6 @@ export function ProgressOverview({
                           </div>
                         )}
                       </div>
-
-                      {/* Milestone Actions - Show for non-completed milestones */}
-                      {showActions && !isCompleted && (
-                        <div className="flex items-center space-x-2 mt-3 pt-3 border-t">
-                          <Button
-                            size="sm"
-                            onClick={() => handleApprove(milestone)}
-                            className="bg-green-600 hover:bg-green-700"
-                          >
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                            Approve & Release Payment
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDecline(milestone)}
-                          >
-                            <X className="w-4 h-4 mr-1" />
-                            Decline
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleViewDetail(milestone)}
-                          >
-                            <Eye className="w-4 h-4 mr-1" />
-                            View Detail
-                          </Button>
-                        </div>
-                      )}
-
-                      {/* Completed milestone actions */}
-                      {isCompleted && (
-                        <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                          <div className="flex items-center space-x-2 text-sm text-green-600">
-                            <CheckCircle className="w-4 h-4" />
-                            <span>
-                              Payment released on{" "}
-                              {formatDateToMonthDayYear(milestone.dueDate)}
-                            </span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleViewDetail(milestone)}
-                          >
-                            <Eye className="w-4 h-4 mr-1" />
-                            View Detail
-                          </Button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 );
