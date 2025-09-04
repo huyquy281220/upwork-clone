@@ -16,27 +16,20 @@ import {
   Clock,
   AlertTriangle,
 } from "lucide-react";
-import {
-  WorkSubmissionProps,
-  WorkSubmissionStatus,
-} from "@/types/work-submissions";
+import { WorkSubmissionProps } from "@/types/work-submissions";
 import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
-interface SubmissionDetailModalProps {
-  submission: WorkSubmissionProps | null;
+interface ViewSubmissionModalProps {
+  submission: WorkSubmissionProps;
   isOpen: boolean;
   onClose: () => void;
-  onApprove?: (submission: WorkSubmissionProps) => void;
-  onDecline?: (submission: WorkSubmissionProps) => void;
 }
 
-export function SubmissionDetailModal({
+export function ViewSubmissionModal({
   submission,
   isOpen,
   onClose,
-  onApprove,
-  onDecline,
-}: SubmissionDetailModalProps) {
+}: ViewSubmissionModalProps) {
   if (!submission) return null;
 
   const getStatusColor = (status: string) => {
@@ -84,7 +77,7 @@ export function SubmissionDetailModal({
         </DialogHeader>
 
         <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+          <div className="grid grid-cols-2 gap-4 p-4 bg-red-500 rounded-lg">
             <div>
               <span className="text-sm text-gray-600">Status:</span>
               <div className="flex items-center gap-2 mt-1">
@@ -146,26 +139,6 @@ export function SubmissionDetailModal({
               </Button>
             </div>
           </div>
-
-          {submission.status === WorkSubmissionStatus.SUBMITTED && (
-            <div className="flex justify-end gap-2 pt-4 border-t">
-              <Button
-                variant="outline"
-                onClick={() => onDecline?.(submission)}
-                className="text-red-600 border-red-200 hover:bg-red-50"
-              >
-                <XCircle className="w-4 h-4 mr-1" />
-                Decline
-              </Button>
-              <Button
-                onClick={() => onApprove?.(submission)}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <CheckCircle className="w-4 h-4 mr-1" />
-                Approve & Release Payment
-              </Button>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>

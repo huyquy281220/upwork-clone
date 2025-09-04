@@ -17,6 +17,7 @@ export type WorkSubmissionProps = {
   updatedAt: string;
   reviewedAt?: string;
   contractId: string;
+  amount?: number;
 };
 
 export type CreateWorkSubmissionProps = {

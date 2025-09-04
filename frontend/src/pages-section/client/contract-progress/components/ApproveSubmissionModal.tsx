@@ -11,16 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CheckCircle, Star } from "lucide-react";
+import { WorkSubmissionProps } from "@/types/work-submissions";
 
 interface ApproveSubmissionModalProps {
-  submission: {
-    id: number;
-    title: string;
-    amount: string;
-  } | null;
+  submission: WorkSubmissionProps;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (submissionId: number, feedback?: string, rating?: number) => void;
+  onConfirm: (submissionId: string, feedback?: string, rating?: number) => void;
 }
 
 export function ApproveSubmissionModal({

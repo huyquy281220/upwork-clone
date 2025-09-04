@@ -11,16 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { XCircle } from "lucide-react";
+import { WorkSubmissionProps } from "@/types/work-submissions";
 
 interface DeclineSubmissionModalProps {
-  submission: {
-    id: number;
-    title: string;
-    amount: string;
-  } | null;
+  submission: WorkSubmissionProps;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (submissionId: number, reason: string) => void;
+  onConfirm: (submissionId: string, reason: string) => void;
 }
 
 export function DeclineSubmissionModal({
