@@ -444,6 +444,6 @@ enum NotificationType {
 
 enum SubmissionStatus {
   PENDING
-  SUBMITTED
+  APPROVED
   REJECTED
 }
