@@ -263,7 +263,7 @@ export class WorkSubmissionsService {
       const notification = await tx.notification.create({
         data: {
           userId: submission.contract.freelancer.userId,
-          type: NotificationType.WORK_SUBMISSION,
+          type: NotificationType.DECLINE_WORK_SUBMISSION,
           content: `Your work submission "${submission.title}" has been declined. Reason: ${reason}`,
           itemId: submission.id,
         },
