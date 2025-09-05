@@ -204,7 +204,7 @@ export function WorkSubmissionsTab({
             className="hover:shadow-md transition-shadow"
           >
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="font-semibold text-2xl">
@@ -244,7 +244,7 @@ export function WorkSubmissionsTab({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 ml-4">
+                <div className="flex items-center justify-start sm:justify-end gap-2 ml-4">
                   {submission.status === WorkSubmissionStatus.PENDING && (
                     <>
                       <Button
