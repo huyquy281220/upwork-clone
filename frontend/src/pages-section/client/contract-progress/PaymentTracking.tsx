@@ -65,10 +65,6 @@ export function PaymentTracking({ contract, totalPaid }: PaymentTrackingProps) {
               <CreditCard className="w-5 h-5" />
               <span>Payment History</span>
             </div>
-            <Button variant="outline" size="sm">
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -76,7 +72,7 @@ export function PaymentTracking({ contract, totalPaid }: PaymentTrackingProps) {
             {payments.map((payment) => (
               <div
                 key={payment.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center justify-between p-4 border rounded-lg transition-colors"
               >
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
@@ -87,7 +83,7 @@ export function PaymentTracking({ contract, totalPaid }: PaymentTrackingProps) {
                       <Badge className={getPaymentStatusColor(payment.status)}>
                         {payment.status}
                       </Badge>
-                      <span className="text-lg font-semibold text-gray-900">
+                      <span className="text-lg font-semibold text-foreground">
                         {payment.amount}
                       </span>
                     </div>
