@@ -38,7 +38,7 @@ export function MilestoneList({ milestones }: MilestoneListProps) {
             return (
               <div
                 key={milestone.id}
-                className="flex items-center space-x-4 p-4 border rounded-lg"
+                className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-0 md:space-x-4 p-4 border rounded-lg"
               >
                 <div className="flex-shrink-0">
                   <div
@@ -54,7 +54,7 @@ export function MilestoneList({ milestones }: MilestoneListProps) {
 
                 <div className="flex-1">
                   <div className="flex items-center justify-start gap-4">
-                    <h4 className="font-medium text-foreground">
+                    <h4 className="font-medium text-foreground line-clamp-1 md:line-clamp-2">
                       {milestone.title}
                     </h4>
                     <div className="flex items-center space-x-2">
@@ -75,7 +75,7 @@ export function MilestoneList({ milestones }: MilestoneListProps) {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-4 mt-2 text-sm text-foreground opacity-80">
+                  <div className="flex flex-wrap gap-3 items-center md:space-x-4 mt-2 text-sm text-foreground opacity-80">
                     <div className="flex items-center space-x-1">
                       <Calendar className="w-4 h-4" />
                       <span>
