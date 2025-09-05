@@ -10,7 +10,7 @@ import { s3Client } from 'src/config/aws-s3.config';
 import { CreateWorkSubmissionDto } from './dto/create-work-submissions.dto';
 import { UpdateWorkSubmissionDto } from './dto/update-work-submissions.dto';
 import { Express } from 'express';
-import { NotificationType } from '@prisma/client';
+import { NotificationType, SubmissionStatus } from '@prisma/client';
 import { NotificationsGateway } from 'src/socket/socket.gateway';
 
 @Injectable()
@@ -184,6 +184,99 @@ export class WorkSubmissionsService {
         `Failed to fetch work submission: ${error.message}`,
       );
     }
+  }
+
+  async approveSubmission(
+    submissionId: string,
+    data: { rating?: number; feedback?: string },
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      // Update submission status
+      const submission = await tx.workSubmission.update({
+        where: { id: submissionId },
+        data: {
+          // status: SubmissionStatus.APPROVED,
+          reviewedAt: new Date(),
+        },
+        include: {
+          contract: {
+            include: {
+              freelancer: {
+                include: { user: true },
+              },
+              client: {
+                include: { user: true },
+              },
+            },
+          },
+          milestone: true,
+          workLog: true,
+        },
+      });
+
+      // Create notification for freelancer
+      const notification = await tx.notification.create({
+        data: {
+          userId: submission.contract.freelancer.userId,
+          type: NotificationType.APPROVE_WORK_SUBMISSION,
+          content: `Your work submission "${submission.title}" has been approved.`,
+          itemId: submission.id,
+        },
+      });
+
+      // Send real-time notification
+      this.notificationGateway.sendNotificationToUser(
+        submission.contract.freelancer.userId,
+        notification,
+      );
+
+      return submission;
+    });
+  }
+
+  async declineSubmission(submissionId: string, reason: string) {
+    return this.prisma.$transaction(async (tx) => {
+      // Update submission status
+      const submission = await tx.workSubmission.update({
+        where: { id: submissionId },
+        data: {
+          status: SubmissionStatus.REJECTED,
+          reviewedAt: new Date(),
+        },
+        include: {
+          contract: {
+            include: {
+              freelancer: {
+                include: { user: true },
+              },
+              client: {
+                include: { user: true },
+              },
+            },
+          },
+          milestone: true,
+          workLog: true,
+        },
+      });
+
+      // Create notification for freelancer
+      const notification = await tx.notification.create({
+        data: {
+          userId: submission.contract.freelancer.userId,
+          type: NotificationType.WORK_SUBMISSION,
+          content: `Your work submission "${submission.title}" has been declined. Reason: ${reason}`,
+          itemId: submission.id,
+        },
+      });
+
+      // Send real-time notification
+      this.notificationGateway.sendNotificationToUser(
+        submission.contract.freelancer.userId,
+        notification,
+      );
+
+      return submission;
+    });
   }
 
   async update(

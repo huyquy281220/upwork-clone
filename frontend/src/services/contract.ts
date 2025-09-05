@@ -62,3 +62,13 @@ export const updateContract = async (
   );
   return response.data;
 };
+
+export const approveContract = async (contractId: string) => {
+  const response = await api.post(`${apiURL}/contracts/approve/${contractId}`);
+  return response.data;
+};
+
+export const declineContract = async (contractId: string) => {
+  const response = await api.post(`${apiURL}/contracts/decline/${contractId}`);
+  return response.data;
+};
