@@ -10,6 +10,7 @@ import {
 } from "@/assets/svg";
 import Image from "next/image";
 import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   const [activeTab, setActiveTab] = useState<string>("for-clients");
@@ -84,9 +85,9 @@ const ClientContent = () => {
           placeholder="Search by role, skills, or keywords"
           className="flex-1 bg-transparent text-white placeholder-gray-400 outline-none px-4 py-2 text-sm"
         />
-        <button className="bg-main text-black rounded-full p-2 transition-colors">
+        <Button className="bg-main text-black rounded-full p-2 transition-colors">
           <Search className="text-white" />
-        </button>
+        </Button>
       </div>
       <div className="flex justify-between gap-3 mt-8">
         {[LogoMicrosoft, LogoAirbnb, LogoBissel, LogoGlassdoor].map(

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 export function Banner() {
@@ -13,13 +14,13 @@ export function Banner() {
               Learn how to get started on Prowork
             </p>
           </div>
-          <button className="text-green-600 hover:bg-gray-100">
+          <Button className="text-green-600 hover:bg-gray-100">
             Explore Prowork 101
-          </button>
+          </Button>
         </div>
-        <button className="hover:bg-green-600">
+        <Button className="hover:bg-green-600">
           <X className="h-4 w-4" />
-        </button>
+        </Button>
       </div>
     </div>
   );
