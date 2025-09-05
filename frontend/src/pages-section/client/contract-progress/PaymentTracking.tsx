@@ -7,6 +7,7 @@ import { DollarSign, Calendar, CreditCard, Download, Eye } from "lucide-react";
 // import { formatDateToMonthDayYear } from "@/utils/formatDate";
 import { getPaymentStatusColor } from "@/utils/getStatusColor";
 import { ContractProps, ContractType } from "@/types/contract";
+import { PaymentStatus } from "@/types/payments";
 
 interface PaymentTrackingProps {
   contract: ContractProps;
@@ -16,13 +17,9 @@ interface PaymentTrackingProps {
 export function PaymentTracking({ contract, totalPaid }: PaymentTrackingProps) {
   const payments = contract.payments ?? [];
 
-  // const pendingAmount = payments
-  //   .filter((p) => p.status === "pending")
-  //   .reduce(
-  //     (sum, p) =>
-  //       sum + Number.parseFloat(p.amount.replace("$", "").replace(",", "")),
-  //     0
-  //   );
+  const pendingAmount = payments
+    .filter((p) => p.status === PaymentStatus.PENDING)
+    .reduce((sum, p) => sum + p.amount, 0);
 
   return (
     <div className="space-y-6">
@@ -40,20 +37,20 @@ export function PaymentTracking({ contract, totalPaid }: PaymentTrackingProps) {
               <div className="text-2xl font-bold text-green-600">
                 ${totalPaid}
               </div>
-              <div className="text-sm text-gray-600">Total Paid</div>
+              <div className="text-sm text-foreground">Total Paid</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-yellow-600">
-                {/* ${pendingAmount.toLocaleString()} */}
+                ${pendingAmount}
               </div>
-              <div className="text-sm text-gray-600">Pending</div>
+              <div className="text-sm text-foreground">Pending</div>
             </div>
             {contract.contractType === ContractType.FIXED_PRICE && (
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-foreground">
                   {contract.totalPrice}
                 </div>
-                <div className="text-sm text-gray-600">Total Budget</div>
+                <div className="text-sm text-foreground">Total Budget</div>
               </div>
             )}
           </div>
