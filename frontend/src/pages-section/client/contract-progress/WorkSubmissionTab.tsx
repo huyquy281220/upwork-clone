@@ -16,7 +16,10 @@ import {
 import { ApproveSubmissionModal } from "./components/ApproveSubmissionModal";
 import { DeclineSubmissionModal } from "./components/DeclineSubmissionModal";
 import { ViewSubmissionModal } from "./components/ViewSubmissionModal";
-import { WorkSubmissionProps } from "@/types/work-submissions";
+import {
+  WorkSubmissionProps,
+  WorkSubmissionStatus,
+} from "@/types/work-submissions";
 import { formatDateToMonthDayYear } from "@/utils/formatDate";
 import { getWorkSubmissionStatusColor } from "@/utils/getStatusColor";
 import { MilestoneProps } from "@/types/contract";
@@ -192,7 +195,7 @@ export function WorkSubmissionsTab({
           </CardContent>
         </Card>
       </div>
-
+      {/* 853,1783 */}
       {/* Submissions List */}
       <div className="space-y-4">
         {submissions.map((submission) => (
@@ -204,7 +207,7 @@ export function WorkSubmissionsTab({
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-semibold text-lg">
+                    <h3 className="font-semibold text-2xl">
                       {submission.title}
                     </h3>
                     <Badge
@@ -219,58 +222,59 @@ export function WorkSubmissionsTab({
                     </Badge>
                   </div>
 
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                  <div className="flex items-center gap-4 text-sm text-foreground mb-2">
                     <span>{submission.title}</span>
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
                       Submitted {formatDateToMonthDayYear(submission.createdAt)}
                     </span>
-                    {/* <span className="flex items-center gap-1">
-                      <FileText className="w-4 h-4" />
-                      {submission.filesCount} files
-                    </span> */}
-                    <span className="font-medium text-gray-900">
-                      {/* {submission.amount} */}
+                    <span className="text-foreground">
+                      ${getMilestoneAmount(submission)}
                     </span>
                   </div>
 
-                  <p className="text-gray-700 text-sm">
+                  <p className="text-foreground opacity-80 text-sm">
                     {submission.description}
                   </p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <FileText className="w-4 h-4" />
+                    <p className="text-foreground opacity-80 text-sm">
+                      {submission.fileName}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 ml-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleViewDetail(submission)}
-                    className="flex items-center gap-1"
-                  >
-                    <Eye className="w-4 h-4" />
-                    View Detail
-                  </Button>
-
-                  {submission.status === "submitted" && (
+                  {submission.status === WorkSubmissionStatus.PENDING && (
                     <>
+                      <Button
+                        size="sm"
+                        onClick={() => handleApprove(submission)}
+                        className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                        Approve
+                      </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDecline(submission)}
-                        className="flex items-center gap-1 text-red-600 border-red-200 hover:bg-red-50"
+                        className="flex items-center gap-1 text-red-600 border-red-200 hover:text-red-700"
                       >
                         <XCircle className="w-4 h-4" />
                         Decline
                       </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => handleApprove(submission)}
-                        className="flex items-center gap-1 bg-green-600 hover:bg-green-700"
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                        Approve & Release Payment
-                      </Button>
                     </>
                   )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleViewDetail(submission)}
+                    className="flex items-center gap-1 border"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View Detail
+                  </Button>
                 </div>
               </div>
             </CardContent>

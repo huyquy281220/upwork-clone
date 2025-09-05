@@ -1,6 +1,6 @@
 export enum WorkSubmissionStatus {
   PENDING = "PENDING",
-  SUBMITTED = "SUBMITTED",
+  APPROVED = "APPROVED",
   REJECTED = "REJECTED",
 }
 

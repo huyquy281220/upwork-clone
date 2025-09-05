@@ -56,7 +56,7 @@ export const getMilestoneStatusColor = (status: string) => {
 
 export const getWorkSubmissionStatusColor = (status: string) => {
   switch (status) {
-    case WorkSubmissionStatus.SUBMITTED:
+    case WorkSubmissionStatus.APPROVED:
       return "bg-green-100 text-green-800";
     case WorkSubmissionStatus.PENDING:
       return "bg-yellow-100 text-yellow-800";
