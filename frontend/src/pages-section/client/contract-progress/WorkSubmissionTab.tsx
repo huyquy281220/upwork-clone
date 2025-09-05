@@ -2,27 +2,13 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  FileText,
-  Calendar,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Eye,
-  AlertTriangle,
-} from "lucide-react";
+import { FileText, Clock, CheckCircle, AlertTriangle } from "lucide-react";
 import { ApproveSubmissionModal } from "./components/ApproveSubmissionModal";
 import { DeclineSubmissionModal } from "./components/DeclineSubmissionModal";
 import { ViewSubmissionModal } from "./components/ViewSubmissionModal";
-import {
-  WorkSubmissionProps,
-  WorkSubmissionStatus,
-} from "@/types/work-submissions";
-import { formatDateToMonthDayYear } from "@/utils/formatDate";
-import { getWorkSubmissionStatusColor } from "@/utils/getStatusColor";
+import { WorkSubmissionProps } from "@/types/work-submissions";
 import { MilestoneProps } from "@/types/contract";
+import { SubmissionList } from "./components/SubmissionList";
 
 type WorkSubmissionsTabProps = {
   submissions: WorkSubmissionProps[];
@@ -44,6 +30,15 @@ const defaultSubmission: WorkSubmissionProps = {
   contractId: "",
 };
 
+export const getMilestoneAmount = (
+  workSubmission: WorkSubmissionProps,
+  milestones: MilestoneProps[]
+) => {
+  const milestoneId = workSubmission.milestoneId;
+  const milestone = milestones.find((m) => m.id === milestoneId);
+  return milestone?.amount;
+};
+
 export function WorkSubmissionsTab({
   submissions,
   milestones,
@@ -56,21 +51,6 @@ export function WorkSubmissionsTab({
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [declineReason, setDeclineReason] = useState("");
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "approved":
-        return <CheckCircle className="w-4 h-4" />;
-      case "submitted":
-        return <Clock className="w-4 h-4" />;
-      case "needs_revision":
-        return <AlertTriangle className="w-4 h-4" />;
-      case "declined":
-        return <XCircle className="w-4 h-4" />;
-      default:
-        return <Clock className="w-4 h-4" />;
-    }
-  };
 
   const handleViewDetail = (submission: WorkSubmissionProps) => {
     setSelectedSubmission(submission);
@@ -120,12 +100,6 @@ export function WorkSubmissionsTab({
     setSelectedSubmission(defaultSubmission);
   };
 
-  const getMilestoneAmount = (workSubmission: WorkSubmissionProps) => {
-    const milestoneId = workSubmission.milestoneId;
-    const milestone = milestones.find((m) => m.id === milestoneId);
-    return milestone?.amount;
-  };
-
   // Stats calculation
   const stats = {
     awaitingReview: submissions.filter((s) => s.status === "submitted").length,
@@ -143,7 +117,7 @@ export function WorkSubmissionsTab({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Awaiting Review</p>
+                <p className="text-sm text-foreground">Awaiting Review</p>
                 <p className="text-2xl font-bold text-blue-600">
                   {stats.awaitingReview}
                 </p>
@@ -157,7 +131,7 @@ export function WorkSubmissionsTab({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Approved</p>
+                <p className="text-sm text-foreground">Approved</p>
                 <p className="text-2xl font-bold text-green-600">
                   {stats.approved}
                 </p>
@@ -171,7 +145,7 @@ export function WorkSubmissionsTab({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Needs Revision</p>
+                <p className="text-sm text-foreground">Needs Revision</p>
                 <p className="text-2xl font-bold text-yellow-600">
                   {stats.needsRevision}
                 </p>
@@ -185,102 +159,24 @@ export function WorkSubmissionsTab({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Submissions</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-foreground">Total Submissions</p>
+                <p className="text-2xl font-bold text-indigo-500">
                   {stats.total}
                 </p>
               </div>
-              <FileText className="w-8 h-8 text-gray-600" />
+              <FileText className="w-8 h-8 text-indigo-500" />
             </div>
           </CardContent>
         </Card>
       </div>
-      {/* 853,1783 */}
       {/* Submissions List */}
-      <div className="space-y-4">
-        {submissions.map((submission) => (
-          <Card
-            key={submission.id}
-            className="hover:shadow-md transition-shadow"
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-semibold text-2xl">
-                      {submission.title}
-                    </h3>
-                    <Badge
-                      className={getWorkSubmissionStatusColor(
-                        submission.status
-                      )}
-                    >
-                      <div className="flex items-center gap-1">
-                        {getStatusIcon(submission.status)}
-                        {submission.status.replace("_", " ").toUpperCase()}
-                      </div>
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-sm text-foreground mb-2">
-                    <span>{submission.title}</span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      Submitted {formatDateToMonthDayYear(submission.createdAt)}
-                    </span>
-                    <span className="text-foreground">
-                      ${getMilestoneAmount(submission)}
-                    </span>
-                  </div>
-
-                  <p className="text-foreground opacity-80 text-sm">
-                    {submission.description}
-                  </p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <FileText className="w-4 h-4" />
-                    <p className="text-foreground opacity-80 text-sm">
-                      {submission.fileName}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-start sm:justify-end gap-2 ml-4">
-                  {submission.status === WorkSubmissionStatus.PENDING && (
-                    <>
-                      <Button
-                        size="sm"
-                        onClick={() => handleApprove(submission)}
-                        className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                        Approve
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDecline(submission)}
-                        className="flex items-center gap-1 text-red-600 border-red-200 hover:text-red-700"
-                      >
-                        <XCircle className="w-4 h-4" />
-                        Decline
-                      </Button>
-                    </>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleViewDetail(submission)}
-                    className="flex items-center gap-1 border"
-                  >
-                    <Eye className="w-4 h-4" />
-                    View Detail
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <SubmissionList
+        submissions={submissions}
+        milestones={milestones}
+        handleApprove={handleApprove}
+        handleDecline={handleDecline}
+        handleViewDetail={handleViewDetail}
+      />
 
       {/* Detail Modal */}
       <ViewSubmissionModal
@@ -292,7 +188,7 @@ export function WorkSubmissionsTab({
       {/* Approve Modal with Rating */}
       <ApproveSubmissionModal
         submission={selectedSubmission}
-        amount={getMilestoneAmount(selectedSubmission) ?? 0}
+        amount={getMilestoneAmount(selectedSubmission, milestones) ?? 0}
         isOpen={isApproveModalOpen}
         onClose={() => setIsApproveModalOpen(false)}
         onConfirm={confirmApproval}
@@ -301,7 +197,7 @@ export function WorkSubmissionsTab({
       {/* Decline Modal */}
       <DeclineSubmissionModal
         submission={selectedSubmission}
-        amount={getMilestoneAmount(selectedSubmission) ?? 0}
+        amount={getMilestoneAmount(selectedSubmission, milestones) ?? 0}
         isOpen={isDeclineModalOpen}
         onClose={() => setIsDeclineModalOpen(false)}
         onConfirm={confirmDecline}
