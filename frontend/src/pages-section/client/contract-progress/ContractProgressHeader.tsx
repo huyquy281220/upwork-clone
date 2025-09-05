@@ -38,7 +38,7 @@ export function ContractProgressHeader({
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex-1">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap gap-1 items-center justify-between">
               <h1 className="text-2xl font-bold text-foreground">
                 {contract.title}
               </h1>
@@ -53,7 +53,7 @@ export function ContractProgressHeader({
         </div>
 
         {/* Freelancer Info */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center space-x-4">
             <Avatar className="w-16 h-16">
               <AvatarImage
@@ -89,7 +89,7 @@ export function ContractProgressHeader({
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap gap-3 items-center space-x-4">
             <Button variant="outline" size="sm">
               <MessageCircle className="w-4 h-4 mr-2" />
               Message
