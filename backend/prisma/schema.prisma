@@ -442,6 +442,7 @@ enum NotificationType {
   WORK_SUBMISSION
   APPROVE_WORK_SUBMISSION
   DECLINE_WORK_SUBMISSION
+  PAYMENT
 }
 
 enum SubmissionStatus {
