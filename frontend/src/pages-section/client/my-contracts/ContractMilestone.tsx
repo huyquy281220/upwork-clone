@@ -15,20 +15,14 @@ import {
   X,
 } from "lucide-react";
 import { ContractProps, MilestoneStatus } from "@/types/contract";
+import { formatDateToMonthDayYear } from "@/utils/formatDate";
+import { getMilestoneStatusColor } from "@/utils/getStatusColor";
 
 interface ContractMilestonesProps {
   contract: ContractProps;
 }
 
 export function ContractMilestones({ contract }: ContractMilestonesProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case "completed":
@@ -39,19 +33,6 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
         return <AlertCircle className="w-5 h-5 text-yellow-600" />;
       default:
         return <Clock className="w-5 h-5 text-gray-400" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "in progress":
-        return "bg-blue-100 text-blue-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      default:
-        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -135,9 +116,11 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {milestone.name}
+                        {milestone.title}
                       </h3>
-                      <Badge className={getStatusColor(milestone.status)}>
+                      <Badge
+                        className={getMilestoneStatusColor(milestone.status)}
+                      >
                         {milestone.status}
                       </Badge>
                     </div>
@@ -159,7 +142,7 @@ export function ContractMilestones({ contract }: ContractMilestonesProps) {
                           <span>Due Date</span>
                         </div>
                         <p className="text-sm font-medium text-gray-900">
-                          {formatDate(milestone.dueDate)}
+                          {formatDateToMonthDayYear(milestone.dueDate)}
                         </p>
                       </div>
 
