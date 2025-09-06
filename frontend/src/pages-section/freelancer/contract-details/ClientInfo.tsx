@@ -3,10 +3,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Star, Verified, Building, Calendar } from "lucide-react";
-import { ClientDataProps } from "./ContractDetails";
+import { ClientByContractProps } from "@/types/contract";
 import { formatDateToMonthDayYear } from "@/utils/formatDate";
 
-type ClientInfoProps = ClientDataProps & {
+type ClientInfoProps = ClientByContractProps & {
   sentDate: string;
 };
 
@@ -36,7 +36,7 @@ export function ClientInfo({
               <AvatarFallback>
                 {(clientUser?.fullName ?? "")
                   .split(" ")
-                  .map((n) => n[0])
+                  .map((n: string) => n[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
