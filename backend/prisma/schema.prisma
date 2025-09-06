@@ -356,7 +356,7 @@ model PaymentMethod {
 model Review {
   id            String        @id @default(uuid())
   rating        Int
-  comment       String?
+  feedback      String?
   createdAt     DateTime  @default(now())
   
   // Relationships
