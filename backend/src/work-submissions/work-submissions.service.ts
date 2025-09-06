@@ -10,7 +10,11 @@ import { s3Client } from 'src/config/aws-s3.config';
 import { CreateWorkSubmissionDto } from './dto/create-work-submissions.dto';
 import { UpdateWorkSubmissionDto } from './dto/update-work-submissions.dto';
 import { Express } from 'express';
-import { NotificationType, SubmissionStatus } from '@prisma/client';
+import {
+  MilestoneStatus,
+  NotificationType,
+  SubmissionStatus,
+} from '@prisma/client';
 import { NotificationsGateway } from 'src/socket/socket.gateway';
 
 @Injectable()
@@ -195,7 +199,7 @@ export class WorkSubmissionsService {
       const submission = await tx.workSubmission.update({
         where: { id: submissionId },
         data: {
-          // status: SubmissionStatus.APPROVED,
+          status: SubmissionStatus.APPROVED,
           reviewedAt: new Date(),
         },
         include: {
@@ -214,6 +218,29 @@ export class WorkSubmissionsService {
         },
       });
 
+      if (submission.milestoneId) {
+        await tx.milestone.update({
+          where: { id: submission.milestoneId },
+          data: {
+            status: MilestoneStatus.COMPLETED,
+            completedAt: new Date(),
+          },
+        });
+      }
+
+      let review = null;
+      if (data.rating && data.rating > 0) {
+        review = await tx.review.create({
+          data: {
+            rating: data.rating,
+            feedback: data.feedback || null,
+            contractId: submission.contractId,
+            reviewerId: submission.contract.client.userId, // Client reviews freelancer
+            revieweeId: submission.contract.freelancer.userId,
+          },
+        });
+      }
+
       // Create notification for freelancer
       const notification = await tx.notification.create({
         data: {
@@ -230,7 +257,10 @@ export class WorkSubmissionsService {
         notification,
       );
 
-      return submission;
+      return {
+        submission,
+        review,
+      };
     });
   }
 
