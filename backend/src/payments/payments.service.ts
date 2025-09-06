@@ -161,19 +161,15 @@ export class PaymentsService {
         data: [
           {
             userId: contract.freelancer.userId,
-            type: 'PAYMENT',
-            title: 'Payment Received',
-            message: `You've received a payment of $${(payment.amount / 100).toFixed(2)} for "${contract.title}".`,
-            relatedId: payment.id,
-            relatedType: 'PAYMENT',
+            type: NotificationType.PAYMENT,
+            content: `You've received a payment of $${(payment.amount / 100).toFixed(2)} for contract "${contract.title}".`,
+            itemId: contract.id,
           },
           {
             userId: contract.client.userId,
-            type: 'PAYMENT',
-            title: 'Payment Processed',
-            message: `Payment of $${(payment.amount / 100).toFixed(2)} has been processed for "${contract.title}".`,
-            relatedId: payment.id,
-            relatedType: 'PAYMENT',
+            type: NotificationType.PAYMENT,
+            content: `Payment of $${(payment.amount / 100).toFixed(2)} has been processed for contract "${contract.title}".`,
+            itemId: contract.id,
           },
         ],
       });
