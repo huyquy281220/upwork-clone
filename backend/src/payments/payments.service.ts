@@ -8,6 +8,7 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import {
   ContractStatus,
   MilestoneStatus,
+  NotificationType,
   PaymentMethodType,
 } from '@prisma/client';
 import { PaymentStatus } from '@prisma/client';
