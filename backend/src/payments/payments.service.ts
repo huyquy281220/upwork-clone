@@ -5,7 +5,11 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { ContractStatus, PaymentMethodType } from '@prisma/client';
+import {
+  ContractStatus,
+  MilestoneStatus,
+  PaymentMethodType,
+} from '@prisma/client';
 import { PaymentStatus } from '@prisma/client';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import Stripe from 'stripe';
@@ -103,21 +107,79 @@ export class PaymentsService {
   }
 
   async handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
-    await this.prisma.payment.update({
-      where: { paymentIntentId: paymentIntent.id },
-      data: {
-        status: PaymentStatus.PAID,
-        paidAt: new Date(),
-      },
-    });
-
-    const contractId = paymentIntent.metadata.contractId;
-    if (contractId) {
-      await this.prisma.contract.update({
-        where: { id: contractId },
-        data: { status: ContractStatus.COMPLETED },
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Update payment status
+      const payment = await tx.payment.update({
+        where: { paymentIntentId: paymentIntent.id },
+        data: { status: PaymentStatus.PAID, paidAt: new Date() },
+        include: {
+          contract: {
+            include: {
+              freelancer: { include: { user: true } },
+              client: { include: { user: true } },
+              milestones: true,
+            },
+          },
+        },
       });
-    }
+
+      const contract = payment.contract;
+      const contractId = paymentIntent.metadata.contractId;
+      const milestoneId = paymentIntent.metadata.milestoneId;
+
+      // 2. Update milestone status if this payment is for a milestone
+      if (milestoneId) {
+        await tx.milestone.update({
+          where: { id: milestoneId },
+          data: {
+            status: MilestoneStatus.COMPLETED,
+            completedAt: new Date(),
+          },
+        });
+      }
+
+      // 3. Check if all milestones are completed before marking contract complete
+      if (contract.contractType === 'FIXED_PRICE') {
+        const allMilestones = await tx.milestone.findMany({
+          where: { contractId },
+        });
+
+        const allCompleted = allMilestones.every(
+          (milestone) => milestone.status === MilestoneStatus.COMPLETED,
+        );
+
+        if (allCompleted) {
+          await tx.contract.update({
+            where: { id: contractId },
+            data: { status: ContractStatus.COMPLETED },
+          });
+        }
+      }
+
+      // 4. Create notifications
+      await tx.notification.createMany({
+        data: [
+          {
+            userId: contract.freelancer.userId,
+            type: 'PAYMENT',
+            title: 'Payment Received',
+            message: `You've received a payment of $${(payment.amount / 100).toFixed(2)} for "${contract.title}".`,
+            relatedId: payment.id,
+            relatedType: 'PAYMENT',
+          },
+          {
+            userId: contract.client.userId,
+            type: 'PAYMENT',
+            title: 'Payment Processed',
+            message: `Payment of $${(payment.amount / 100).toFixed(2)} has been processed for "${contract.title}".`,
+            relatedId: payment.id,
+            relatedType: 'PAYMENT',
+          },
+        ],
+      });
+
+      return { payment, milestoneUpdated: !!milestoneId };
+    });
   }
 
   async handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
