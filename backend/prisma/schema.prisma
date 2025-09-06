@@ -266,6 +266,7 @@ model WorkSubmission {
   status       SubmissionStatus @default(PENDING)
   reviewedAt   DateTime?
   createdAt   DateTime @default(now())
+  completedAt DateTime?
   updatedAt   DateTime @updatedAt
 
   contract   Contract   @relation("WorkSubmissionContract", fields: [contractId], references: [id])
