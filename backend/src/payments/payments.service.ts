@@ -15,12 +15,14 @@ import { PaymentStatus } from '@prisma/client';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import Stripe from 'stripe';
 import { StripeService } from 'src/stripe/stripe.service';
+import { NotificationsGateway } from 'src/socket/socket.gateway';
 
 @Injectable()
 export class PaymentsService {
   constructor(
     private prisma: PrismaService,
     private stripeService: StripeService,
+    private notificationGateway: NotificationsGateway,
   ) {}
 
   async createPayment(data: CreatePaymentDto) {
@@ -158,59 +160,178 @@ export class PaymentsService {
       }
 
       // 4. Create notifications
-      await tx.notification.createMany({
-        data: [
-          {
-            userId: contract.freelancer.userId,
-            type: NotificationType.PAYMENT,
-            content: `You've received a payment of $${(payment.amount / 100).toFixed(2)} for contract "${contract.title}".`,
-            itemId: contract.id,
-          },
-          {
-            userId: contract.client.userId,
-            type: NotificationType.PAYMENT,
-            content: `Payment of $${(payment.amount / 100).toFixed(2)} has been processed for contract "${contract.title}".`,
-            itemId: contract.id,
-          },
-        ],
+      const notificationForClient = await tx.notification.create({
+        data: {
+          userId: contract.client.userId,
+          type: NotificationType.PAYMENT,
+          content: `Payment of $${(payment.amount / 100).toFixed(2)} has been processed for contract "${contract.title}".`,
+          itemId: contract.id,
+        },
       });
+      const notificationForFreelancer = await tx.notification.create({
+        data: {
+          userId: contract.freelancer.userId,
+          type: NotificationType.PAYMENT,
+          content: `You've received a payment of $${(payment.amount / 100).toFixed(2)} for contract "${contract.title}".`,
+          itemId: contract.id,
+        },
+      });
+
+      await Promise.all([
+        this.notificationGateway.sendNotificationToUser(
+          contract.freelancer.userId,
+          notificationForFreelancer,
+        ),
+        this.notificationGateway.sendNotificationToUser(
+          contract.client.userId,
+          notificationForClient,
+        ),
+      ]);
 
       return { payment, milestoneUpdated: !!milestoneId };
     });
   }
 
   async handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
+    const payment = await this.prisma.payment.findUnique({
+      where: { paymentIntentId: paymentIntent.id },
+      include: {
+        contract: {
+          include: {
+            client: { include: { user: true } },
+          },
+        },
+      },
+    });
+
+    if (!payment) {
+      throw new NotFoundException('Payment not found');
+    }
+
     await this.prisma.payment.update({
       where: { paymentIntentId: paymentIntent.id },
       data: { status: PaymentStatus.FAILED },
     });
+
+    const notification = await this.prisma.notification.create({
+      data: {
+        userId: payment.contract.client.userId,
+        type: NotificationType.PAYMENT,
+        content: `Payment failed for contract "${payment.contract.title}".`,
+        itemId: payment.contract.id,
+      },
+    });
+
+    this.notificationGateway.sendNotificationToUser(
+      payment.contract.client.userId,
+      notification,
+    );
   }
 
   async handlePaymentCanceled(paymentIntent: Stripe.PaymentIntent) {
-    const contractId = paymentIntent.metadata.contractId;
-    const payment = await this.prisma.payment.findFirst({
-      where: { contractId, status: PaymentStatus.SUCCEEDED },
+    const payment = await this.prisma.payment.findUnique({
+      where: { paymentIntentId: paymentIntent.id },
+      include: {
+        contract: {
+          include: {
+            client: { include: { user: true } },
+            freelancer: { include: { user: true } },
+          },
+        },
+      },
     });
 
-    if (payment) {
-      await this.stripeService.createRefund(payment.paymentIntentId);
+    if (payment && payment.status === PaymentStatus.PAID) {
+      // Only refund if payment was actually successful
+      try {
+        await this.stripeService.createRefund(payment.paymentIntentId);
+
+        await this.prisma.payment.update({
+          where: { paymentIntentId: paymentIntent.id },
+          data: { status: PaymentStatus.REFUNDED },
+        });
+
+        // Send notifications about refund
+        await this.prisma.notification.createMany({
+          data: [
+            {
+              userId: payment.contract.client.userId,
+              type: NotificationType.PAYMENT,
+              content: `Payment refunded for contract "${payment.contract.title}".`,
+              itemId: payment.contract.id,
+            },
+            {
+              userId: payment.contract.freelancer.userId,
+              type: NotificationType.PAYMENT,
+              content: `Payment refunded for contract "${payment.contract.title}".`,
+              itemId: payment.contract.id,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error('Failed to process refund:', error);
+        await this.prisma.payment.update({
+          where: { paymentIntentId: paymentIntent.id },
+          data: { status: PaymentStatus.FAILED },
+        });
+      }
+    } else {
+      // Payment was never successful, just mark as canceled
       await this.prisma.payment.update({
         where: { paymentIntentId: paymentIntent.id },
-        data: { status: PaymentStatus.REFUNDED },
+        data: { status: PaymentStatus.CANCELED },
       });
     }
   }
 
   async handleChargeCaptured(charge: Stripe.Charge) {
-    // Handle when escrow payment is captured
     const paymentIntentId = charge.payment_intent as string;
-    await this.prisma.payment.update({
+
+    const payment = await this.prisma.payment.update({
       where: { paymentIntentId },
       data: {
         status: PaymentStatus.PAID,
         paidAt: new Date(),
       },
+      include: {
+        contract: {
+          include: {
+            client: { include: { user: true } },
+            freelancer: { include: { user: true } },
+          },
+        },
+      },
     });
+
+    // Send notifications about successful payment
+    const notificationForFreelancer = await this.prisma.notification.create({
+      data: {
+        userId: payment.contract.freelancer.userId,
+        type: NotificationType.PAYMENT,
+        content: `Payment of $${(payment.amount / 100).toFixed(2)} received for contract "${payment.contract.title}".`,
+        itemId: payment.contract.id,
+      },
+    });
+    const notificationForClient = await this.prisma.notification.create({
+      data: {
+        userId: payment.contract.client.userId,
+        type: NotificationType.PAYMENT,
+        content: `Payment of $${(payment.amount / 100).toFixed(2)} processed for contract "${payment.contract.title}".`,
+        itemId: payment.contract.id,
+      },
+    });
+    await Promise.all([
+      this.notificationGateway.sendNotificationToUser(
+        payment.contract.freelancer.userId,
+        notificationForFreelancer,
+      ),
+      this.notificationGateway.sendNotificationToUser(
+        payment.contract.client.userId,
+        notificationForClient,
+      ),
+    ]);
+
+    return payment;
   }
 
   async chargeOnApproval(contractId: string, amount: number) {
@@ -231,7 +352,7 @@ export class PaymentsService {
           contractId: contract.id,
           amount,
           currency: 'USD',
-          status: 'PENDING',
+          status: PaymentStatus.PENDING,
           method: 'CARD',
         },
       });
@@ -252,7 +373,7 @@ export class PaymentsService {
       if (!defaultMethod) {
         await this.updatePaymentStatus(
           payment.id,
-          'FAILED',
+          PaymentStatus.FAILED,
           'No default payment method',
         );
         throw new BadRequestException('No default payment method');
