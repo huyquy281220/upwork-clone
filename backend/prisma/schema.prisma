@@ -384,6 +384,7 @@ enum LanguageProficiency {
 enum PaymentStatus {
   PENDING  
   AUTHORIZED
+  PROCESSING
   PAID
   FAILED
   CANCELED
