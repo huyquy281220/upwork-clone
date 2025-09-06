@@ -295,6 +295,8 @@ export class StripeService {
             freelancerId: data.freelancerId,
             clientId: data.clientId,
             contractType: data.contractType,
+            milestoneId: data.milestoneId,
+            workLogId: data.workLogId,
           },
         },
         {

@@ -30,4 +30,12 @@ export class CreatePaymentIntentDto {
 
   @IsString()
   contractType: string;
+
+  @IsOptional()
+  @IsString()
+  milestoneId?: string;
+
+  @IsOptional()
+  @IsString()
+  workLogId?: string;
 }
