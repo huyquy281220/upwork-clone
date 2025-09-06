@@ -8,6 +8,7 @@ export type ContractStatus = 'PENDING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
 export type PaymentStatus =
   | 'PENDING'
   | 'AUTHORIZED'
+  | 'PROCESSING'
   | 'PAID'
   | 'FAILED'
   | 'CANCELED'
